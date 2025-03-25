@@ -1,0 +1,148 @@
+{% extends 'generic/object.html' %}
+{% load buttons %}
+{% load static %}
+{% load custom_links %}
+{% load helpers %}
+{% load plugins %}
+{% load render_table from django_tables2 %}
+
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col col-md-6">
+        <div class="card">
+            <h5 class="card-header">NAT Rule</h5>
+            <table class="table table-hover attr-table">
+                <tr>
+                    <th scope="row">Rule Set</th>
+                    <td>
+                        <a href="{{ object.rule_set.get_absolute_url }}">{{ object.rule_set.name }}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Name</th>
+                    <td>{{ object.name }}</td>
+                </tr>
+                <tr>
+                    <td>Device</td>
+                    <td>
+                        {% if object.rule_set.assigned_object %}
+                        <a href="{{ object.rule_set.assigned_object.get_absolute_url }}">{{ object.rule_set.assigned_object }}</a>
+                        {% else %}
+                        <span class="text-muted">None</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Outbound Interface/Pool</td>
+                    <td>
+                        {% if object.assigned_object %}
+                        <a href="{{ object.assigned_object.get_absolute_url }}">{{ object.assigned_object }}</a>
+                        {% elif object.pool %}
+                        <a href="{{ object.pool.get_absolute_url }}">{{ object.pool }}</a>
+                        {% elif object.custom_interface %}
+                        {{ object.custom_interface }}
+                        {% else %}
+                        <span class="text-muted">None</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td>
+                        <span class="label label-{{ object.get_status_class }}">{{ object.get_status_display }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Description</th>
+                    <td>{{ object.description|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Source Address NAT Type</th>
+                    <td>{{ object.source_type|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Destination Address NAT Type</th>
+                    <td>{{ object.destination_type|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Source Ports</th>
+                    <td>{{ object.source_port_list|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Destination Ports</th>
+                    <td>{{ object.destination_port_list|placeholder }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                Source/Destination Pools
+            </h5>
+            <table class="table table-hover attr-table">
+                <tr>
+                    <th scope="row">Source Pool</th>
+                    <td>
+                        {% if object.source_pool %}
+                        <a href="{{ object.source_pool.get_absolute_url }}">{{ object.source_pool }}</a>
+                        {% else %}
+                        <span class="text-muted">None</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Destination Pool</th>
+                    <td>
+                        {% if object.destination_pool %}
+                        <a href="{{ object.destination_pool.get_absolute_url }}">{{ object.destination_pool }}</a>
+                        {% else %}
+                        <span class="text-muted">None</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {% include 'inc/panels/custom_fields.html' %}
+        {% include 'inc/panels/tags.html' %}
+        {% include 'inc/panels/comments.html' %}
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                Source Addresses - Address Type: {{ object.source_type|placeholder }}
+            </h5>
+            {% render_table source_addresses_table 'inc/table.html' %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                Destination Addresses - Address Type: {{ object.destination_type|placeholder }}
+            </h5>
+            {% render_table destination_addresses_table 'inc/table.html' %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                Source Prefixes
+            </h5>
+            {% render_table source_prefixes_table 'inc/table.html' %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                Destination Prefixes
+            </h5>
+            {% render_table destination_prefixes_table 'inc/table.html' %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                Source IP Ranges
+            </h5>
+            {% render_table source_ranges_table 'inc/table.html' %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                Destination IP Ranges
+            </h5>
+            {% render_table destination_ranges_table 'inc/table.html' %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

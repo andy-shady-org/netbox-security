@@ -1,0 +1,69 @@
+{% extends 'generic/object.html' %}
+{% load buttons %}
+{% load custom_links %}
+{% load helpers %}
+{% load plugins %}
+{% load render_table from django_tables2 %}
+
+{% block extra_controls %}
+    {% if perms.netbox_security.change_natruleset %}
+    <a href="{% url 'plugins:netbox_security:natrule_add' %}?rule_set={{ object.pk }}" class="btn btn-success">
+        <span class="mdi mdi-plus-thick" aria-hidden="true"></span> Add Rule
+    </a>
+    {% endif %}
+{% endblock extra_controls %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                NAT Rulesets
+            </h5>
+            <table class="table table-hover attr-table">
+                <tr>
+                    <td>name</td>
+                    <td>{{ object.name }}</td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td>{{ object.description|placeholder }}</td>
+                </tr>
+                <tr>
+                    <td>NAT Type</td>
+                    <td>{{ object.nat_type }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">NAT Rules</th>
+                    <td>{{ object.rules.count }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Assigned Host</th>
+                    <td>{{ object.assigned_object|linkify }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Direction</th>
+                    <td>{{ object.direction }}</td>
+                </tr>
+            </table>
+        </div>
+        {% include 'inc/panels/custom_fields.html' %}
+        {% include 'inc/panels/tags.html' %}
+        {% include 'inc/panels/comments.html' %}
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                Source Zones
+            </h5>
+            {% render_table source_zones_table 'inc/table.html' %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                Destination Zones
+            </h5>
+            {% render_table destination_zones_table 'inc/table.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

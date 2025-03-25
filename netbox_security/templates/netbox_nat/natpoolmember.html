@@ -1,0 +1,73 @@
+{% extends 'generic/object.html' %}
+{% load helpers %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col col-md-5">
+        <div class="card">
+            <h5 class="card-header">NAT Pool Member</h5>
+            <table class="table table-hover attr-table">
+                <tr>
+                    <th scope="row">NAT Pool</th>
+                    <td>
+                        <a href="{{ object.pool.get_absolute_url }}">{{ object.pool }}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Name</th>
+                    <td>{{ object.name }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Prefix</th>
+                    {% if object.network %}
+                    <td>
+                        <a href="{{ object.network.get_absolute_url }}">{{ object.network }}</a>
+                    </td>
+                    {% else %}
+                    <td>{{ object.network|placeholder }}</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th scope="row">Address</th>
+                    {% if object.address %}
+                    <td>
+                        <a href="{{ object.address.get_absolute_url }}">{{ object.address }}</a>
+                    </td>
+                    {% else %}
+                    <td>{{ object.address|placeholder }}</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th scope="row">IP Range</th>
+                    {% if object.address_range %}
+                    <td>
+                        <a href="{{ object.address_range.get_absolute_url }}">{{ object.address_range }}</a>
+                    </td>
+                    {% else %}
+                    <td>{{ object.address_range|placeholder }}</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th scope="row">Source Ports</th>
+                    {% if object.source_ports %}
+                    <td>{{ object.source_port_list|placeholder }}</td>
+                    {% else %}
+                    <td>{{ object.source_ports|placeholder }}</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th scope="row">Destination Ports</th>
+                    {% if object.source_ports %}
+                    <td>{{ object.destination_port_list|placeholder }}</td>
+                    {% else %}
+                    <td>{{ object.destination_ports|placeholder }}</td>
+                    {% endif %}
+                </tr>
+            </table>
+        </div>
+        {% include 'inc/panels/custom_fields.html' %}
+        {% include 'inc/panels/tags.html' %}
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,42 @@
+{% load buttons %}
+{% load custom_links %}
+{% load helpers %}
+{% load i18n %}
+{% load plugins %}
+{% load render_table from django_tables2 %}
+<div class="card">
+    <h5 class="card-header">
+        {% trans "NAT Rules" %}
+        <div class="card-actions">
+            {% if perms.netbox_security.add_natrule %}
+                <a href="{% url 'plugins:netbox_security:natrule_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                  <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create NAT Rule" %}
+                </a>
+            {% endif %}
+            {% if perms.netbox_security.add_natruleassignment %}
+                <a href="{% url 'plugins:netbox_security:natruleassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                  <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign NAT Rule" %}
+                </a>
+            {% endif %}
+        </div>
+    </h5>
+    {% render_table related_rule_table 'inc/table.html' %}
+</div>
+<div class="card">
+    <h5 class="card-header">
+        {% trans "Security Zones" %}
+        <div class="card-actions">
+            {% if perms.netbox_security.add_securityzone %}
+                <a href="{% url 'plugins:netbox_security:securityzone_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                  <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Security Zone" %}
+                </a>
+            {% endif %}
+            {% if perms.netbox_security.add_securityzoneassignment %}
+                <a href="{% url 'plugins:netbox_security:securityzoneassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                  <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Security Zone" %}
+                </a>
+            {% endif %}
+        </div>
+    </h5>
+    {% render_table related_zone_table 'inc/table.html' %}
+</div>
