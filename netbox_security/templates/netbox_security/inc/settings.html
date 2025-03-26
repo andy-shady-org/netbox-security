@@ -1,0 +1,26 @@
+<div class="card">
+    <h5 class="card-header">From Settings</h5>
+    <table class="table table-hover attr-table">
+      {% for setting in object.from_settings.all %}
+        <tr>
+          <th scope="row">{{ setting.get_key_display }}</th>
+          <td>
+            {{ setting.value }}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+</div>
+<div class="card">
+    <h5 class="card-header">Then Settings</h5>
+    <table class="table table-hover attr-table">
+      {% for setting in object.then_settings.all %}
+        <tr>
+          <th scope="row">{{ setting.get_key_display }}</th>
+          <td>
+            {{ setting.value }}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+</div>

@@ -1,4 +1,5 @@
 {% extends 'generic/object.html' %}
+{% load i18n %}
 {% load buttons %}
 {% load custom_links %}
 {% load helpers %}
@@ -18,30 +19,30 @@
     <div class="col-md-6">
         <div class="card">
             <h5 class="card-header">
-                NAT Pools
+                {% trans "NAT Pools" %}
             </h5>
             <table class="table table-hover attr-table">
                 <tr>
-                    <td>name</td>
+                    <td>{% trans "Name" %}</td>
                     <td>{{ object.name }}</td>
                 </tr>
                 <tr>
-                    <td>Pool Type</td>
+                    <td>{% trans "Pool Type" %}</td>
                     <td>{{ object.pool_type }}</td>
                 </tr>
                 <tr>
-                    <td>Description</td>
+                    <td>{% trans "Description" %}</td>
                     <td>{{ object.description|placeholder }}</td>
                 </tr>
                 <tr>
-                    <td>Member Count</td>
+                    <td>% trans "Member Count" %}</td>
                     <td>{{ object.member_count|placeholder }}</td>
                 </tr>
             </table>
         </div>
+        {% include 'inc/panels/custom_fields.html' %}
     </div>
     <div class="col-md-6">
-        {% include 'inc/panels/custom_fields.html' %}
         {% include 'inc/panels/tags.html' %}
         {% include 'inc/panels/comments.html' %}
     </div>
@@ -50,7 +51,7 @@
     <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
-                Pool Members
+                {% trans "Pool Members" %}
             </h5>
             {% render_table related_session_table 'inc/table.html' %}
         </div>

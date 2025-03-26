@@ -1,0 +1,39 @@
+{% extends 'generic/object.html' %}
+{% load i18n %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col col-md-6">
+        <div class="card">
+            <h5 class="card-header">{% trans "Firewall Filter Rules" %}</h5>
+            <table class="table table-hover attr-table">
+                <tr>
+                    <th scope="row">{% trans "Name" %}</th>
+                    <td>{{ object.name }}</td>
+                </tr>
+                {% if object.description %}
+                <tr>
+                    <th scope="row">{% trans "Description" %}</th>
+                    <td>{{ object.description|placeholder }}</td>
+                </tr>
+                {% endif %}
+                {% if object.filter %}
+                <tr>
+                    <th scope="row">{% trans "Firewall Filter" %}</th>
+                    <td>
+                        {{ object.filter|linkify|placeholder }}
+                    </td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        {% include 'netbox_security/inc/settings.html' %}
+    </div>
+    <div class="col col-md-6">
+        {% include 'inc/panels/custom_fields.html' %}
+        {% include 'inc/panels/comments.html' %}
+        {% include 'inc/panels/tags.html' %}
+    </div>
+</div>
+{% endblock %}
