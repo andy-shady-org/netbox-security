@@ -1,6 +1,3 @@
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
-
 from netbox.views import generic
 from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view

@@ -10,6 +10,7 @@ from .models import (
     NatRuleSet,
     NatRule,
     FirewallFilter,
+    FirewallFilterRule,
 )
 
 from . import views
@@ -102,6 +103,15 @@ urlpatterns = [
     path('firewall-filter/<int:pk>/delete/', views.FirewallFilterDeleteView.as_view(), name='firewallfilter_delete'),
     path('firewall-filter/<int:pk>/contacts/', views.FirewallFilterContactsView.as_view(), name='firewallfilter_contacts'),
     path('firewall-filter/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='firewallfilter_changelog', kwargs={'model': FirewallFilter}),
+    # Firewall Filter Rules
+    path('firewall-filter-rule/', views.FirewallFilterRuleView.as_view(), name='firewallfilterrule_list'),
+    path('firewall-filter-rule/add/', views.FirewallFilterRuleEditView.as_view(), name='firewallfilterrule_add'),
+    path('firewall-filter-rule/delete/', views.FirewallFilterRuleBulkDeleteView.as_view(), name='firewallfilterrule_bulk_delete'),
+    path('firewall-filter-rule/<int:pk>/', views.FirewallFilterRuleView.as_view(), name='firewallfilterrule'),
+    path('firewall-filter-rule/<int:pk>/edit/', views.FirewallFilterRuleEditView.as_view(), name='firewallfilterrule_edit'),
+    path('firewall-filter-rule/<int:pk>/delete/', views.FirewallFilterRuleDeleteView.as_view(), name='firewallfilterrule_delete'),
+    path('firewall-filter-rule/<int:pk>/contacts/', views.FirewallFilterRuleContactsView.as_view(), name='firewallfilterrule_contacts'),
+    path('firewall-filter-rule/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='firewallfilterrule_changelog', kwargs={'model': FirewallFilterRule}),
     # Address Assignments
     path('address-assignments/add/', views.AddressAssignmentEditView.as_view(), name='addressassignment_add'),
     path('address-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'addressassignment'))),

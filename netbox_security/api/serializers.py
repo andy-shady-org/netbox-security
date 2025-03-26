@@ -6,3 +6,4 @@ from .serializers_.NatRuleSet import NatRuleSetSerializer, NatRuleSetAssignmentS
 from .serializers_.NatRule import NatRuleSerializer, NatRuleAssignmentSerializer
 from .serializers_.Address import AddressSerializer, AddressAssignmentSerializer
 from .serializers_.FirewallFilter import FirewallFilterSerializer, FirewallFilterAssignmentSerializer
+from .serializers_.FirewallFilterRule import FirewallFilterRuleSerializer, FirewallRuleSettingSerializer

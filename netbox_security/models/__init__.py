@@ -6,3 +6,4 @@ from .SecurityZone import SecurityZone, SecurityZoneAssignment, SecurityZoneInde
 from .SecurityZonePolicy import SecurityZonePolicy, SecurityZonePolicyIndex
 from .Address import Address, AddressAssignment, AddressIndex
 from .FirewallFilter import FirewallFilter, FirewallFilterAssignment, FirewallFilterIndex
+from .FirewallFilterRule import FirewallFilterRule, FirewallRuleSetting

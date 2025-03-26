@@ -7,6 +7,25 @@ plugin_settings = settings.PLUGINS_CONFIG.get('netbox_security', {})
 
 security_menu_items = (
     PluginMenuItem(
+        link='plugins:netbox_security:address_list',
+        link_text='Addresses',
+        permissions=['netbox_security.view_address'],
+        buttons=(
+            PluginMenuButton(
+                'plugins:netbox_security:address_add',
+                _("Add"),
+                'mdi mdi-plus-thick',
+                permissions=['netbox_security.add_address'],
+            ),
+            PluginMenuButton(
+                'plugins:netbox_security:address_import',
+                _("Import"),
+                'mdi mdi-upload',
+                permissions=['netbox_security.add_address'],
+            ),
+        ),
+    ),
+    PluginMenuItem(
         link='plugins:netbox_security:securityzone_list',
         link_text='Security Zones',
         permissions=['netbox_security.view_securityzone'],
@@ -22,6 +41,25 @@ security_menu_items = (
                 _("Import"),
                 'mdi mdi-upload',
                 permissions=['netbox_security.add_securityzone'],
+            ),
+        ),
+    ),
+    PluginMenuItem(
+        link='plugins:netbox_security:securityzonepolicy_list',
+        link_text='Security Zone Policies',
+        permissions=['netbox_security.view_securityzonepolicy'],
+        buttons=(
+            PluginMenuButton(
+                'plugins:netbox_security:securityzonepolicy_add',
+                _("Add"),
+                'mdi mdi-plus-thick',
+                permissions=['netbox_security.add_securityzonepolicy'],
+            ),
+            PluginMenuButton(
+                'plugins:netbox_security:securityzonepolicy_import',
+                _("Import"),
+                'mdi mdi-upload',
+                permissions=['netbox_security.add_securityzonepolicy'],
             ),
         ),
     ),
@@ -107,6 +145,47 @@ rule_menu_items = (
     ),
 )
 
+firewall_menu_items = (
+    PluginMenuItem(
+        link='plugins:netbox_security:firewallfilter_list',
+        link_text='Firewall Filters',
+        permissions=['netbox_security.view_firewallfilter'],
+        buttons=(
+            PluginMenuButton(
+                'plugins:netbox_security:firewallfilter_add',
+                _("Add"),
+                'mdi mdi-plus-thick',
+                permissions=['netbox_security.add_firewallfilter'],
+            ),
+            PluginMenuButton(
+                'plugins:netbox_security:firewallfilter_import',
+                _("Import"),
+                'mdi mdi-upload',
+                permissions=['netbox_security.add_firewallfilter'],
+            ),
+        ),
+    ),
+    PluginMenuItem(
+        link='plugins:netbox_security:firewallfilterrule_list',
+        link_text='Firewall Filter Rules',
+        permissions=['netbox_security.view_firewallfilterrule'],
+        buttons=(
+            PluginMenuButton(
+                'plugins:netbox_security:firewallfilterrule_add',
+                _("Add"),
+                'mdi mdi-plus-thick',
+                permissions=['netbox_security.add_firewallfilterrule'],
+            ),
+            PluginMenuButton(
+                'plugins:netbox_security:firewallfilterrule_import',
+                _("Import"),
+                'mdi mdi-upload',
+                permissions=['netbox_security.add_firewallfilterrule'],
+            ),
+        ),
+    ),
+)
+
 if plugin_settings.get('top_level_menu'):
     menu = PluginMenu(
         label="NAT",
@@ -114,8 +193,9 @@ if plugin_settings.get('top_level_menu'):
             ("Security Zones", security_menu_items),
             ("NAT Pools", pool_menu_items),
             ("NAT Rules", rule_menu_items),
+            ("Firewall Filters", firewall_menu_items),
         ),
         icon_class="mdi mdi-server-security",
     )
 else:
-    menu_items = (security_menu_items + pool_menu_items + rule_menu_items)
+    menu_items = (security_menu_items + pool_menu_items + rule_menu_items + firewall_menu_items)

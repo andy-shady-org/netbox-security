@@ -26,10 +26,14 @@ ZONE_ASSIGNMENT_MODELS = Q(
 ADDRESSLIST_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device"),
     Q(app_label="dcim", model="virtualdevicecontext"),
-    Q(app_label="netbox_security", model="SecurityZone"),
+    Q(app_label="netbox_security", model="securityzone"),
 )
 
 FILTER_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device"),
     Q(app_label="dcim", model="virtualdevicecontext"),
+)
+
+FILTER_SETTING_ASSIGNMENT_MODELS = Q(
+    Q(app_label="netbox_security", model="firewallfilterrule"),
 )

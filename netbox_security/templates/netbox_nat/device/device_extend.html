@@ -47,6 +47,28 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Addresses" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_address %}
+                        <a href="{% url 'plugins:netbox_security:address_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Address" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_addressassignment %}
+                        <a href="{% url 'plugins:netbox_security:addressassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Address" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% render_table related_address_table 'inc/table.html' %}
+        </div>
+    </div>
+</div>
 <div class="card">
     <h5 class="card-header">
         {% trans "Security Zones" %}

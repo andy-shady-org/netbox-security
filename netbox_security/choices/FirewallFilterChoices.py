@@ -16,3 +16,15 @@ class FamilyChoices(ChoiceSet):
         (MPLS, 'MPLS', 'cyan'),
         (CCC, 'CCC', 'orange'),
     ]
+
+
+class FirewallRuleSettingChoices(ChoiceSet):
+    ADDRESS = 'address'
+
+    CHOICES = [
+        (ADDRESS, 'Address'),
+    ]
+
+    FIELD_TYPES = {
+        ADDRESS: 'ipaddr',
+    }

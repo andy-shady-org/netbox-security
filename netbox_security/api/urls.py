@@ -10,6 +10,7 @@ from .views import (
     NatRuleSetViewSet, NatRuleSetAssignmentViewSet,
     NatRuleViewSet, NatRuleAssignmentViewSet,
     FirewallFilterViewSet, FirewallFilterAssignmentViewSet,
+    FirewallFilterRuleViewSet, FirewallRuleSettingViewSet
 )
 
 app_name = 'netbox_security'
@@ -24,6 +25,8 @@ router.register('pool-member', NatPoolMemberViewSet)
 router.register('rule-set', NatRuleSetViewSet)
 router.register('nat-rule', NatRuleViewSet)
 router.register('firewall-filter', FirewallFilterViewSet)
+router.register('firewall-filter-rule', FirewallFilterRuleViewSet)
+router.register('firewall-filter-rule-setting', FirewallRuleSettingViewSet)
 router.register('address-assignments', AddressAssignmentViewSet)
 router.register('security-zone-assignments', SecurityZoneAssignmentViewSet)
 router.register('nat-pool-assignments', NatPoolAssignmentViewSet)

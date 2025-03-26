@@ -5,6 +5,7 @@ from netbox_security.models import (
     NatRuleSetAssignment,
     NatRuleAssignment,
     SecurityZoneAssignment,
+    AddressAssignment,
 )
 from netbox_security.tables import (
     NatPoolDeviceAssignmentTable,
@@ -15,6 +16,8 @@ from netbox_security.tables import (
     SecurityZoneDeviceAssignmentTable,
     SecurityZoneVirtualDeviceContextAssignmentTable,
     SecurityZoneInterfaceAssignmentTable,
+    AddressDeviceAssignmentTable,
+    AddressVirtualDeviceContextAssignmentTable,
 )
 
 
@@ -50,12 +53,15 @@ class VirtualDeviceContextInfo(PluginTemplateExtension):
         ruleset_table = NatRuleSetVirtualDeviceContextAssignmentTable(ruleset_assignments)
         zone_assignments = SecurityZoneAssignment.objects.filter(virtualdevicecontext=obj)
         zone_table = SecurityZoneVirtualDeviceContextAssignmentTable(zone_assignments)
+        address_assignments = AddressAssignment.objects.filter(virtualdevicecontext=obj)
+        address_table = AddressVirtualDeviceContextAssignmentTable(address_assignments)
         return self.render(
             'netbox_security/device/device_extend.html',
             extra_context={
                 'related_pool_table': pool_table,
                 'related_ruleset_table': ruleset_table,
                 'related_zone_table': zone_table,
+                'related_address_table': address_table,
             }
         )
 
@@ -92,12 +98,15 @@ class DeviceInfo(PluginTemplateExtension):
         ruleset_table = NatRuleSetDeviceAssignmentTable(ruleset_assignments)
         zone_assignments = SecurityZoneAssignment.objects.filter(device=obj)
         zone_table = SecurityZoneDeviceAssignmentTable(zone_assignments)
+        address_assignments = AddressAssignment.objects.filter(device=obj)
+        address_table = AddressDeviceAssignmentTable(address_assignments)
         return self.render(
             'netbox_security/device/device_extend.html',
             extra_context={
                 'related_pool_table': pool_table,
                 'related_ruleset_table': ruleset_table,
                 'related_zone_table': zone_table,
+                'related_address_table': address_table,
             }
         )
 
