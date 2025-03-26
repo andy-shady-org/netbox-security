@@ -14,5 +14,5 @@ class ActionChoices(ChoiceSet):
         (DENY, 'Deny', 'red'),
         (LOG, 'Log', 'blue'),
         (COUNT, 'Count', 'cyan'),
-        (REJECT, 'Reject', 'cyan'),
+        (REJECT, 'Reject', 'red'),
     ]

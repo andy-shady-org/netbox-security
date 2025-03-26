@@ -4,3 +4,4 @@ from .NatRule import *
 from .NatRuleSet import *
 from .SecurityZone import *
 from .Address import *
+from .FirewallFilter import *

@@ -36,8 +36,8 @@ class AddressDeviceAssignmentTable(NetBoxTable):
         orderable=False,
         verbose_name=_('Device'),
     )
-    address_list = tables.Column(
-        verbose_name=_('Address List'),
+    address = tables.Column(
+        verbose_name=_('Address'),
         linkify=True
     )
     actions = ActionsColumn(
@@ -46,7 +46,7 @@ class AddressDeviceAssignmentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = AddressAssignment
-        fields = ('pk', 'address_list', 'assigned_object')
+        fields = ('pk', 'address', 'assigned_object')
         exclude = ('id',)
 
 
@@ -62,8 +62,8 @@ class AddressVirtualDeviceContextAssignmentTable(NetBoxTable):
         orderable=False,
         verbose_name=_('Virtual Device Context'),
     )
-    address_list = tables.Column(
-        verbose_name=_('Address List'),
+    address = tables.Column(
+        verbose_name=_('Address'),
         linkify=True
     )
     actions = ActionsColumn(
@@ -72,7 +72,7 @@ class AddressVirtualDeviceContextAssignmentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = AddressAssignment
-        fields = ('pk', 'address_list', 'assigned_object')
+        fields = ('pk', 'address', 'assigned_object')
         exclude = ('id',)
 
 
@@ -82,8 +82,8 @@ class AddressSecurityZoneAssignmentTable(NetBoxTable):
         orderable=False,
         verbose_name=_('Security Zone'),
     )
-    address_list = tables.Column(
-        verbose_name=_('Address List'),
+    address = tables.Column(
+        verbose_name=_('Address'),
         linkify=True
     )
     actions = ActionsColumn(
@@ -92,6 +92,6 @@ class AddressSecurityZoneAssignmentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = AddressAssignment
-        fields = ('pk', 'address_list', 'assigned_object')
+        fields = ('pk', 'address', 'assigned_object')
         exclude = ('id',)
 

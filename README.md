@@ -10,8 +10,8 @@ This plugin provides following Models:
 * NAT Pool Members
 * NAT Rule-sets
 * NAT Rules
-* Firewalls
-* Firewall Rules
+* Firewall Filters
+* Firewall Filter Rules
 
 ## Compatibility
 

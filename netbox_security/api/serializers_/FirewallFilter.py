@@ -7,36 +7,36 @@ from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 
 from netbox_security.models import (
-    Address,
-    AddressAssignment
+    FirewallFilter,
+    FirewallFilterAssignment
 )
 
 
-class AddressSerializer(NetBoxModelSerializer):
-    url = HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:address-detail')
+class FirewallFilterSerializer(NetBoxModelSerializer):
+    url = HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:firewallfilter-detail')
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
-        model = Address
-        fields = ('id', 'url', 'display', 'name', 'value', 'description', 'tenant',
+        model = FirewallFilter
+        fields = ('id', 'url', 'display', 'name', 'family', 'description', 'tenant',
                   'comments', 'tags', 'custom_fields', 'created', 'last_updated')
-        brief_fields = ('id', 'url', 'display', 'name', 'value', 'description',)
+        brief_fields = ('id', 'url', 'display', 'name', 'family', 'description',)
 
 
-class AddressAssignmentSerializer(NetBoxModelSerializer):
-    address = AddressSerializer(nested=True, required=True, allow_null=False)
+class FirewallFilterAssignmentSerializer(NetBoxModelSerializer):
+    firewall_filter = FirewallFilterSerializer(nested=True, required=True, allow_null=False)
     assigned_object_type = ContentTypeField(
         queryset=ContentType.objects.all()
     )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:
-        model = AddressAssignment
+        model = FirewallFilterAssignment
         fields = [
-            'id', 'url', 'display', 'address', 'assigned_object_type', 'assigned_object_id', 'assigned_object',
+            'id', 'url', 'display', 'firewall_filter', 'assigned_object_type', 'assigned_object_id', 'assigned_object',
             'created', 'last_updated',
         ]
-        brief_fields = ('id', 'url', 'display', 'address', 'assigned_object_type', 'assigned_object_id')
+        brief_fields = ('id', 'url', 'display', 'firewall_filter', 'assigned_object_type', 'assigned_object_id')
 
     @extend_schema_field(JSONField(allow_null=True))
     def get_assigned_object(self, obj):

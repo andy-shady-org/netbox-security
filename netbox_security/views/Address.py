@@ -37,7 +37,7 @@ __all__ = (
 
 class AddressView(generic.ObjectView):
     queryset = Address.objects.all()
-    template_name = 'netbox_security/addresslist.html'
+    template_name = 'netbox_security/address.html'
 
 
 class AddressListView(generic.ObjectListView):
@@ -54,7 +54,7 @@ class AddressEditView(generic.ObjectEditView):
 
 class AddressDeleteView(generic.ObjectDeleteView):
     queryset = Address.objects.all()
-    default_return_url = 'plugins:netbox_security:addresslist_list'
+    default_return_url = 'plugins:netbox_security:address_list'
 
 
 class AddressBulkEditView(generic.BulkEditView):
@@ -67,7 +67,7 @@ class AddressBulkEditView(generic.BulkEditView):
 class AddressBulkDeleteView(generic.BulkDeleteView):
     queryset = Address.objects.all()
     table = AddressTable
-    default_return_url = 'plugins:netbox_security:addresslist_list'
+    default_return_url = 'plugins:netbox_security:address_list'
 
 
 class AddressBulkImportView(generic.BulkImportView):

@@ -5,3 +5,4 @@ from .NatRuleSet import NatRuleSet, NatRuleSetAssignment, NatRuleSetIndex
 from .SecurityZone import SecurityZone, SecurityZoneAssignment, SecurityZoneIndex
 from .SecurityZonePolicy import SecurityZonePolicy, SecurityZonePolicyIndex
 from .Address import Address, AddressAssignment, AddressIndex
+from .FirewallFilter import FirewallFilter, FirewallFilterAssignment, FirewallFilterIndex

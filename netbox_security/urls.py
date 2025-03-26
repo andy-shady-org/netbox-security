@@ -8,23 +8,24 @@ from .models import (
     NatPool,
     NatPoolMember,
     NatRuleSet,
-    NatRule
+    NatRule,
+    FirewallFilter,
 )
 
 from . import views
 
 urlpatterns = [
-    # Address Lists
-    path('address-list/', views.AddressListView.as_view(), name='addresslist_list'),
-    path('address-list/add/', views.AddressEditView.as_view(), name='addresslist_add'),
-    path('address-list/import/', views.AddressBulkImportView.as_view(), name='addresslist_import'),
-    path('address-list/edit/', views.AddressBulkEditView.as_view(), name='addresslist_bulk_edit'),
-    path('address-list/delete/', views.AddressBulkDeleteView.as_view(), name='addresslist_bulk_delete'),
-    path('address-list/<int:pk>/', views.AddressView.as_view(), name='addresslist'),
-    path('address-list/<int:pk>/edit/', views.AddressEditView.as_view(), name='addresslist_edit'),
-    path('address-list/<int:pk>/delete/', views.AddressDeleteView.as_view(), name='addresslist_delete'),
-    path('address-list/<int:pk>/contacts/', views.AddressContactsView.as_view(), name='addresslist_contacts'),
-    path('address-list/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='addresslist_changelog', kwargs={'model': Address}),
+    # Addresses
+    path('address/', views.AddressView.as_view(), name='address_list'),
+    path('address/add/', views.AddressEditView.as_view(), name='address_add'),
+    path('address/import/', views.AddressBulkImportView.as_view(), name='address_import'),
+    path('address/edit/', views.AddressBulkEditView.as_view(), name='address_bulk_edit'),
+    path('address/delete/', views.AddressBulkDeleteView.as_view(), name='address_bulk_delete'),
+    path('address/<int:pk>/', views.AddressView.as_view(), name='address'),
+    path('address/<int:pk>/edit/', views.AddressEditView.as_view(), name='address_edit'),
+    path('address/<int:pk>/delete/', views.AddressDeleteView.as_view(), name='address_delete'),
+    path('address/<int:pk>/contacts/', views.AddressContactsView.as_view(), name='address_contacts'),
+    path('address/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='address_changelog', kwargs={'model': Address}),
     # Security Zones
     path('security-zone/', views.SecurityZoneListView.as_view(), name='securityzone_list'),
     path('security-zone/add/', views.SecurityZoneEditView.as_view(), name='securityzone_add'),
@@ -90,9 +91,20 @@ urlpatterns = [
     path('nat-rule/<int:pk>/delete/', views.NatRuleDeleteView.as_view(), name='natrule_delete'),
     path('nat-rule/<int:pk>/contacts/', views.NatRuleContactsView.as_view(), name='natrule_contacts'),
     path('nat-rule/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='natrule_changelog', kwargs={'model': NatRule}),
-    # Address List Assignments
-    path('address-list-assignments/add/', views.AddressAssignmentEditView.as_view(), name='addresslistassignment_add'),
-    path('address-list-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'addresslistassignment'))),
+    # Firewall Filters
+    path('firewall-filter/', views.FirewallFilterView.as_view(), name='firewallfilter_list'),
+    path('firewall-filter/add/', views.FirewallFilterEditView.as_view(), name='firewallfilter_add'),
+    path('firewall-filter/import/', views.FirewallFilterBulkImportView.as_view(), name='firewallfilter_import'),
+    path('firewall-filter/edit/', views.FirewallFilterBulkEditView.as_view(), name='firewallfilter_bulk_edit'),
+    path('firewall-filter/delete/', views.FirewallFilterBulkDeleteView.as_view(), name='firewallfilter_bulk_delete'),
+    path('firewall-filter/<int:pk>/', views.FirewallFilterView.as_view(), name='firewallfilter'),
+    path('firewall-filter/<int:pk>/edit/', views.FirewallFilterEditView.as_view(), name='firewallfilter_edit'),
+    path('firewall-filter/<int:pk>/delete/', views.FirewallFilterDeleteView.as_view(), name='firewallfilter_delete'),
+    path('firewall-filter/<int:pk>/contacts/', views.FirewallFilterContactsView.as_view(), name='firewallfilter_contacts'),
+    path('firewall-filter/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='firewallfilter_changelog', kwargs={'model': FirewallFilter}),
+    # Address Assignments
+    path('address-assignments/add/', views.AddressAssignmentEditView.as_view(), name='addressassignment_add'),
+    path('address-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'addressassignment'))),
     # Security Zone Assignments
     path('security-zone-assignments/add/', views.SecurityZoneAssignmentEditView.as_view(), name='securityzoneassignment_add'),
     path('security-zone-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'securityzoneassignment'))),
@@ -105,4 +117,7 @@ urlpatterns = [
     # NAT Ruleset Assignments
     path('rule-set-assignments/add/', views.NatRuleSetAssignmentEditView.as_view(), name='natrulesetassignment_add'),
     path('rule-set-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'natrulesetassignment'))),
+    # Firewall Filter Assignments
+    path('firewall-filter-assignments/add/', views.AddressAssignmentEditView.as_view(), name='addresslistassignment_add'),
+    path('firewall-filter-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'addresslistassignment'))),
 ]

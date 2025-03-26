@@ -2,8 +2,6 @@ import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from netaddr.core import AddrFormatError
-from netaddr import IPNetwork
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
 from utilities.filters import (
@@ -13,20 +11,21 @@ from utilities.filters import (
 from dcim.models import Device, VirtualDeviceContext
 
 from netbox_security.models import (
-    Address,
-    AddressAssignment,
-    SecurityZone,
+    FirewallFilter,
+    FirewallFilterAssignment,
 )
 
+from netbox_security.choices import FamilyChoices
 
-class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
-    value = django_filters.CharFilter(
-        method='filter_value',
-        label=_('Value'),
+
+class FirewallFilterFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+    family = django_filters.MultipleChoiceFilter(
+        choices=FamilyChoices,
+        required=False,
     )
 
     class Meta:
-        model = Address
+        model = FirewallFilter
         fields = ['id', 'name', 'description']
 
     def search(self, queryset, name, value):
@@ -39,21 +38,12 @@ class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         )
         return queryset.filter(qs_filter)
 
-    def filter_value(self, queryset, name, value):
-        if not value.strip():
-            return queryset
-        try:
-            query = str(IPNetwork(value).cidr)
-            return queryset.filter(prefix=query)
-        except (AddrFormatError, ValueError):
-            return queryset.none()
 
-
-class AddressAssignmentFilterSet(NetBoxModelFilterSet):
+class FirewallFilterAssignmentFilterSet(NetBoxModelFilterSet):
     assigned_object_type = ContentTypeFilter()
-    address_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Address.objects.all(),
-        label=_('Address (ID)'),
+    firewall_filter_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=FirewallFilter.objects.all(),
+        label=_('Firewall Filter (ID)'),
     )
     device = MultiValueCharFilter(
         method='filter_device',
@@ -75,20 +65,10 @@ class AddressAssignmentFilterSet(NetBoxModelFilterSet):
         field_name='pk',
         label=_('Virtual Device Context (ID)'),
     )
-    securityzone = MultiValueCharFilter(
-        method='filter_securityzone',
-        field_name='name',
-        label=_('Security Zone (name)'),
-    )
-    securityzone_id = MultiValueNumberFilter(
-        method='filter_securityzone',
-        field_name='pk',
-        label=_('Security Zone (ID)'),
-    )
 
     class Meta:
-        model = AddressAssignment
-        fields = ('id', 'address_id', 'assigned_object_type', 'assigned_object_id')
+        model = FirewallFilterAssignment
+        fields = ('id', 'firewall_filter_id', 'assigned_object_type', 'assigned_object_id')
 
     def filter_device(self, queryset, name, value):
         devices = Device.objects.filter(**{f'{name}__in': value})
@@ -108,14 +88,4 @@ class AddressAssignmentFilterSet(NetBoxModelFilterSet):
         device_ids.extend(VirtualDeviceContext.objects.filter(**{f'{name}__in': value}).values_list('id', flat=True))
         return queryset.filter(
             Q(assigned_object_type=ContentType.objects.get_for_model(Device), assigned_object_id__in=device_ids)
-        )
-
-    def filter_securityzone(self, queryset, name, value):
-        zones = SecurityZone.objects.filter(**{f'{name}__in': value})
-        if not zones.exists():
-            return queryset.none()
-        zone_ids = []
-        zone_ids.extend(SecurityZone.objects.filter(**{f'{name}__in': value}).values_list('id', flat=True))
-        return queryset.filter(
-            Q(assigned_object_type=ContentType.objects.get_for_model(SecurityZone), assigned_object_id__in=zone_ids)
         )

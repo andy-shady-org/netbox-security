@@ -9,78 +9,88 @@ from netbox.forms import (
 )
 
 from tenancy.forms import TenancyForm, TenancyFilterForm
-from ipam.formfields import IPNetworkFormField
 from utilities.forms.rendering import FieldSet, ObjectAttribute
 from utilities.forms.fields import (
     DynamicModelChoiceField,
     TagFilterField,
     CommentField,
+    CSVChoiceField,
 )
 
 
 from netbox_security.models import (
-    Address,
-    AddressAssignment,
+    FirewallFilter,
+    FirewallFilterAssignment,
 )
+
+from netbox_security.choices import FamilyChoices
+
 
 __all__ = (
-    "AddressForm",
-    "AddressFilterForm",
-    "AddressImportForm",
-    "AddressBulkEditForm",
-    "AddressAssignmentForm",
+    "FirewallFilterForm",
+    "FirewallFilterFilterForm",
+    "FirewallFilterImportForm",
+    "FirewallFilterBulkEditForm",
+    "FirewallFilterAssignmentForm",
 )
 
 
-class AddressForm(TenancyForm, NetBoxModelForm):
+class FirewallFilterForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(
         max_length=64,
         required=True
     )
-    value = IPNetworkFormField(
+    family = forms.ChoiceField(
         required=False,
-        label=_('Value'),
-        help_text=_('The IP address or prefix value in x.x.x.x/yy format'),
+        choices=FamilyChoices,
     )
     description = forms.CharField(
         max_length=200,
         required=False
     )
     fieldsets = (
-        FieldSet('name', 'value', 'description', name=_('Address List')),
+        FieldSet('name', 'family', 'description', name=_('Firewall Filter')),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
     comments = CommentField()
 
     class Meta:
-        model = Address
+        model = FirewallFilter
         fields = [
-            'name', 'value', 'tenant_group', 'tenant', 'description', 'comments', 'tags',
+            'name', 'family', 'tenant_group', 'tenant', 'description', 'comments', 'tags',
         ]
 
 
-class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
-    model = Address
+class FirewallFilterFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+    model = FirewallFilter
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet('name', 'value', name=_('Address List')),
+        FieldSet('name', 'family', name=_('Firewall Filter')),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
+    )
+    family = forms.MultipleChoiceField(
+        choices=FamilyChoices,
+        required=False,
     )
     tags = TagFilterField(model)
 
 
-class AddressImportForm(NetBoxModelImportForm):
+class FirewallFilterImportForm(NetBoxModelImportForm):
+    family = CSVChoiceField(
+        choices=FamilyChoices,
+        help_text=_('Family')
+    )
 
     class Meta:
-        model = Address
+        model = FirewallFilter
         fields = (
-            'name', 'value', 'description', 'tenant', 'tags',
+            'name', 'family', 'description', 'tenant', 'tags',
         )
 
 
-class AddressBulkEditForm(NetBoxModelBulkEditForm):
-    model = Address
+class FirewallFilterBulkEditForm(NetBoxModelBulkEditForm):
+    model = FirewallFilter
     description = forms.CharField(
         max_length=200,
         required=False
@@ -89,36 +99,36 @@ class AddressBulkEditForm(NetBoxModelBulkEditForm):
     nullable_fields = [
     ]
     fieldsets = (
-        FieldSet('name', 'value', 'description'),
+        FieldSet('name', 'family', 'description'),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
 
 
-class AddressAssignmentForm(forms.ModelForm):
-    address = DynamicModelChoiceField(
-        label=_('Address'),
-        queryset=Address.objects.all()
+class FirewallFilterAssignmentForm(forms.ModelForm):
+    firewall_filter = DynamicModelChoiceField(
+        label=_('Firewall Filter'),
+        queryset=FirewallFilter.objects.all()
     )
 
     fieldsets = (
-        FieldSet(ObjectAttribute('assigned_object'), 'address'),
+        FieldSet(ObjectAttribute('assigned_object'), 'firewall_filter'),
     )
 
     class Meta:
-        model = AddressAssignment
-        fields = ('address',)
+        model = FirewallFilterAssignment
+        fields = ('firewall_filter',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def clean_address(self):
-        address = self.cleaned_data['address']
+    def clean_firewall_filter(self):
+        firewall_filter = self.cleaned_data['firewall_filter']
 
-        conflicting_assignments = AddressAssignment.objects.filter(
+        conflicting_assignments = FirewallFilterAssignment.objects.filter(
             assigned_object_type=self.instance.assigned_object_type,
             assigned_object_id=self.instance.assigned_object_id,
-            address=address
+            firewall_filter=firewall_filter
         )
         if self.instance.id:
             conflicting_assignments = conflicting_assignments.exclude(id=self.instance.id)
@@ -128,4 +138,4 @@ class AddressAssignmentForm(forms.ModelForm):
                 _('Assignment already exists')
             )
 
-        return address
+        return firewall_filter

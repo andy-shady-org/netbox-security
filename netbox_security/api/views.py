@@ -5,28 +5,34 @@ from django.db.models import Count
 from .serializers import (
     AddressSerializer, AddressAssignmentSerializer,
     SecurityZoneSerializer, SecurityZoneAssignmentSerializer,
+    SecurityZonePolicySerializer,
     NatPoolSerializer, NatPoolAssignmentSerializer,
     NatPoolMemberSerializer,
     NatRuleSetSerializer, NatRuleSetAssignmentSerializer,
     NatRuleSerializer, NatRuleAssignmentSerializer,
+    FirewallFilterSerializer, FirewallFilterAssignmentSerializer,
 )
 
 from netbox_security.models import (
     Address, AddressAssignment,
     SecurityZone, SecurityZoneAssignment,
+    SecurityZonePolicy,
     NatPool, NatPoolAssignment,
     NatPoolMember,
     NatRuleSet, NatRuleSetAssignment,
     NatRule, NatRuleAssignment,
+    FirewallFilter, FirewallFilterAssignment,
 )
 
 from netbox_security.filtersets import (
     AddressFilterSet, AddressAssignmentFilterSet,
     SecurityZoneFilterSet, SecurityZoneAssignmentFilterSet,
+    SecurityZonePolicyFilterSet,
     NatPoolFilterSet, NatPoolAssignmentFilterSet,
     NatPoolMemberFilterSet,
     NatRuleSetFilterSet, NatRuleSetAssignmentFilterSet,
     NatRuleFilterSet, NatRuleAssignmentFilterSet,
+    FirewallFilterFilterSet, FirewallFilterAssignmentFilterSet,
 )
 
 
@@ -57,6 +63,15 @@ class SecurityZoneAssignmentViewSet(NetBoxModelViewSet):
     queryset = SecurityZoneAssignment.objects.all()
     serializer_class = SecurityZoneAssignmentSerializer
     filterset_class = SecurityZoneAssignmentFilterSet
+
+
+class SecurityZonePolicyViewSet(NetBoxModelViewSet):
+    queryset = SecurityZonePolicy.objects.prefetch_related(
+        'source_zone', 'destination_zone', 'source_address',
+        'destination_address', 'tenant', 'tags'
+    )
+    serializer_class = SecurityZonePolicySerializer
+    filterset_class = SecurityZonePolicyFilterSet
 
 
 class NatPoolViewSet(NetBoxModelViewSet):
@@ -108,3 +123,17 @@ class NatRuleAssignmentViewSet(NetBoxModelViewSet):
     queryset = NatRuleAssignment.objects.all()
     serializer_class = NatRuleAssignmentSerializer
     filterset_class = NatRuleAssignmentFilterSet
+
+
+class FirewallFilterViewSet(NetBoxModelViewSet):
+    queryset = FirewallFilter.objects.prefetch_related('tenant', 'tags')
+    serializer_class = FirewallFilterSerializer
+    filterset_class = FirewallFilterFilterSet
+
+
+class FirewallFilterAssignmentViewSet(NetBoxModelViewSet):
+    queryset = FirewallFilterAssignment.objects.all()
+    serializer_class = FirewallFilterAssignmentSerializer
+    filterset_class = FirewallFilterAssignmentFilterSet
+
+
