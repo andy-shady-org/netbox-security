@@ -13,20 +13,20 @@ from utilities.filters import (
 from dcim.models import Device, VirtualDeviceContext
 
 from netbox_security.models import (
-    AddressList,
-    AddressListAssignment,
+    Address,
+    AddressAssignment,
     SecurityZone,
 )
 
 
-class AddressListFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
     value = django_filters.CharFilter(
         method='filter_value',
         label=_('Value'),
     )
 
     class Meta:
-        model = AddressList
+        model = Address
         fields = ['id', 'name', 'description']
 
     def search(self, queryset, name, value):
@@ -49,7 +49,7 @@ class AddressListFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
             return queryset.none()
 
 
-class AddressListAssignmentFilterSet(NetBoxModelFilterSet):
+class AddressAssignmentFilterSet(NetBoxModelFilterSet):
     assigned_object_type = ContentTypeFilter()
     zone_id = django_filters.ModelMultipleChoiceFilter(
         queryset=SecurityZone.objects.all(),
@@ -87,7 +87,7 @@ class AddressListAssignmentFilterSet(NetBoxModelFilterSet):
     )
 
     class Meta:
-        model = AddressListAssignment
+        model = AddressAssignment
         fields = ('id', 'zone_id', 'assigned_object_type', 'assigned_object_id')
 
     def filter_device(self, queryset, name, value):

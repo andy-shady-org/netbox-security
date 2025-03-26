@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class NetBoxNATConfig(AppConfig):
+class NetBoxSecurityConfig(AppConfig):
     name = "netbox_security"

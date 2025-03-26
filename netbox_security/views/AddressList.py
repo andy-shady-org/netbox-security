@@ -5,85 +5,85 @@ from netbox.views import generic
 from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view
 
-from netbox_security.tables import AddressListTable
-from netbox_security.filtersets import AddressListFilterSet
+from netbox_security.tables import AddressTable
+from netbox_security.filtersets import AddressFilterSet
 
 from netbox_security.models import (
-    AddressList,
-    AddressListAssignment
+    Address,
+    AddressAssignment
 )
 from netbox_security.forms import (
-    AddressListFilterForm,
-    AddressListForm,
-    AddressListBulkEditForm,
-    AddressListAssignmentForm,
-    AddressListImportForm
+    AddressFilterForm,
+    AddressForm,
+    AddressBulkEditForm,
+    AddressAssignmentForm,
+    AddressImportForm
 )
 
 
 __all__ = (
+    'AddressView',
     'AddressListView',
-    'AddressListListView',
-    'AddressListEditView',
-    'AddressListDeleteView',
-    'AddressListBulkEditView',
-    'AddressListBulkDeleteView',
-    'AddressListBulkImportView',
-    'AddressListContactsView',
-    'AddressListAssignmentEditView',
-    'AddressListAssignmentDeleteView',
+    'AddressEditView',
+    'AddressDeleteView',
+    'AddressBulkEditView',
+    'AddressBulkDeleteView',
+    'AddressBulkImportView',
+    'AddressContactsView',
+    'AddressAssignmentEditView',
+    'AddressAssignmentDeleteView',
 )
 
 
-class AddressListView(generic.ObjectView):
-    queryset = AddressList.objects.all()
+class AddressView(generic.ObjectView):
+    queryset = Address.objects.all()
     template_name = 'netbox_security/addresslist.html'
 
 
-class AddressListListView(generic.ObjectListView):
-    queryset = AddressList.objects.all()
-    filterset = AddressListFilterSet
-    filterset_form = AddressListFilterForm
-    table = AddressListTable
+class AddressListView(generic.ObjectListView):
+    queryset = Address.objects.all()
+    filterset = AddressFilterSet
+    filterset_form = AddressFilterForm
+    table = AddressTable
 
 
-class AddressListEditView(generic.ObjectEditView):
-    queryset = AddressList.objects.all()
-    form = AddressListForm
+class AddressEditView(generic.ObjectEditView):
+    queryset = Address.objects.all()
+    form = AddressForm
 
 
-class AddressListDeleteView(generic.ObjectDeleteView):
-    queryset = AddressList.objects.all()
+class AddressDeleteView(generic.ObjectDeleteView):
+    queryset = Address.objects.all()
     default_return_url = 'plugins:netbox_security:addresslist_list'
 
 
-class AddressListBulkEditView(generic.BulkEditView):
-    queryset = AddressList.objects.all()
-    filterset = AddressListFilterSet
-    table = AddressListTable
-    form = AddressListBulkEditForm
+class AddressBulkEditView(generic.BulkEditView):
+    queryset = Address.objects.all()
+    filterset = AddressFilterSet
+    table = AddressTable
+    form = AddressBulkEditForm
 
 
-class AddressListBulkDeleteView(generic.BulkDeleteView):
-    queryset = AddressList.objects.all()
-    table = AddressListTable
+class AddressBulkDeleteView(generic.BulkDeleteView):
+    queryset = Address.objects.all()
+    table = AddressTable
     default_return_url = 'plugins:netbox_security:addresslist_list'
 
 
-class AddressListBulkImportView(generic.BulkImportView):
-    queryset = AddressList.objects.all()
-    model_form = AddressListImportForm
+class AddressBulkImportView(generic.BulkImportView):
+    queryset = Address.objects.all()
+    model_form = AddressImportForm
 
 
-@register_model_view(AddressList, "contacts")
-class AddressListContactsView(ObjectContactsView):
-    queryset = AddressList.objects.all()
+@register_model_view(Address, "contacts")
+class AddressContactsView(ObjectContactsView):
+    queryset = Address.objects.all()
 
 
-@register_model_view(AddressListAssignment, 'edit')
-class AddressListAssignmentEditView(generic.ObjectEditView):
-    queryset = AddressListAssignment.objects.all()
-    form = AddressListAssignmentForm
+@register_model_view(AddressAssignment, 'edit')
+class AddressAssignmentEditView(generic.ObjectEditView):
+    queryset = AddressAssignment.objects.all()
+    form = AddressAssignmentForm
 
     def alter_object(self, instance, request, args, kwargs):
         if not instance.pk:
@@ -98,6 +98,6 @@ class AddressListAssignmentEditView(generic.ObjectEditView):
         }
 
 
-@register_model_view(AddressListAssignment, 'delete')
-class AddressListAssignmentDeleteView(generic.ObjectDeleteView):
-    queryset = AddressListAssignment.objects.all()
+@register_model_view(AddressAssignment, 'delete')
+class AddressAssignmentDeleteView(generic.ObjectDeleteView):
+    queryset = AddressAssignment.objects.all()

@@ -3,4 +3,5 @@ from .NatPoolMember import NatPoolMember, NatPoolMemberIndex
 from .NatRule import NatRule, NatRuleAssignment, NatRuleIndex
 from .NatRuleSet import NatRuleSet, NatRuleSetAssignment, NatRuleSetIndex
 from .SecurityZone import SecurityZone, SecurityZoneAssignment, SecurityZoneIndex
-from .AddressList import AddressList, AddressListAssignment, AddressListIndex
+from .SecurityZonePolicy import SecurityZonePolicy, SecurityZonePolicyIndex
+from .Address import Address, AddressAssignment, AddressIndex

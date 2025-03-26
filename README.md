@@ -3,12 +3,13 @@
 
 ## Features
 This plugin provides following Models:
+* Addresses
 * Security Zones
+* Security Zone Policies
 * NAT Pools
 * NAT Pool Members
 * NAT Rule-sets
 * NAT Rules
-* Security Policies
 * Firewalls
 * Firewall Rules
 
@@ -37,7 +38,6 @@ cd /opt/netbox
 source venv/bin/activate
 python ./netbox/manage.py migrate netbox_security
 python ./netbox/manage.py reindex netbox_security
-
 ```
 See [NetBox Documentation](https://docs.netbox.dev/en/stable/plugins/#installing-plugins) for details
 

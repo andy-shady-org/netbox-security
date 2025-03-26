@@ -3,8 +3,9 @@ import strawberry_django
 from netbox.graphql.filter_mixins import autotype_decorator, BaseFilterMixin
 
 from netbox_security.models import (
-    AddressList,
+    Address,
     SecurityZone,
+    SecurityZonePolicy,
     NatPool,
     NatPoolMember,
     NatRuleSet,
@@ -12,8 +13,9 @@ from netbox_security.models import (
 )
 
 from netbox_security.filtersets import (
-    AddressListFilterSet,
+    AddressFilterSet,
     SecurityZoneFilterSet,
+    SecurityZonePolicyFilterSet,
     NatPoolFilterSet,
     NatPoolMemberFilterSet,
     NatRuleSetFilterSet,
@@ -21,15 +23,21 @@ from netbox_security.filtersets import (
 )
 
 
-@strawberry_django.filter(AddressList, lookups=True)
-@autotype_decorator(AddressListFilterSet)
-class NetBoxSecurityAddressListFilter(BaseFilterMixin):
+@strawberry_django.filter(Address, lookups=True)
+@autotype_decorator(AddressFilterSet)
+class NetBoxSecurityAddressFilter(BaseFilterMixin):
     pass
 
 
 @strawberry_django.filter(SecurityZone, lookups=True)
 @autotype_decorator(SecurityZoneFilterSet)
 class NetBoxSecuritySecurityZoneFilter(BaseFilterMixin):
+    pass
+
+
+@strawberry_django.filter(SecurityZonePolicy, lookups=True)
+@autotype_decorator(SecurityZonePolicyFilterSet)
+class NetBoxSecuritySecurityZonePolicyFilter(BaseFilterMixin):
     pass
 
 

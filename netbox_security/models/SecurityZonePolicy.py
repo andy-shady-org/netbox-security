@@ -5,10 +5,11 @@ from django.utils.translation import gettext_lazy as _
 from netbox.search import SearchIndex, register_search
 
 from netbox.models import PrimaryModel
+from netbox.models.features import ContactsMixin
 from netbox_security.choices import ActionChoices
 
 
-class SecurityZonePolicy(PrimaryModel):
+class SecurityZonePolicy(ContactsMixin, PrimaryModel):
     name = models.CharField(
         max_length=100,
     )
@@ -23,14 +24,12 @@ class SecurityZonePolicy(PrimaryModel):
         on_delete=models.CASCADE,
     )
     source_address = models.ManyToManyField(
-        to='netbox_security.AddressList',
-        blank=True,
-        related_name="%(class)s_source_address_list",
+        to='netbox_security.Address',
+        related_name="%(class)s_source_address",
     )
     destination_address = models.ManyToManyField(
-        to='netbox_security.AddressList',
-        blank=True,
-        related_name="%(class)s_destination_address_list",
+        to='netbox_security.Address',
+        related_name="%(class)s_destination_address",
     )
     application = models.CharField(
         max_length=200,
@@ -46,7 +45,7 @@ class SecurityZonePolicy(PrimaryModel):
     )
     prerequisite_models = (
         'netbox_security.SecurityZone',
-        'netbox_security.AddressList',
+        'netbox_security.Address',
     )
 
     class Meta:

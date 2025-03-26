@@ -12,7 +12,7 @@ from netbox_security.constants import ADDRESSLIST_ASSIGNMENT_MODELS
 from netbox_security.models import SecurityZone
 
 
-class AddressList(ContactsMixin, PrimaryModel):
+class Address(ContactsMixin, PrimaryModel):
     """
     """
     name = models.CharField(
@@ -43,7 +43,7 @@ class AddressList(ContactsMixin, PrimaryModel):
         return reverse('plugins:netbox_security:addresslist', args=[self.pk])
 
 
-class AddressListAssignment(NetBoxModel):
+class AddressAssignment(NetBoxModel):
     assigned_object_type = models.ForeignKey(
         to='contenttypes.ContentType',
         limit_choices_to=ADDRESSLIST_ASSIGNMENT_MODELS,
@@ -55,7 +55,7 @@ class AddressListAssignment(NetBoxModel):
         fk_field='assigned_object_id'
     )
     address_list = models.ForeignKey(
-        to='netbox_security.AddressList',
+        to='netbox_security.Address',
         on_delete=models.CASCADE
     )
 
@@ -63,7 +63,7 @@ class AddressListAssignment(NetBoxModel):
 
     prerequisite_models = (
         'dcim.Device',
-        'netbox_security.AddressList',
+        'netbox_security.Address',
         'netbox_security.SecurityZone'
     )
 
@@ -90,8 +90,8 @@ class AddressListAssignment(NetBoxModel):
 
 
 @register_search
-class AddressListIndex(SearchIndex):
-    model = AddressList
+class AddressIndex(SearchIndex):
+    model = Address
     fields = (
         ("name", 100),
         ("description", 500),
@@ -99,21 +99,21 @@ class AddressListIndex(SearchIndex):
 
 
 GenericRelation(
-    to=AddressListAssignment,
+    to=AddressAssignment,
     content_type_field="assigned_object_type",
     object_id_field="assigned_object_id",
     related_query_name="device",
 ).contribute_to_class(Device, "address_lists")
 
 GenericRelation(
-    to=AddressListAssignment,
+    to=AddressAssignment,
     content_type_field="assigned_object_type",
     object_id_field="assigned_object_id",
     related_query_name="security_zone",
 ).contribute_to_class(SecurityZone, "address_lists")
 
 GenericRelation(
-    to=AddressListAssignment,
+    to=AddressAssignment,
     content_type_field="assigned_object_type",
     object_id_field="assigned_object_id",
     related_query_name="virtualdevicecontext",

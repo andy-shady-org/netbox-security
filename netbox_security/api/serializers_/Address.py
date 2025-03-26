@@ -7,31 +7,31 @@ from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 
 from netbox_security.models import (
-    AddressList,
-    AddressListAssignment
+    Address,
+    AddressAssignment
 )
 
 
-class AddressListSerializer(NetBoxModelSerializer):
+class AddressSerializer(NetBoxModelSerializer):
     url = HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:addresslist-detail')
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
-        model = AddressList
+        model = Address
         fields = ('id', 'url', 'display', 'name', 'value', 'description', 'tenant',
                   'comments', 'tags', 'custom_fields', 'created', 'last_updated')
         brief_fields = ('id', 'url', 'display', 'name', 'value', 'description',)
 
 
-class AddressListAssignmentSerializer(NetBoxModelSerializer):
-    address_list = AddressListSerializer(nested=True, required=True, allow_null=False)
+class AddressAssignmentSerializer(NetBoxModelSerializer):
+    address_list = AddressSerializer(nested=True, required=True, allow_null=False)
     assigned_object_type = ContentTypeField(
         queryset=ContentType.objects.all()
     )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:
-        model = AddressListAssignment
+        model = AddressAssignment
         fields = [
             'id', 'url', 'display', 'address_list', 'assigned_object_type', 'assigned_object_id', 'assigned_object',
             'created', 'last_updated',

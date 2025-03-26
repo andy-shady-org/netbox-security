@@ -8,8 +8,9 @@ from ipam.graphql.types import IPAddressType, PrefixType, IPRangeType
 from tenancy.graphql.types import TenantType
 
 from netbox_security.models import (
-    AddressList,
+    Address,
     SecurityZone,
+    SecurityZonePolicy,
     NatPool,
     NatPoolMember,
     NatRuleSet,
@@ -17,8 +18,9 @@ from netbox_security.models import (
 )
 
 from .filters import (
-    NetBoxSecurityAddressListFilter,
+    NetBoxSecurityAddressFilter,
     NetBoxSecuritySecurityZoneFilter,
+    NetBoxSecuritySecurityZonePolicyFilter,
     NetBoxSecurityNatPoolFilter,
     NetBoxSecurityNatPoolMemberFilter,
     NetBoxSecurityNatRuleSetFilter,
@@ -26,14 +28,23 @@ from .filters import (
 )
 
 
-@strawberry_django.type(AddressList, fields="__all__", filters=NetBoxSecurityAddressListFilter)
-class NetBoxSecurityAddressListType(NetBoxObjectType):
+@strawberry_django.type(Address, fields="__all__", filters=NetBoxSecurityAddressFilter)
+class NetBoxSecurityAddressType(NetBoxObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
 
 
 @strawberry_django.type(SecurityZone, fields="__all__", filters=NetBoxSecuritySecurityZoneFilter)
 class NetBoxSecuritySecurityZoneType(NetBoxObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+
+
+@strawberry_django.type(SecurityZonePolicy, fields="__all__", filters=NetBoxSecuritySecurityZonePolicyFilter)
+class NetBoxSecuritySecurityZonePolicyType(NetBoxObjectType):
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+    source_zone: Annotated["NetBoxSecuritySecurityZoneType", strawberry.lazy("netbox_security.graphql.types")]
+    destination_zone: Annotated["NetBoxSecuritySecurityZoneType", strawberry.lazy("netbox_security.graphql.types")]
+    source_address: Annotated["NetBoxSecurityAddressType", strawberry.lazy("netbox_security.graphql.types")]
+    destination_address: Annotated["NetBoxSecurityAddressType", strawberry.lazy("netbox_security.graphql.types")]
 
 
 @strawberry_django.type(NatPool, fields="__all__", filters=NetBoxSecurityNatPoolFilter)

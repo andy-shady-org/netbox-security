@@ -2,8 +2,9 @@ from django.urls import include, path
 from netbox.views.generic import ObjectChangeLogView
 from utilities.urls import get_model_urls
 from .models import (
-    AddressList,
+    Address,
     SecurityZone,
+    SecurityZonePolicy,
     NatPool,
     NatPoolMember,
     NatRuleSet,
@@ -14,16 +15,16 @@ from . import views
 
 urlpatterns = [
     # Address Lists
-    path('address-list/', views.AddressListListView.as_view(), name='addresslist_list'),
-    path('address-list/add/', views.AddressListEditView.as_view(), name='addresslist_add'),
-    path('address-list/import/', views.AddressListBulkImportView.as_view(), name='addresslist_import'),
-    path('address-list/edit/', views.AddressListBulkEditView.as_view(), name='addresslist_bulk_edit'),
-    path('address-list/delete/', views.AddressListBulkDeleteView.as_view(), name='addresslist_bulk_delete'),
-    path('address-list/<int:pk>/', views.AddressListView.as_view(), name='addresslist'),
-    path('address-list/<int:pk>/edit/', views.AddressListEditView.as_view(), name='addresslist_edit'),
-    path('address-list/<int:pk>/delete/', views.AddressListDeleteView.as_view(), name='addresslist_delete'),
-    path('address-list/<int:pk>/contacts/', views.AddressListContactsView.as_view(), name='addresslist_contacts'),
-    path('address-list/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='addresslist_changelog', kwargs={'model': AddressList}),
+    path('address-list/', views.AddressListView.as_view(), name='addresslist_list'),
+    path('address-list/add/', views.AddressEditView.as_view(), name='addresslist_add'),
+    path('address-list/import/', views.AddressBulkImportView.as_view(), name='addresslist_import'),
+    path('address-list/edit/', views.AddressBulkEditView.as_view(), name='addresslist_bulk_edit'),
+    path('address-list/delete/', views.AddressBulkDeleteView.as_view(), name='addresslist_bulk_delete'),
+    path('address-list/<int:pk>/', views.AddressView.as_view(), name='addresslist'),
+    path('address-list/<int:pk>/edit/', views.AddressEditView.as_view(), name='addresslist_edit'),
+    path('address-list/<int:pk>/delete/', views.AddressDeleteView.as_view(), name='addresslist_delete'),
+    path('address-list/<int:pk>/contacts/', views.AddressContactsView.as_view(), name='addresslist_contacts'),
+    path('address-list/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='addresslist_changelog', kwargs={'model': Address}),
     # Security Zones
     path('security-zone/', views.SecurityZoneListView.as_view(), name='securityzone_list'),
     path('security-zone/add/', views.SecurityZoneEditView.as_view(), name='securityzone_add'),
@@ -35,6 +36,17 @@ urlpatterns = [
     path('security-zone/<int:pk>/delete/', views.SecurityZoneDeleteView.as_view(), name='securityzone_delete'),
     path('security-zone/<int:pk>/contacts/', views.SecurityZoneContactsView.as_view(), name='securityzone_contacts'),
     path('security-zone/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='securityzone_changelog', kwargs={'model': SecurityZone}),
+    # Security Zones
+    path('security-zone-policy/', views.SecurityZonePolicyListView.as_view(), name='securityzonepolicy_list'),
+    path('security-zone-policy/add/', views.SecurityZonePolicyEditView.as_view(), name='securityzonepolicy_add'),
+    path('security-zone-policy/import/', views.SecurityZonePolicyBulkImportView.as_view(), name='securityzonepolicy_import'),
+    path('security-zone-policy/edit/', views.SecurityZonePolicyBulkEditView.as_view(), name='securityzonepolicy_bulk_edit'),
+    path('security-zone-policy/delete/', views.SecurityZonePolicyBulkDeleteView.as_view(), name='securityzonepolicy_bulk_delete'),
+    path('security-zone-policy/<int:pk>/', views.SecurityZonePolicyView.as_view(), name='securityzonepolicy'),
+    path('security-zone-policy/<int:pk>/edit/', views.SecurityZonePolicyEditView.as_view(), name='securityzonepolicy_edit'),
+    path('security-zone-policy/<int:pk>/delete/', views.SecurityZonePolicyDeleteView.as_view(), name='securityzonepolicy_delete'),
+    path('security-zone-policy/<int:pk>/contacts/', views.SecurityZonePolicyContactsView.as_view(), name='securityzonepolicy_contacts'),
+    path('security-zone-policy/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='securityzonepolicy_changelog', kwargs={'model': SecurityZonePolicy}),
     # Nat Pool
     path('nat-pool/', views.NatPoolListView.as_view(), name='natpool_list'),
     path('nat-pool/add/', views.NatPoolEditView.as_view(), name='natpool_add'),
@@ -79,7 +91,7 @@ urlpatterns = [
     path('nat-rule/<int:pk>/contacts/', views.NatRuleContactsView.as_view(), name='natrule_contacts'),
     path('nat-rule/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='natrule_changelog', kwargs={'model': NatRule}),
     # Address List Assignments
-    path('address-list-assignments/add/', views.AddressListAssignmentEditView.as_view(), name='addresslistassignment_add'),
+    path('address-list-assignments/add/', views.AddressAssignmentEditView.as_view(), name='addresslistassignment_add'),
     path('address-list-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'addresslistassignment'))),
     # Security Zone Assignments
     path('security-zone-assignments/add/', views.SecurityZoneAssignmentEditView.as_view(), name='securityzoneassignment_add'),

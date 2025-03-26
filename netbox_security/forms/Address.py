@@ -19,20 +19,20 @@ from utilities.forms.fields import (
 
 
 from netbox_security.models import (
-    AddressList,
-    AddressListAssignment,
+    Address,
+    AddressAssignment,
 )
 
 __all__ = (
-    "AddressListForm",
-    "AddressListFilterForm",
-    "AddressListImportForm",
-    "AddressListBulkEditForm",
-    "AddressListAssignmentForm",
+    "AddressForm",
+    "AddressFilterForm",
+    "AddressImportForm",
+    "AddressBulkEditForm",
+    "AddressAssignmentForm",
 )
 
 
-class AddressListForm(TenancyForm, NetBoxModelForm):
+class AddressForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(
         max_length=64,
         required=True
@@ -54,14 +54,14 @@ class AddressListForm(TenancyForm, NetBoxModelForm):
     comments = CommentField()
 
     class Meta:
-        model = AddressList
+        model = Address
         fields = [
             'name', 'value', 'tenant_group', 'tenant', 'description', 'comments', 'tags',
         ]
 
 
-class AddressListFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
-    model = AddressList
+class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+    model = Address
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
         FieldSet('name', 'value', name=_('Address List')),
@@ -70,17 +70,17 @@ class AddressListFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class AddressListImportForm(NetBoxModelImportForm):
+class AddressImportForm(NetBoxModelImportForm):
 
     class Meta:
-        model = AddressList
+        model = Address
         fields = (
             'name', 'value', 'description', 'tenant', 'tags',
         )
 
 
-class AddressListBulkEditForm(NetBoxModelBulkEditForm):
-    model = AddressList
+class AddressBulkEditForm(NetBoxModelBulkEditForm):
+    model = Address
     description = forms.CharField(
         max_length=200,
         required=False
@@ -95,10 +95,10 @@ class AddressListBulkEditForm(NetBoxModelBulkEditForm):
     )
 
 
-class AddressListAssignmentForm(forms.ModelForm):
+class AddressAssignmentForm(forms.ModelForm):
     address_list = DynamicModelChoiceField(
         label=_('Address List'),
-        queryset=AddressList.objects.all()
+        queryset=Address.objects.all()
     )
 
     fieldsets = (
@@ -106,7 +106,7 @@ class AddressListAssignmentForm(forms.ModelForm):
     )
 
     class Meta:
-        model = AddressListAssignment
+        model = AddressAssignment
         fields = ('address_list',)
 
     def __init__(self, *args, **kwargs):
@@ -115,7 +115,7 @@ class AddressListAssignmentForm(forms.ModelForm):
     def clean_zone(self):
         address_list = self.cleaned_data['address_list']
 
-        conflicting_assignments = AddressListAssignment.objects.filter(
+        conflicting_assignments = AddressAssignment.objects.filter(
             assigned_object_type=self.instance.assigned_object_type,
             assigned_object_id=self.instance.assigned_object_id,
             address_list=address_list
