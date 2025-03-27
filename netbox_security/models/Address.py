@@ -12,6 +12,13 @@ from netbox_security.constants import ADDRESSLIST_ASSIGNMENT_MODELS
 from netbox_security.models import SecurityZone
 
 
+__all__ = (
+    'Address',
+    'AddressAssignment',
+    'AddressIndex'
+)
+
+
 class Address(ContactsMixin, PrimaryModel):
     """
     """
