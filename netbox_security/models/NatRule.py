@@ -194,7 +194,7 @@ class NatRuleAssignment(NetBoxModel):
         constraints = (
             models.UniqueConstraint(
                 fields=('assigned_object_type', 'assigned_object_id', 'rule'),
-                name='%(app_label)s_%(class)s_unique_interface_rule'
+                name='%(app_label)s_%(class)s_unique_nat_rule'
             ),
         )
         verbose_name = _('NAT Pool assignment')

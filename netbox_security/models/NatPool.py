@@ -87,7 +87,7 @@ class NatPoolAssignment(NetBoxModel):
         constraints = (
             models.UniqueConstraint(
                 fields=('assigned_object_type', 'assigned_object_id', 'pool'),
-                name='%(app_label)s_%(class)s_unique_device_pool'
+                name='%(app_label)s_%(class)s_unique_nat_pool'
             ),
         )
         verbose_name = _('NAT Pool assignment')

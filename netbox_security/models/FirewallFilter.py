@@ -74,7 +74,7 @@ class FirewallFilterAssignment(NetBoxModel):
         )
         constraints = (
             models.UniqueConstraint(
-                fields=('assigned_object_type', 'assigned_object_id', 'address'),
+                fields=('assigned_object_type', 'assigned_object_id', 'firewall_filter'),
                 name='%(app_label)s_%(class)s_unique_firewall_filter',
             ),
         )

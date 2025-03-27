@@ -74,7 +74,7 @@ class SecurityZoneAssignment(NetBoxModel):
         constraints = (
             models.UniqueConstraint(
                 fields=('assigned_object_type', 'assigned_object_id', 'zone'),
-                name='%(app_label)s_%(class)s_unique_device_zone'
+                name='%(app_label)s_%(class)s_unique_security_zone'
             ),
         )
         verbose_name = _('Security Zone assignment')

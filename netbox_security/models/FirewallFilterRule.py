@@ -3,10 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
-from netbox.models import PrimaryModel, NetBoxModel
-from netbox.models.features import ContactsMixin
-from dcim.models import Device, VirtualDeviceContext
-from ipam.fields import IPNetworkField
+from netbox.models import PrimaryModel
 from netbox.search import SearchIndex, register_search
 
 from netbox_security.constants import FILTER_SETTING_ASSIGNMENT_MODELS
@@ -36,13 +33,12 @@ class FirewallRuleSetting(PrimaryModel):
     value = models.CharField()
 
     class Meta:
-        verbose_name = 'Firewall Filter Rule Setting'
+        verbose_name = _('Firewall Filter Rule Setting')
 
     def __str__(self):
         return f'{self.assigned_object}: {self.key}'
 
     def get_absolute_url(self):
-        from django.urls import reverse
         return reverse('plugins:netbox_security:firewallrulesetting', args=[self.pk])
 
 
@@ -77,5 +73,14 @@ class FirewallFilterRule(PrimaryModel):
         return self.name
 
     def get_absolute_url(self):
-        from django.urls import reverse
         return reverse('plugins:netbox_security:firewallfilterrule', args=[self.pk])
+
+
+@register_search
+class FirewallFilterRuleIndex(SearchIndex):
+    model = FirewallFilterRule
+    fields = (
+        ("name", 100),
+        ("filter", 300),
+        ("description", 500),
+    )
