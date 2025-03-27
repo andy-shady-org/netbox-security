@@ -46,7 +46,17 @@
                 <tr>
                     <td>{% trans "Actions" %}</td>
                     <td>
-                        {{ object.actions }}
+                        {% for action in object.actions %}
+                            {% if action == 'permit' %}bg-success
+                            <span class="badge text-bg
+                            {% if action == 'permit' %}bg-success
+                            {% elif action == 'deny' %}bg-danger
+                            {% elif action == 'log' %}bg-default
+                            {% elif action == 'count' %}bg-default
+                            {% elif action == 'reject' %}bg-danger
+                            {% endif %}"
+                            >"{{ action }}"</span>
+                        {% endfor %}
                     </td>
                 </tr>
             </table>
