@@ -106,11 +106,11 @@ GenericRelation(
     content_type_field="assigned_object_type",
     object_id_field="assigned_object_id",
     related_query_name="device",
-).contribute_to_class(Device, "addresss")
+).contribute_to_class(Device, "firewall_filter")
 
 GenericRelation(
     to=FirewallFilterAssignment,
     content_type_field="assigned_object_type",
     object_id_field="assigned_object_id",
     related_query_name="virtualdevicecontext",
-).contribute_to_class(VirtualDeviceContext, "addresss")
+).contribute_to_class(VirtualDeviceContext, "firewall_filter")
