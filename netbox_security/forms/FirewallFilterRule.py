@@ -9,6 +9,7 @@ from netbox.forms import (
 from utilities.forms.rendering import FieldSet
 from utilities.forms.fields import (
     DynamicModelMultipleChoiceField,
+    DynamicModelChoiceField,
     TagFilterField,
     CommentField,
 )
@@ -18,7 +19,7 @@ from netbox_security.models import (
     FirewallFilter,
 )
 
-from netbox_security.mixins import FilterRuleFromSettingMixin
+from netbox_security.mixins import FilterRuleSettingMixin
 
 
 __all__ = (
@@ -27,10 +28,15 @@ __all__ = (
 )
 
 
-class FirewallFilterRuleForm(FilterRuleFromSettingMixin, NetBoxModelForm):
+class FirewallFilterRuleForm(FilterRuleSettingMixin, NetBoxModelForm):
     name = forms.CharField(
         max_length=100,
         required=True
+    )
+    filter = DynamicModelChoiceField(
+        queryset=FirewallFilter.objects.all(),
+        required=False,
+        label=_('Firewall Filter'),
     )
     description = forms.CharField(
         max_length=200,

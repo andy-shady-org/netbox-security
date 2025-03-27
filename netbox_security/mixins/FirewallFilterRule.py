@@ -7,7 +7,7 @@ from netbox_security.choices import FirewallRuleFromSettingChoices, FirewallRule
 from netbox_security.models import FirewallRuleSetting
 
 
-class FilterRuleFromSettingMixin:
+class FilterRuleSettingMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._append_from_settings_fields()
