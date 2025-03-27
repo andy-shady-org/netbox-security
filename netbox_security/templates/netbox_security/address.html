@@ -21,6 +21,7 @@
                     <th scope="row">{% trans "Description" %}</th>
                     <td>{{ object.description|placeholder }}</td>
                 </tr>
+                {% endif %}
                 {% if object.tenant %}
                 <tr>
                     <th scope="row">{% trans "Tenant" %}</th>
