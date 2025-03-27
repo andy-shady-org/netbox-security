@@ -21,7 +21,7 @@
                 {% if object.family %}
                 <tr>
                     <th scope="row">{% trans "Family" %}</th>
-                    <td>{{ object.family|placeholder }}</td>
+                    <td>{% badge object.get_family_display bg_color=object.get_family_color %}</td>
                 </tr>
                 {% endif %}
                 {% if object.tenant %}

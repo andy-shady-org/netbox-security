@@ -27,6 +27,10 @@
                     <td>{{ object.name }}</td>
                 </tr>
                 <tr>
+                    <td>{% trans "Status" %}</td>
+                    <td>{% badge object.get_status_display bg_color=object.get_status_color %}</td>
+                </tr>
+                <tr>
                     <td>{% trans "Pool Type" %}</td>
                     <td>{{ object.pool_type }}</td>
                 </tr>
