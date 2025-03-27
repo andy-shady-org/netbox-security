@@ -13,6 +13,17 @@ LOOPS = """
 {% endfor %}
 """
 
+ACTIONS = """
+{% for action in value %}
+    <span class="badge text-bg-{% if action == 'permit' %}green
+    {% elif action == 'deny' %}reg
+    {% elif action == 'log' %}orange
+    {% elif action == 'count' %}orange
+    {% elif action == 'reject' %}red
+    {% endif %}"
+    >{{ action }}</span>
+"""
+
 
 __all__ = (
     "SecurityZonePolicyTable",
@@ -32,7 +43,10 @@ class SecurityZonePolicyTable(NetBoxTable):
         orderable=False
     )
     application = ArrayColumn()
-    actions = ChoicesColumn()
+    actions = tables.TemplateColumn(
+        template_code=ACTIONS,
+        orderable=False
+    )
     tags = TagColumn(
         url_name='plugins:netbox_security:securityzone_list'
     )
