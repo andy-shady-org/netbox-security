@@ -40,25 +40,25 @@ class SecurityZonePolicyFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
     )
     source_address_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Address.objects.all(),
-        field_name="pool__id",
+        field_name="source_address__id",
         to_field_name='id',
         label=_('Source Address List (ID)'),
     )
     source_address = django_filters.ModelMultipleChoiceFilter(
         queryset=Address.objects.all(),
-        field_name="pool__name",
+        field_name="source_address__name",
         to_field_name='name',
         label=_('Source Address List (Name)'),
     )
     destination_address_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Address.objects.all(),
-        field_name="pool__id",
+        field_name="destination_address__id",
         to_field_name='id',
         label=_('Destination Address List (ID)'),
     )
     destination_address = django_filters.ModelMultipleChoiceFilter(
         queryset=Address.objects.all(),
-        field_name="pool__name",
+        field_name="destination_address__name",
         to_field_name='name',
         label=_('Destination Address List (Name)'),
     )
