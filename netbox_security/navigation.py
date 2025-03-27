@@ -194,4 +194,4 @@ full_menu = PluginMenu(
 if plugin_settings.get('top_level_menu'):
     menu = full_menu
 else:
-    menu_items = (full_menu,)
+    menu_items = (security_menu_items, pool_menu_items, rule_menu_items, firewall_menu_items)
