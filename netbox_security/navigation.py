@@ -180,16 +180,18 @@ firewall_menu_items = (
     ),
 )
 
+full_menu = PluginMenu(
+    label="Security",
+    groups=(
+        ("Security Zones", security_menu_items),
+        ("NAT Pools", pool_menu_items),
+        ("NAT Rules", rule_menu_items),
+        ("Firewall Filters", firewall_menu_items),
+    ),
+    icon_class="mdi mdi-security",
+)
+
 if plugin_settings.get('top_level_menu'):
-    menu = PluginMenu(
-        label="Security",
-        groups=(
-            ("Security Zones", security_menu_items),
-            ("NAT Pools", pool_menu_items),
-            ("NAT Rules", rule_menu_items),
-            ("Firewall Filters", firewall_menu_items),
-        ),
-        icon_class="mdi mdi-security",
-    )
+    menu = full_menu
 else:
-    menu_items = (security_menu_items + pool_menu_items + rule_menu_items + firewall_menu_items)
+    menu_items = (full_menu,)
