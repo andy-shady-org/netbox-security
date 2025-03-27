@@ -1,7 +1,7 @@
 import django_tables2 as tables
 
 from netbox.tables import NetBoxTable
-from netbox.tables.columns import TagColumn, ArrayColumn, ChoicesColumn, Ch
+from netbox.tables.columns import TagColumn, ArrayColumn, ChoicesColumn
 from tenancy.tables import TenancyColumnsMixin
 
 from netbox_security.models import SecurityZonePolicy
