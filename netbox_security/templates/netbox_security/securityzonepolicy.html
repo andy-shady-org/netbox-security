@@ -33,6 +33,23 @@
                     </td>
                 </tr>
                 {% endif %}
+                {% if object.source_address %}
+                <tr>
+                    <th scope="row">{% trans "Source Addresses" %}</th>
+                    <td>
+                        {{ object.source_address|linkify|placeholder }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if object.destination_address %}
+                <tr>
+                    <th scope="row">{% trans "Destination Addresses" %}</th>
+                    <td>
+                        {{ object.destination_address|linkify|placeholder }}
+                    </td>
+                </tr>
+                {% endif %}
+
                 {% if object.application %}
                 <tr>
                     <th scope="row">{% trans "Application" %}</th>
@@ -44,9 +61,7 @@
                 <tr>
                     <td>{% trans "Actions" %}</td>
                     <td>
-                        {% for action in object.actions %}
-                            {% badge object.get_actions_display bg_color=object.get_actions_color %}
-                        {% endfor %}
+                        {{ object.actions }}
                     </td>
                 </tr>
             </table>
