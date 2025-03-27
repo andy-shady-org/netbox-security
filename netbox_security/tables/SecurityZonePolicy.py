@@ -1,10 +1,18 @@
 import django_tables2 as tables
 
 from netbox.tables import NetBoxTable
-from netbox.tables.columns import TagColumn, ArrayColumn, ChoicesColumn
+from netbox.tables.columns import TagColumn, ArrayColumn, ChoicesColumn, Ch
 from tenancy.tables import TenancyColumnsMixin
 
 from netbox_security.models import SecurityZonePolicy
+
+LOOPS = """
+{% for p in value.all %}
+    <a href="{{ p.get_absolute_url }}">{{ p }}</a>{% if not forloop.last %}<br />{% endif %}
+{% empty %}
+    &mdash;
+{% endfor %}
+"""
 
 
 __all__ = (
@@ -16,8 +24,14 @@ class SecurityZonePolicyTable(TenancyColumnsMixin, NetBoxTable):
     name = tables.LinkColumn()
     source_zone = tables.LinkColumn()
     destination_zone = tables.LinkColumn()
-    source_address = ArrayColumn()
-    destination_address = ArrayColumn()
+    source_address = tables.TemplateColumn(
+        template_code=LOOPS,
+        orderable=False
+    )
+    destination_address = tables.TemplateColumn(
+        template_code=LOOPS,
+        orderable=False
+    )
     application = ArrayColumn()
     actions = ChoicesColumn()
     tags = TagColumn(

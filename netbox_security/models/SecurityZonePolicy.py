@@ -67,9 +67,6 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
     def __str__(self):
         return self.name
 
-    def get_actions_color(self):
-        return ActionChoices.colors.get(self.actions)
-
     def get_absolute_url(self):
         return reverse('plugins:netbox_security:securityzonepolicy', args=[self.pk])
 
