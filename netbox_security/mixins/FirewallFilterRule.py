@@ -2,6 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 from django import forms
 from django.forms import fields
 from django.utils.translation import gettext as _
+from utilities.forms.rendering import FieldSet
 
 from netbox_security.choices import FirewallRuleFromSettingChoices, FirewallRuleThenSettingChoices
 from netbox_security.models import FirewallRuleSetting
@@ -15,11 +16,7 @@ class FilterRuleSettingMixin:
 
     def _append_from_settings_fields(self):
         assigned_fields = []
-        fieldset = (
-            _('From Settings'), [
-                'address',
-            ]
-        )
+        fieldset = FieldSet('address', name=_('From Settings'))
         for key, label in FirewallRuleFromSettingChoices.CHOICES:
             initial = None
             if hasattr(self, 'instance'):
@@ -64,18 +61,14 @@ class FilterRuleSettingMixin:
                 css = self.fields[key].widget.attrs.get('class', '')
                 self.fields[key].widget.attrs['class'] = f'{css} form-control'
             assigned_fields.append(key)
-            if key not in fieldset[1]:
-                fieldset[1].append(key)
+            # if key not in fieldset[1]:
+            #     fieldset[1].append(key)
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
 
     def _append_then_settings_fields(self):
         assigned_fields = []
-        fieldset = (
-            _('Then Settings'), [
-                'address',
-            ]
-        )
+        fieldset = FieldSet('address', name=_('Then Settings'))
         for key, label in FirewallRuleFromSettingChoices.CHOICES:
             initial = None
             if hasattr(self, 'instance'):
@@ -120,8 +113,8 @@ class FilterRuleSettingMixin:
                 css = self.fields[key].widget.attrs.get('class', '')
                 self.fields[key].widget.attrs['class'] = f'{css} form-control'
             assigned_fields.append(key)
-            if key not in fieldset[1]:
-                fieldset[1].append(key)
+            # if key not in fieldset[1]:
+            #     fieldset[1].append(key)
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
 
