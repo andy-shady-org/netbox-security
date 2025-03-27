@@ -31,20 +31,25 @@ from .filters import (
 @strawberry_django.type(Address, fields="__all__", filters=NetBoxSecurityAddressFilter)
 class NetBoxSecurityAddressType(NetBoxObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+    name: str
+    value: str
 
 
 @strawberry_django.type(SecurityZone, fields="__all__", filters=NetBoxSecuritySecurityZoneFilter)
 class NetBoxSecuritySecurityZoneType(NetBoxObjectType):
+    name: str
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
 
 
 @strawberry_django.type(SecurityZonePolicy, fields="__all__", filters=NetBoxSecuritySecurityZonePolicyFilter)
 class NetBoxSecuritySecurityZonePolicyType(NetBoxObjectType):
+    name: str
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
     source_zone: Annotated["NetBoxSecuritySecurityZoneType", strawberry.lazy("netbox_security.graphql.types")]
     destination_zone: Annotated["NetBoxSecuritySecurityZoneType", strawberry.lazy("netbox_security.graphql.types")]
     source_address: Annotated["NetBoxSecurityAddressType", strawberry.lazy("netbox_security.graphql.types")]
     destination_address: Annotated["NetBoxSecurityAddressType", strawberry.lazy("netbox_security.graphql.types")]
+    application: str
 
 
 @strawberry_django.type(NatPool, fields="__all__", filters=NetBoxSecurityNatPoolFilter)
