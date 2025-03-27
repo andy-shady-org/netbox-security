@@ -47,8 +47,7 @@
                     <td>{% trans "Actions" %}</td>
                     <td>
                         {% for action in object.actions %}
-                            <span class="badge text-bg-
-                            {% if action == 'permit' %}green
+                            <span class="badge text-bg-{% if action == 'permit' %}green
                             {% elif action == 'deny' %}reg
                             {% elif action == 'log' %}orange
                             {% elif action == 'count' %}orange
