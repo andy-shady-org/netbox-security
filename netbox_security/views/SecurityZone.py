@@ -43,11 +43,11 @@ class SecurityZoneView(generic.ObjectView):
 
     def get_extra_context(self, request, instance):
         source_zone_table = SecurityZonePolicyTable(
-            instance.source_zone.all(),
+            instance.source_zone_policies.all(),
             orderable=False
         )
         destination_zone_table = SecurityZonePolicyTable(
-            instance.destination_zone.all(),
+            instance.destination_zone_policies.all(),
             orderable=False
         )
         return {
