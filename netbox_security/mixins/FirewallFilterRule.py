@@ -67,7 +67,7 @@ class FilterRuleSettingMixin:
             if key not in fieldset[1]:
                 fieldset[1].append(key)
         if fieldset not in self.fieldsets:
-            self.fieldsets.append(fieldset)
+            self.fieldsets = (*self.fieldsets, fieldset)
 
     def _append_then_settings_fields(self):
         assigned_fields = []
@@ -123,7 +123,7 @@ class FilterRuleSettingMixin:
             if key not in fieldset[1]:
                 fieldset[1].append(key)
         if fieldset not in self.fieldsets:
-            self.fieldsets.append(fieldset)
+            self.fieldsets = (*self.fieldsets, fieldset)
 
     def _clean_fieldset(self):
         pass
