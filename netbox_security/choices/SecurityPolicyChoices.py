@@ -12,7 +12,7 @@ class ActionChoices(ChoiceSet):
     CHOICES = [
         (PERMIT, 'Permit', 'green'),
         (DENY, 'Deny', 'red'),
-        (LOG, 'Log', 'blue'),
-        (COUNT, 'Count', 'cyan'),
+        (LOG, 'Log', 'orange'),
+        (COUNT, 'Count', 'orange'),
         (REJECT, 'Reject', 'red'),
     ]
