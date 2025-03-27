@@ -17,7 +17,7 @@ from . import views
 
 urlpatterns = [
     # Addresses
-    path('address/', views.AddressView.as_view(), name='address_list'),
+    path('address/', views.AddressListView.as_view(), name='address_list'),
     path('address/add/', views.AddressEditView.as_view(), name='address_add'),
     path('address/import/', views.AddressBulkImportView.as_view(), name='address_import'),
     path('address/edit/', views.AddressBulkEditView.as_view(), name='address_bulk_edit'),
