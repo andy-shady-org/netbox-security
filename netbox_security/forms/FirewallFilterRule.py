@@ -50,7 +50,7 @@ class FirewallFilterRuleForm(FilterRuleSettingMixin, NetBoxModelForm):
 
     class Meta:
         model = FirewallFilterRule
-        fields = ['name', 'filter', ]
+        fields = ['name', 'index', 'filter', ]
 
     def save(self, *args, **kwargs):
         return super().save(*args, **kwargs)
