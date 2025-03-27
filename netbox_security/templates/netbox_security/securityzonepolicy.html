@@ -50,11 +50,11 @@
                             <span class="badge text-bg
                             {% if action == 'permit' %}bg-success
                             {% elif action == 'deny' %}bg-danger
-                            {% elif action == 'log' %}bg-default
-                            {% elif action == 'count' %}bg-default
+                            {% elif action == 'log' %}bg-info
+                            {% elif action == 'count' %}bg-info
                             {% elif action == 'reject' %}bg-danger
                             {% endif %}"
-                            >"{{ action }}"</span>
+                            >{{ action }}</span>
                         {% endfor %}
                     </td>
                 </tr>
