@@ -19,6 +19,7 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
     name = models.CharField(
         max_length=100,
     )
+    index = models.PositiveIntegerField()
     source_zone = models.ForeignKey(
         to='netbox_security.SecurityZone',
         related_name='source_zone_policies',

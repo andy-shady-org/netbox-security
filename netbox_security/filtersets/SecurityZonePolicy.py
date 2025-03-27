@@ -68,7 +68,7 @@ class SecurityZonePolicyFilterSet(NetBoxModelFilterSet):
 
     class Meta:
         model = SecurityZonePolicy
-        fields = ['id', 'name', 'description']
+        fields = ['id', 'name', 'description', 'index']
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""

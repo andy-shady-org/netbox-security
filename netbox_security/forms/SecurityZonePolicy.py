@@ -69,7 +69,7 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
         choices=ActionChoices,
     )
     fieldsets = (
-        FieldSet('name', 'description', name=_('Security Zone Policy')),
+        FieldSet('name', 'index', 'description', name=_('Security Zone Policy')),
         FieldSet('source_zone', 'source_address', name=_('Source Assignment')),
         FieldSet('destination_zone', 'destination_address', name=_('Destination Assignment')),
         FieldSet('application', name=_('Application')),
@@ -93,7 +93,7 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
         destination_zone = self.cleaned_data.get("destination_zone")
         source_address = self.cleaned_data.get("source_address")
         destination_address = self.cleaned_data.get("destination_address")
-        if set(source_zone) & set(destination_zone):
+        if source_zone == destination_zone:
             error_message_mismatch_zones = f'Cannot have the same source and destination zone within a policy'
             error_message["source_zone"] = [error_message_mismatch_zones]
             error_message["destination_zone"] = [error_message_mismatch_zones]
@@ -110,9 +110,12 @@ class SecurityZonePolicyFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = SecurityZonePolicy
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet('name',),
+        FieldSet('name', 'index',),
         FieldSet('source_zone', 'source_address', 'destination_zone', 'destination_address', name=_('Source/Destination Assignment')),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
+    )
+    index = forms.IntegerField(
+        required=False
     )
     source_zone = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
@@ -158,7 +161,7 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
     class Meta:
         model = SecurityZonePolicy
         fields = (
-            'name', 'description', 'source_zone', 'source_address',
+            'name', 'index', 'description', 'source_zone', 'source_address',
             'destination_zone', 'destination_address', 'application',
             'tenant', 'tags',
         )
