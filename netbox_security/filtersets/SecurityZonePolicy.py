@@ -2,7 +2,6 @@ import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
-from tenancy.filtersets import TenancyFilterSet
 
 from netbox_security.models import (
     SecurityZonePolicy,
@@ -13,7 +12,7 @@ from netbox_security.models import (
 from netbox_security.choices import ActionChoices
 
 
-class SecurityZonePolicyFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+class SecurityZonePolicyFilterSet(NetBoxModelFilterSet):
     source_zone_id = django_filters.ModelMultipleChoiceFilter(
         queryset=SecurityZone.objects.all(),
         field_name="source_zone__id",
