@@ -16,8 +16,8 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
     url = HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:securityzonepolicy-detail')
     source_zone = SecurityZoneSerializer(nested=True, required=True, allow_null=True)
     destination_zone = SecurityZoneSerializer(nested=True, required=True, allow_null=True)
-    source_address = AddressSerializer(nested=True, required=True, allow_null=True)
-    destination_address = AddressSerializer(nested=True, required=True, allow_null=True)
+    source_address = AddressSerializer(nested=True, required=True, allow_null=True, many=True)
+    destination_address = AddressSerializer(nested=True, required=True, allow_null=True, many=True)
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
     application = ListField(
         child=CharField(),
