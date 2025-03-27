@@ -193,4 +193,4 @@ if plugin_settings.get('top_level_menu'):
         icon_class="mdi mdi-security",
     )
 else:
-    menu_items = (security_menu_items, pool_menu_items, rule_menu_items, firewall_menu_items,)
+    menu_items = (security_menu_items + pool_menu_items + rule_menu_items + firewall_menu_items)
