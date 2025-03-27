@@ -67,6 +67,7 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
     )
     actions = forms.MultipleChoiceField(
         choices=ActionChoices,
+        required=True,
     )
     fieldsets = (
         FieldSet('name', 'index', 'description', name=_('Security Zone Policy')),
@@ -83,7 +84,7 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
         model = SecurityZonePolicy
         fields = [
             'name', 'index', 'source_zone', 'source_address', 'destination_zone', 'destination_address',
-            'application', 'tenant_group', 'tenant', 'description', 'comments', 'tags',
+            'application', 'actions', 'tenant_group', 'tenant', 'description', 'comments', 'tags',
         ]
 
     def clean(self):
