@@ -57,5 +57,5 @@ class SecurityZonePolicyTable(NetBoxTable):
                   'destination_address', 'application', 'actions', 'description', 'tags')
         default_columns = (
             'pk', 'name', 'source_zone', 'destination_zone', 'source_address',
-            'destination_address', 'application', 'actions', 'tags',
+            'destination_address', 'application', 'actions',
         )
