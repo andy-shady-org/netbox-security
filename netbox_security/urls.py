@@ -93,7 +93,7 @@ urlpatterns = [
     path('nat-rule/<int:pk>/contacts/', views.NatRuleContactsView.as_view(), name='natrule_contacts'),
     path('nat-rule/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='natrule_changelog', kwargs={'model': NatRule}),
     # Firewall Filters
-    path('firewall-filter/', views.FirewallFilterView.as_view(), name='firewallfilter_list'),
+    path('firewall-filter/', views.FirewallFilterListView.as_view(), name='firewallfilter_list'),
     path('firewall-filter/add/', views.FirewallFilterEditView.as_view(), name='firewallfilter_add'),
     path('firewall-filter/import/', views.FirewallFilterBulkImportView.as_view(), name='firewallfilter_import'),
     path('firewall-filter/edit/', views.FirewallFilterBulkEditView.as_view(), name='firewallfilter_bulk_edit'),
@@ -104,7 +104,7 @@ urlpatterns = [
     path('firewall-filter/<int:pk>/contacts/', views.FirewallFilterContactsView.as_view(), name='firewallfilter_contacts'),
     path('firewall-filter/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='firewallfilter_changelog', kwargs={'model': FirewallFilter}),
     # Firewall Filter Rules
-    path('firewall-filter-rule/', views.FirewallFilterRuleView.as_view(), name='firewallfilterrule_list'),
+    path('firewall-filter-rule/', views.FirewallFilterRuleListView.as_view(), name='firewallfilterrule_list'),
     path('firewall-filter-rule/add/', views.FirewallFilterRuleEditView.as_view(), name='firewallfilterrule_add'),
     path('firewall-filter-rule/delete/', views.FirewallFilterRuleBulkDeleteView.as_view(), name='firewallfilterrule_bulk_delete'),
     path('firewall-filter-rule/<int:pk>/', views.FirewallFilterRuleView.as_view(), name='firewallfilterrule'),
