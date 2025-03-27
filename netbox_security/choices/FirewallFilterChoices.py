@@ -28,3 +28,27 @@ class FirewallRuleSettingChoices(ChoiceSet):
     FIELD_TYPES = {
         ADDRESS: 'ipaddr',
     }
+
+
+class FirewallRuleFromSettingChoices(ChoiceSet):
+    ADDRESS = 'address'
+
+    CHOICES = [
+        (ADDRESS, 'Address'),
+    ]
+
+    FIELD_TYPES = {
+        ADDRESS: 'ipaddr',
+    }
+
+
+class FirewallRuleThenSettingChoices(ChoiceSet):
+    ADDRESS = 'address'
+
+    CHOICES = [
+        (ADDRESS, 'Address'),
+    ]
+
+    FIELD_TYPES = {
+        ADDRESS: 'ipaddr',
+    }
