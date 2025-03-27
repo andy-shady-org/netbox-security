@@ -65,7 +65,7 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
         help_text=_("Comma-separated list of applications."),
         required=False,
     )
-    status = forms.MultipleChoiceField(
+    actions = forms.MultipleChoiceField(
         choices=ActionChoices,
     )
     fieldsets = (
