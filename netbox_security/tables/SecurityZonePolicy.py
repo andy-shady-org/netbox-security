@@ -22,6 +22,7 @@ ACTIONS = """
     {% elif action == 'reject' %}red
     {% endif %}"
     >{{ action }}</span>
+{% endfor %}
 """
 
 
