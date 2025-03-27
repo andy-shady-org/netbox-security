@@ -41,14 +41,14 @@
                     </td>
                 </tr>
                 {% endif %}
-                {% if object.actions %}
                 <tr>
-                    <th scope="row">{% trans "Actions" %}</th>
+                    <td>{% trans "Actions" %}</td>
                     <td>
-                        {{ object.actions }}
+                        {% for action in object.actions %}
+                            {% badge object.get_actions_display bg_color=object.get_actions_color %}
+                        {% endfor %}
                     </td>
                 </tr>
-                {% endif %}
             </table>
         </div>
         {% include 'inc/panels/custom_fields.html' %}

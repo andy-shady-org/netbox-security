@@ -9,7 +9,6 @@ from netbox.forms import (
     NetBoxModelFilterSetForm
 )
 
-from tenancy.forms import TenancyForm, TenancyFilterForm
 from utilities.forms.rendering import FieldSet
 from utilities.forms.fields import (
     DynamicModelChoiceField,
@@ -39,7 +38,7 @@ __all__ = (
 )
 
 
-class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
+class SecurityZonePolicyForm(NetBoxModelForm):
     name = forms.CharField(
         max_length=100,
         required=True
@@ -75,7 +74,6 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
         FieldSet('destination_zone', 'destination_address', name=_('Destination Assignment')),
         FieldSet('application', name=_('Application')),
         FieldSet('actions', name=_('Actions')),
-        FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
     comments = CommentField()
@@ -84,7 +82,7 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
         model = SecurityZonePolicy
         fields = [
             'name', 'index', 'source_zone', 'source_address', 'destination_zone', 'destination_address',
-            'application', 'actions', 'tenant_group', 'tenant', 'description', 'comments', 'tags',
+            'application', 'actions', 'description', 'comments', 'tags',
         ]
 
     def clean(self):
@@ -107,13 +105,13 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
         return self.cleaned_data
 
 
-class SecurityZonePolicyFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
     model = SecurityZonePolicy
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet('name', 'index',),
+        FieldSet('name', 'index'),
         FieldSet('source_zone', 'source_address', 'destination_zone', 'destination_address', name=_('Source/Destination Assignment')),
-        FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
+        FieldSet('actions', name=_('Actions')),
     )
     index = forms.IntegerField(
         required=False
@@ -133,6 +131,10 @@ class SecurityZonePolicyFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     destination_address = DynamicModelMultipleChoiceField(
         queryset=Address.objects.all(),
         required=False,
+    )
+    actions = forms.MultipleChoiceField(
+        choices=ActionChoices,
+        required=True,
     )
     tags = TagFilterField(model)
 
