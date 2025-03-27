@@ -49,7 +49,6 @@ class NetBoxSecuritySecurityZonePolicyType(NetBoxObjectType):
     destination_zone: Annotated["NetBoxSecuritySecurityZoneType", strawberry.lazy("netbox_security.graphql.types")]
     source_address: Annotated["NetBoxSecurityAddressType", strawberry.lazy("netbox_security.graphql.types")]
     destination_address: Annotated["NetBoxSecurityAddressType", strawberry.lazy("netbox_security.graphql.types")]
-    application: list
 
 
 @strawberry_django.type(NatPool, fields="__all__", filters=NetBoxSecurityNatPoolFilter)
