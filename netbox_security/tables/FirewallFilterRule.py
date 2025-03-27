@@ -25,8 +25,8 @@ class FirewallFilterRuleTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = FirewallFilterRule
-        fields = ('pk', 'id', 'name', 'filter')
-        default_columns = ('pk', 'id', 'name', 'filter')
+        fields = ('pk', 'id', 'name', 'index', 'filter')
+        default_columns = ('pk', 'id', 'name', 'index', 'filter')
 
 
 class FirewallRuleSettingTable(NetBoxTable):

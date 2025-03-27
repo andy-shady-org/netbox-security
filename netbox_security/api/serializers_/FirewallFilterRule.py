@@ -47,5 +47,5 @@ class FirewallFilterRuleSerializer(NetBoxModelSerializer):
 
     class Meta:
         model = FirewallFilterRule
-        fields = ('url', 'id', 'display', 'name', 'filter', 'from_settings', 'then_settings', 'description', 'comments', 'tags')
-        brief_fields = ('url', 'id', 'display', 'name', 'filter', )
+        fields = ('url', 'id', 'display', 'name', 'index', 'filter', 'from_settings', 'then_settings', 'description', 'comments', 'tags')
+        brief_fields = ('url', 'id', 'display', 'name', 'index', 'filter', )

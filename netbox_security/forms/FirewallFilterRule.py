@@ -43,7 +43,7 @@ class FirewallFilterRuleForm(FilterRuleSettingMixin, NetBoxModelForm):
         required=False
     )
     fieldsets = (
-        FieldSet('name', 'filter', 'description', name=_('Firewall Filter Rule')),
+        FieldSet('name', 'index', 'filter', 'description', name=_('Firewall Filter Rule')),
         FieldSet("tags", name=_("Tags")),
     )
     comments = CommentField()
@@ -62,10 +62,13 @@ class FirewallFilterRuleFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_('Firewall Filter'),
     )
+    index = forms.IntegerField(
+        required=False
+    )
     model = FirewallFilterRule
     fieldsets = (
        FieldSet('q', 'filter_id', 'tag'),
-       FieldSet('name', 'filter', 'description', name=_('Firewall Filter Rule')),
+       FieldSet('name', 'index', 'filter', 'description', name=_('Firewall Filter Rule')),
     )
     tag = TagFilterField(model)
 

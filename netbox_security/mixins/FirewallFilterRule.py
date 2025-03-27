@@ -61,8 +61,6 @@ class FilterRuleSettingMixin:
                 css = self.fields[key].widget.attrs.get('class', '')
                 self.fields[key].widget.attrs['class'] = f'{css} form-control'
             assigned_fields.append(key)
-            # if key not in fieldset[1]:
-            #     fieldset[1].append(key)
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
 
@@ -113,8 +111,6 @@ class FilterRuleSettingMixin:
                 css = self.fields[key].widget.attrs.get('class', '')
                 self.fields[key].widget.attrs['class'] = f'{css} form-control'
             assigned_fields.append(key)
-            # if key not in fieldset[1]:
-            #     fieldset[1].append(key)
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
 

@@ -54,9 +54,9 @@ class SecurityZonePolicyTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = SecurityZonePolicy
-        fields = ('pk', 'name', 'source_zone', 'destination_zone', 'source_address',
+        fields = ('pk', 'index', 'name', 'source_zone', 'destination_zone', 'source_address',
                   'destination_address', 'application', 'actions', 'description', 'tags')
         default_columns = (
-            'pk', 'name', 'source_zone', 'destination_zone', 'source_address',
+            'pk', 'index', 'name', 'source_zone', 'destination_zone', 'source_address',
             'destination_address', 'application', 'actions',
         )

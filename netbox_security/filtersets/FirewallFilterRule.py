@@ -33,7 +33,7 @@ class FirewallFilterRuleFilterSet(NetBoxModelFilterSet):
 
     class Meta:
         model = FirewallFilterRule
-        fields = ('name', 'description')
+        fields = ['name', 'description', 'index']
 
     def search(self, queryset, name, value):
         if not value.strip():
@@ -54,7 +54,7 @@ class FirewallFilterRuleSettingFilterSet(NetBoxModelFilterSet):
 
     class Meta:
         model = FirewallRuleSetting
-        fields = ('key', )
+        fields = ['key', ]
 
     def search(self, queryset, name, value):
         if not value.strip():
