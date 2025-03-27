@@ -82,7 +82,7 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
     class Meta:
         model = SecurityZonePolicy
         fields = [
-            'name', 'source_zone', 'source_address', 'destination_zone', 'destination_address',
+            'name', 'index', 'source_zone', 'source_address', 'destination_zone', 'destination_address',
             'application', 'tenant_group', 'tenant', 'description', 'comments', 'tags',
         ]
 
