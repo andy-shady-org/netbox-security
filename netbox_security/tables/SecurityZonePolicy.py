@@ -18,6 +18,7 @@ class SecurityZonePolicyTable(TenancyColumnsMixin, NetBoxTable):
     destination_zone = tables.LinkColumn()
     source_address = ArrayColumn()
     destination_address = ArrayColumn()
+    application = ArrayColumn()
     actions = ChoicesColumn()
     tags = TagColumn(
         url_name='plugins:netbox_security:securityzone_list'

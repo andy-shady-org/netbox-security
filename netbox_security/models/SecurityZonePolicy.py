@@ -37,8 +37,12 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
         to='netbox_security.Address',
         related_name="%(class)s_destination_address",
     )
-    application = models.CharField(
-        max_length=200,
+    application = ArrayField(
+        models.CharField(
+            max_length=50, blank=True, null=True,
+        ),
+        size=20,
+        verbose_name=_('Applications')
     )
     actions = ArrayField(
         models.CharField(

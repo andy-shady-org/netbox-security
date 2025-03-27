@@ -1,4 +1,4 @@
-from rest_framework.serializers import HyperlinkedIdentityField
+from rest_framework.serializers import HyperlinkedIdentityField, ListField, MultipleChoiceField, CharField
 from netbox.api.serializers import NetBoxModelSerializer
 from tenancy.api.serializers import TenantSerializer
 from netbox_security.api.serializers import (
@@ -9,6 +9,8 @@ from netbox_security.models import (
     SecurityZonePolicy,
 )
 
+from netbox_security.choices import ActionChoices
+
 
 class SecurityZonePolicySerializer(NetBoxModelSerializer):
     url = HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:securityzonepolicy-detail')
@@ -17,13 +19,20 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
     source_address = AddressSerializer(nested=True, required=True, allow_null=True)
     destination_address = AddressSerializer(nested=True, required=True, allow_null=True)
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+    application = ListField(
+        child=CharField(),
+        required=True,
+        allow_empty=False,
+        default=[]
+    )
+    actions = MultipleChoiceField(choices=ActionChoices, required=True)
 
     class Meta:
         model = SecurityZonePolicy
         fields = ('id', 'url', 'display', 'name', 'description', 
                   'source_zone', 'source_address', 'destination_zone', 'destination_address', 
-                  'application', 'tenant', 'comments', 'tags', 'custom_fields', 
+                  'application', 'actions', 'tenant', 'comments', 'tags', 'custom_fields',
                   'created', 'last_updated')
         brief_fields = ('id', 'url', 'display', 'name', 'description',
                         'source_zone', 'source_address', 'destination_zone', 'destination_address', 
-                        'application')
+                        'application', 'actions',)

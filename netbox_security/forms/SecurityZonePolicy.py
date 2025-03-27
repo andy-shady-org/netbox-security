@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from django.contrib.postgres.forms import SimpleArrayField
 
 from netbox.forms import (
     NetBoxModelBulkEditForm,
@@ -26,6 +27,9 @@ from netbox_security.models import (
     SecurityZone,
     Address
 )
+
+from netbox_security.choices import ActionChoices
+
 
 __all__ = (
     "SecurityZonePolicyForm",
@@ -56,15 +60,20 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
     destination_address = DynamicModelMultipleChoiceField(
         queryset=Address.objects.all(),
     )
-    application = forms.CharField(
-        max_length=200,
-        required=True
+    application = SimpleArrayField(
+        forms.CharField(max_length=50),
+        help_text=_("Comma-separated list of applications."),
+        required=False,
+    )
+    status = forms.MultipleChoiceField(
+        choices=ActionChoices,
     )
     fieldsets = (
         FieldSet('name', 'description', name=_('Security Zone Policy')),
         FieldSet('source_zone', 'source_address', name=_('Source Assignment')),
         FieldSet('destination_zone', 'destination_address', name=_('Destination Assignment')),
         FieldSet('application', name=_('Application')),
+        FieldSet('actions', name=_('Actions')),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
