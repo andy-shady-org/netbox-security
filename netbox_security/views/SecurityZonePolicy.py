@@ -15,6 +15,8 @@ from netbox_security.forms import (
     SecurityZonePolicyImportForm
 )
 
+from netbox_security.tables import AddressTable
+
 
 __all__ = (
     'SecurityZonePolicyView',
@@ -31,6 +33,20 @@ __all__ = (
 class SecurityZonePolicyView(generic.ObjectView):
     queryset = SecurityZonePolicy.objects.all()
     template_name = 'netbox_security/securityzonepolicy.html'
+
+    def get_extra_context(self, request, instance):
+        source_address_table = AddressTable(
+            instance.source_address.all(),
+            orderable=False
+        )
+        destination_address_table = AddressTable(
+            instance.destination_address.all(),
+            orderable=False
+        )
+        return {
+            'source_address_table': source_address_table,
+            'destination_address_table': destination_address_table,
+        }
 
 
 class SecurityZonePolicyListView(generic.ObjectListView):

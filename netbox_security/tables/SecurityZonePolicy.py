@@ -2,7 +2,6 @@ import django_tables2 as tables
 
 from netbox.tables import NetBoxTable
 from netbox.tables.columns import TagColumn, ArrayColumn, ChoicesColumn
-from tenancy.tables import TenancyColumnsMixin
 
 from netbox_security.models import SecurityZonePolicy
 
@@ -20,7 +19,7 @@ __all__ = (
 )
 
 
-class SecurityZonePolicyTable(TenancyColumnsMixin, NetBoxTable):
+class SecurityZonePolicyTable(NetBoxTable):
     name = tables.LinkColumn()
     source_zone = tables.LinkColumn()
     destination_zone = tables.LinkColumn()
@@ -41,8 +40,8 @@ class SecurityZonePolicyTable(TenancyColumnsMixin, NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = SecurityZonePolicy
         fields = ('pk', 'name', 'source_zone', 'destination_zone', 'source_address',
-                  'destination_address', 'application', 'actions', 'description', 'tenant', 'tags')
+                  'destination_address', 'application', 'actions', 'description', 'tags')
         default_columns = (
             'pk', 'name', 'source_zone', 'destination_zone', 'source_address',
-            'destination_address', 'application', 'actions', 'tenant', 'tags',
+            'destination_address', 'application', 'actions', 'tags',
         )

@@ -33,23 +33,6 @@
                     </td>
                 </tr>
                 {% endif %}
-                {% if object.source_address %}
-                <tr>
-                    <th scope="row">{% trans "Source Addresses" %}</th>
-                    <td>
-                        {{ object.source_address }}
-                    </td>
-                </tr>
-                {% endif %}
-                {% if object.destination_address %}
-                <tr>
-                    <th scope="row">{% trans "Destination Addresses" %}</th>
-                    <td>
-                        {{ object.destination_address }}
-                    </td>
-                </tr>
-                {% endif %}
-
                 {% if object.application %}
                 <tr>
                     <th scope="row">{% trans "Application" %}</th>
@@ -69,6 +52,19 @@
         {% include 'inc/panels/custom_fields.html' %}
     </div>
     <div class="col col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                Source Addresses
+            </h5>
+            {% render_table source_address_table 'inc/table.html' %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                Destination Addresses
+            </h5>
+            {% render_table destination_address_table 'inc/table.html' %}
+        </div>
+    </div>
         {% include 'inc/panels/comments.html' %}
         {% include 'inc/panels/tags.html' %}
     </div>
