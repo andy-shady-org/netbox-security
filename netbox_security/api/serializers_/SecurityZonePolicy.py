@@ -23,7 +23,6 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
         child=CharField(),
         required=True,
         allow_empty=False,
-        default=[]
     )
     actions = MultipleChoiceField(choices=ActionChoices, required=True)
 
