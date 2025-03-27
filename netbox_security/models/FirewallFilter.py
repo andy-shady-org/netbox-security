@@ -66,7 +66,6 @@ class FirewallFilterAssignment(NetBoxModel):
     prerequisite_models = (
         'dcim.Device',
         'netbox_security.FirewallFilter',
-        'netbox_security.SecurityZone'
     )
 
     class Meta:
