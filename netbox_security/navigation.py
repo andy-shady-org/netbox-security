@@ -8,7 +8,7 @@ plugin_settings = settings.PLUGINS_CONFIG.get('netbox_security', {})
 security_menu_items = (
     PluginMenuItem(
         link='plugins:netbox_security:address_list',
-        link_text='Addresses',
+        link_text=_('Addresses'),
         permissions=['netbox_security.view_address'],
         buttons=(
             PluginMenuButton(
@@ -27,7 +27,7 @@ security_menu_items = (
     ),
     PluginMenuItem(
         link='plugins:netbox_security:securityzone_list',
-        link_text='Security Zones',
+        link_text=_('Security Zones'),
         permissions=['netbox_security.view_securityzone'],
         buttons=(
             PluginMenuButton(
@@ -46,7 +46,7 @@ security_menu_items = (
     ),
     PluginMenuItem(
         link='plugins:netbox_security:securityzonepolicy_list',
-        link_text='Security Zone Policies',
+        link_text=_('Security Zone Policies'),
         permissions=['netbox_security.view_securityzonepolicy'],
         buttons=(
             PluginMenuButton(
@@ -67,7 +67,7 @@ security_menu_items = (
 pool_menu_items = (
     PluginMenuItem(
         link='plugins:netbox_security:natpool_list',
-        link_text='NAT Pools',
+        link_text=_('NAT Pools'),
         permissions=['netbox_security.view_natpool'],
         buttons=(
             PluginMenuButton(
@@ -86,7 +86,7 @@ pool_menu_items = (
     ),
     PluginMenuItem(
         link='plugins:netbox_security:natpoolmember_list',
-        link_text='Pool Members',
+        link_text=_('Pool Members'),
         permissions=['netbox_security.view_natpoolmember'],
         buttons=(
             PluginMenuButton(
@@ -107,7 +107,7 @@ pool_menu_items = (
 rule_menu_items = (
     PluginMenuItem(
         link='plugins:netbox_security:natruleset_list',
-        link_text='NAT Rule Sets',
+        link_text=_('NAT Rule Sets'),
         permissions=['netbox_security.view_natruleset'],
         buttons=(
             PluginMenuButton(
@@ -148,7 +148,7 @@ rule_menu_items = (
 firewall_menu_items = (
     PluginMenuItem(
         link='plugins:netbox_security:firewallfilter_list',
-        link_text='Firewall Filters',
+        link_text=_('Firewall Filters'),
         permissions=['netbox_security.view_firewallfilter'],
         buttons=(
             PluginMenuButton(
@@ -181,12 +181,12 @@ firewall_menu_items = (
 )
 
 full_menu = PluginMenu(
-    label="Security",
+    label=_("Security"),
     groups=(
-        ("Security Zones", security_menu_items),
-        ("NAT Pools", pool_menu_items),
-        ("NAT Rules", rule_menu_items),
-        ("Firewall Filters", firewall_menu_items),
+        (_("Security Zones"), security_menu_items),
+        (_("NAT Pools"), pool_menu_items),
+        (_("NAT Rules"), rule_menu_items),
+        (_("Firewall Filters"), firewall_menu_items),
     ),
     icon_class="mdi mdi-security",
 )
