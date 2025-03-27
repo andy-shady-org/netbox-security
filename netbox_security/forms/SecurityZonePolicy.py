@@ -63,7 +63,7 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
     application = SimpleArrayField(
         forms.CharField(max_length=50),
         help_text=_("Comma-separated list of applications."),
-        required=False,
+        required=True,
     )
     actions = forms.MultipleChoiceField(
         choices=ActionChoices,
