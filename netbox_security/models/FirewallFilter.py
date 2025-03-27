@@ -32,8 +32,8 @@ class FirewallFilter(ContactsMixin, PrimaryModel):
 
     class Meta:
         verbose_name_plural = _('Firewall Filters')
-        ordering = ('name', 'value')
-        unique_together = ('name', 'value')
+        ordering = ('name', 'family')
+        unique_together = ('name', 'family', 'tenant')
 
     def __str__(self):
         return self.name

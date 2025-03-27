@@ -20,7 +20,7 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
     )
     destination_zone = models.ForeignKey(
         to='netbox_security.SecurityZone',
-        related_name='source_zone_policies',
+        related_name='destination_zone_policies',
         on_delete=models.CASCADE,
     )
     source_address = models.ManyToManyField(
