@@ -37,7 +37,7 @@
                 <tr>
                     <th scope="row">{% trans "Source Addresses" %}</th>
                     <td>
-                        {{ object.source_address|linkify|placeholder }}
+                        {{ object.source_address }}
                     </td>
                 </tr>
                 {% endif %}
@@ -45,7 +45,7 @@
                 <tr>
                     <th scope="row">{% trans "Destination Addresses" %}</th>
                     <td>
-                        {{ object.destination_address|linkify|placeholder }}
+                        {{ object.destination_address }}
                     </td>
                 </tr>
                 {% endif %}
