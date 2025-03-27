@@ -39,7 +39,7 @@ class Address(ContactsMixin, PrimaryModel):
     )
 
     class Meta:
-        verbose_name_plural = _('Address Lists')
+        verbose_name_plural = _('Addresses')
         ordering = ('name', 'value')
         unique_together = ('name', 'value')
 
@@ -47,7 +47,7 @@ class Address(ContactsMixin, PrimaryModel):
         return f'{self.name}: {self.value}'
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:addresslist', args=[self.pk])
+        return reverse('plugins:netbox_security:address', args=[self.pk])
 
 
 class AddressAssignment(NetBoxModel):
