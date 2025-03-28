@@ -20,17 +20,17 @@ class FamilyChoices(ChoiceSet):
 
 class FirewallRuleFromSettingChoices(ChoiceSet):
     ADDRESS = 'address'
-    DESTINATION_ADDRESS = 'destination-address'
-    DESTINATION_PORT = 'destination-port'
-    DESTINATION_PREFIX_LIST = 'destination-prefix-list'
+    DESTINATION_ADDRESS = 'destination_address'
+    DESTINATION_PORT = 'destination_port'
+    DESTINATION_PREFIX_LIST = 'destination_prefix_ist'
     PORT = 'port'
     INTERFACE = 'interface'
-    PREFIX_LIST = 'prefix-list'
+    PREFIX_LIST = 'prefix_list'
     PROTOCOL = 'protocol'
-    SOURCE_ADDRESS = 'source-address'
+    SOURCE_ADDRESS = 'source_address'
     SOURCE_PORT = 'source-port'
-    SOURCE_PREFIX_LIST = 'source-prefix-list'
-    TCP_ESTABLISHED = 'tcp-established'
+    SOURCE_PREFIX_LIST = 'source_prefix_list'
+    TCP_ESTABLISHED = 'tcp_established'
 
     CHOICES = [
         (ADDRESS, 'Address'),
@@ -66,7 +66,7 @@ class FirewallRuleThenSettingChoices(ChoiceSet):
     COUNT = 'count'
     DISCARD = 'discard'
     LOG = 'log'
-    NEXT = 'nextt'
+    NEXT = 'next'
     POLICER = 'policier'
     REJECT = 'reject'
     SAMPLE = 'sample'
