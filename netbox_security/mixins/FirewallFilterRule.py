@@ -15,6 +15,8 @@ class FilterRuleSettingFormMixin:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._append_from_settings_fields()
+        self._append_then_settings_fields()
 
     def _clean_fieldset(self):
         pass
