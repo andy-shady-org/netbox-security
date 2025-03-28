@@ -18,7 +18,7 @@ __all__ = (
 
 
 class FirewallRuleSettingSerializer(NetBoxModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='plugins-api:netbox_routing-api:firewallrulesetting-detail')
+    url = serializers.HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:firewallrulesetting-detail')
 
     assigned_object = serializers.SerializerMethodField(read_only=True)
 
@@ -40,7 +40,7 @@ class FirewallRuleSettingSerializer(NetBoxModelSerializer):
 
 
 class FirewallFilterRuleSerializer(NetBoxModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='plugins-api:netbox_routing-api:firewallfilterrule-detail')
+    url = serializers.HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:firewallfilterrule-detail')
     filter = FirewallFilterSerializer(nested=True)
     from_settings = FirewallRuleSettingSerializer(many=True)
     then_settings = FirewallRuleSettingSerializer(many=True)
