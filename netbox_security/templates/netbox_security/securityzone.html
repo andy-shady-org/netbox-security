@@ -4,8 +4,11 @@
 
 {% block extra_controls %}
     {% if perms.netbox_security.change_securityzonepolicy %}
-    <a href="{% url 'plugins:netbox_security:securityzonepolicy_add' %}?pool={{ object.pk }}" class="btn btn-success">
-        <span class="mdi mdi-plus-thick" aria-hidden="true"></span> Add Policy
+    <a href="{% url 'plugins:netbox_security:securityzonepolicy_add' %}?source_zone={{ object.pk }}" class="btn btn-success">
+        <span class="mdi mdi-plus-thick" aria-hidden="true"></span> Add Source Policy
+    </a>
+    <a href="{% url 'plugins:netbox_security:securityzonepolicy_add' %}?destination_zone={{ object.pk }}" class="btn btn-success">
+        <span class="mdi mdi-plus-thick" aria-hidden="true"></span> Add Destination Policy
     </a>
     {% endif %}
 {% endblock extra_controls %}

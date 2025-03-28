@@ -4,7 +4,7 @@
 
 {% block extra_controls %}
     {% if perms.netbox_security.change_firewallfilterrule %}
-    <a href="{% url 'plugins:netbox_security:firewallfilterrule_add' %}?pool={{ object.pk }}" class="btn btn-success">
+    <a href="{% url 'plugins:netbox_security:firewallfilterrule_add' %}?filter={{ object.pk }}" class="btn btn-success">
         <span class="mdi mdi-plus-thick" aria-hidden="true"></span> Add Rule
     </a>
     {% endif %}
