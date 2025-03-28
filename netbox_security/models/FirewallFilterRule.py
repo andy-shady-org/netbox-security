@@ -7,6 +7,10 @@ from netbox.models import PrimaryModel
 from netbox.search import SearchIndex, register_search
 
 from netbox_security.mixins import FirewallRuleSettingMixin
+from netbox_security.choices import (
+    FirewallRuleFromSettingChoices,
+    FirewallRuleThenSettingChoices
+)
 
 
 __all__ = (
@@ -18,16 +22,30 @@ __all__ = (
 
 
 class FirewallRuleFromSetting(FirewallRuleSettingMixin):
+    key = models.CharField(
+        choices=FirewallRuleFromSettingChoices,
+    )
+
     class Meta:
         verbose_name = _('Firewall Filter Rule Setting')
+
+    def __str__(self):
+        return f'{self.assigned_object}: {self.key}'
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_security:firewallrulefromsetting', args=[self.pk])
 
 
 class FirewallRuleThenSetting(FirewallRuleSettingMixin):
+    key = models.CharField(
+        choices=FirewallRuleThenSettingChoices,
+    )
+
     class Meta:
         verbose_name = _('Firewall Filter Rule Setting')
+
+    def __str__(self):
+        return f'{self.assigned_object}: {self.key}'
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_security:firewallrulethensetting', args=[self.pk])

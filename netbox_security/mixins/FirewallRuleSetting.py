@@ -3,7 +3,6 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from netbox.models import PrimaryModel
 from netbox_security.constants import FILTER_SETTING_ASSIGNMENT_MODELS
-from netbox_security.choices import FirewallRuleSettingChoices
 
 
 class FirewallRuleSettingMixin(PrimaryModel):
@@ -23,13 +22,7 @@ class FirewallRuleSettingMixin(PrimaryModel):
         ct_field='assigned_object_type',
         fk_field='assigned_object_id'
     )
-    key = models.CharField(
-        choices=FirewallRuleSettingChoices,
-    )
     value = models.CharField()
 
     class Meta:
         abstract = True
-
-    def __str__(self):
-        return f'{self.assigned_object}: {self.key}'
