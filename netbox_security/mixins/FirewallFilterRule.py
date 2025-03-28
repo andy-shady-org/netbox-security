@@ -1,23 +1,35 @@
-from django.contrib.contenttypes.models import ContentType
 from django import forms
 from django.forms import fields
-from django.utils.translation import gettext as _
+from django.contrib.contenttypes.models import ContentType
 from utilities.forms.rendering import FieldSet
 from netbox_security.choices import FirewallRuleFromSettingChoices, FirewallRuleThenSettingChoices
-from netbox_security.models import FirewallRuleSetting
+from netbox_security.models import FirewallRuleFromSetting, FirewallRuleThenSetting
 
 
-class FilterRuleSettingMixin:
+class FilterRuleSettingBase:
+    MODEL = None
+    CHOICE = None
+    NAME = None
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.assigned_fields = []
-        self._append_from_settings_fields()
-        self._append_then_settings_fields()
+
+    def _clean_fieldset(self):
+        pass
+
+    def _append_settings_fields(self):
+        fieldset = FieldSet(*self.CHOICE.values(), name=_(self.NAME))
+        for key, label in self.CHOICE.CHOICES:
+            self._parse_key(key, label, self.CHOICE.FIELD_TYPES[key])
+            self.assigned_fields.append(key)
+        if fieldset not in self.fieldsets:
+            self.fieldsets = (*self.fieldsets, fieldset)
 
     def _parse_key(self, key, label, field_type):
         initial = None
         if hasattr(self, 'instance'):
-            setting = FirewallRuleSetting.objects.filter(
+            setting = self.MODEL.objects.filter(
                 assigned_object_type=ContentType.objects.get_for_model(self.Meta.model),
                 assigned_object_id=self.instance.pk,
                 key=key
@@ -58,73 +70,29 @@ class FilterRuleSettingMixin:
             css = self.fields[key].widget.attrs.get('class', '')
             self.fields[key].widget.attrs['class'] = f'{css} form-control'
 
-    def _append_from_settings_fields(self):
-        fieldset = FieldSet(*FirewallRuleFromSettingChoices.values(), name=_('From Settings'))
-        for key, label in FirewallRuleFromSettingChoices.CHOICES:
-            self._parse_key(key, label, FirewallRuleFromSettingChoices.FIELD_TYPES[key])
-            self.assigned_fields.append(key)
-        if fieldset not in self.fieldsets:
-            self.fieldsets = (*self.fieldsets, fieldset)
-
-    def _append_then_settings_fields(self):
-        fieldset = FieldSet(*FirewallRuleThenSettingChoices.values(), name=_('Then Settings'))
-        for key, label in FirewallRuleThenSettingChoices.CHOICES:
-            self._parse_key(key, label, FirewallRuleThenSettingChoices.FIELD_TYPES[key])
-            self.assigned_fields.append(key)
-        if fieldset not in self.fieldsets:
-            self.fieldsets = (*self.fieldsets, fieldset)
-
-    def _clean_fieldset(self):
-        pass
-
     def save(self, *args, **kwargs):
-        from_settings = {}
-        then_settings = {}
-        for key, _ in FirewallRuleFromSettingChoices.CHOICES:
+        settings = {}
+        for key, _ in self.CHOICE.CHOICES:
             if key in self.cleaned_data:
-                from_settings[key] = self.cleaned_data.pop(key)
-        for key, _ in FirewallRuleThenSettingChoices.CHOICES:
-            if key in self.cleaned_data:
-                then_settings[key] = self.cleaned_data.pop(key)
+                settings[key] = self.cleaned_data.pop(key)
         obj = super().save(*args, **kwargs)
 
-        for key, _ in FirewallRuleFromSettingChoices.CHOICES:
-            value = from_settings.get(key, None)
-            setting = FirewallRuleSetting.objects.filter(
-                    assigned_object_type=self.get_assigned_object_type(),
-                    assigned_object_id=self.get_assigned_object_id(),
-                    key=key
+        for key, _ in self.CHOICE.CHOICES:
+            value = settings.get(key, None)
+            setting = self.MODEL.objects.filter(
+                assigned_object_type=self.get_assigned_object_type(),
+                assigned_object_id=self.get_assigned_object_id(),
+                key=key
             ).first()
             if setting and value:
-                setting.value = from_settings.get(key)
+                setting.value = settings.get(key)
                 setting.clean()
                 setting.save()
             elif value:
-                setting = FirewallRuleSetting(
+                setting = self.MODEL(
                     assigned_object=self.instance,
                     key=key,
-                    value=from_settings.get(key, None)
-                )
-                setting.clean()
-                setting.save()
-            elif setting:
-                setting.delete()
-        for key, _ in FirewallRuleThenSettingChoices.CHOICES:
-            value = then_settings.get(key, None)
-            setting = FirewallRuleSetting.objects.filter(
-                    assigned_object_type=self.get_assigned_object_type(),
-                    assigned_object_id=self.get_assigned_object_id(),
-                    key=key
-            ).first()
-            if setting and value:
-                setting.value = then_settings.get(key)
-                setting.clean()
-                setting.save()
-            elif value:
-                setting = FirewallRuleSetting(
-                    assigned_object=self.instance,
-                    key=key,
-                    value=then_settings.get(key, None)
+                    value=settings.get(key, None)
                 )
                 setting.clean()
                 setting.save()
@@ -137,3 +105,23 @@ class FilterRuleSettingMixin:
 
     def get_assigned_object_id(self):
         return self.instance.pk
+
+
+class FilterRuleFromSettingMixin(FilterRuleSettingBase):
+    MODEL = FirewallRuleFromSetting
+    CHOICE = FirewallRuleFromSettingChoices
+    NAME = 'From Settings'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._append_settings_fields()
+
+
+class FilterRuleThenSettingMixin(FilterRuleSettingBase):
+    MODEL = FirewallRuleThenSetting
+    CHOICE = FirewallRuleThenSettingChoices
+    NAME = 'Then Settings'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._append_settings_fields()

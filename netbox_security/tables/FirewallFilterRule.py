@@ -6,13 +6,14 @@ from netbox.tables.columns import TagColumn
 
 from netbox_security.models import (
     FirewallFilterRule,
-    FirewallRuleSetting
+    FirewallRuleFromSetting
 )
 
 
 __all__ = (
     'FirewallFilterRuleTable',
-    'FirewallRuleSettingTable',
+    'FirewallRuleFromSettingTable',
+    'FirewallRuleThenSettingTable',
 )
 
 
@@ -29,8 +30,15 @@ class FirewallFilterRuleTable(NetBoxTable):
         default_columns = ('pk', 'id', 'name', 'index', 'filter')
 
 
-class FirewallRuleSettingTable(NetBoxTable):
+class FirewallRuleFromSettingTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
-        model = FirewallRuleSetting
+        model = FirewallRuleFromSetting
+        fields = ('pk', 'id', 'assigned_object', 'key', 'value')
+        default_columns = ('pk', 'id', 'assigned_object', 'key', 'value')
+
+
+class FirewallRuleThenSettingTable(NetBoxTable):
+    class Meta(NetBoxTable.Meta):
+        model = FirewallRuleFromSetting
         fields = ('pk', 'id', 'assigned_object', 'key', 'value')
         default_columns = ('pk', 'id', 'assigned_object', 'key', 'value')

@@ -4,17 +4,22 @@ from django.utils.translation import gettext as _
 
 from netbox.filtersets import NetBoxModelFilterSet
 
-from netbox_security.choices import FirewallRuleSettingChoices
+from netbox_security.choices import (
+    FirewallRuleFromSettingChoices,
+    FirewallRuleThenSettingChoices,
+)
 from netbox_security.models import (
     FirewallFilterRule,
     FirewallFilter,
-    FirewallRuleSetting
+    FirewallRuleFromSetting,
+    FirewallRuleThenSetting
 )
 
 
 __all__ = (
     'FirewallFilterRuleFilterSet',
-    'FirewallFilterRuleSettingFilterSet',
+    'FirewallFilterRuleFromSettingFilterSet',
+    'FirewallFilterRuleThenSettingFilterSet',
 )
 
 
@@ -45,15 +50,35 @@ class FirewallFilterRuleFilterSet(NetBoxModelFilterSet):
         return queryset.filter(qs_filter).distinct()
 
 
-class FirewallFilterRuleSettingFilterSet(NetBoxModelFilterSet):
+class FirewallFilterRuleFromSettingFilterSet(NetBoxModelFilterSet):
     key = django_filters.MultipleChoiceFilter(
-        choices=FirewallRuleSettingChoices,
+        choices=FirewallRuleFromSettingChoices,
         null_value=None,
         label=_('Setting Name')
     )
 
     class Meta:
-        model = FirewallRuleSetting
+        model = FirewallRuleFromSetting
+        fields = ['key', ]
+
+    def search(self, queryset, name, value):
+        if not value.strip():
+            return queryset
+        qs_filter = (
+            Q(key__icontains=value)
+        )
+        return queryset.filter(qs_filter).distinct()
+
+
+class FirewallFilterRuleThenSettingFilterSet(NetBoxModelFilterSet):
+    key = django_filters.MultipleChoiceFilter(
+        choices=FirewallRuleThenSettingChoices,
+        null_value=None,
+        label=_('Setting Name')
+    )
+
+    class Meta:
+        model = FirewallRuleThenSetting
         fields = ['key', ]
 
     def search(self, queryset, name, value):

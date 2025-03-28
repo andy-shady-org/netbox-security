@@ -6,4 +6,4 @@ from .SecurityZone import SecurityZoneTable, SecurityZoneDeviceAssignmentTable, 
 from .SecurityZonePolicy import SecurityZonePolicyTable
 from .Address import AddressTable, AddressDeviceAssignmentTable, AddressVirtualDeviceContextAssignmentTable, AddressSecurityZoneAssignmentTable
 from .FirewallFilter import FirewallFilterTable, FirewallFilterDeviceAssignmentTable, FirewallFilterVirtualDeviceContextAssignmentTable
-from .FirewallFilterRule import FirewallFilterRuleTable, FirewallRuleSettingTable
+from .FirewallFilterRule import FirewallFilterRuleTable, FirewallRuleFromSettingTable, FirewallRuleThenSettingTable

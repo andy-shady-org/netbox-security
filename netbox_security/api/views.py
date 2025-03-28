@@ -11,7 +11,8 @@ from .serializers import (
     NatRuleSetSerializer, NatRuleSetAssignmentSerializer,
     NatRuleSerializer, NatRuleAssignmentSerializer,
     FirewallFilterSerializer, FirewallFilterAssignmentSerializer,
-    FirewallFilterRuleSerializer, FirewallRuleSettingSerializer,
+    FirewallFilterRuleSerializer,
+    FirewallRuleFromSettingSerializer, FirewallRuleThenSettingSerializer,
 )
 
 from netbox_security.models import (
@@ -23,7 +24,8 @@ from netbox_security.models import (
     NatRuleSet, NatRuleSetAssignment,
     NatRule, NatRuleAssignment,
     FirewallFilter, FirewallFilterAssignment,
-    FirewallFilterRule, FirewallRuleSetting,
+    FirewallFilterRule,
+    FirewallRuleFromSetting, FirewallRuleThenSetting,
 )
 
 from netbox_security.filtersets import (
@@ -35,7 +37,8 @@ from netbox_security.filtersets import (
     NatRuleSetFilterSet, NatRuleSetAssignmentFilterSet,
     NatRuleFilterSet, NatRuleAssignmentFilterSet,
     FirewallFilterFilterSet, FirewallFilterAssignmentFilterSet,
-    FirewallFilterRuleFilterSet, FirewallFilterRuleSettingFilterSet,
+    FirewallFilterRuleFilterSet,
+    FirewallFilterRuleFromSettingFilterSet, FirewallFilterRuleThenSettingFilterSet,
 )
 
 
@@ -146,7 +149,13 @@ class FirewallFilterRuleViewSet(NetBoxModelViewSet):
     filterset_class = FirewallFilterRuleFilterSet
 
 
-class FirewallRuleSettingViewSet(NetBoxModelViewSet):
-    queryset = FirewallRuleSetting.objects.all()
-    serializer_class = FirewallRuleSettingSerializer
-    filterset_class = FirewallFilterRuleSettingFilterSet
+class FirewallRuleFromSettingViewSet(NetBoxModelViewSet):
+    queryset = FirewallRuleFromSetting.objects.all()
+    serializer_class = FirewallRuleFromSettingSerializer
+    filterset_class = FirewallFilterRuleFromSettingFilterSet
+
+
+class FirewallRuleThenSettingViewSet(NetBoxModelViewSet):
+    queryset = FirewallRuleThenSetting.objects.all()
+    serializer_class = FirewallRuleThenSettingSerializer
+    filterset_class = FirewallFilterRuleThenSettingFilterSet
