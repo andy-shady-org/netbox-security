@@ -14,16 +14,16 @@ class FilterRuleSettingBase:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.assigned_fields = []
 
     def _clean_fieldset(self):
         pass
 
     def _append_settings_fields(self):
+        assigned_fields = []
         fieldset = FieldSet(*self.CHOICE.values(), name=_(self.NAME))
         for key, label in self.CHOICE.CHOICES:
             self._parse_key(key, label, self.CHOICE.FIELD_TYPES[key])
-            self.assigned_fields.append(key)
+            assigned_fields.append(key)
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
 
