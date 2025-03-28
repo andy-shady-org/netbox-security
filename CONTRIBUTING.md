@@ -46,7 +46,7 @@ $ git clone https://github.com/YOUR-GITHUB-USERNAME/netbox-security.git
 * Use the main project's `main` repository as upstream remote:
 
 ```bash
-$ cd netbox-plugin-dns
+$ cd netbox-security
 $ git remote add upstream https://github.com/andy-shady-org/netbox-security.git
 ```
 
@@ -63,14 +63,14 @@ $ source /opt/netbox/venv/bin/activate
 $ pip3 install black
 ```
 
-* Install `netbox-security`. In a development environment it makes most sense to use an editable installation, which can be achieved by the following commands (assuming you checked out the NetBox DNS repository to `/install-path/netbox-plugin-dns`):
+* Install `netbox-security`. In a development environment it makes most sense to use an editable installation, which can be achieved by the following commands (assuming you checked out the NetBox DNS repository to `/install-path/netbox-security`):
 
 ```bash
 $ pip3 -e /install-path/netbox-security
 
 ```
 
-* Add NetBox DNS to the NetBox configuration `/opt/netbox/netbox/netbox/configuration.py`
+* Add NetBox Security to the NetBox configuration `/opt/netbox/netbox/netbox/configuration.py`
 
 ```python
 PLUGINS = [
