@@ -18,15 +18,6 @@ class FilterRuleSettingBase:
     def _clean_fieldset(self):
         pass
 
-    def _append_settings_fields(self):
-        assigned_fields = []
-        fieldset = FieldSet(*self.CHOICE.values(), name=_(self.NAME))
-        for key, label in self.CHOICE.CHOICES:
-            self._parse_key(key, label, self.CHOICE.FIELD_TYPES[key])
-            assigned_fields.append(key)
-        if fieldset not in self.fieldsets:
-            self.fieldsets = (*self.fieldsets, fieldset)
-
     def _parse_key(self, key, label, field_type):
         initial = None
         if hasattr(self, 'instance'):
@@ -117,6 +108,15 @@ class FilterRuleFromSettingMixin(FilterRuleSettingBase):
         super().__init__(*args, **kwargs)
         self._append_settings_fields()
 
+    def _append_settings_fields(self):
+        assigned_fields = []
+        fieldset = FieldSet(*self.CHOICE.values(), name=_(self.NAME))
+        for key, label in self.CHOICE.CHOICES:
+            self._parse_key(key, label, self.CHOICE.FIELD_TYPES[key])
+            assigned_fields.append(key)
+        if fieldset not in self.fieldsets:
+            self.fieldsets = (*self.fieldsets, fieldset)
+
 
 class FilterRuleThenSettingMixin(FilterRuleSettingBase):
     MODEL = FirewallRuleThenSetting
@@ -126,3 +126,12 @@ class FilterRuleThenSettingMixin(FilterRuleSettingBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._append_settings_fields()
+
+    def _append_settings_fields(self):
+        assigned_fields = []
+        fieldset = FieldSet(*self.CHOICE.values(), name=_(self.NAME))
+        for key, label in self.CHOICE.CHOICES:
+            self._parse_key(key, label, self.CHOICE.FIELD_TYPES[key])
+            assigned_fields.append(key)
+        if fieldset not in self.fieldsets:
+            self.fieldsets = (*self.fieldsets, fieldset)

@@ -19,7 +19,10 @@ from netbox_security.models import (
     FirewallFilter,
 )
 
-from netbox_security.mixins import FilterRuleFromSettingMixin, FilterRuleThenSettingMixin
+from netbox_security.mixins import (
+    FilterRuleFromSettingMixin,
+    FilterRuleThenSettingMixin,
+)
 
 
 __all__ = (
@@ -28,7 +31,7 @@ __all__ = (
 )
 
 
-class FirewallFilterRuleForm(FilterRuleThenSettingMixin, NetBoxModelForm):
+class FirewallFilterRuleForm(FilterRuleFromSettingMixin, FilterRuleThenSettingMixin, NetBoxModelForm):
     name = forms.CharField(
         max_length=100,
         required=True
