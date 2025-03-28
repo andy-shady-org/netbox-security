@@ -5,9 +5,9 @@ from netbox.forms import (
     NetBoxModelBulkEditForm,
     NetBoxModelForm,
     NetBoxModelImportForm,
-    NetBoxModelFilterSetForm
+    NetBoxModelFilterSetForm,
 )
-from utilities.forms.rendering import FieldSet,  ObjectAttribute
+from utilities.forms.rendering import FieldSet, ObjectAttribute
 from utilities.forms.fields import (
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
@@ -17,9 +17,7 @@ from utilities.forms.fields import (
     CommentField,
 )
 
-from netbox_security.choices import (
-    NatTypeChoices, RuleDirectionChoices
-)
+from netbox_security.choices import NatTypeChoices, RuleDirectionChoices
 
 from netbox_security.models import (
     NatRuleSet,
@@ -38,23 +36,13 @@ __all__ = (
 
 
 class NatRuleSetForm(NetBoxModelForm):
-    name = forms.CharField(
-        max_length=64,
-        required=True
-    )
-    description = forms.CharField(
-        max_length=200,
-        required=False
-    )
+    name = forms.CharField(max_length=64, required=True)
+    description = forms.CharField(max_length=200, required=False)
     nat_type = forms.ChoiceField(
-        required=True,
-        choices=NatTypeChoices,
-        widget=forms.Select()
+        required=True, choices=NatTypeChoices, widget=forms.Select()
     )
     direction = forms.ChoiceField(
-        required=True,
-        choices=RuleDirectionChoices,
-        widget=forms.Select()
+        required=True, choices=RuleDirectionChoices, widget=forms.Select()
     )
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
@@ -65,16 +53,24 @@ class NatRuleSetForm(NetBoxModelForm):
         required=False,
     )
     fieldsets = (
-        FieldSet('name', 'nat_type', 'description', 'direction'),
-        FieldSet('source_zones', 'destination_zones', name=_('Security Zones)')),
+        FieldSet("name", "nat_type", "description", "direction"),
+        FieldSet("source_zones", "destination_zones", name=_("Security Zones)")),
         FieldSet("tags", name=_("Tags")),
     )
     comments = CommentField()
 
     class Meta:
         model = NatRuleSet
-        fields = ['name', 'description', 'nat_type', 'direction',
-                  'source_zones', 'destination_zones', 'comments', 'tags']
+        fields = [
+            "name",
+            "description",
+            "nat_type",
+            "direction",
+            "source_zones",
+            "destination_zones",
+            "comments",
+            "tags",
+        ]
 
     def clean(self):
         super().clean()
@@ -82,7 +78,9 @@ class NatRuleSetForm(NetBoxModelForm):
         source_zones = self.cleaned_data.get("source_zones")
         destination_zones = self.cleaned_data.get("destination_zones")
         if set(source_zones) & set(destination_zones):
-            error_message_mismatch_zones = f'Cannot have the same source and destination zones within a rule'
+            error_message_mismatch_zones = (
+                f"Cannot have the same source and destination zones within a rule"
+            )
             error_message["source_zones"] = [error_message_mismatch_zones]
             error_message["destination_zones"] = [error_message_mismatch_zones]
         if error_message:
@@ -94,16 +92,20 @@ class NatRuleSetFilterForm(NetBoxModelFilterSetForm):
     model = NatRuleSet
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("nat_type", "direction", "source_zones", "destination_zones", name="Rule Set Details"),
+        FieldSet(
+            "nat_type",
+            "direction",
+            "source_zones",
+            "destination_zones",
+            name="Rule Set Details",
+        ),
     )
     nat_type = forms.MultipleChoiceField(
         choices=NatTypeChoices,
         required=False,
     )
     direction = forms.ChoiceField(
-        required=False,
-        choices=RuleDirectionChoices,
-        widget=forms.Select()
+        required=False, choices=RuleDirectionChoices, widget=forms.Select()
     )
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
@@ -117,14 +119,8 @@ class NatRuleSetFilterForm(NetBoxModelFilterSetForm):
 
 
 class NatRuleSetImportForm(NetBoxModelImportForm):
-    nat_type = CSVChoiceField(
-        choices=NatTypeChoices,
-        help_text=_('NAT Type')
-    )
-    direction = CSVChoiceField(
-        choices=RuleDirectionChoices,
-        help_text=_('Direction')
-    )
+    nat_type = CSVChoiceField(choices=NatTypeChoices, help_text=_("NAT Type"))
+    direction = CSVChoiceField(choices=RuleDirectionChoices, help_text=_("Direction"))
     source_zones = CSVModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
         required=False,
@@ -136,23 +132,23 @@ class NatRuleSetImportForm(NetBoxModelImportForm):
 
     class Meta:
         model = NatRuleSet
-        fields = ("name", "nat_type", "direction", "source_zones", "destination_zones", "tags")
+        fields = (
+            "name",
+            "nat_type",
+            "direction",
+            "source_zones",
+            "destination_zones",
+            "tags",
+        )
 
 
 class NatRuleSetBulkEditForm(NetBoxModelBulkEditForm):
-    description = forms.CharField(
-        max_length=200,
-        required=False
-    )
+    description = forms.CharField(max_length=200, required=False)
     nat_type = forms.ChoiceField(
-        required=False,
-        choices=NatTypeChoices,
-        widget=forms.Select()
+        required=False, choices=NatTypeChoices, widget=forms.Select()
     )
     direction = forms.ChoiceField(
-        required=False,
-        choices=RuleDirectionChoices,
-        widget=forms.Select()
+        required=False, choices=RuleDirectionChoices, widget=forms.Select()
     )
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
@@ -166,46 +162,43 @@ class NatRuleSetBulkEditForm(NetBoxModelBulkEditForm):
 
     model = NatRuleSet
     nullable_fields = [
-       'description',
+        "description",
     ]
     fieldsets = (
-        FieldSet('nat_type', 'description', 'direction'),
-        FieldSet('source_zones', 'destination_zones', name=_('Security Zones)')),
+        FieldSet("nat_type", "description", "direction"),
+        FieldSet("source_zones", "destination_zones", name=_("Security Zones)")),
         FieldSet("tags", name=_("Tags")),
     )
 
 
 class NatRuleSetAssignmentForm(forms.ModelForm):
     ruleset = DynamicModelChoiceField(
-        label=_('NAT Ruleset'),
-        queryset=NatRuleSet.objects.all()
+        label=_("NAT Ruleset"), queryset=NatRuleSet.objects.all()
     )
 
-    fieldsets = (
-        FieldSet(ObjectAttribute('assigned_object'), 'ruleset'),
-    )
+    fieldsets = (FieldSet(ObjectAttribute("assigned_object"), "ruleset"),)
 
     class Meta:
         model = NatRuleSetAssignment
-        fields = ('ruleset',)
+        fields = ("ruleset",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def clean_ruleset(self):
-        ruleset = self.cleaned_data['ruleset']
+        ruleset = self.cleaned_data["ruleset"]
 
         conflicting_assignments = NatRuleSetAssignment.objects.filter(
             assigned_object_type=self.instance.assigned_object_type,
             assigned_object_id=self.instance.assigned_object_id,
-            ruleset=ruleset
+            ruleset=ruleset,
         )
         if self.instance.id:
-            conflicting_assignments = conflicting_assignments.exclude(id=self.instance.id)
+            conflicting_assignments = conflicting_assignments.exclude(
+                id=self.instance.id
+            )
 
         if conflicting_assignments.exists():
-            raise forms.ValidationError(
-                _('Assignment already exists')
-            )
+            raise forms.ValidationError(_("Assignment already exists"))
 
         return ruleset

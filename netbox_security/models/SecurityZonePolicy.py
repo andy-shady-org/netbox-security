@@ -10,8 +10,8 @@ from netbox_security.choices import ActionChoices
 
 
 __all__ = (
-    'SecurityZonePolicy',
-    'SecurityZonePolicyIndex',
+    "SecurityZonePolicy",
+    "SecurityZonePolicyIndex",
 )
 
 
@@ -21,54 +21,58 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
     )
     index = models.PositiveIntegerField()
     source_zone = models.ForeignKey(
-        to='netbox_security.SecurityZone',
-        related_name='source_zone_policies',
+        to="netbox_security.SecurityZone",
+        related_name="source_zone_policies",
         on_delete=models.CASCADE,
     )
     destination_zone = models.ForeignKey(
-        to='netbox_security.SecurityZone',
-        related_name='destination_zone_policies',
+        to="netbox_security.SecurityZone",
+        related_name="destination_zone_policies",
         on_delete=models.CASCADE,
     )
     source_address = models.ManyToManyField(
-        to='netbox_security.Address',
+        to="netbox_security.Address",
         related_name="%(class)s_source_address",
     )
     destination_address = models.ManyToManyField(
-        to='netbox_security.Address',
+        to="netbox_security.Address",
         related_name="%(class)s_destination_address",
     )
     application = ArrayField(
         models.CharField(
-            max_length=50, blank=True, null=True,
+            max_length=50,
+            blank=True,
+            null=True,
         ),
         size=20,
-        verbose_name=_('Applications')
+        verbose_name=_("Applications"),
     )
     actions = ArrayField(
         models.CharField(
-                max_length=20, blank=True, null=True,
-                choices=ActionChoices,
-                default=ActionChoices.PERMIT
+            max_length=20,
+            blank=True,
+            null=True,
+            choices=ActionChoices,
+            default=ActionChoices.PERMIT,
         ),
         size=4,
-        verbose_name=_('Actions')
+        verbose_name=_("Actions"),
     )
     prerequisite_models = (
-        'netbox_security.SecurityZone',
-        'netbox_security.Address',
+        "netbox_security.SecurityZone",
+        "netbox_security.Address",
     )
 
     class Meta:
-        verbose_name_plural = _('Security Zone Policies')
-        ordering = ['index', 'name']
-        unique_together = ['name', 'source_zone', 'destination_zone']
+        verbose_name_plural = _("Security Zone Policies")
+        ordering = ["index", "name"]
+        unique_together = ["name", "source_zone", "destination_zone"]
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:securityzonepolicy', args=[self.pk])
+        return reverse("plugins:netbox_security:securityzonepolicy", args=[self.pk])
 
 
 @register_search

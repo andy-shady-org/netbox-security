@@ -4,7 +4,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
 from utilities.filters import (
-    ContentTypeFilter, MultiValueCharFilter, MultiValueNumberFilter,
+    ContentTypeFilter,
+    MultiValueCharFilter,
+    MultiValueNumberFilter,
 )
 from dcim.models import Device
 
@@ -38,16 +40,13 @@ class NatRuleSetFilterSet(NetBoxModelFilterSet):
 
     class Meta:
         model = NatRuleSet
-        fields = ['id', 'name', 'description']
+        fields = ["id", "name", "description"]
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""
         if not value.strip():
             return queryset
-        qs_filter = (
-                Q(name__icontains=value)
-                | Q(description__icontains=value)
-        )
+        qs_filter = Q(name__icontains=value) | Q(description__icontains=value)
         return queryset.filter(qs_filter)
 
 
@@ -55,29 +54,34 @@ class NatRuleSetAssignmentFilterSet(NetBoxModelFilterSet):
     assigned_object_type = ContentTypeFilter()
     ruleset_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatRuleSet.objects.all(),
-        label=_('NAT Ruleset (ID)'),
+        label=_("NAT Ruleset (ID)"),
     )
     device = MultiValueCharFilter(
-        method='filter_device',
-        field_name='name',
-        label=_('Device (name)'),
+        method="filter_device",
+        field_name="name",
+        label=_("Device (name)"),
     )
     device_id = MultiValueNumberFilter(
-        method='filter_device',
-        field_name='pk',
-        label=_('Device (ID)'),
+        method="filter_device",
+        field_name="pk",
+        label=_("Device (ID)"),
     )
 
     class Meta:
         model = NatRuleSetAssignment
-        fields = ('id', 'ruleset_id', 'assigned_object_type', 'assigned_object_id')
+        fields = ("id", "ruleset_id", "assigned_object_type", "assigned_object_id")
 
     def filter_device(self, queryset, name, value):
-        devices = Device.objects.filter(**{f'{name}__in': value})
+        devices = Device.objects.filter(**{f"{name}__in": value})
         if not devices.exists():
             return queryset.none()
         device_ids = []
-        device_ids.extend(Device.objects.filter(**{f'{name}__in': value}).values_list('id', flat=True))
+        device_ids.extend(
+            Device.objects.filter(**{f"{name}__in": value}).values_list("id", flat=True)
+        )
         return queryset.filter(
-            Q(assigned_object_type=ContentType.objects.get_for_model(Device), assigned_object_id__in=device_ids)
+            Q(
+                assigned_object_type=ContentType.objects.get_for_model(Device),
+                assigned_object_id__in=device_ids,
+            )
         )

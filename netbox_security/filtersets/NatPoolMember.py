@@ -19,73 +19,67 @@ class NatPoolMemberFilterSet(NetBoxModelFilterSet):
     pool_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
         field_name="pool__id",
-        to_field_name='id',
-        label=_('NAT Pool (ID)'),
+        to_field_name="id",
+        label=_("NAT Pool (ID)"),
     )
     pool = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
         field_name="pool__name",
-        to_field_name='name',
-        label=_('NAT Pool (Name)'),
+        to_field_name="name",
+        label=_("NAT Pool (Name)"),
     )
     status = django_filters.MultipleChoiceFilter(
         choices=IPAddressStatusChoices,
         required=False,
     )
     address = django_filters.ModelMultipleChoiceFilter(
-        field_name='address__address',
+        field_name="address__address",
         queryset=IPAddress.objects.all(),
-        to_field_name='address',
-        label=_('Address'),
+        to_field_name="address",
+        label=_("Address"),
     )
     address_id = django_filters.ModelMultipleChoiceFilter(
-        field_name='address__id',
+        field_name="address__id",
         queryset=IPAddress.objects.all(),
-        to_field_name='id',
-        label=_('Address (ID)'),
+        to_field_name="id",
+        label=_("Address (ID)"),
     )
     prefix = django_filters.ModelMultipleChoiceFilter(
-        field_name='prefix__prefix',
+        field_name="prefix__prefix",
         queryset=Prefix.objects.all(),
-        to_field_name='prefix',
-        label=_('Prefix'),
+        to_field_name="prefix",
+        label=_("Prefix"),
     )
     prefix_id = django_filters.ModelMultipleChoiceFilter(
-        field_name='prefix__id',
+        field_name="prefix__id",
         queryset=Prefix.objects.all(),
-        to_field_name='id',
-        label=_('Prefix (ID)'),
+        to_field_name="id",
+        label=_("Prefix (ID)"),
     )
     address_range = django_filters.ModelMultipleChoiceFilter(
-        field_name='address_range__start_address',
+        field_name="address_range__start_address",
         queryset=IPRange.objects.all(),
-        to_field_name='start_address',
-        label=_('IPRange (Start Address)'),
+        to_field_name="start_address",
+        label=_("IPRange (Start Address)"),
     )
     address_range_id = django_filters.ModelMultipleChoiceFilter(
-        field_name='address_range__id',
+        field_name="address_range__id",
         queryset=IPRange.objects.all(),
-        to_field_name='id',
-        label=_('IPRange (ID)'),
+        to_field_name="id",
+        label=_("IPRange (ID)"),
     )
-    source_port = NumericArrayFilter(
-        field_name='source_ports',
-        lookup_expr='contains'
-    )
+    source_port = NumericArrayFilter(field_name="source_ports", lookup_expr="contains")
     destination_port = NumericArrayFilter(
-        field_name='destination_ports',
-        lookup_expr='contains'
+        field_name="destination_ports", lookup_expr="contains"
     )
 
     class Meta:
         model = NatPoolMember
-        fields = ['id', 'name']
+        fields = ["id", "name"]
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""
         if not value.strip():
             return queryset
-        qs_filter = (
-                Q(name__icontains=value)
-        )
+        qs_filter = Q(name__icontains=value)
         return queryset.filter(qs_filter)

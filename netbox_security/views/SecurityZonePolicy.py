@@ -12,40 +12,38 @@ from netbox_security.forms import (
     SecurityZonePolicyFilterForm,
     SecurityZonePolicyForm,
     SecurityZonePolicyBulkEditForm,
-    SecurityZonePolicyImportForm
+    SecurityZonePolicyImportForm,
 )
 
 from netbox_security.tables import AddressTable
 
 
 __all__ = (
-    'SecurityZonePolicyView',
-    'SecurityZonePolicyListView',
-    'SecurityZonePolicyEditView',
-    'SecurityZonePolicyDeleteView',
-    'SecurityZonePolicyBulkEditView',
-    'SecurityZonePolicyBulkDeleteView',
-    'SecurityZonePolicyBulkImportView',
-    'SecurityZonePolicyContactsView',
+    "SecurityZonePolicyView",
+    "SecurityZonePolicyListView",
+    "SecurityZonePolicyEditView",
+    "SecurityZonePolicyDeleteView",
+    "SecurityZonePolicyBulkEditView",
+    "SecurityZonePolicyBulkDeleteView",
+    "SecurityZonePolicyBulkImportView",
+    "SecurityZonePolicyContactsView",
 )
 
 
 class SecurityZonePolicyView(generic.ObjectView):
     queryset = SecurityZonePolicy.objects.all()
-    template_name = 'netbox_security/securityzonepolicy.html'
+    template_name = "netbox_security/securityzonepolicy.html"
 
     def get_extra_context(self, request, instance):
         source_address_table = AddressTable(
-            instance.source_address.all(),
-            orderable=False
+            instance.source_address.all(), orderable=False
         )
         destination_address_table = AddressTable(
-            instance.destination_address.all(),
-            orderable=False
+            instance.destination_address.all(), orderable=False
         )
         return {
-            'source_address_table': source_address_table,
-            'destination_address_table': destination_address_table,
+            "source_address_table": source_address_table,
+            "destination_address_table": destination_address_table,
         }
 
 
@@ -63,7 +61,7 @@ class SecurityZonePolicyEditView(generic.ObjectEditView):
 
 class SecurityZonePolicyDeleteView(generic.ObjectDeleteView):
     queryset = SecurityZonePolicy.objects.all()
-    default_return_url = 'plugins:netbox_security:securityzonepolicy_list'
+    default_return_url = "plugins:netbox_security:securityzonepolicy_list"
 
 
 class SecurityZonePolicyBulkEditView(generic.BulkEditView):
@@ -76,7 +74,7 @@ class SecurityZonePolicyBulkEditView(generic.BulkEditView):
 class SecurityZonePolicyBulkDeleteView(generic.BulkDeleteView):
     queryset = SecurityZonePolicy.objects.all()
     table = SecurityZonePolicyTable
-    default_return_url = 'plugins:netbox_security:securityzonepolicy_list'
+    default_return_url = "plugins:netbox_security:securityzonepolicy_list"
 
 
 class SecurityZonePolicyBulkImportView(generic.BulkImportView):

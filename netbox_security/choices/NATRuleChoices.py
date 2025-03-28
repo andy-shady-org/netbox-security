@@ -3,63 +3,63 @@ from django.utils.translation import gettext_lazy as _
 
 
 class RuleDirectionChoices(ChoiceSet):
-    DIRECTION_INBOUND = 'inbound'
-    DIRECTION_OUTBOUND = 'outbound'
+    DIRECTION_INBOUND = "inbound"
+    DIRECTION_OUTBOUND = "outbound"
 
     CHOICES = (
-        (DIRECTION_INBOUND, 'Inbound', 'blue'),
-        (DIRECTION_OUTBOUND, 'Outbound', 'cyan'),
-     )
+        (DIRECTION_INBOUND, "Inbound", "blue"),
+        (DIRECTION_OUTBOUND, "Outbound", "cyan"),
+    )
 
 
 class NatTypeChoices(ChoiceSet):
-    TYPE_STATIC = 'static'
-    TYPE_DESTINATION = 'destination'
-    TYPE_SOURCE = 'source'
-    TYPE_IPV4 = 'source'
-    TYPE_NAT64 = 'nat64'
-    TYPE_NPTV6 = 'nptv6'
+    TYPE_STATIC = "static"
+    TYPE_DESTINATION = "destination"
+    TYPE_SOURCE = "source"
+    TYPE_IPV4 = "source"
+    TYPE_NAT64 = "nat64"
+    TYPE_NPTV6 = "nptv6"
 
     CHOICES = (
-        (TYPE_STATIC, 'Static', 'blue'),
-        (TYPE_DESTINATION, 'Destination', 'cyan'),
-        (TYPE_SOURCE, 'Source', 'red'),
-        (TYPE_IPV4, 'IPv4', 'orange'),
-        (TYPE_NAT64, 'NAT64', 'brown'),
-        (TYPE_NPTV6, 'NPTv6', 'green'),
-     )
+        (TYPE_STATIC, "Static", "blue"),
+        (TYPE_DESTINATION, "Destination", "cyan"),
+        (TYPE_SOURCE, "Source", "red"),
+        (TYPE_IPV4, "IPv4", "orange"),
+        (TYPE_NAT64, "NAT64", "brown"),
+        (TYPE_NPTV6, "NPTv6", "green"),
+    )
 
 
 class RuleStatusChoices(ChoiceSet):
 
-    STATUS_ACTIVE = 'active'
-    STATUS_RESERVED = 'reserved'
-    STATUS_DEPRECATED = 'deprecated'
+    STATUS_ACTIVE = "active"
+    STATUS_RESERVED = "reserved"
+    STATUS_DEPRECATED = "deprecated"
 
     CHOICES = (
-        (STATUS_ACTIVE, 'Active', 'blue'),
-        (STATUS_RESERVED, 'Reserved', 'cyan'),
-        (STATUS_DEPRECATED, 'Deprecated', 'red'),
-     )
+        (STATUS_ACTIVE, "Active", "blue"),
+        (STATUS_RESERVED, "Reserved", "cyan"),
+        (STATUS_DEPRECATED, "Deprecated", "red"),
+    )
 
 
 class CustomInterfaceChoices(ChoiceSet):
-    INTERFACE = 'interface'
-    NAT_OFF = 'off'
-    NONE = ''
+    INTERFACE = "interface"
+    NAT_OFF = "off"
+    NONE = ""
 
     CHOICES = (
-        (INTERFACE, 'Interface', 'blue'),
-        (NAT_OFF, 'Off', 'cyan'),
-        (NONE, '', 'red'),
+        (INTERFACE, "Interface", "blue"),
+        (NAT_OFF, "Off", "cyan"),
+        (NONE, "", "red"),
     )
 
 
 class AddressTypeChoices(ChoiceSet):
-    STATIC = 'static'
-    DYNAMIC = 'dynamic'
+    STATIC = "static"
+    DYNAMIC = "dynamic"
 
     CHOICES = (
-        (STATIC, 'Static', 'blue'),
-        (DYNAMIC, 'Dynamic', 'cyan'),
-     )
+        (STATIC, "Static", "blue"),
+        (DYNAMIC, "Dynamic", "cyan"),
+    )

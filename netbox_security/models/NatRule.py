@@ -15,9 +15,7 @@ from utilities.data import array_to_string
 from ipam.constants import *
 from dcim.models import Interface
 
-from netbox_security.constants.constants import (
-    RULE_ASSIGNMENT_MODELS
-)
+from netbox_security.constants.constants import RULE_ASSIGNMENT_MODELS
 
 from netbox_security.choices import (
     RuleStatusChoices,
@@ -27,83 +25,73 @@ from netbox_security.choices import (
 
 
 __all__ = (
-    'NatRule',
-    'NatRuleAssignment',
-    'NatRuleIndex',
+    "NatRule",
+    "NatRuleAssignment",
+    "NatRuleIndex",
 )
 
 
 class NatRule(ContactsMixin, PrimaryModel):
-    """
-    """
+    """ """
+
     rule_set = models.ForeignKey(
-        to='netbox_security.NatRuleSet',
+        to="netbox_security.NatRuleSet",
         on_delete=models.PROTECT,
         blank=True,
         null=True,
-        related_name="%(class)s_rules"
+        related_name="%(class)s_rules",
     )
     pool = models.ForeignKey(
-        to='netbox_security.NatPool',
+        to="netbox_security.NatPool",
         on_delete=models.PROTECT,
         null=True,
     )
-    name = models.CharField(
-        max_length=100
-    )
+    name = models.CharField(max_length=100)
     status = models.CharField(
         max_length=50,
         choices=RuleStatusChoices,
-        default=RuleStatusChoices.STATUS_ACTIVE
+        default=RuleStatusChoices.STATUS_ACTIVE,
     )
     source_type = models.CharField(
-        max_length=50,
-        choices=AddressTypeChoices,
-        default=AddressTypeChoices.STATIC
+        max_length=50, choices=AddressTypeChoices, default=AddressTypeChoices.STATIC
     )
     destination_type = models.CharField(
-        max_length=50,
-        choices=AddressTypeChoices,
-        default=AddressTypeChoices.STATIC
+        max_length=50, choices=AddressTypeChoices, default=AddressTypeChoices.STATIC
     )
     source_addresses = models.ManyToManyField(
-        to='ipam.IPAddress',
-        blank=True,
-        related_name="%(class)s_source_addresses"
+        to="ipam.IPAddress", blank=True, related_name="%(class)s_source_addresses"
     )
     destination_addresses = models.ManyToManyField(
-        to='ipam.IPAddress',
-        blank=True,
-        related_name="%(class)s_destination_addresses"
+        to="ipam.IPAddress", blank=True, related_name="%(class)s_destination_addresses"
     )
     source_prefixes = models.ManyToManyField(
-        to='ipam.Prefix',
+        to="ipam.Prefix",
         blank=True,
         related_name="%(class)s_source_prefixes",
     )
     destination_prefixes = models.ManyToManyField(
-        to='ipam.Prefix',
+        to="ipam.Prefix",
         blank=True,
         related_name="%(class)s_destination_prefixes",
     )
     source_ranges = models.ManyToManyField(
-        to='ipam.IPRange',
+        to="ipam.IPRange",
         blank=True,
         related_name="%(class)s_source_ranges",
     )
     destination_ranges = models.ManyToManyField(
-        to='ipam.IPRange',
+        to="ipam.IPRange",
         blank=True,
         related_name="%(class)s_destination_ranges",
     )
     source_pool = models.ForeignKey(
-        to='netbox_security.NatPool',
+        to="netbox_security.NatPool",
         on_delete=models.PROTECT,
         null=True,
         related_name="%(class)s_source_pool",
     )
     destination_pool = models.ForeignKey(
-        to='netbox_security.NatPool',
+        to="netbox_security.NatPool",
         on_delete=models.PROTECT,
         null=True,
         related_name="%(class)s_destination_pool",
@@ -112,21 +100,21 @@ class NatRule(ContactsMixin, PrimaryModel):
         base_field=models.PositiveIntegerField(
             validators=[
                 MinValueValidator(SERVICE_PORT_MIN),
-                MaxValueValidator(SERVICE_PORT_MAX)
+                MaxValueValidator(SERVICE_PORT_MAX),
             ]
         ),
         null=True,
-        verbose_name=_('Source Port numbers')
+        verbose_name=_("Source Port numbers"),
     )
     destination_ports = ArrayField(
         base_field=models.PositiveIntegerField(
             validators=[
                 MinValueValidator(SERVICE_PORT_MIN),
-                MaxValueValidator(SERVICE_PORT_MAX)
+                MaxValueValidator(SERVICE_PORT_MAX),
             ]
         ),
         null=True,
-        verbose_name=_('Destination Port numbers')
+        verbose_name=_("Destination Port numbers"),
     )
     custom_interface = models.CharField(
         max_length=50,
@@ -137,20 +125,20 @@ class NatRule(ContactsMixin, PrimaryModel):
     )
 
     prerequisite_models = (
-        'dcim.Interface',
-        'netbox_security.NatPool',
-        'netbox_security.NatRuleSet',
+        "dcim.Interface",
+        "netbox_security.NatPool",
+        "netbox_security.NatRuleSet",
     )
 
     class Meta:
-        verbose_name_plural = _('NAT Rules')
-        unique_together = ['rule_set', 'name']
+        verbose_name_plural = _("NAT Rules")
+        unique_together = ["rule_set", "name"]
 
     def __str__(self):
-        return f'{self.name}'
+        return f"{self.name}"
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:natrule', args=[self.pk])
+        return reverse("plugins:netbox_security:natrule", args=[self.pk])
 
     def get_status_color(self):
         return RuleStatusChoices.colors.get(self.status)
@@ -170,38 +158,36 @@ class NatRuleAssignment(NetBoxModel):
         limit_choices_to=RULE_ASSIGNMENT_MODELS,
         on_delete=models.CASCADE,
     )
-    assigned_object_id = models.PositiveBigIntegerField(blank=True, null=True,)
+    assigned_object_id = models.PositiveBigIntegerField(
+        blank=True,
+        null=True,
+    )
     assigned_object = GenericForeignKey(
         ct_field="assigned_object_type",
         fk_field="assigned_object_id",
     )
-    rule = models.ForeignKey(
-        to='netbox_security.NatRule',
-        on_delete=models.CASCADE
-    )
+    rule = models.ForeignKey(to="netbox_security.NatRule", on_delete=models.CASCADE)
 
-    clone_fields = ('assigned_object_type', 'assigned_object_id')
+    clone_fields = ("assigned_object_type", "assigned_object_id")
 
     prerequisite_models = (
-        'dcim.Device',
-        'netbox_security.NatRule',
+        "dcim.Device",
+        "netbox_security.NatRule",
     )
 
     class Meta:
-        indexes = (
-            models.Index(fields=('assigned_object_type', 'assigned_object_id')),
-        )
+        indexes = (models.Index(fields=("assigned_object_type", "assigned_object_id")),)
         constraints = (
             models.UniqueConstraint(
-                fields=('assigned_object_type', 'assigned_object_id', 'rule'),
-                name='%(app_label)s_%(class)s_unique_nat_rule'
+                fields=("assigned_object_type", "assigned_object_id", "rule"),
+                name="%(app_label)s_%(class)s_unique_nat_rule",
             ),
         )
-        verbose_name = _('NAT Pool assignment')
-        verbose_name_plural = _('NAT Ruleset assignments')
+        verbose_name = _("NAT Pool assignment")
+        verbose_name_plural = _("NAT Ruleset assignments")
 
     def __str__(self):
-        return f'{self.assigned_object}: {self.rule}'
+        return f"{self.assigned_object}: {self.rule}"
 
     def get_absolute_url(self):
         if self.assigned_object:
@@ -212,9 +198,7 @@ class NatRuleAssignment(NetBoxModel):
 @register_search
 class NatRuleIndex(SearchIndex):
     model = NatRule
-    fields = (
-        ("name", 100),
-    )
+    fields = (("name", 100),)
 
 
 GenericRelation(

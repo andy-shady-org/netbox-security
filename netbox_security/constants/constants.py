@@ -1,6 +1,7 @@
 """
 Constants for filters
 """
+
 from django.db.models import Q
 
 RULESET_ASSIGNMENT_MODELS = Q(
@@ -13,9 +14,7 @@ POOL_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="virtualdevicecontext"),
 )
 
-RULE_ASSIGNMENT_MODELS = Q(
-    Q(app_label="dcim", model="interface")
-)
+RULE_ASSIGNMENT_MODELS = Q(Q(app_label="dcim", model="interface"))
 
 ZONE_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device"),

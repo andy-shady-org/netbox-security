@@ -7,7 +7,7 @@ from netbox_security.forms import (
     NatPoolMemberFilterForm,
     NatPoolMemberForm,
     NatPoolMemberBulkEditForm,
-    NatPoolMemberImportForm
+    NatPoolMemberImportForm,
 )
 
 
@@ -24,7 +24,7 @@ __all__ = (
 
 class NatPoolMemberView(generic.ObjectView):
     queryset = NatPoolMember.objects.all()
-    template_name = 'netbox_security/natpoolmember.html'
+    template_name = "netbox_security/natpoolmember.html"
 
 
 class NatPoolMemberListView(generic.ObjectListView):
@@ -41,7 +41,7 @@ class NatPoolMemberEditView(generic.ObjectEditView):
 
 class NatPoolMemberDeleteView(generic.ObjectDeleteView):
     queryset = NatPoolMember.objects.all()
-    default_return_url = 'plugins:netbox_security:natpoolmember_list'
+    default_return_url = "plugins:netbox_security:natpoolmember_list"
 
 
 class NatPoolMemberBulkEditView(generic.BulkEditView):
@@ -59,4 +59,4 @@ class NatPoolMemberBulkImportView(generic.BulkImportView):
 class NatPoolMemberBulkDeleteView(generic.BulkDeleteView):
     queryset = NatPoolMember.objects.all()
     table = NatPoolMemberTable
-    default_return_url = 'plugins:netbox_security:natpoolmember_list'
+    default_return_url = "plugins:netbox_security:natpoolmember_list"

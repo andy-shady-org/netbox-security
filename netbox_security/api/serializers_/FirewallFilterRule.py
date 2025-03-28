@@ -9,65 +9,118 @@ from netbox_security.api.serializers import FirewallFilterSerializer
 from netbox_security.models import (
     FirewallFilterRule,
     FirewallRuleFromSetting,
-    FirewallRuleThenSetting
+    FirewallRuleThenSetting,
 )
 
 __all__ = (
-    'FirewallFilterRuleSerializer',
-    'FirewallRuleFromSettingSerializer',
-    'FirewallRuleThenSettingSerializer',
+    "FirewallFilterRuleSerializer",
+    "FirewallRuleFromSettingSerializer",
+    "FirewallRuleThenSettingSerializer",
 )
 
 
 class FirewallRuleFromSettingSerializer(NetBoxModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:firewallrulefromsetting-detail')
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_security-api:firewallrulefromsetting-detail"
+    )
     assigned_object = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = FirewallRuleFromSetting
         fields = (
-            'url', 'id', 'display', 'assigned_object_type', 'assigned_object_id', 'assigned_object', 'key', 'value',
-            'description', 'comments',
+            "url",
+            "id",
+            "display",
+            "assigned_object_type",
+            "assigned_object_id",
+            "assigned_object",
+            "key",
+            "value",
+            "description",
+            "comments",
         )
-        brief_fields = ('url', 'id', 'display', 'assigned_object', 'key', )
+        brief_fields = (
+            "url",
+            "id",
+            "display",
+            "assigned_object",
+            "key",
+        )
 
     @extend_schema_field(serializers.JSONField(allow_null=True))
     def get_assigned_object(self, obj):
         if obj.assigned_object is None:
             return None
         serializer = get_serializer_for_model(obj.assigned_object)
-        context = {'request': self.context['request']}
+        context = {"request": self.context["request"]}
         return serializer(obj.assigned_object, context=context, nested=True).data
 
 
 class FirewallRuleThenSettingSerializer(NetBoxModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:firewallrulethensetting-detail')
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_security-api:firewallrulethensetting-detail"
+    )
     assigned_object = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = FirewallRuleThenSetting
         fields = (
-            'url', 'id', 'display', 'assigned_object_type', 'assigned_object_id', 'assigned_object', 'key', 'value',
-            'description', 'comments',
+            "url",
+            "id",
+            "display",
+            "assigned_object_type",
+            "assigned_object_id",
+            "assigned_object",
+            "key",
+            "value",
+            "description",
+            "comments",
         )
-        brief_fields = ('url', 'id', 'display', 'assigned_object', 'key', )
+        brief_fields = (
+            "url",
+            "id",
+            "display",
+            "assigned_object",
+            "key",
+        )
 
     @extend_schema_field(serializers.JSONField(allow_null=True))
     def get_assigned_object(self, obj):
         if obj.assigned_object is None:
             return None
         serializer = get_serializer_for_model(obj.assigned_object)
-        context = {'request': self.context['request']}
+        context = {"request": self.context["request"]}
         return serializer(obj.assigned_object, context=context, nested=True).data
 
 
 class FirewallFilterRuleSerializer(NetBoxModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:firewallfilterrule-detail')
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_security-api:firewallfilterrule-detail"
+    )
     filter = FirewallFilterSerializer(nested=True)
     from_settings = FirewallRuleFromSettingSerializer(many=True)
     then_settings = FirewallRuleThenSettingSerializer(many=True)
 
     class Meta:
         model = FirewallFilterRule
-        fields = ('url', 'id', 'display', 'name', 'index', 'filter', 'from_settings', 'then_settings', 'description', 'comments', 'tags')
-        brief_fields = ('url', 'id', 'display', 'name', 'index', 'filter', )
+        fields = (
+            "url",
+            "id",
+            "display",
+            "name",
+            "index",
+            "filter",
+            "from_settings",
+            "then_settings",
+            "description",
+            "comments",
+            "tags",
+        )
+        brief_fields = (
+            "url",
+            "id",
+            "display",
+            "name",
+            "index",
+            "filter",
+        )

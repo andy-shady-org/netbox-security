@@ -21,53 +21,41 @@ from netbox_security.choices import (
 
 
 __all__ = (
-    'NatRuleSet',
-    'NatRuleSetAssignment',
-    'NatRuleSetIndex',
+    "NatRuleSet",
+    "NatRuleSetAssignment",
+    "NatRuleSetIndex",
 )
 
 
 class NatRuleSet(ContactsMixin, PrimaryModel):
-    """
-    """
-    name = models.CharField(
-        max_length=100
-    )
-    description = models.CharField(
-        max_length=200,
-        blank=True
-    )
-    nat_type = models.CharField(
-        max_length=30,
-        choices=NatTypeChoices
-    )
+    """ """
+
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=200, blank=True)
+    nat_type = models.CharField(max_length=30, choices=NatTypeChoices)
     source_zones = models.ManyToManyField(
-        to='netbox_security.SecurityZone',
-        blank=True,
-        related_name='rule_source_zones'
+        to="netbox_security.SecurityZone", blank=True, related_name="rule_source_zones"
     )
     destination_zones = models.ManyToManyField(
-        to='netbox_security.SecurityZone',
+        to="netbox_security.SecurityZone",
         blank=True,
-        related_name='rule_destination_zones'
+        related_name="rule_destination_zones",
     )
     direction = models.CharField(
         max_length=30,
         choices=RuleDirectionChoices,
-        default=RuleDirectionChoices.DIRECTION_INBOUND
+        default=RuleDirectionChoices.DIRECTION_INBOUND,
     )
-    prerequisite_models = (
-        'dcim.Device',
-    )
+    prerequisite_models = ("dcim.Device",)
 
     class Meta:
-        verbose_name_plural = 'NAT Rule Sets'
+        verbose_name_plural = "NAT Rule Sets"
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:natruleset', args=[self.pk])
+        return reverse("plugins:netbox_security:natruleset", args=[self.pk])
 
 
 class NatRuleSetAssignment(NetBoxModel):
@@ -83,31 +71,26 @@ class NatRuleSetAssignment(NetBoxModel):
         fk_field="assigned_object_id",
     )
     ruleset = models.ForeignKey(
-        to='netbox_security.NatRuleSet',
-        on_delete=models.CASCADE
+        to="netbox_security.NatRuleSet", on_delete=models.CASCADE
     )
 
-    clone_fields = ('assigned_object_type', 'assigned_object_id')
+    clone_fields = ("assigned_object_type", "assigned_object_id")
 
-    prerequisite_models = (
-        'dcim.Device',
-    )
+    prerequisite_models = ("dcim.Device",)
 
     class Meta:
-        indexes = (
-            models.Index(fields=('assigned_object_type', 'assigned_object_id')),
-        )
+        indexes = (models.Index(fields=("assigned_object_type", "assigned_object_id")),)
         constraints = (
             models.UniqueConstraint(
-                fields=('assigned_object_type', 'assigned_object_id', 'ruleset'),
-                name='%(app_label)s_%(class)s_unique_nat_rule_set'
+                fields=("assigned_object_type", "assigned_object_id", "ruleset"),
+                name="%(app_label)s_%(class)s_unique_nat_rule_set",
             ),
         )
-        verbose_name = _('NAT Pool assignment')
-        verbose_name_plural = _('NAT Ruleset assignments')
+        verbose_name = _("NAT Pool assignment")
+        verbose_name_plural = _("NAT Ruleset assignments")
 
     def __str__(self):
-        return f'{self.assigned_object}: {self.ruleset}'
+        return f"{self.assigned_object}: {self.ruleset}"
 
     def get_absolute_url(self):
         if self.assigned_object:

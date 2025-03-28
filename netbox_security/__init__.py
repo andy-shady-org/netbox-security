@@ -4,20 +4,21 @@ from .version import __version__
 
 
 class SecurityConfig(PluginConfig):
-    name = 'netbox_security'
-    verbose_name = _('Netbox Security')
-    description = _('Subsystem for tracking Security and NAT related objects')
+    name = "netbox_security"
+    verbose_name = _("Netbox Security")
+    description = _("Subsystem for tracking Security and NAT related objects")
     version = __version__
-    author = 'Andy Wilson'
-    author_email = 'andy@shady.org'
-    base_url = 'netbox-security'
+    author = "Andy Wilson"
+    author_email = "andy@shady.org"
+    base_url = "netbox-security"
     required_settings = []
-    min_version = '4.1.0'
+    min_version = "4.1.0"
     default_settings = {
-        'top_level_menu': True,
-        'virtual_ext_page': 'left',
-        'device_ext_page': 'left',
-        'interface_ext_page': 'right',
+        "top_level_menu": True,
+        "virtual_ext_page": "left",
+        "device_ext_page": "left",
+        "interface_ext_page": "right",
     }
 
-config = SecurityConfig # noqa
+
+config = SecurityConfig  # noqa

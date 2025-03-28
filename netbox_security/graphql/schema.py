@@ -24,7 +24,9 @@ class NetBoxSecurityAddressQuery:
 
 @strawberry.type(name="Query")
 class NetBoxSecuritySecurityZoneQuery:
-    netbox_security_securityzone: NetBoxSecuritySecurityZoneType = strawberry_django.field()
+    netbox_security_securityzone: NetBoxSecuritySecurityZoneType = (
+        strawberry_django.field()
+    )
     netbox_security_securityzone_list: List[NetBoxSecuritySecurityZoneType] = (
         strawberry_django.field()
     )
@@ -32,10 +34,12 @@ class NetBoxSecuritySecurityZoneQuery:
 
 @strawberry.type(name="Query")
 class NetBoxSecuritySecurityZonePolicyQuery:
-    netbox_security_securityzonepolicy: NetBoxSecuritySecurityZonePolicyType = strawberry_django.field()
-    netbox_security_securityzonepolicy_list: List[NetBoxSecuritySecurityZonePolicyType] = (
+    netbox_security_securityzonepolicy: NetBoxSecuritySecurityZonePolicyType = (
         strawberry_django.field()
     )
+    netbox_security_securityzonepolicy_list: List[
+        NetBoxSecuritySecurityZonePolicyType
+    ] = strawberry_django.field()
 
 
 @strawberry.type(name="Query")
@@ -48,7 +52,9 @@ class NetBoxSecurityNatPoolQuery:
 
 @strawberry.type(name="Query")
 class NetBoxSecurityNatPoolMemberQuery:
-    netbox_security_natpoolmember: NetBoxSecurityNatPoolMemberType = strawberry_django.field()
+    netbox_security_natpoolmember: NetBoxSecurityNatPoolMemberType = (
+        strawberry_django.field()
+    )
     netbox_security_natpoolmember_list: List[NetBoxSecurityNatPoolMemberType] = (
         strawberry_django.field()
     )

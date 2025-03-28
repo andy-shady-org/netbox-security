@@ -8,36 +8,33 @@ from utilities.views import register_model_view
 from netbox_security.tables import AddressTable
 from netbox_security.filtersets import AddressFilterSet
 
-from netbox_security.models import (
-    Address,
-    AddressAssignment
-)
+from netbox_security.models import Address, AddressAssignment
 from netbox_security.forms import (
     AddressFilterForm,
     AddressForm,
     AddressBulkEditForm,
     AddressAssignmentForm,
-    AddressImportForm
+    AddressImportForm,
 )
 
 
 __all__ = (
-    'AddressView',
-    'AddressListView',
-    'AddressEditView',
-    'AddressDeleteView',
-    'AddressBulkEditView',
-    'AddressBulkDeleteView',
-    'AddressBulkImportView',
-    'AddressContactsView',
-    'AddressAssignmentEditView',
-    'AddressAssignmentDeleteView',
+    "AddressView",
+    "AddressListView",
+    "AddressEditView",
+    "AddressDeleteView",
+    "AddressBulkEditView",
+    "AddressBulkDeleteView",
+    "AddressBulkImportView",
+    "AddressContactsView",
+    "AddressAssignmentEditView",
+    "AddressAssignmentDeleteView",
 )
 
 
 class AddressView(generic.ObjectView):
     queryset = Address.objects.all()
-    template_name = 'netbox_security/address.html'
+    template_name = "netbox_security/address.html"
 
 
 class AddressListView(generic.ObjectListView):
@@ -54,7 +51,7 @@ class AddressEditView(generic.ObjectEditView):
 
 class AddressDeleteView(generic.ObjectDeleteView):
     queryset = Address.objects.all()
-    default_return_url = 'plugins:netbox_security:address_list'
+    default_return_url = "plugins:netbox_security:address_list"
 
 
 class AddressBulkEditView(generic.BulkEditView):
@@ -67,7 +64,7 @@ class AddressBulkEditView(generic.BulkEditView):
 class AddressBulkDeleteView(generic.BulkDeleteView):
     queryset = Address.objects.all()
     table = AddressTable
-    default_return_url = 'plugins:netbox_security:address_list'
+    default_return_url = "plugins:netbox_security:address_list"
 
 
 class AddressBulkImportView(generic.BulkImportView):
@@ -80,24 +77,28 @@ class AddressContactsView(ObjectContactsView):
     queryset = Address.objects.all()
 
 
-@register_model_view(AddressAssignment, 'edit')
+@register_model_view(AddressAssignment, "edit")
 class AddressAssignmentEditView(generic.ObjectEditView):
     queryset = AddressAssignment.objects.all()
     form = AddressAssignmentForm
 
     def alter_object(self, instance, request, args, kwargs):
         if not instance.pk:
-            content_type = get_object_or_404(ContentType, pk=request.GET.get('assigned_object_type'))
-            instance.assigned_object = get_object_or_404(content_type.model_class(), pk=request.GET.get('assigned_object_id'))
+            content_type = get_object_or_404(
+                ContentType, pk=request.GET.get("assigned_object_type")
+            )
+            instance.assigned_object = get_object_or_404(
+                content_type.model_class(), pk=request.GET.get("assigned_object_id")
+            )
         return instance
 
     def get_extra_addanother_params(self, request):
         return {
-            'assigned_object_type': request.GET.get('assigned_object_type'),
-            'assigned_object_id': request.GET.get('assigned_object_id'),
+            "assigned_object_type": request.GET.get("assigned_object_type"),
+            "assigned_object_id": request.GET.get("assigned_object_id"),
         }
 
 
-@register_model_view(AddressAssignment, 'delete')
+@register_model_view(AddressAssignment, "delete")
 class AddressAssignmentDeleteView(generic.ObjectDeleteView):
     queryset = AddressAssignment.objects.all()

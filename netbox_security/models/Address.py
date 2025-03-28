@@ -12,23 +12,15 @@ from netbox_security.constants import ADDRESSLIST_ASSIGNMENT_MODELS
 from netbox_security.models import SecurityZone
 
 
-__all__ = (
-    'Address',
-    'AddressAssignment',
-    'AddressIndex'
-)
+__all__ = ("Address", "AddressAssignment", "AddressIndex")
 
 
 class Address(ContactsMixin, PrimaryModel):
-    """
-    """
-    name = models.CharField(
-        max_length=200
-    )
+    """ """
+
+    name = models.CharField(max_length=200)
     value = IPNetworkField(
-        blank=True,
-        null=True,
-        help_text=_('An IP or Prefix in x.x.x.x/yy format')
+        blank=True, null=True, help_text=_("An IP or Prefix in x.x.x.x/yy format")
     )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
@@ -39,56 +31,50 @@ class Address(ContactsMixin, PrimaryModel):
     )
 
     class Meta:
-        verbose_name_plural = _('Addresses')
-        ordering = ('name', 'value')
-        unique_together = ('name', 'value')
+        verbose_name_plural = _("Addresses")
+        ordering = ("name", "value")
+        unique_together = ("name", "value")
 
     def __str__(self):
-        return f'{self.name}: {self.value}'
+        return f"{self.name}: {self.value}"
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:address', args=[self.pk])
+        return reverse("plugins:netbox_security:address", args=[self.pk])
 
 
 class AddressAssignment(NetBoxModel):
     assigned_object_type = models.ForeignKey(
-        to='contenttypes.ContentType',
+        to="contenttypes.ContentType",
         limit_choices_to=ADDRESSLIST_ASSIGNMENT_MODELS,
         on_delete=models.CASCADE,
     )
     assigned_object_id = models.PositiveBigIntegerField()
     assigned_object = GenericForeignKey(
-        ct_field='assigned_object_type',
-        fk_field='assigned_object_id'
+        ct_field="assigned_object_type", fk_field="assigned_object_id"
     )
-    address = models.ForeignKey(
-        to='netbox_security.Address',
-        on_delete=models.CASCADE
-    )
+    address = models.ForeignKey(to="netbox_security.Address", on_delete=models.CASCADE)
 
-    clone_fields = ('assigned_object_type', 'assigned_object_id')
+    clone_fields = ("assigned_object_type", "assigned_object_id")
 
     prerequisite_models = (
-        'dcim.Device',
-        'netbox_security.Address',
-        'netbox_security.SecurityZone'
+        "dcim.Device",
+        "netbox_security.Address",
+        "netbox_security.SecurityZone",
     )
 
     class Meta:
-        indexes = (
-            models.Index(fields=('assigned_object_type', 'assigned_object_id')),
-        )
+        indexes = (models.Index(fields=("assigned_object_type", "assigned_object_id")),)
         constraints = (
             models.UniqueConstraint(
-                fields=('assigned_object_type', 'assigned_object_id', 'address'),
-                name='%(app_label)s_%(class)s_unique_address'
+                fields=("assigned_object_type", "assigned_object_id", "address"),
+                name="%(app_label)s_%(class)s_unique_address",
             ),
         )
-        verbose_name = _('Address Assignment')
-        verbose_name_plural = _('Address Assignments')
+        verbose_name = _("Address Assignment")
+        verbose_name_plural = _("Address Assignments")
 
     def __str__(self):
-        return f'{self.assigned_object}: {self.address}'
+        return f"{self.assigned_object}: {self.address}"
 
     def get_absolute_url(self):
         if self.assigned_object:
