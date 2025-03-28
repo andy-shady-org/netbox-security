@@ -28,7 +28,7 @@ class FirewallRuleFromSettingChoices(ChoiceSet):
     PREFIX_LIST = 'prefix_list'
     PROTOCOL = 'protocol'
     SOURCE_ADDRESS = 'source_address'
-    SOURCE_PORT = 'source-port'
+    SOURCE_PORT = 'source_port'
     SOURCE_PREFIX_LIST = 'source_prefix_list'
     TCP_ESTABLISHED = 'tcp_established'
 

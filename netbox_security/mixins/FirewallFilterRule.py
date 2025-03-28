@@ -59,7 +59,7 @@ class FilterRuleSettingMixin:
             self.fields[key].widget.attrs['class'] = f'{css} form-control'
 
     def _append_from_settings_fields(self):
-        fieldset = FieldSet(*[v.lower() for k, v in FirewallRuleFromSettingChoices.CHOICES], name=_('From Settings'))
+        fieldset = FieldSet(*FirewallRuleFromSettingChoices.values(), name=_('From Settings'))
         for key, label in FirewallRuleFromSettingChoices.CHOICES:
             self._parse_key(key, label, FirewallRuleFromSettingChoices.FIELD_TYPES[key])
             self.assigned_fields.append(key)
@@ -67,7 +67,7 @@ class FilterRuleSettingMixin:
             self.fieldsets = (*self.fieldsets, fieldset)
 
     def _append_then_settings_fields(self):
-        fieldset = FieldSet(*[v.lower() for k, v in FirewallRuleThenSettingChoices.CHOICES], name=_('Then Settings'))
+        fieldset = FieldSet(*FirewallRuleThenSettingChoices.values(), name=_('Then Settings'))
         for key, label in FirewallRuleThenSettingChoices.CHOICES:
             self._parse_key(key, label, FirewallRuleThenSettingChoices.FIELD_TYPES[key])
             self.assigned_fields.append(key)
