@@ -10,7 +10,7 @@ from netbox_security.models import FirewallRuleFromSetting, FirewallRuleThenSett
 class FilterRuleSettingFormMixin:
     FROM_MODEL = FirewallRuleFromSetting
     FROM_CHOICE = FirewallRuleFromSettingChoices
-    FROM_NAME = None
+    FROM_NAME = 'From Settings'
     THEN_MODEL = FirewallRuleThenSetting
     THEN_CHOICE = FirewallRuleThenSettingChoices
     THEN_NAME = 'Then Settings'
