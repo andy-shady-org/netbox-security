@@ -18,50 +18,6 @@ class FilterRuleSettingBase:
     def _clean_fieldset(self):
         pass
 
-    def _parse_key(self, key, label, field_type):
-        initial = None
-        if hasattr(self, 'instance'):
-            setting = self.MODEL.objects.filter(
-                assigned_object_type=ContentType.objects.get_for_model(self.Meta.model),
-                assigned_object_id=self.instance.pk,
-                key=key
-            ).first()
-            if setting:
-                initial = setting.value
-        if field_type == 'string':
-            self.fields[key] = fields.CharField(
-                label=label,
-                required=False,
-                initial=initial,
-                max_length=128,
-            )
-            css = self.fields[key].widget.attrs.get('class', '')
-            self.fields[key].widget.attrs['class'] = f'{css} form-control'
-        elif field_type == 'integer':
-            self.fields[key] = fields.IntegerField(
-                label=label,
-                required=False,
-                initial=initial,
-                min_value=0,
-                max_value=65535
-            )
-            css = self.fields[key].widget.attrs.get('class', '')
-            self.fields[key].widget.attrs['class'] = f'{css} form-control'
-        elif field_type == 'boolean':
-            choices = (
-                (None, '---------'),
-                (True, _('True')),
-                (False, _('False')),
-            )
-            self.fields[key] = fields.NullBooleanField(
-                label=label,
-                required=False,
-                initial=initial,
-                widget=forms.Select(choices=choices)
-            )
-            css = self.fields[key].widget.attrs.get('class', '')
-            self.fields[key].widget.attrs['class'] = f'{css} form-control'
-
     def save(self, *args, **kwargs):
         settings = {}
         for key, _ in self.CHOICE.CHOICES:
@@ -117,6 +73,50 @@ class FilterRuleFromSettingMixin(FilterRuleSettingBase):
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
 
+    def _parse_key(self, key, label, field_type):
+        initial = None
+        if hasattr(self, 'instance'):
+            setting = self.MODEL.objects.filter(
+                assigned_object_type=ContentType.objects.get_for_model(self.Meta.model),
+                assigned_object_id=self.instance.pk,
+                key=key
+            ).first()
+            if setting:
+                initial = setting.value
+        if field_type == 'string':
+            self.fields[key] = fields.CharField(
+                label=label,
+                required=False,
+                initial=initial,
+                max_length=128,
+            )
+            css = self.fields[key].widget.attrs.get('class', '')
+            self.fields[key].widget.attrs['class'] = f'{css} form-control'
+        elif field_type == 'integer':
+            self.fields[key] = fields.IntegerField(
+                label=label,
+                required=False,
+                initial=initial,
+                min_value=0,
+                max_value=65535
+            )
+            css = self.fields[key].widget.attrs.get('class', '')
+            self.fields[key].widget.attrs['class'] = f'{css} form-control'
+        elif field_type == 'boolean':
+            choices = (
+                (None, '---------'),
+                (True, _('True')),
+                (False, _('False')),
+            )
+            self.fields[key] = fields.NullBooleanField(
+                label=label,
+                required=False,
+                initial=initial,
+                widget=forms.Select(choices=choices)
+            )
+            css = self.fields[key].widget.attrs.get('class', '')
+            self.fields[key].widget.attrs['class'] = f'{css} form-control'
+
 
 class FilterRuleThenSettingMixin(FilterRuleSettingBase):
     MODEL = FirewallRuleThenSetting
@@ -135,3 +135,47 @@ class FilterRuleThenSettingMixin(FilterRuleSettingBase):
             assigned_fields.append(key)
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
+
+    def _parse_key(self, key, label, field_type):
+        initial = None
+        if hasattr(self, 'instance'):
+            setting = self.MODEL.objects.filter(
+                assigned_object_type=ContentType.objects.get_for_model(self.Meta.model),
+                assigned_object_id=self.instance.pk,
+                key=key
+            ).first()
+            if setting:
+                initial = setting.value
+        if field_type == 'string':
+            self.fields[key] = fields.CharField(
+                label=label,
+                required=False,
+                initial=initial,
+                max_length=128,
+            )
+            css = self.fields[key].widget.attrs.get('class', '')
+            self.fields[key].widget.attrs['class'] = f'{css} form-control'
+        elif field_type == 'integer':
+            self.fields[key] = fields.IntegerField(
+                label=label,
+                required=False,
+                initial=initial,
+                min_value=0,
+                max_value=65535
+            )
+            css = self.fields[key].widget.attrs.get('class', '')
+            self.fields[key].widget.attrs['class'] = f'{css} form-control'
+        elif field_type == 'boolean':
+            choices = (
+                (None, '---------'),
+                (True, _('True')),
+                (False, _('False')),
+            )
+            self.fields[key] = fields.NullBooleanField(
+                label=label,
+                required=False,
+                initial=initial,
+                widget=forms.Select(choices=choices)
+            )
+            css = self.fields[key].widget.attrs.get('class', '')
+            self.fields[key].widget.attrs['class'] = f'{css} form-control'
