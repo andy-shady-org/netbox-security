@@ -66,7 +66,7 @@ class FilterRuleFromSettingMixin(FilterRuleSettingBase):
 
     def _append_from_settings_fields(self):
         assigned_fields = []
-        fieldset = FieldSet(*self.CHOICE.values(), name=_(self.NAME))
+        fieldset = FieldSet(*self.CHOICE.values(), name=_('From Settings'))
         for key, label in self.CHOICE.CHOICES:
             self._parse_key(key, label, self.CHOICE.FIELD_TYPES[key])
             assigned_fields.append(key)
@@ -129,7 +129,7 @@ class FilterRuleThenSettingMixin(FilterRuleSettingBase):
 
     def _append_then_settings_fields(self):
         assigned_fields = []
-        fieldset = FieldSet(*self.CHOICE.values(), name=_(self.NAME))
+        fieldset = FieldSet(*self.CHOICE.values(), name=_('Then Settings'))
         for key, label in self.CHOICE.CHOICES:
             self._parse_key(key, label, self.CHOICE.FIELD_TYPES[key])
             assigned_fields.append(key)
