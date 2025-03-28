@@ -43,13 +43,13 @@ class FirewallFilterRuleEditView(generic.ObjectEditView):
 
 class FirewallFilterRuleDeleteView(generic.ObjectDeleteView):
     queryset = FirewallFilterRule.objects.all()
-    default_return_url = 'plugins:netbox_security:securityzonepolicy_list'
+    default_return_url = 'plugins:netbox_security:firewallfilterrule_list'
 
 
 class FirewallFilterRuleBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallFilterRule.objects.all()
     table = FirewallFilterRuleTable
-    default_return_url = 'plugins:netbox_security:securityzonepolicy_list'
+    default_return_url = 'plugins:netbox_security:firewallfilterrule_list'
 
 
 @register_model_view(FirewallFilterRule, "contacts")
