@@ -28,8 +28,10 @@ __all__ = (
     'FirewallFilterRuleDeleteView',
     'FirewallFilterRuleBulkDeleteView',
     'FirewallFilterRuleContactsView',
+    'FirewallRuleFromSettingView',
     'FirewallRuleFromSettingDeleteView',
     'FirewallRuleFromSettingBulkDeleteView',
+    'FirewallRuleThenSettingView',
     'FirewallRuleThenSettingDeleteView',
     'FirewallRuleThenSettingBulkDeleteView',
 )
