@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from netbox.models.features import ContactsMixin
 from netbox.models import PrimaryModel
 from netbox.search import SearchIndex, register_search
 
@@ -49,7 +50,7 @@ class FirewallRuleSetting(PrimaryModel):
         return reverse('plugins:netbox_security:firewallrulesetting', args=[self.pk])
 
 
-class FirewallFilterRule(PrimaryModel):
+class FirewallFilterRule(ContactsMixin, PrimaryModel):
     name = models.CharField(
         max_length=200
     )
