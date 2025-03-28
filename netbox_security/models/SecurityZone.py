@@ -9,16 +9,10 @@ from netbox.models import PrimaryModel, NetBoxModel
 from netbox.models.features import ContactsMixin
 from dcim.models import Device, VirtualDeviceContext, Interface
 
-from netbox_security.constants.constants import (
-    ZONE_ASSIGNMENT_MODELS
-)
+from netbox_security.constants.constants import ZONE_ASSIGNMENT_MODELS
 
 
-__all__ = (
-    'SecurityZone',
-    'SecurityZoneAssignment',
-    'SecurityZoneIndex'
-)
+__all__ = ("SecurityZone", "SecurityZoneAssignment", "SecurityZoneIndex")
 
 
 class SecurityZone(ContactsMixin, PrimaryModel):
@@ -34,14 +28,14 @@ class SecurityZone(ContactsMixin, PrimaryModel):
     )
 
     class Meta:
-        verbose_name_plural = 'Security Zones'
-        ordering = ['name']
+        verbose_name_plural = "Security Zones"
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:securityzone', args=[self.pk])
+        return reverse("plugins:netbox_security:securityzone", args=[self.pk])
 
 
 class SecurityZoneAssignment(NetBoxModel):
@@ -50,38 +44,38 @@ class SecurityZoneAssignment(NetBoxModel):
         limit_choices_to=ZONE_ASSIGNMENT_MODELS,
         on_delete=models.CASCADE,
     )
-    assigned_object_id = models.PositiveBigIntegerField(blank=True, null=True,)
+    assigned_object_id = models.PositiveBigIntegerField(
+        blank=True,
+        null=True,
+    )
     assigned_object = GenericForeignKey(
         ct_field="assigned_object_type",
         fk_field="assigned_object_id",
     )
     zone = models.ForeignKey(
-        to='netbox_security.SecurityZone',
-        on_delete=models.CASCADE
+        to="netbox_security.SecurityZone", on_delete=models.CASCADE
     )
 
-    clone_fields = ('assigned_object_type', 'assigned_object_id')
+    clone_fields = ("assigned_object_type", "assigned_object_id")
 
     prerequisite_models = (
-        'dcim.Device',
-        'netbox_security.SecurityZone',
+        "dcim.Device",
+        "netbox_security.SecurityZone",
     )
 
     class Meta:
-        indexes = (
-            models.Index(fields=('assigned_object_type', 'assigned_object_id')),
-        )
+        indexes = (models.Index(fields=("assigned_object_type", "assigned_object_id")),)
         constraints = (
             models.UniqueConstraint(
-                fields=('assigned_object_type', 'assigned_object_id', 'zone'),
-                name='%(app_label)s_%(class)s_unique_security_zone'
+                fields=("assigned_object_type", "assigned_object_id", "zone"),
+                name="%(app_label)s_%(class)s_unique_security_zone",
             ),
         )
-        verbose_name = _('Security Zone assignment')
-        verbose_name_plural = _('Security Zone assignments')
+        verbose_name = _("Security Zone assignment")
+        verbose_name_plural = _("Security Zone assignments")
 
     def __str__(self):
-        return f'{self.assigned_object}: {self.zone}'
+        return f"{self.assigned_object}: {self.zone}"
 
     def get_absolute_url(self):
         if self.assigned_object:

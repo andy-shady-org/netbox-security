@@ -9,7 +9,7 @@ from netbox_security.models import (
     NatPool,
     NatPoolMember,
     NatRuleSet,
-    NatRule
+    NatRule,
 )
 
 from netbox_security.filtersets import (

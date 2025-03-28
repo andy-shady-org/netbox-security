@@ -4,7 +4,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
 from utilities.filters import (
-    ContentTypeFilter, MultiValueCharFilter, MultiValueNumberFilter, NumericArrayFilter,
+    ContentTypeFilter,
+    MultiValueCharFilter,
+    MultiValueNumberFilter,
+    NumericArrayFilter,
 )
 from dcim.models import Interface, Device, VirtualDeviceContext
 from ipam.models import IPAddress, Prefix, IPRange
@@ -16,10 +19,7 @@ from netbox_security.models import (
     NatRuleAssignment,
 )
 
-from netbox_security.choices import (
-    AddressTypeChoices,
-    RuleStatusChoices
-)
+from netbox_security.choices import AddressTypeChoices, RuleStatusChoices
 
 
 class NatRuleFilterSet(NetBoxModelFilterSet):
@@ -75,13 +75,9 @@ class NatRuleFilterSet(NetBoxModelFilterSet):
     source_ranges = django_filters.ModelMultipleChoiceFilter(
         queryset=IPRange.objects.all(),
     )
-    source_port = NumericArrayFilter(
-        field_name='source_ports',
-        lookup_expr='contains'
-    )
+    source_port = NumericArrayFilter(field_name="source_ports", lookup_expr="contains")
     destination_port = NumericArrayFilter(
-        field_name='destination_ports',
-        lookup_expr='contains'
+        field_name="destination_ports", lookup_expr="contains"
     )
     source_pool = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all()
@@ -92,16 +88,16 @@ class NatRuleFilterSet(NetBoxModelFilterSet):
 
     class Meta:
         model = NatRule
-        fields = ['id', 'name', 'description', 'custom_interface']
+        fields = ["id", "name", "description", "custom_interface"]
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""
         if not value.strip():
             return queryset
         qs_filter = (
-                Q(name__icontains=value)
-                | Q(description__icontains=value)
-                | Q(custom_interface__icontains=value)
+            Q(name__icontains=value)
+            | Q(description__icontains=value)
+            | Q(custom_interface__icontains=value)
         )
         return queryset.filter(qs_filter)
 
@@ -110,50 +106,60 @@ class NatRuleAssignmentFilterSet(NetBoxModelFilterSet):
     assigned_object_type = ContentTypeFilter()
     rule_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatRule.objects.all(),
-        label=_('NAT Rule (ID)'),
+        label=_("NAT Rule (ID)"),
     )
     device = MultiValueCharFilter(
-        method='filter_device',
-        field_name='name',
-        label=_('Device (name)'),
+        method="filter_device",
+        field_name="name",
+        label=_("Device (name)"),
     )
     device_id = MultiValueNumberFilter(
-        method='filter_device',
-        field_name='pk',
-        label=_('Device (ID)'),
+        method="filter_device",
+        field_name="pk",
+        label=_("Device (ID)"),
     )
     virtualdevicecontext = MultiValueCharFilter(
-        method='filter_context',
-        field_name='name',
-        label=_('Virtual Device Context (name)'),
+        method="filter_context",
+        field_name="name",
+        label=_("Virtual Device Context (name)"),
     )
     virtualdevicecontext_id = MultiValueNumberFilter(
-        method='filter_context',
-        field_name='pk',
-        label=_('Virtual Device Context (ID)'),
+        method="filter_context",
+        field_name="pk",
+        label=_("Virtual Device Context (ID)"),
     )
 
     class Meta:
         model = NatRuleAssignment
-        fields = ('id', 'rule_id', 'assigned_object_type', 'assigned_object_id')
+        fields = ("id", "rule_id", "assigned_object_type", "assigned_object_id")
 
     def filter_device(self, queryset, name, value):
-        devices = Device.objects.filter(**{f'{name}__in': value})
+        devices = Device.objects.filter(**{f"{name}__in": value})
         if not devices.exists():
             return queryset.none()
         interface_ids = []
         for device in devices:
-            interface_ids.extend(device.vc_interfaces().values_list('id', flat=True))
+            interface_ids.extend(device.vc_interfaces().values_list("id", flat=True))
         return queryset.filter(
-            Q(assigned_object_type=ContentType.objects.get_for_model(Interface), assigned_object_id__in=interface_ids)
+            Q(
+                assigned_object_type=ContentType.objects.get_for_model(Interface),
+                assigned_object_id__in=interface_ids,
+            )
         )
 
     def filter_context(self, queryset, name, value):
-        devices = VirtualDeviceContext.objects.filter(**{f'{name}__in': value})
+        devices = VirtualDeviceContext.objects.filter(**{f"{name}__in": value})
         if not devices.exists():
             return queryset.none()
         device_ids = []
-        device_ids.extend(VirtualDeviceContext.objects.filter(**{f'{name}__in': value}).values_list('id', flat=True))
+        device_ids.extend(
+            VirtualDeviceContext.objects.filter(**{f"{name}__in": value}).values_list(
+                "id", flat=True
+            )
+        )
         return queryset.filter(
-            Q(assigned_object_type=ContentType.objects.get_for_model(Device), assigned_object_id__in=device_ids)
+            Q(
+                assigned_object_type=ContentType.objects.get_for_model(Device),
+                assigned_object_id__in=device_ids,
+            )
         )

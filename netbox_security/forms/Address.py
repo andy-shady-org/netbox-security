@@ -5,7 +5,7 @@ from netbox.forms import (
     NetBoxModelBulkEditForm,
     NetBoxModelForm,
     NetBoxModelImportForm,
-    NetBoxModelFilterSetForm
+    NetBoxModelFilterSetForm,
 )
 
 from tenancy.forms import TenancyForm, TenancyFilterForm
@@ -33,21 +33,15 @@ __all__ = (
 
 
 class AddressForm(TenancyForm, NetBoxModelForm):
-    name = forms.CharField(
-        max_length=64,
-        required=True
-    )
+    name = forms.CharField(max_length=64, required=True)
     value = IPNetworkFormField(
         required=False,
-        label=_('Value'),
-        help_text=_('The IP address or prefix value in x.x.x.x/yy format'),
+        label=_("Value"),
+        help_text=_("The IP address or prefix value in x.x.x.x/yy format"),
     )
-    description = forms.CharField(
-        max_length=200,
-        required=False
-    )
+    description = forms.CharField(max_length=200, required=False)
     fieldsets = (
-        FieldSet('name', 'value', 'description', name=_('Address List')),
+        FieldSet("name", "value", "description", name=_("Address List")),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
@@ -56,7 +50,13 @@ class AddressForm(TenancyForm, NetBoxModelForm):
     class Meta:
         model = Address
         fields = [
-            'name', 'value', 'tenant_group', 'tenant', 'description', 'comments', 'tags',
+            "name",
+            "value",
+            "tenant_group",
+            "tenant",
+            "description",
+            "comments",
+            "tags",
         ]
 
 
@@ -64,7 +64,7 @@ class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = Address
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet('name', 'value', name=_('Address List')),
+        FieldSet("name", "value", name=_("Address List")),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
     tags = TagFilterField(model)
@@ -75,21 +75,21 @@ class AddressImportForm(NetBoxModelImportForm):
     class Meta:
         model = Address
         fields = (
-            'name', 'value', 'description', 'tenant', 'tags',
+            "name",
+            "value",
+            "description",
+            "tenant",
+            "tags",
         )
 
 
 class AddressBulkEditForm(NetBoxModelBulkEditForm):
     model = Address
-    description = forms.CharField(
-        max_length=200,
-        required=False
-    )
+    description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
-    nullable_fields = [
-    ]
+    nullable_fields = []
     fieldsets = (
-        FieldSet('name', 'value', 'description'),
+        FieldSet("name", "value", "description"),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
@@ -97,35 +97,32 @@ class AddressBulkEditForm(NetBoxModelBulkEditForm):
 
 class AddressAssignmentForm(forms.ModelForm):
     address = DynamicModelChoiceField(
-        label=_('Address'),
-        queryset=Address.objects.all()
+        label=_("Address"), queryset=Address.objects.all()
     )
 
-    fieldsets = (
-        FieldSet(ObjectAttribute('assigned_object'), 'address'),
-    )
+    fieldsets = (FieldSet(ObjectAttribute("assigned_object"), "address"),)
 
     class Meta:
         model = AddressAssignment
-        fields = ('address',)
+        fields = ("address",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def clean_address(self):
-        address = self.cleaned_data['address']
+        address = self.cleaned_data["address"]
 
         conflicting_assignments = AddressAssignment.objects.filter(
             assigned_object_type=self.instance.assigned_object_type,
             assigned_object_id=self.instance.assigned_object_id,
-            address=address
+            address=address,
         )
         if self.instance.id:
-            conflicting_assignments = conflicting_assignments.exclude(id=self.instance.id)
+            conflicting_assignments = conflicting_assignments.exclude(
+                id=self.instance.id
+            )
 
         if conflicting_assignments.exists():
-            raise forms.ValidationError(
-                _('Assignment already exists')
-            )
+            raise forms.ValidationError(_("Assignment already exists"))
 
         return address

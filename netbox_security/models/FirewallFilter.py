@@ -12,23 +12,22 @@ from netbox_security.choices import FamilyChoices
 
 
 __all__ = (
-    'FirewallFilter',
-    'FirewallFilterAssignment',
-    'FirewallFilterIndex',
-
+    "FirewallFilter",
+    "FirewallFilterAssignment",
+    "FirewallFilterIndex",
 )
 
 
 class FirewallFilter(ContactsMixin, PrimaryModel):
-    """
-    """
-    name = models.CharField(
-        max_length=200
-    )
+    """ """
+
+    name = models.CharField(max_length=200)
     family = models.CharField(
-        max_length=20, blank=True, null=True,
+        max_length=20,
+        blank=True,
+        null=True,
         choices=FamilyChoices,
-        default=FamilyChoices.INET
+        default=FamilyChoices.INET,
     )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
@@ -39,9 +38,9 @@ class FirewallFilter(ContactsMixin, PrimaryModel):
     )
 
     class Meta:
-        verbose_name_plural = _('Firewall Filters')
-        ordering = ('name', 'family')
-        unique_together = ('name', 'family', 'tenant')
+        verbose_name_plural = _("Firewall Filters")
+        ordering = ("name", "family")
+        unique_together = ("name", "family", "tenant")
 
     def __str__(self):
         return self.name
@@ -50,47 +49,47 @@ class FirewallFilter(ContactsMixin, PrimaryModel):
         return FamilyChoices.colors.get(self.family)
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:firewallfilter', args=[self.pk])
+        return reverse("plugins:netbox_security:firewallfilter", args=[self.pk])
 
 
 class FirewallFilterAssignment(NetBoxModel):
     assigned_object_type = models.ForeignKey(
-        to='contenttypes.ContentType',
+        to="contenttypes.ContentType",
         limit_choices_to=FILTER_ASSIGNMENT_MODELS,
         on_delete=models.CASCADE,
     )
     assigned_object_id = models.PositiveBigIntegerField()
     assigned_object = GenericForeignKey(
-        ct_field='assigned_object_type',
-        fk_field='assigned_object_id'
+        ct_field="assigned_object_type", fk_field="assigned_object_id"
     )
     firewall_filter = models.ForeignKey(
-        to='netbox_security.FirewallFilter',
-        on_delete=models.CASCADE
+        to="netbox_security.FirewallFilter", on_delete=models.CASCADE
     )
 
-    clone_fields = ('assigned_object_type', 'assigned_object_id')
+    clone_fields = ("assigned_object_type", "assigned_object_id")
 
     prerequisite_models = (
-        'dcim.Device',
-        'netbox_security.FirewallFilter',
+        "dcim.Device",
+        "netbox_security.FirewallFilter",
     )
 
     class Meta:
-        indexes = (
-            models.Index(fields=('assigned_object_type', 'assigned_object_id')),
-        )
+        indexes = (models.Index(fields=("assigned_object_type", "assigned_object_id")),)
         constraints = (
             models.UniqueConstraint(
-                fields=('assigned_object_type', 'assigned_object_id', 'firewall_filter'),
-                name='%(app_label)s_%(class)s_unique_firewall_filter',
+                fields=(
+                    "assigned_object_type",
+                    "assigned_object_id",
+                    "firewall_filter",
+                ),
+                name="%(app_label)s_%(class)s_unique_firewall_filter",
             ),
         )
-        verbose_name = _('Firewall Filter Assignment')
-        verbose_name_plural = _('Firewall Filter Assignments')
+        verbose_name = _("Firewall Filter Assignment")
+        verbose_name_plural = _("Firewall Filter Assignments")
 
     def __str__(self):
-        return f'{self.assigned_object}: {self.firewall_filter}'
+        return f"{self.assigned_object}: {self.firewall_filter}"
 
     def get_absolute_url(self):
         if self.assigned_object:

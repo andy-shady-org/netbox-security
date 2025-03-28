@@ -1,5 +1,11 @@
 from django.contrib.contenttypes.models import ContentType
-from rest_framework.serializers import HyperlinkedIdentityField, ChoiceField, SerializerMethodField, JSONField, ValidationError
+from rest_framework.serializers import (
+    HyperlinkedIdentityField,
+    ChoiceField,
+    SerializerMethodField,
+    JSONField,
+    ValidationError,
+)
 from drf_spectacular.utils import extend_schema_field
 
 from netbox.api.fields import SerializedPKRelatedField, ContentTypeField
@@ -8,10 +14,7 @@ from ipam.api.serializers import IPAddressSerializer, PrefixSerializer
 from utilities.api import get_serializer_for_model
 from ipam.models import IPAddress, Prefix
 
-from netbox_security.models import (
-    NatRule,
-    NatRuleAssignment
-)
+from netbox_security.models import NatRule, NatRuleAssignment
 
 from netbox_security.choices import (
     RuleStatusChoices,
@@ -26,7 +29,9 @@ from netbox_security.api.serializers import (
 
 
 class NatRuleSerializer(NetBoxModelSerializer):
-    url = HyperlinkedIdentityField(view_name='plugins-api:netbox_security-api:natrule-detail')
+    url = HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_security-api:natrule-detail"
+    )
     rule_set = NatRuleSetSerializer(nested=True, required=True)
     status = ChoiceField(choices=RuleStatusChoices, required=False)
     source_type = ChoiceField(choices=AddressTypeChoices, required=False)
@@ -38,7 +43,7 @@ class NatRuleSerializer(NetBoxModelSerializer):
         serializer=IPAddressSerializer,
         required=False,
         allow_null=True,
-        many=True
+        many=True,
     )
     destination_addresses = SerializedPKRelatedField(
         nested=True,
@@ -46,7 +51,7 @@ class NatRuleSerializer(NetBoxModelSerializer):
         serializer=IPAddressSerializer,
         required=False,
         allow_null=True,
-        many=True
+        many=True,
     )
     source_prefixes = SerializedPKRelatedField(
         nested=True,
@@ -54,7 +59,7 @@ class NatRuleSerializer(NetBoxModelSerializer):
         serializer=PrefixSerializer,
         required=False,
         allow_null=True,
-        many=True
+        many=True,
     )
     destination_prefixes = SerializedPKRelatedField(
         nested=True,
@@ -62,7 +67,7 @@ class NatRuleSerializer(NetBoxModelSerializer):
         serializer=PrefixSerializer,
         required=False,
         allow_null=True,
-        many=True
+        many=True,
     )
     source_pool = NatPoolSerializer(nested=True, required=False, allow_null=True)
     destination_pool = NatPoolSerializer(nested=True, required=False, allow_null=True)
@@ -70,12 +75,35 @@ class NatRuleSerializer(NetBoxModelSerializer):
 
     class Meta:
         model = NatRule
-        fields = ('id', 'url', 'display', 'rule_set', 'name',
-                  'description', 'status', 'source_type', 'destination_type', 'source_addresses', 'destination_addresses',
-                  'source_prefixes', 'destination_prefixes', 'source_ranges', 'destination_ranges',
-                  'source_pool', 'destination_pool', 'source_ports', 'destination_ports', 'pool', 'custom_interface',
-                  'comments', 'tags', 'custom_fields', 'created', 'last_updated')
-        brief_fields = ('id', 'url', 'display', 'rule_set', 'name')
+        fields = (
+            "id",
+            "url",
+            "display",
+            "rule_set",
+            "name",
+            "description",
+            "status",
+            "source_type",
+            "destination_type",
+            "source_addresses",
+            "destination_addresses",
+            "source_prefixes",
+            "destination_prefixes",
+            "source_ranges",
+            "destination_ranges",
+            "source_pool",
+            "destination_pool",
+            "source_ports",
+            "destination_ports",
+            "pool",
+            "custom_interface",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields = ("id", "url", "display", "rule_set", "name")
 
     def validate(self, data):
         error_message = {}
@@ -127,23 +155,35 @@ class NatRuleSerializer(NetBoxModelSerializer):
 
 class NatRuleAssignmentSerializer(NetBoxModelSerializer):
     rule = NatRuleSerializer(nested=True, required=True, allow_null=False)
-    assigned_object_type = ContentTypeField(
-        queryset=ContentType.objects.all()
-    )
+    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:
         model = NatRuleAssignment
         fields = [
-            'id', 'url', 'display', 'rule', 'assigned_object_type', 'assigned_object_id', 'assigned_object',
-            'created', 'last_updated',
+            "id",
+            "url",
+            "display",
+            "rule",
+            "assigned_object_type",
+            "assigned_object_id",
+            "assigned_object",
+            "created",
+            "last_updated",
         ]
-        brief_fields = ('id', 'url', 'display', 'rule', 'assigned_object_type', 'assigned_object_id')
+        brief_fields = (
+            "id",
+            "url",
+            "display",
+            "rule",
+            "assigned_object_type",
+            "assigned_object_id",
+        )
 
     @extend_schema_field(JSONField(allow_null=True))
     def get_assigned_object(self, obj):
         if obj.assigned_object is None:
             return None
         serializer = get_serializer_for_model(obj.assigned_object)
-        context = {'request': self.context['request']}
+        context = {"request": self.context["request"]}
         return serializer(obj.assigned_object, nested=True, context=context).data

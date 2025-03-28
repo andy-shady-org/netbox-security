@@ -17,35 +17,31 @@ from netbox_security.choices import (
 )
 
 __all__ = (
-    'NatPool',
-    'NatPoolAssignment',
-    'NatPoolIndex',
+    "NatPool",
+    "NatPoolAssignment",
+    "NatPoolIndex",
 )
 
 
 class NatPool(ContactsMixin, PrimaryModel):
-    """
-    """
-    name = models.CharField(
-        max_length=100
-    )
+    """ """
+
+    name = models.CharField(max_length=100)
     pool_type = models.CharField(
-        max_length=30,
-        choices=PoolTypeChoices,
-        default=PoolTypeChoices.ADDRESS
+        max_length=30, choices=PoolTypeChoices, default=PoolTypeChoices.ADDRESS
     )
     status = models.CharField(
         max_length=50,
         choices=IPAddressStatusChoices,
         default=IPAddressStatusChoices.STATUS_ACTIVE,
-        verbose_name=_('Status'),
-        help_text=_('The operational status of this NAT Pool')
+        verbose_name=_("Status"),
+        help_text=_("The operational status of this NAT Pool"),
     )
 
     class Meta:
-        verbose_name = _('NAT Pool')
-        verbose_name_plural = _('NAT Pools')
-        unique_together = ['name', 'pool_type']
+        verbose_name = _("NAT Pool")
+        verbose_name_plural = _("NAT Pools")
+        unique_together = ["name", "pool_type"]
 
     def __str__(self):
         return self.name
@@ -54,47 +50,41 @@ class NatPool(ContactsMixin, PrimaryModel):
         return IPAddressStatusChoices.colors.get(self.status)
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:natpool', args=[self.pk])
+        return reverse("plugins:netbox_security:natpool", args=[self.pk])
 
 
 class NatPoolAssignment(NetBoxModel):
     assigned_object_type = models.ForeignKey(
-        to='contenttypes.ContentType',
+        to="contenttypes.ContentType",
         limit_choices_to=POOL_ASSIGNMENT_MODELS,
         on_delete=models.CASCADE,
     )
     assigned_object_id = models.PositiveBigIntegerField()
     assigned_object = GenericForeignKey(
-        ct_field='assigned_object_type',
-        fk_field='assigned_object_id'
+        ct_field="assigned_object_type", fk_field="assigned_object_id"
     )
-    pool = models.ForeignKey(
-        to='netbox_security.NatPool',
-        on_delete=models.CASCADE
-    )
+    pool = models.ForeignKey(to="netbox_security.NatPool", on_delete=models.CASCADE)
 
-    clone_fields = ('assigned_object_type', 'assigned_object_id')
+    clone_fields = ("assigned_object_type", "assigned_object_id")
 
     prerequisite_models = (
-        'dcim.Device',
-        'netbox_security.NatPool',
+        "dcim.Device",
+        "netbox_security.NatPool",
     )
 
     class Meta:
-        indexes = (
-            models.Index(fields=('assigned_object_type', 'assigned_object_id')),
-        )
+        indexes = (models.Index(fields=("assigned_object_type", "assigned_object_id")),)
         constraints = (
             models.UniqueConstraint(
-                fields=('assigned_object_type', 'assigned_object_id', 'pool'),
-                name='%(app_label)s_%(class)s_unique_nat_pool'
+                fields=("assigned_object_type", "assigned_object_id", "pool"),
+                name="%(app_label)s_%(class)s_unique_nat_pool",
             ),
         )
-        verbose_name = _('NAT Pool assignment')
-        verbose_name_plural = _('NAT Pool assignments')
+        verbose_name = _("NAT Pool assignment")
+        verbose_name_plural = _("NAT Pool assignments")
 
     def __str__(self):
-        return f'{self.assigned_object}: {self.pool}'
+        return f"{self.assigned_object}: {self.pool}"
 
     def get_absolute_url(self):
         if self.assigned_object:

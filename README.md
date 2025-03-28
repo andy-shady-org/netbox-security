@@ -51,3 +51,12 @@ left, right, full_width. Set empty value for disable.
 * `interface_ext_page`: String (default left) Interface related objects table position. The following values are available:  
 left, right, full_width. Set empty value for disable.
 * `top_level_menu`: Boolean (default True) Display plugin menu at the top level. The following values are available: True, False.
+
+
+## Credits
+
+Thanks to Peter Eckel for providing some lovely examples which I've happily borrowed.
+Thanks to Dan Sheppard for the abstracted field generation stuff which I also used.
+
+Thanks to Kris and Mark at Netbox Labs for encouragement and engagement.
+

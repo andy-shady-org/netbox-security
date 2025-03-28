@@ -10,15 +10,15 @@ from django.contrib.contenttypes.models import ContentType
 from netbox_security.constants import FILTER_SETTING_ASSIGNMENT_MODELS
 from netbox_security.choices import (
     FirewallRuleFromSettingChoices,
-    FirewallRuleThenSettingChoices
+    FirewallRuleThenSettingChoices,
 )
 
 
 __all__ = (
-    'FirewallRuleFromSetting',
-    'FirewallRuleThenSetting',
-    'FirewallFilterRule',
-    'FirewallFilterRuleIndex',
+    "FirewallRuleFromSetting",
+    "FirewallRuleThenSetting",
+    "FirewallFilterRule",
+    "FirewallFilterRuleIndex",
 )
 
 
@@ -27,17 +27,13 @@ class FirewallRuleSettingMixin(PrimaryModel):
         to=ContentType,
         limit_choices_to=FILTER_SETTING_ASSIGNMENT_MODELS,
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name="+",
         blank=True,
-        null=True
+        null=True,
     )
-    assigned_object_id = models.PositiveBigIntegerField(
-        blank=True,
-        null=True
-    )
+    assigned_object_id = models.PositiveBigIntegerField(blank=True, null=True)
     assigned_object = GenericForeignKey(
-        ct_field='assigned_object_type',
-        fk_field='assigned_object_id'
+        ct_field="assigned_object_type", fk_field="assigned_object_id"
     )
     value = models.CharField()
 
@@ -51,13 +47,15 @@ class FirewallRuleFromSetting(FirewallRuleSettingMixin):
     )
 
     class Meta:
-        verbose_name = _('Firewall Filter Rule Setting')
+        verbose_name = _("Firewall Filter Rule Setting")
 
     def __str__(self):
-        return f'{self.assigned_object}: {self.key}'
+        return f"{self.assigned_object}: {self.key}"
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:firewallrulefromsetting', args=[self.pk])
+        return reverse(
+            "plugins:netbox_security:firewallrulefromsetting", args=[self.pk]
+        )
 
 
 class FirewallRuleThenSetting(FirewallRuleSettingMixin):
@@ -66,49 +64,49 @@ class FirewallRuleThenSetting(FirewallRuleSettingMixin):
     )
 
     class Meta:
-        verbose_name = _('Firewall Filter Rule Setting')
+        verbose_name = _("Firewall Filter Rule Setting")
 
     def __str__(self):
-        return f'{self.assigned_object}: {self.key}'
+        return f"{self.assigned_object}: {self.key}"
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:firewallrulethensetting', args=[self.pk])
+        return reverse(
+            "plugins:netbox_security:firewallrulethensetting", args=[self.pk]
+        )
 
 
 class FirewallFilterRule(ContactsMixin, PrimaryModel):
-    name = models.CharField(
-        max_length=200
-    )
+    name = models.CharField(max_length=200)
     filter = models.ForeignKey(
-        to='netbox_security.FirewallFilter',
+        to="netbox_security.FirewallFilter",
         on_delete=models.CASCADE,
-        related_name="%(class)s_rules"
+        related_name="%(class)s_rules",
     )
     index = models.PositiveIntegerField()
     from_settings = GenericRelation(
-        to='netbox_security.FirewallRuleFromSetting',
-        related_name='from_settings',
-        related_query_name='from_settings',
-        content_type_field='assigned_object_type',
-        object_id_field='assigned_object_id'
+        to="netbox_security.FirewallRuleFromSetting",
+        related_name="from_settings",
+        related_query_name="from_settings",
+        content_type_field="assigned_object_type",
+        object_id_field="assigned_object_id",
     )
     then_settings = GenericRelation(
-        to='netbox_security.FirewallRuleThenSetting',
-        related_name='then_settings',
-        related_query_name='then_settings',
-        content_type_field='assigned_object_type',
-        object_id_field='assigned_object_id'
+        to="netbox_security.FirewallRuleThenSetting",
+        related_name="then_settings",
+        related_query_name="then_settings",
+        content_type_field="assigned_object_type",
+        object_id_field="assigned_object_id",
     )
 
     class Meta:
-        verbose_name = 'Firewall Filter Rule'
-        ordering = ['index', 'name']
+        verbose_name = "Firewall Filter Rule"
+        ordering = ["index", "name"]
 
     def __str__(self):
-        return f'{self.filter}: {self.name}'
+        return f"{self.filter}: {self.name}"
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_security:firewallfilterrule', args=[self.pk])
+        return reverse("plugins:netbox_security:firewallfilterrule", args=[self.pk])
 
 
 @register_search

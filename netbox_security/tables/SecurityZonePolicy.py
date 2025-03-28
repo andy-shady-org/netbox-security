@@ -26,37 +26,42 @@ ACTIONS = """
 """
 
 
-__all__ = (
-    "SecurityZonePolicyTable",
-)
+__all__ = ("SecurityZonePolicyTable",)
 
 
 class SecurityZonePolicyTable(NetBoxTable):
     name = tables.LinkColumn()
     source_zone = tables.LinkColumn()
     destination_zone = tables.LinkColumn()
-    source_address = tables.TemplateColumn(
-        template_code=LOOPS,
-        orderable=False
-    )
-    destination_address = tables.TemplateColumn(
-        template_code=LOOPS,
-        orderable=False
-    )
+    source_address = tables.TemplateColumn(template_code=LOOPS, orderable=False)
+    destination_address = tables.TemplateColumn(template_code=LOOPS, orderable=False)
     application = ArrayColumn()
-    actions = tables.TemplateColumn(
-        template_code=ACTIONS,
-        orderable=False
-    )
-    tags = TagColumn(
-        url_name='plugins:netbox_security:securityzone_list'
-    )
+    actions = tables.TemplateColumn(template_code=ACTIONS, orderable=False)
+    tags = TagColumn(url_name="plugins:netbox_security:securityzone_list")
 
     class Meta(NetBoxTable.Meta):
         model = SecurityZonePolicy
-        fields = ('pk', 'index', 'name', 'source_zone', 'destination_zone', 'source_address',
-                  'destination_address', 'application', 'actions', 'description', 'tags')
+        fields = (
+            "pk",
+            "index",
+            "name",
+            "source_zone",
+            "destination_zone",
+            "source_address",
+            "destination_address",
+            "application",
+            "actions",
+            "description",
+            "tags",
+        )
         default_columns = (
-            'pk', 'index', 'name', 'source_zone', 'destination_zone', 'source_address',
-            'destination_address', 'application', 'actions',
+            "pk",
+            "index",
+            "name",
+            "source_zone",
+            "destination_zone",
+            "source_address",
+            "destination_address",
+            "application",
+            "actions",
         )
