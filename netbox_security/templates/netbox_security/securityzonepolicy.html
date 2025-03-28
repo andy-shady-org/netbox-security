@@ -1,5 +1,7 @@
 {% extends 'generic/object.html' %}
 {% load i18n %}
+{% load render_table from django_tables2 %}
+
 
 {% block content %}
 <div class="row">
@@ -10,6 +12,10 @@
                 <tr>
                     <th scope="row">{% trans "Name" %}</th>
                     <td>{{ object.name }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Index" %}</th>
+                    <td>{{ object.index|placeholder }}</td>
                 </tr>
                 {% if object.description %}
                 <tr>
@@ -41,21 +47,39 @@
                     </td>
                 </tr>
                 {% endif %}
-                {% if object.actions %}
                 <tr>
-                    <th scope="row">{% trans "Actions" %}</th>
+                    <td>{% trans "Actions" %}</td>
                     <td>
-                        {{ object.actions }}
+                        {% for action in object.actions %}
+                            <span class="badge text-bg-{% if action == 'permit' %}green
+                            {% elif action == 'deny' %}reg
+                            {% elif action == 'log' %}orange
+                            {% elif action == 'count' %}orange
+                            {% elif action == 'reject' %}red
+                            {% endif %}"
+                            >{{ action }}</span>
+                        {% endfor %}
                     </td>
                 </tr>
-                {% endif %}
             </table>
         </div>
-        {% include 'inc/panels/custom_fields.html' %}
+      {% include 'inc/panels/custom_fields.html' %}
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
     </div>
     <div class="col col-md-6">
-        {% include 'inc/panels/comments.html' %}
-        {% include 'inc/panels/tags.html' %}
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Source Addresses" %}
+            </h5>
+            {% render_table source_address_table 'inc/table.html' %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Destination Addresses" %}
+            </h5>
+            {% render_table destination_address_table 'inc/table.html' %}
+        </div>
     </div>
 </div>
 {% endblock %}

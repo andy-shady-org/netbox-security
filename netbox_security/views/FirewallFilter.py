@@ -10,7 +10,8 @@ from netbox_security.filtersets import FirewallFilterFilterSet
 
 from netbox_security.models import (
     FirewallFilter,
-    FirewallFilterAssignment
+    FirewallFilterAssignment,
+    FirewallFilterRule
 )
 from netbox_security.forms import (
     FirewallFilterFilterForm,
@@ -19,6 +20,8 @@ from netbox_security.forms import (
     FirewallFilterAssignmentForm,
     FirewallFilterImportForm
 )
+
+from netbox_security.tables import FirewallFilterRuleTable
 
 
 __all__ = (
@@ -38,6 +41,15 @@ __all__ = (
 class FirewallFilterView(generic.ObjectView):
     queryset = FirewallFilter.objects.all()
     template_name = 'netbox_security/firewallfilter.html'
+
+    def get_extra_context(self, request, instance):
+        filter_rules_table = FirewallFilterRuleTable(
+            instance.firewallfilterrule_rules.all(),
+            orderable=False
+        )
+        return {
+            'filter_rules_table': filter_rules_table,
+        }
 
 
 class FirewallFilterListView(generic.ObjectListView):

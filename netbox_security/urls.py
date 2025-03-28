@@ -11,6 +11,8 @@ from .models import (
     NatRule,
     FirewallFilter,
     FirewallFilterRule,
+    FirewallRuleFromSetting,
+    FirewallRuleThenSetting,
 )
 
 from . import views
@@ -62,26 +64,26 @@ urlpatterns = [
     path('nat-pool/<int:pk>/contacts/', views.NatPoolContactsView.as_view(), name='natpool_contacts'),
     path('nat-pool/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='natpool_changelog', kwargs={'model': NatPool}),
     # Nat Pool Members
-    path('pool-member/', views.NatPoolMemberListView.as_view(), name='natpoolmember_list'),
-    path('pool-member/add/', views.NatPoolMemberEditView.as_view(), name='natpoolmember_add'),
-    path('pool-member/import/', views.NatPoolMemberBulkImportView.as_view(), name='natpoolmember_import'),
-    path('pool-member/delete/', views.NatPoolMemberBulkDeleteView.as_view(), name='natpoolmember_bulk_delete'),
-    path('pool-member/<int:pk>/', views.NatPoolMemberView.as_view(), name='natpoolmember'),
-    path('pool-member/<int:pk>/edit/', views.NatPoolMemberEditView.as_view(), name='natpoolmember_edit'),
-    path('pool-member/<int:pk>/delete/', views.NatPoolMemberDeleteView.as_view(), name='natpoolmember_delete'),
-    path('pool-member/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='natpoolmember_changelog', kwargs={'model': NatPoolMember}),
+    path('nat-pool-member/', views.NatPoolMemberListView.as_view(), name='natpoolmember_list'),
+    path('nat-pool-member/add/', views.NatPoolMemberEditView.as_view(), name='natpoolmember_add'),
+    path('nat-pool-member/import/', views.NatPoolMemberBulkImportView.as_view(), name='natpoolmember_import'),
+    path('nat-pool-member/delete/', views.NatPoolMemberBulkDeleteView.as_view(), name='natpoolmember_bulk_delete'),
+    path('nat-pool-member/<int:pk>/', views.NatPoolMemberView.as_view(), name='natpoolmember'),
+    path('nat-pool-member/<int:pk>/edit/', views.NatPoolMemberEditView.as_view(), name='natpoolmember_edit'),
+    path('nat-pool-member/<int:pk>/delete/', views.NatPoolMemberDeleteView.as_view(), name='natpoolmember_delete'),
+    path('nat-pool-member/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='natpoolmember_changelog', kwargs={'model': NatPoolMember}),
     # Nat Rule Sets
-    path('rule-set/', views.NatRuleSetListView.as_view(), name='natruleset_list'),
-    path('rule-set/add/', views.NatRuleSetEditView.as_view(), name='natruleset_add'),
-    path('rule-set/import/', views.NatRuleSetBulkImportView.as_view(), name='natruleset_import'),
-    path('rule-set/edit/', views.NatRuleSetBulkEditView.as_view(), name='natruleset_bulk_edit'),
-    path('rule-set/delete/', views.NatRuleSetBulkDeleteView.as_view(), name='natruleset_bulk_delete'),
-    path('rule-set/<int:pk>/', views.NatRuleSetView.as_view(), name='natruleset'),
-    path('rule-set/<int:pk>/edit/', views.NatRuleSetEditView.as_view(), name='natruleset_edit'),
-    path('rule-set/<int:pk>/rules/', views.NatRuleSetRulesView.as_view(), name='natruleset_rules'),
-    path('rule-set/<int:pk>/delete/', views.NatRuleSetDeleteView.as_view(), name='natruleset_delete'),
-    path('rule-set/<int:pk>/contacts/', views.NatRuleSetContactsView.as_view(), name='natruleset_contacts'),
-    path('rule-set/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='natruleset_changelog', kwargs={'model': NatRuleSet}),
+    path('nat-rule-set/', views.NatRuleSetListView.as_view(), name='natruleset_list'),
+    path('nat-rule-set/add/', views.NatRuleSetEditView.as_view(), name='natruleset_add'),
+    path('nat-rule-set/import/', views.NatRuleSetBulkImportView.as_view(), name='natruleset_import'),
+    path('nat-rule-set/edit/', views.NatRuleSetBulkEditView.as_view(), name='natruleset_bulk_edit'),
+    path('nat-rule-set/delete/', views.NatRuleSetBulkDeleteView.as_view(), name='natruleset_bulk_delete'),
+    path('nat-rule-set/<int:pk>/', views.NatRuleSetView.as_view(), name='natruleset'),
+    path('nat-rule-set/<int:pk>/edit/', views.NatRuleSetEditView.as_view(), name='natruleset_edit'),
+    path('nat-rule-set/<int:pk>/rules/', views.NatRuleSetRulesView.as_view(), name='natruleset_rules'),
+    path('nat-rule-set/<int:pk>/delete/', views.NatRuleSetDeleteView.as_view(), name='natruleset_delete'),
+    path('nat-rule-set/<int:pk>/contacts/', views.NatRuleSetContactsView.as_view(), name='natruleset_contacts'),
+    path('nat-rule-set/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='natruleset_changelog', kwargs={'model': NatRuleSet}),
     # Nat Rules
     path('nat-rule/', views.NatRuleListView.as_view(), name='natrule_list'),
     path('nat-rule/add/', views.NatRuleEditView.as_view(), name='natrule_add'),
@@ -93,7 +95,7 @@ urlpatterns = [
     path('nat-rule/<int:pk>/contacts/', views.NatRuleContactsView.as_view(), name='natrule_contacts'),
     path('nat-rule/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='natrule_changelog', kwargs={'model': NatRule}),
     # Firewall Filters
-    path('firewall-filter/', views.FirewallFilterView.as_view(), name='firewallfilter_list'),
+    path('firewall-filter/', views.FirewallFilterListView.as_view(), name='firewallfilter_list'),
     path('firewall-filter/add/', views.FirewallFilterEditView.as_view(), name='firewallfilter_add'),
     path('firewall-filter/import/', views.FirewallFilterBulkImportView.as_view(), name='firewallfilter_import'),
     path('firewall-filter/edit/', views.FirewallFilterBulkEditView.as_view(), name='firewallfilter_bulk_edit'),
@@ -104,7 +106,7 @@ urlpatterns = [
     path('firewall-filter/<int:pk>/contacts/', views.FirewallFilterContactsView.as_view(), name='firewallfilter_contacts'),
     path('firewall-filter/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='firewallfilter_changelog', kwargs={'model': FirewallFilter}),
     # Firewall Filter Rules
-    path('firewall-filter-rule/', views.FirewallFilterRuleView.as_view(), name='firewallfilterrule_list'),
+    path('firewall-filter-rule/', views.FirewallFilterRuleListView.as_view(), name='firewallfilterrule_list'),
     path('firewall-filter-rule/add/', views.FirewallFilterRuleEditView.as_view(), name='firewallfilterrule_add'),
     path('firewall-filter-rule/delete/', views.FirewallFilterRuleBulkDeleteView.as_view(), name='firewallfilterrule_bulk_delete'),
     path('firewall-filter-rule/<int:pk>/', views.FirewallFilterRuleView.as_view(), name='firewallfilterrule'),
@@ -112,6 +114,14 @@ urlpatterns = [
     path('firewall-filter-rule/<int:pk>/delete/', views.FirewallFilterRuleDeleteView.as_view(), name='firewallfilterrule_delete'),
     path('firewall-filter-rule/<int:pk>/contacts/', views.FirewallFilterRuleContactsView.as_view(), name='firewallfilterrule_contacts'),
     path('firewall-filter-rule/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='firewallfilterrule_changelog', kwargs={'model': FirewallFilterRule}),
+    # Firewall Filter Rule From Settings
+    path('firewall-filter-rule-from-setting/<int:pk>/', views.FirewallRuleFromSettingView.as_view(), name='firewallrulefromsetting'),
+    path('firewall-filter-rule-from-setting/delete/', views.FirewallRuleFromSettingBulkDeleteView.as_view(), name='firewallrulefromsetting_bulk_delete'),
+    path('firewall-filter-rule-from-setting/<int:pk>/delete/', views.FirewallRuleFromSettingDeleteView.as_view(), name='firewallrulefromsetting_delete'),
+    # Firewall Filter Rule Then Settings
+    path('firewall-filter-rule-then-setting/<int:pk>/', views.FirewallFilterRuleView.as_view(), name='firewallrulethensetting'),
+    path('firewall-filter-rule-then-setting/delete/', views.FirewallRuleThenSettingBulkDeleteView.as_view(), name='firewallrulethensetting_bulk_delete'),
+    path('firewall-filter-rule-then-setting/<int:pk>/delete/', views.FirewallRuleFromSettingDeleteView.as_view(), name='firewallrulethensetting_delete'),
     # Address Assignments
     path('address-assignments/add/', views.AddressAssignmentEditView.as_view(), name='addressassignment_add'),
     path('address-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'addressassignment'))),
@@ -125,8 +135,8 @@ urlpatterns = [
     path('nat-rule-assignments/add/', views.NatRuleAssignmentEditView.as_view(), name='natruleassignment_add'),
     path('nat-rule-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'natruleassignment'))),
     # NAT Ruleset Assignments
-    path('rule-set-assignments/add/', views.NatRuleSetAssignmentEditView.as_view(), name='natrulesetassignment_add'),
-    path('rule-set-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'natrulesetassignment'))),
+    path('nat-rule-set-assignments/add/', views.NatRuleSetAssignmentEditView.as_view(), name='natrulesetassignment_add'),
+    path('nat-rule-set-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'natrulesetassignment'))),
     # Firewall Filter Assignments
     path('firewall-filter-assignments/add/', views.AddressAssignmentEditView.as_view(), name='addresslistassignment_add'),
     path('firewall-filter-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'addresslistassignment'))),

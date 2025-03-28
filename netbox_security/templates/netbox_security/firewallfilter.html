@@ -1,6 +1,14 @@
 {% extends 'generic/object.html' %}
 {% load i18n %}
+{% load render_table from django_tables2 %}
 
+{% block extra_controls %}
+    {% if perms.netbox_security.change_firewallfilterrule %}
+    <a href="{% url 'plugins:netbox_security:firewallfilterrule_add' %}?filter={{ object.pk }}" class="btn btn-success">
+        <span class="mdi mdi-plus-thick" aria-hidden="true"></span> Add Rule
+    </a>
+    {% endif %}
+{% endblock extra_controls %}
 
 {% block content %}
 <div class="row">
@@ -21,7 +29,7 @@
                 {% if object.family %}
                 <tr>
                     <th scope="row">{% trans "Family" %}</th>
-                    <td>{{ object.family|placeholder }}</td>
+                    <td>{% badge object.get_family_display bg_color=object.get_family_color %}</td>
                 </tr>
                 {% endif %}
                 {% if object.tenant %}
@@ -38,10 +46,16 @@
             </table>
         </div>
         {% include 'inc/panels/custom_fields.html' %}
+        {% include 'inc/panels/tags.html' %}
+        {% include 'inc/panels/comments.html' %}
     </div>
     <div class="col col-md-6">
-        {% include 'inc/panels/comments.html' %}
-        {% include 'inc/panels/tags.html' %}
+        <div class="card">
+            <h5 class="card-header">
+                Filter Rules
+            </h5>
+            {% render_table filter_rules_table 'inc/table.html' %}
+        </div>
     </div>
 </div>
 {% endblock %}

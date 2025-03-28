@@ -19,6 +19,7 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
     name = models.CharField(
         max_length=100,
     )
+    index = models.PositiveIntegerField()
     source_zone = models.ForeignKey(
         to='netbox_security.SecurityZone',
         related_name='source_zone_policies',
@@ -37,8 +38,12 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
         to='netbox_security.Address',
         related_name="%(class)s_destination_address",
     )
-    application = models.CharField(
-        max_length=200,
+    application = ArrayField(
+        models.CharField(
+            max_length=50, blank=True, null=True,
+        ),
+        size=20,
+        verbose_name=_('Applications')
     )
     actions = ArrayField(
         models.CharField(
@@ -56,7 +61,7 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
 
     class Meta:
         verbose_name_plural = _('Security Zone Policies')
-        ordering = ['name']
+        ordering = ['index', 'name']
         unique_together = ['name', 'source_zone', 'destination_zone']
 
     def __str__(self):

@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from django.contrib.postgres.forms import SimpleArrayField
 
 from netbox.forms import (
     NetBoxModelBulkEditForm,
@@ -8,7 +9,6 @@ from netbox.forms import (
     NetBoxModelFilterSetForm
 )
 
-from tenancy.forms import TenancyForm, TenancyFilterForm
 from utilities.forms.rendering import FieldSet
 from utilities.forms.fields import (
     DynamicModelChoiceField,
@@ -27,6 +27,9 @@ from netbox_security.models import (
     Address
 )
 
+from netbox_security.choices import ActionChoices
+
+
 __all__ = (
     "SecurityZonePolicyForm",
     "SecurityZonePolicyFilterForm",
@@ -35,7 +38,7 @@ __all__ = (
 )
 
 
-class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
+class SecurityZonePolicyForm(NetBoxModelForm):
     name = forms.CharField(
         max_length=100,
         required=True
@@ -56,16 +59,21 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
     destination_address = DynamicModelMultipleChoiceField(
         queryset=Address.objects.all(),
     )
-    application = forms.CharField(
-        max_length=200,
-        required=True
+    application = SimpleArrayField(
+        forms.CharField(max_length=50),
+        help_text=_("Comma-separated list of applications."),
+        required=True,
+    )
+    actions = forms.MultipleChoiceField(
+        choices=ActionChoices,
+        required=True,
     )
     fieldsets = (
-        FieldSet('name', 'description', name=_('Security Zone Policy')),
+        FieldSet('name', 'index', 'description', name=_('Security Zone Policy')),
         FieldSet('source_zone', 'source_address', name=_('Source Assignment')),
         FieldSet('destination_zone', 'destination_address', name=_('Destination Assignment')),
         FieldSet('application', name=_('Application')),
-        FieldSet("tenant_group", "tenant", name=_("Tenancy")),
+        FieldSet('actions', name=_('Actions')),
         FieldSet("tags", name=_("Tags")),
     )
     comments = CommentField()
@@ -73,8 +81,8 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
     class Meta:
         model = SecurityZonePolicy
         fields = [
-            'name', 'source_zone', 'source_address', 'destination_zone', 'destination_address',
-            'application', 'tenant_group', 'tenant', 'description', 'comments', 'tags',
+            'name', 'index', 'source_zone', 'source_address', 'destination_zone', 'destination_address',
+            'application', 'actions', 'description', 'comments', 'tags',
         ]
 
     def clean(self):
@@ -84,7 +92,7 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
         destination_zone = self.cleaned_data.get("destination_zone")
         source_address = self.cleaned_data.get("source_address")
         destination_address = self.cleaned_data.get("destination_address")
-        if set(source_zone) & set(destination_zone):
+        if source_zone == destination_zone:
             error_message_mismatch_zones = f'Cannot have the same source and destination zone within a policy'
             error_message["source_zone"] = [error_message_mismatch_zones]
             error_message["destination_zone"] = [error_message_mismatch_zones]
@@ -97,13 +105,16 @@ class SecurityZonePolicyForm(TenancyForm, NetBoxModelForm):
         return self.cleaned_data
 
 
-class SecurityZonePolicyFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
     model = SecurityZonePolicy
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet('name',),
+        FieldSet('name', 'index'),
         FieldSet('source_zone', 'source_address', 'destination_zone', 'destination_address', name=_('Source/Destination Assignment')),
-        FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
+        FieldSet('actions', name=_('Actions')),
+    )
+    index = forms.IntegerField(
+        required=False
     )
     source_zone = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
@@ -120,6 +131,10 @@ class SecurityZonePolicyFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     destination_address = DynamicModelMultipleChoiceField(
         queryset=Address.objects.all(),
         required=False,
+    )
+    actions = forms.MultipleChoiceField(
+        choices=ActionChoices,
+        required=True,
     )
     tags = TagFilterField(model)
 
@@ -149,7 +164,7 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
     class Meta:
         model = SecurityZonePolicy
         fields = (
-            'name', 'description', 'source_zone', 'source_address',
+            'name', 'index', 'description', 'source_zone', 'source_address',
             'destination_zone', 'destination_address', 'application',
             'tenant', 'tags',
         )

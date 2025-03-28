@@ -19,7 +19,9 @@ from netbox_security.models import (
     FirewallFilter,
 )
 
-from netbox_security.mixins import FilterRuleSettingMixin
+from netbox_security.mixins import (
+    FilterRuleSettingFormMixin,
+)
 
 
 __all__ = (
@@ -28,14 +30,14 @@ __all__ = (
 )
 
 
-class FirewallFilterRuleForm(FilterRuleSettingMixin, NetBoxModelForm):
+class FirewallFilterRuleForm(FilterRuleSettingFormMixin, NetBoxModelForm):
     name = forms.CharField(
         max_length=100,
         required=True
     )
     filter = DynamicModelChoiceField(
         queryset=FirewallFilter.objects.all(),
-        required=False,
+        required=True,
         label=_('Firewall Filter'),
     )
     description = forms.CharField(
@@ -43,14 +45,14 @@ class FirewallFilterRuleForm(FilterRuleSettingMixin, NetBoxModelForm):
         required=False
     )
     fieldsets = (
-        FieldSet('name', 'filter', 'description', name=_('Firewall Filter Rule')),
+        FieldSet('name', 'index', 'filter', 'description', name=_('Firewall Filter Rule')),
         FieldSet("tags", name=_("Tags")),
     )
     comments = CommentField()
 
     class Meta:
         model = FirewallFilterRule
-        fields = ['name', 'filter', ]
+        fields = ['name', 'index', 'filter', ]
 
     def save(self, *args, **kwargs):
         return super().save(*args, **kwargs)
@@ -62,10 +64,13 @@ class FirewallFilterRuleFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_('Firewall Filter'),
     )
+    index = forms.IntegerField(
+        required=False
+    )
     model = FirewallFilterRule
     fieldsets = (
        FieldSet('q', 'filter_id', 'tag'),
-       FieldSet('name', 'filter', 'description', name=_('Firewall Filter Rule')),
+       FieldSet('name', 'index', 'filter', 'description', name=_('Firewall Filter Rule')),
     )
     tag = TagFilterField(model)
 
