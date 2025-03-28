@@ -2,6 +2,14 @@
 {% load i18n %}
 {% load render_table from django_tables2 %}
 
+{% block extra_controls %}
+    {% if perms.netbox_security.change_securityzonepolicy %}
+    <a href="{% url 'plugins:netbox_security:securityzonepolicy_add' %}?pool={{ object.pk }}" class="btn btn-success">
+        <span class="mdi mdi-plus-thick" aria-hidden="true"></span> Add Policy
+    </a>
+    {% endif %}
+{% endblock extra_controls %}
+
 
 {% block content %}
 <div class="row">

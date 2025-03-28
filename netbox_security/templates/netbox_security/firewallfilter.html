@@ -2,6 +2,13 @@
 {% load i18n %}
 {% load render_table from django_tables2 %}
 
+{% block extra_controls %}
+    {% if perms.netbox_security.change_firewallfilterrule %}
+    <a href="{% url 'plugins:netbox_security:firewallfilterrule_add' %}?pool={{ object.pk }}" class="btn btn-success">
+        <span class="mdi mdi-plus-thick" aria-hidden="true"></span> Add Rule
+    </a>
+    {% endif %}
+{% endblock extra_controls %}
 
 {% block content %}
 <div class="row">
