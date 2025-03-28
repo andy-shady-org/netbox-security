@@ -10,6 +10,7 @@ from netbox_security.models import FirewallRuleSetting
 class FilterRuleSettingMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.assigned_fields = []
         self._append_from_settings_fields()
         self._append_then_settings_fields()
 
@@ -58,20 +59,18 @@ class FilterRuleSettingMixin:
             self.fields[key].widget.attrs['class'] = f'{css} form-control'
 
     def _append_from_settings_fields(self):
-        assigned_fields = []
         fieldset = FieldSet(*[v.lower() for k, v in FirewallRuleFromSettingChoices.CHOICES], name=_('From Settings'))
         for key, label in FirewallRuleFromSettingChoices.CHOICES:
             self._parse_key(key, label, FirewallRuleFromSettingChoices.FIELD_TYPES[key])
-            assigned_fields.append(key)
+            self.assigned_fields.append(key)
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
 
     def _append_then_settings_fields(self):
-        assigned_fields = []
         fieldset = FieldSet(*[v.lower() for k, v in FirewallRuleThenSettingChoices.CHOICES], name=_('Then Settings'))
         for key, label in FirewallRuleThenSettingChoices.CHOICES:
             self._parse_key(key, label, FirewallRuleThenSettingChoices.FIELD_TYPES[key])
-            assigned_fields.append(key)
+            self.assigned_fields.append(key)
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
 
