@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import fields
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import gettext_lazy as _
 from utilities.forms.rendering import FieldSet
 from netbox_security.choices import FirewallRuleFromSettingChoices, FirewallRuleThenSettingChoices
 from netbox_security.models import FirewallRuleFromSetting, FirewallRuleThenSetting

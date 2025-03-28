@@ -1,12 +1,13 @@
 from django.urls import reverse
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from netbox.models.features import ContactsMixin
 from netbox.models import PrimaryModel
 from netbox.search import SearchIndex, register_search
+from django.contrib.contenttypes.models import ContentType
 
-from netbox_security.mixins import FirewallRuleSettingMixin
+from netbox_security.constants import FILTER_SETTING_ASSIGNMENT_MODELS
 from netbox_security.choices import (
     FirewallRuleFromSettingChoices,
     FirewallRuleThenSettingChoices
@@ -19,6 +20,29 @@ __all__ = (
     'FirewallFilterRule',
     'FirewallFilterRuleIndex',
 )
+
+
+class FirewallRuleSettingMixin(PrimaryModel):
+    assigned_object_type = models.ForeignKey(
+        to=ContentType,
+        limit_choices_to=FILTER_SETTING_ASSIGNMENT_MODELS,
+        on_delete=models.PROTECT,
+        related_name='+',
+        blank=True,
+        null=True
+    )
+    assigned_object_id = models.PositiveBigIntegerField(
+        blank=True,
+        null=True
+    )
+    assigned_object = GenericForeignKey(
+        ct_field='assigned_object_type',
+        fk_field='assigned_object_id'
+    )
+    value = models.CharField()
+
+    class Meta:
+        abstract = True
 
 
 class FirewallRuleFromSetting(FirewallRuleSettingMixin):
