@@ -28,7 +28,7 @@ __all__ = (
 )
 
 
-class FirewallFilterRuleForm(FilterRuleFromSettingMixin, FilterRuleThenSettingMixin, NetBoxModelForm):
+class FirewallFilterRuleForm(FilterRuleThenSettingMixin, NetBoxModelForm):
     name = forms.CharField(
         max_length=100,
         required=True
