@@ -11,6 +11,8 @@ from .models import (
     NatRule,
     FirewallFilter,
     FirewallFilterRule,
+    FirewallRuleFromSetting,
+    FirewallRuleThenSetting,
 )
 
 from . import views
@@ -112,6 +114,12 @@ urlpatterns = [
     path('firewall-filter-rule/<int:pk>/delete/', views.FirewallFilterRuleDeleteView.as_view(), name='firewallfilterrule_delete'),
     path('firewall-filter-rule/<int:pk>/contacts/', views.FirewallFilterRuleContactsView.as_view(), name='firewallfilterrule_contacts'),
     path('firewall-filter-rule/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='firewallfilterrule_changelog', kwargs={'model': FirewallFilterRule}),
+    # Firewall Filter Rule From Settings
+    path('firewall-filter-rule-from-setting/delete/', views.FirewallRuleFromSettingBulkDeleteView.as_view(), name='firewallrulefromsetting_bulk_delete'),
+    path('firewall-filter-rule-from-setting/<int:pk>/delete/', views.FirewallRuleFromSettingDeleteView.as_view(), name='firewallrulefromsetting_delete'),
+    # Firewall Filter Rule Then Settings
+    path('firewall-filter-rule-then-setting/delete/', views.FirewallRuleThenSettingBulkDeleteView.as_view(), name='firewallrulefromsetting_bulk_delete'),
+    path('firewall-filter-rule-then-setting/<int:pk>/delete/', views.FirewallRuleFromSettingDeleteView.as_view(), name='firewallrulefromsetting_delete'),
     # Address Assignments
     path('address-assignments/add/', views.AddressAssignmentEditView.as_view(), name='addressassignment_add'),
     path('address-assignments/<int:pk>/', include(get_model_urls('netbox_security', 'addressassignment'))),
