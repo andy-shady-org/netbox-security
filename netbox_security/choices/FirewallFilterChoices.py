@@ -18,7 +18,7 @@ class FamilyChoices(ChoiceSet):
     ]
 
 
-class FirewallRuleSettingChoices(ChoiceSet):
+class FirewallRuleFromSettingChoices(ChoiceSet):
     ADDRESS = 'address'
     DESTINATION_ADDRESS = 'destination-address'
     DESTINATION_PORT = 'destination-port'
@@ -61,7 +61,7 @@ class FirewallRuleSettingChoices(ChoiceSet):
     }
 
 
-class FirewallRuleFromSettingChoices(ChoiceSet):
+class FirewallRuleThenSettingChoices(ChoiceSet):
     ACCEPT = 'accept'
     COUNT = 'count'
     DISCARD = 'discard'
@@ -97,7 +97,7 @@ class FirewallRuleFromSettingChoices(ChoiceSet):
     }
 
 
-class FirewallRuleThenSettingChoices(ChoiceSet):
+class FirewallRuleSettingChoices(ChoiceSet):
     ADDRESS = 'address'
     DESTINATION_ADDRESS = 'destination-address'
     DESTINATION_PORT = 'destination-port'
