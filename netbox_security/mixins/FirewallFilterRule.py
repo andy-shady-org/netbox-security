@@ -3,7 +3,6 @@ from django import forms
 from django.forms import fields
 from django.utils.translation import gettext as _
 from utilities.forms.rendering import FieldSet
-
 from netbox_security.choices import FirewallRuleFromSettingChoices, FirewallRuleThenSettingChoices
 from netbox_security.models import FirewallRuleSetting
 
@@ -14,102 +13,64 @@ class FilterRuleSettingMixin:
         self._append_from_settings_fields()
         self._append_then_settings_fields()
 
+    def _parse_key(self, key, label, field_type):
+        initial = None
+        if hasattr(self, 'instance'):
+            setting = FirewallRuleSetting.objects.filter(
+                assigned_object_type=ContentType.objects.get_for_model(self.Meta.model),
+                assigned_object_id=self.instance.pk,
+                key=key
+            ).first()
+            if setting:
+                initial = setting.value
+        if field_type == 'string':
+            self.fields[key] = fields.CharField(
+                label=label,
+                required=False,
+                initial=initial,
+                max_length=128,
+            )
+            css = self.fields[key].widget.attrs.get('class', '')
+            self.fields[key].widget.attrs['class'] = f'{css} form-control'
+        elif field_type == 'integer':
+            self.fields[key] = fields.IntegerField(
+                label=label,
+                required=False,
+                initial=initial,
+                min_value=0,
+                max_value=65535
+            )
+            css = self.fields[key].widget.attrs.get('class', '')
+            self.fields[key].widget.attrs['class'] = f'{css} form-control'
+        elif field_type == 'boolean':
+            choices = (
+                (None, '---------'),
+                (True, _('True')),
+                (False, _('False')),
+            )
+            self.fields[key] = fields.NullBooleanField(
+                label=label,
+                required=False,
+                initial=initial,
+                widget=forms.Select(choices=choices)
+            )
+            css = self.fields[key].widget.attrs.get('class', '')
+            self.fields[key].widget.attrs['class'] = f'{css} form-control'
+
     def _append_from_settings_fields(self):
         assigned_fields = []
-        fieldset = FieldSet('address', name=_('From Settings'))
+        fieldset = FieldSet(*[v.lower() for k, v in FirewallRuleFromSettingChoices.CHOICES], name=_('From Settings'))
         for key, label in FirewallRuleFromSettingChoices.CHOICES:
-            initial = None
-            if hasattr(self, 'instance'):
-                setting = FirewallRuleSetting.objects.filter(
-                        assigned_object_type=ContentType.objects.get_for_model(self.Meta.model),
-                        assigned_object_id=self.instance.pk,
-                        key=key
-                ).first()
-                if setting:
-                    initial = setting.value
-            if FirewallRuleFromSettingChoices.FIELD_TYPES[key] == 'ipaddr':
-                self.fields[key] = fields.CharField(
-                    label=label,
-                    required=False,
-                    initial=initial,
-                    max_length=128
-                )
-                css = self.fields[key].widget.attrs.get('class', '')
-                self.fields[key].widget.attrs['class'] = f'{css} form-control'
-            elif FirewallRuleFromSettingChoices.FIELD_TYPES[key] == 'integer':
-                self.fields[key] = fields.IntegerField(
-                    label=label,
-                    required=False,
-                    initial=initial,
-                    min_value=0,
-                    max_value=65535
-                )
-                css = self.fields[key].widget.attrs.get('class', '')
-                self.fields[key].widget.attrs['class'] = f'{css} form-control'
-            elif FirewallRuleFromSettingChoices.FIELD_TYPES[key] == 'boolean':
-                choices = (
-                    (None, '---------'),
-                    (True, _('True')),
-                    (False, _('False')),
-                )
-                self.fields[key] = fields.NullBooleanField(
-                    label=label,
-                    required=False,
-                    initial=initial,
-                    widget=forms.Select(choices=choices)
-                )
-                css = self.fields[key].widget.attrs.get('class', '')
-                self.fields[key].widget.attrs['class'] = f'{css} form-control'
+            self._parse_key(key, label, FirewallRuleFromSettingChoices.FIELD_TYPES[key])
             assigned_fields.append(key)
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
 
     def _append_then_settings_fields(self):
         assigned_fields = []
-        fieldset = FieldSet('address', name=_('Then Settings'))
-        for key, label in FirewallRuleFromSettingChoices.CHOICES:
-            initial = None
-            if hasattr(self, 'instance'):
-                setting = FirewallRuleSetting.objects.filter(
-                        assigned_object_type=ContentType.objects.get_for_model(self.Meta.model),
-                        assigned_object_id=self.instance.pk,
-                        key=key
-                ).first()
-                if setting:
-                    initial = setting.value
-            if FirewallRuleThenSettingChoices.FIELD_TYPES[key] == 'ipaddr':
-                self.fields[key] = fields.CharField(
-                    label=label,
-                    required=False,
-                    initial=initial,
-                    max_length=128
-                )
-                css = self.fields[key].widget.attrs.get('class', '')
-                self.fields[key].widget.attrs['class'] = f'{css} form-control'
-            elif FirewallRuleThenSettingChoices.FIELD_TYPES[key] == 'integer':
-                self.fields[key] = fields.IntegerField(
-                    label=label,
-                    required=False,
-                    initial=initial,
-                    min_value=0,
-                    max_value=65535
-                )
-                css = self.fields[key].widget.attrs.get('class', '')
-                self.fields[key].widget.attrs['class'] = f'{css} form-control'
-            elif FirewallRuleThenSettingChoices.FIELD_TYPES[key] == 'boolean':
-                choices = (
-                    (None, '---------'),
-                    (True, _('True')),
-                    (False, _('False')),
-                )
-                self.fields[key] = fields.NullBooleanField(
-                    label=label,
-                    required=False,
-                    initial=initial,
-                    widget=forms.Select(choices=choices)
-                )
-                css = self.fields[key].widget.attrs.get('class', '')
-                self.fields[key].widget.attrs['class'] = f'{css} form-control'
+        fieldset = FieldSet(*[v.lower() for k, v in FirewallRuleThenSettingChoices.CHOICES], name=_('Then Settings'))
+        for key, label in FirewallRuleThenSettingChoices.CHOICES:
+            self._parse_key(key, label, FirewallRuleThenSettingChoices.FIELD_TYPES[key])
             assigned_fields.append(key)
         if fieldset not in self.fieldsets:
             self.fieldsets = (*self.fieldsets, fieldset)
