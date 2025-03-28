@@ -68,6 +68,10 @@ class FirewallFilterRuleContactsView(ObjectContactsView):
     queryset = FirewallFilterRule.objects.all()
 
 
+class FirewallRuleFromSettingView(generic.ObjectView):
+    queryset = FirewallRuleFromSetting.objects.all()
+
+
 class FirewallRuleFromSettingDeleteView(generic.ObjectDeleteView):
     queryset = FirewallRuleFromSetting.objects.all()
     default_return_url = 'plugins:netbox_security:firewallfilterrule_list'
@@ -77,6 +81,10 @@ class FirewallRuleFromSettingBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallFilterRule.objects.all()
     table = FirewallRuleFromSettingTable
     default_return_url = 'plugins:netbox_security:firewallfilterrule_list'
+
+
+class FirewallRuleThenSettingView(generic.ObjectView):
+    queryset = FirewallRuleThenSetting.objects.all()
 
 
 class FirewallRuleThenSettingDeleteView(generic.ObjectDeleteView):
