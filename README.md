@@ -1,6 +1,17 @@
 # NetBox Security Plugin
 [Netbox](https://github.com/netbox-community/netbox) plugin for Security and NAT related objects documentation.
 
+<div align="center">
+<a href="https://pypi.org/project/netbox-security/"><img src="https://img.shields.io/pypi/v/netbox-security" alt="PyPi"/></a>
+<a href="https://github.com/andy-shady-org/netbox-security/network/members"><img src="https://img.shields.io/github/forks/andy-shady-org/netbox-security?style=flat" alt="Forks Badge"/></a>
+<a href="https://github.com/andy-shady-org/netbox-security/issues"><img src="https://img.shields.io/github/issues/andy-shady-org/netbox-security" alt="Issues Badge"/></a>
+<a href="https://github.com/andy-shady-org/netbox-security/pulls"><img src="https://img.shields.io/github/issues-pr/andy-shady-org/netbox-security" alt="Pull Requests Badge"/></a>
+<a href="https://github.com/andy-shady-org/netbox-security/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/andy-shady-org/netbox-security?color=2b9348"></a>
+<a href="https://github.com/andy-shady-org/netbox-security/blob/master/LICENSE"><img src="https://img.shields.io/github/license/andy-shady-org/netbox-security?color=2b9348" alt="License Badge"/></a>
+<a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code Style Black"/></a>
+</div>
+
+
 ## Features
 This plugin provides following Models:
 * Addresses
@@ -39,7 +50,9 @@ source venv/bin/activate
 python ./netbox/manage.py migrate netbox_security
 python ./netbox/manage.py reindex netbox_security
 ```
-See [NetBox Documentation](https://docs.netbox.dev/en/stable/plugins/#installing-plugins) for details
+
+Full documentation on using plugins with NetBox: [Using Plugins - NetBox Documentation](https://netbox.readthedocs.io/en/stable/plugins/)
+
 
 ## Configuration
 
@@ -53,10 +66,15 @@ left, right, full_width. Set empty value for disable.
 * `top_level_menu`: Boolean (default True) Display plugin menu at the top level. The following values are available: True, False.
 
 
+## Contribute
+
+Contributions are always welcome! Please see the [Contribution Guidelines](CONTRIBUTING.md)
+
+
 ## Credits
 
-Thanks to Peter Eckel for providing some lovely examples which I've happily borrowed.
-Thanks to Dan Sheppard for the abstracted field generation stuff which I also used.
+- Thanks to Peter Eckel for providing some lovely examples which I've happily borrowed.
+- Thanks to Dan Sheppard for the abstracted field generation stuff which I also used.
+- Thanks to Kris and Mark at Netbox Labs for encouragement and engagement.
 
-Thanks to Kris and Mark at Netbox Labs for encouragement and engagement.
 
