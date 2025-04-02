@@ -17,7 +17,7 @@ class SecurityConfig(PluginConfig):
         "top_level_menu": True,
         "virtual_ext_page": "left",
         "device_ext_page": "left",
-        "interface_ext_page": "right",
+        "interface_ext_page": "left",
         "address_ext_page": "right",
     }
 

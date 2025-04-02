@@ -65,6 +65,8 @@ left, right, full_width. Set empty value for disable.
 left, right, full_width. Set empty value for disable.
 * `interface_ext_page`: String (default left) Interface related objects table position. The following values are available:  
 left, right, full_width. Set empty value for disable.
+* `address_ext_page`: String (default right) Address/Address Set related objects table position. The following values are available:  
+left, right, full_width. Set empty value for disable.
 * `top_level_menu`: Boolean (default True) Display plugin menu at the top level. The following values are available: True, False.
 
 
@@ -73,11 +75,16 @@ left, right, full_width. Set empty value for disable.
 Contributions are always welcome! Please see the [Contribution Guidelines](CONTRIBUTING.md)
 
 
+## Documentation
+
+For further information, please refer to the full documentation: [Using NetBox Security](docs/using_netbox_security.md)
+
+
 ## Credits
 
 - Thanks to Peter Eckel for providing some lovely examples which I've happily borrowed.
 - Thanks to Dan Sheppard for the abstracted field generation stuff which I also used.
-- Thanks to Kris and Mark at Netbox Labs for encouragement and engagement.
+- Thanks to Kris Beevers and Mark Coleman at Netbox Labs for encouragement and engagement.
 
 
 ## Screenshots
