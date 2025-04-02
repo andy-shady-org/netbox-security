@@ -1,0 +1,113 @@
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
+
+from netbox.views import generic
+from tenancy.views import ObjectContactsView
+from utilities.views import register_model_view
+
+from netbox_security.tables import AddressSetTable, AddressTable
+from netbox_security.filtersets import AddressSetFilterSet
+
+from netbox_security.models import AddressSet, AddressSetAssignment
+from netbox_security.forms import (
+    AddressSetFilterForm,
+    AddressSetForm,
+    AddressSetBulkEditForm,
+    AddressSetAssignmentForm,
+    AddressSetImportForm,
+)
+
+
+__all__ = (
+    "AddressSetView",
+    "AddressSetListView",
+    "AddressSetEditView",
+    "AddressSetDeleteView",
+    "AddressSetBulkEditView",
+    "AddressSetBulkDeleteView",
+    "AddressSetBulkImportView",
+    "AddressSetContactsView",
+    "AddressSetAssignmentEditView",
+    "AddressSetAssignmentDeleteView",
+)
+
+
+class AddressSetView(generic.ObjectView):
+    queryset = AddressSet.objects.all()
+    template_name = "netbox_security/addressset.html"
+
+    def get_extra_context(self, request, instance):
+        address_table = AddressTable(
+            instance.addresses.all(), orderable=False
+        )
+        return {
+            "address_table": address_table,
+        }
+
+
+class AddressSetListView(generic.ObjectListView):
+    queryset = AddressSet.objects.all()
+    filterset = AddressSetFilterSet
+    filterset_form = AddressSetFilterForm
+    table = AddressSetTable
+
+
+class AddressSetEditView(generic.ObjectEditView):
+    queryset = AddressSet.objects.all()
+    form = AddressSetForm
+
+
+class AddressSetDeleteView(generic.ObjectDeleteView):
+    queryset = AddressSet.objects.all()
+    default_return_url = "plugins:netbox_security:addressset_list"
+
+
+class AddressSetBulkEditView(generic.BulkEditView):
+    queryset = AddressSet.objects.all()
+    filterset = AddressSetFilterSet
+    table = AddressSetTable
+    form = AddressSetBulkEditForm
+
+
+class AddressSetBulkDeleteView(generic.BulkDeleteView):
+    queryset = AddressSet.objects.all()
+    table = AddressSetTable
+    default_return_url = "plugins:netbox_security:addressset_list"
+
+
+class AddressSetBulkImportView(generic.BulkImportView):
+    queryset = AddressSet.objects.all()
+    model_form = AddressSetImportForm
+
+
+@register_model_view(AddressSet, "contacts")
+class AddressSetContactsView(ObjectContactsView):
+    queryset = AddressSet.objects.all()
+
+
+@register_model_view(AddressSetAssignment, "add")
+@register_model_view(AddressSetAssignment, "edit")
+class AddressSetAssignmentEditView(generic.ObjectEditView):
+    queryset = AddressSetAssignment.objects.all()
+    form = AddressSetAssignmentForm
+
+    def alter_object(self, instance, request, args, kwargs):
+        if not instance.pk:
+            content_type = get_object_or_404(
+                ContentType, pk=request.GET.get("assigned_object_type")
+            )
+            instance.assigned_object = get_object_or_404(
+                content_type.model_class(), pk=request.GET.get("assigned_object_id")
+            )
+        return instance
+
+    def get_extra_addanother_params(self, request):
+        return {
+            "assigned_object_type": request.GET.get("assigned_object_type"),
+            "assigned_object_id": request.GET.get("assigned_object_id"),
+        }
+
+
+@register_model_view(AddressSetAssignment, "delete")
+class AddressSetAssignmentDeleteView(generic.ObjectDeleteView):
+    queryset = AddressSetAssignment.objects.all()

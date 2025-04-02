@@ -6,6 +6,9 @@ from netbox_security.models import (
     NatRuleAssignment,
     SecurityZoneAssignment,
     AddressAssignment,
+    AddressSetAssignment,
+    AddressList,
+    FirewallFilterAssignment,
 )
 from netbox_security.tables import (
     NatPoolDeviceAssignmentTable,
@@ -18,11 +21,83 @@ from netbox_security.tables import (
     SecurityZoneInterfaceAssignmentTable,
     AddressDeviceAssignmentTable,
     AddressVirtualDeviceContextAssignmentTable,
+    AddressSetDeviceAssignmentTable,
+    AddressSetVirtualDeviceContextAssignmentTable,
+    AddressListAddressTable,
+    AddressListAddressSetTable,
+    FirewallFilterDeviceAssignmentTable,
+    FirewallFilterVirtualDeviceContextAssignmentTable,
 )
 
 
+class AddressContextInfo(PluginTemplateExtension):
+    models = ["netbox_security.address"]
+
+    def right_page(self):
+        """ """
+        if self.context["config"].get("address_ext_page") == "right":
+            return self.x_page()
+        return ""
+
+    def left_page(self):
+        """ """
+        if self.context["config"].get("address_ext_page") == "left":
+            return self.x_page()
+        return ""
+
+    def full_width_page(self):
+        """ """
+        if self.context["config"].get("address_ext_page") == "full_width":
+            return self.x_page()
+        return ""
+
+    def x_page(self):
+        obj = self.context["object"]
+        address_lists = AddressList.objects.filter(address=obj)
+        address_table = AddressListAddressTable(address_lists)
+        return self.render(
+            "netbox_security/address/extend.html",
+            extra_context={
+                "related_address_table": address_table
+            }
+        )
+
+
+class AddressSetContextInfo(PluginTemplateExtension):
+    models = ["netbox_security.addressset"]
+
+    def right_page(self):
+        """ """
+        if self.context["config"].get("address_ext_page") == "right":
+            return self.x_page()
+        return ""
+
+    def left_page(self):
+        """ """
+        if self.context["config"].get("address_ext_page") == "left":
+            return self.x_page()
+        return ""
+
+    def full_width_page(self):
+        """ """
+        if self.context["config"].get("address_ext_page") == "full_width":
+            return self.x_page()
+        return ""
+
+    def x_page(self):
+        obj = self.context["object"]
+        address_lists = AddressList.objects.filter(address_set=obj)
+        address_table = AddressListAddressSetTable(address_lists)
+        return self.render(
+            "netbox_security/address/extend.html",
+            extra_context={
+                "related_address_table": address_table
+            }
+        )
+
+
 class VirtualDeviceContextInfo(PluginTemplateExtension):
-    model = "dcim.virtualdevicecontext"
+    models = ["dcim.virtualdevicecontext"]
 
     def right_page(self):
         """ """
@@ -58,6 +133,10 @@ class VirtualDeviceContextInfo(PluginTemplateExtension):
         zone_table = SecurityZoneVirtualDeviceContextAssignmentTable(zone_assignments)
         address_assignments = AddressAssignment.objects.filter(virtualdevicecontext=obj)
         address_table = AddressVirtualDeviceContextAssignmentTable(address_assignments)
+        addressset_assignments = AddressSetAssignment.objects.filter(virtualdevicecontext=obj)
+        addressset_table = AddressSetVirtualDeviceContextAssignmentTable(addressset_assignments)
+        firewall_filter_assignments = FirewallFilterAssignment.objects.filter(virtualdevicecontext=obj)
+        firewall_filter_table = FirewallFilterVirtualDeviceContextAssignmentTable(firewall_filter_assignments)
         return self.render(
             "netbox_security/device/device_extend.html",
             extra_context={
@@ -65,12 +144,14 @@ class VirtualDeviceContextInfo(PluginTemplateExtension):
                 "related_ruleset_table": ruleset_table,
                 "related_zone_table": zone_table,
                 "related_address_table": address_table,
+                "related_addressset_table": addressset_table,
+                "related_firewall_filter_table": firewall_filter_table,
             },
         )
 
 
 class DeviceInfo(PluginTemplateExtension):
-    model = "dcim.device"
+    models = ["dcim.device"]
 
     def right_page(self):
         """ """
@@ -100,6 +181,10 @@ class DeviceInfo(PluginTemplateExtension):
         zone_table = SecurityZoneDeviceAssignmentTable(zone_assignments)
         address_assignments = AddressAssignment.objects.filter(device=obj)
         address_table = AddressDeviceAssignmentTable(address_assignments)
+        addressset_assignments = AddressSetAssignment.objects.filter(device=obj)
+        addressset_table = AddressSetDeviceAssignmentTable(addressset_assignments)
+        firewall_filter_assignments = FirewallFilterAssignment.objects.filter(device=obj)
+        firewall_filter_table = FirewallFilterDeviceAssignmentTable(firewall_filter_assignments)
         return self.render(
             "netbox_security/device/device_extend.html",
             extra_context={
@@ -107,12 +192,14 @@ class DeviceInfo(PluginTemplateExtension):
                 "related_ruleset_table": ruleset_table,
                 "related_zone_table": zone_table,
                 "related_address_table": address_table,
+                "related_addressset_table": addressset_table,
+                "related_firewall_filter_table": firewall_filter_table,
             },
         )
 
 
 class InterfaceInfo(PluginTemplateExtension):
-    model = "dcim.interface"
+    models = ["dcim.interface"]
 
     def right_page(self):
         """ """
@@ -148,4 +235,4 @@ class InterfaceInfo(PluginTemplateExtension):
         )
 
 
-template_extensions = [VirtualDeviceContextInfo, DeviceInfo, InterfaceInfo]
+template_extensions = [AddressContextInfo, AddressSetContextInfo, VirtualDeviceContextInfo, DeviceInfo, InterfaceInfo]

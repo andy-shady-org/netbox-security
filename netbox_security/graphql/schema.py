@@ -5,6 +5,8 @@ import strawberry_django
 
 from .types import (
     NetBoxSecurityAddressType,
+    NetBoxSecurityAddressSetType,
+    NetBoxSecurityAddressListType,
     NetBoxSecuritySecurityZoneType,
     NetBoxSecuritySecurityZonePolicyType,
     NetBoxSecurityNatPoolType,
@@ -18,6 +20,22 @@ from .types import (
 class NetBoxSecurityAddressQuery:
     netbox_security_addresslist: NetBoxSecurityAddressType = strawberry_django.field()
     netbox_security_addresslist_list: List[NetBoxSecurityAddressType] = (
+        strawberry_django.field()
+    )
+
+
+@strawberry.type(name="Query")
+class NetBoxSecurityAddressSetQuery:
+    netbox_security_addresssetlist: NetBoxSecurityAddressSetType = strawberry_django.field()
+    netbox_security_addresssetlist_list: List[NetBoxSecurityAddressSetType] = (
+        strawberry_django.field()
+    )
+
+
+@strawberry.type(name="Query")
+class NetBoxSecurityAddressListQuery:
+    netbox_security_addresslistlist: NetBoxSecurityAddressListType = strawberry_django.field()
+    netbox_security_addresslistlist_list: List[NetBoxSecurityAddressListType] = (
         strawberry_django.field()
     )
 

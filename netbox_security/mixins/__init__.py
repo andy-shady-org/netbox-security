@@ -1,1 +1,1 @@
-from .FirewallFilterRule import *
+from .firewall_filter_rule import *

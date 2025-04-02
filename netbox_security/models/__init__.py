@@ -1,18 +1,11 @@
-from .NatPool import NatPool, NatPoolAssignment, NatPoolIndex
-from .NatPoolMember import NatPoolMember, NatPoolMemberIndex
-from .NatRule import NatRule, NatRuleAssignment, NatRuleIndex
-from .NatRuleSet import NatRuleSet, NatRuleSetAssignment, NatRuleSetIndex
-from .SecurityZone import SecurityZone, SecurityZoneAssignment, SecurityZoneIndex
-from .SecurityZonePolicy import SecurityZonePolicy, SecurityZonePolicyIndex
-from .Address import Address, AddressAssignment, AddressIndex
-from .FirewallFilter import (
-    FirewallFilter,
-    FirewallFilterAssignment,
-    FirewallFilterIndex,
-)
-from .FirewallFilterRule import (
-    FirewallFilterRule,
-    FirewallRuleFromSetting,
-    FirewallRuleThenSetting,
-    FirewallFilterRuleIndex,
-)
+from .nat_pool import *
+from .nat_pool_member import *
+from .nat_rule import *
+from .nat_rule_set import *
+from .security_zone import *
+from .security_zone_policy import *
+from .address_set import *
+from .address import *
+from .address_list import *
+from .firewall_filter import *
+from .firewall_filter_rule import *

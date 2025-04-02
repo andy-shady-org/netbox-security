@@ -9,6 +9,48 @@
     <div class="col-md-6">
         <div class="card">
             <h5 class="card-header">
+                {% trans "Security Zones" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_securityzone %}
+                        <a href="{% url 'plugins:netbox_security:securityzone_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Security Zone" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_securityzoneassignment %}
+                        <a href="{% url 'plugins:netbox_security:securityzoneassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Security Zone" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% render_table related_zone_table 'inc/table.html' %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Firewall Filters" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_firewallfilter %}
+                        <a href="{% url 'plugins:netbox_security:firewallfilter_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Firewall Filter" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_firewallfilterassignment %}
+                        <a href="{% url 'plugins:netbox_security:firewallfilterassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Firewall Filter" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% render_table related_firewall_filter_table 'inc/table.html' %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
                 {% trans "NAT Pools" %}
                 <div class="card-actions">
                     {% if perms.netbox_security.add_natpool %}
@@ -68,22 +110,25 @@
             {% render_table related_address_table 'inc/table.html' %}
         </div>
     </div>
-</div>
-<div class="card">
-    <h5 class="card-header">
-        {% trans "Security Zones" %}
-        <div class="card-actions">
-            {% if perms.netbox_security.add_securityzone %}
-                <a href="{% url 'plugins:netbox_security:securityzone_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
-                  <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Security Zone" %}
-                </a>
-            {% endif %}
-            {% if perms.netbox_security.add_securityzoneassignment %}
-                <a href="{% url 'plugins:netbox_security:securityzoneassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
-                  <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Security Zone" %}
-                </a>
-            {% endif %}
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Address Sets" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_addressset %}
+                        <a href="{% url 'plugins:netbox_security:addressset_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Address Set" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_addresssetassignment %}
+                        <a href="{% url 'plugins:netbox_security:addresssetassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Address Set" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% render_table related_addressset_table 'inc/table.html' %}
         </div>
-    </h5>
-    {% render_table related_zone_table 'inc/table.html' %}
+    </div>
 </div>
+

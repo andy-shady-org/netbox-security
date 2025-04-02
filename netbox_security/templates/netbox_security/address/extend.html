@@ -1,0 +1,19 @@
+{% load buttons %}
+{% load custom_links %}
+{% load helpers %}
+{% load i18n %}
+{% load plugins %}
+{% load render_table from django_tables2 %}
+<div class="card">
+    <h5 class="card-header">
+        {% trans "Address Lists" %}
+        <div class="card-actions">
+            {% if perms.netbox_security.add_addresslist %}
+                <a href="{% url 'plugins:netbox_security:addresslist_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                  <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Address List" %}
+                </a>
+            {% endif %}
+        </div>
+    </h5>
+    {% render_table related_address_table 'inc/table.html' %}
+</div>

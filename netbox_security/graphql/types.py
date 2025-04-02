@@ -9,6 +9,8 @@ from tenancy.graphql.types import TenantType
 
 from netbox_security.models import (
     Address,
+    AddressSet,
+    AddressList,
     SecurityZone,
     SecurityZonePolicy,
     NatPool,
@@ -19,6 +21,8 @@ from netbox_security.models import (
 
 from .filters import (
     NetBoxSecurityAddressFilter,
+    NetBoxSecurityAddressSetFilter,
+    NetBoxSecurityAddressListFilter,
     NetBoxSecuritySecurityZoneFilter,
     NetBoxSecuritySecurityZonePolicyFilter,
     NetBoxSecurityNatPoolFilter,
@@ -30,6 +34,22 @@ from .filters import (
 
 @strawberry_django.type(Address, fields="__all__", filters=NetBoxSecurityAddressFilter)
 class NetBoxSecurityAddressType(NetBoxObjectType):
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+    name: str
+    value: str
+
+
+@strawberry_django.type(AddressSet, fields="__all__", filters=NetBoxSecurityAddressSetFilter)
+class NetBoxSecurityAddressSetType(NetBoxObjectType):
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+    name: str
+    addresses: Annotated[
+        "NetBoxSecurityAddressType", strawberry.lazy("netbox_security.graphql.types")
+    ]
+
+
+@strawberry_django.type(AddressList, fields="__all__", filters=NetBoxSecurityAddressListFilter)
+class NetBoxSecurityAddressListType(NetBoxObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
     name: str
     value: str

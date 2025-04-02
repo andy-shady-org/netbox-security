@@ -18,6 +18,7 @@ class SecurityConfig(PluginConfig):
         "virtual_ext_page": "left",
         "device_ext_page": "left",
         "interface_ext_page": "right",
+        "address_ext_page": "right",
     }
 
 

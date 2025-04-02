@@ -3,6 +3,10 @@ from netbox.api.viewsets import NetBoxModelViewSet
 from django.db.models import Count
 
 from .serializers import (
+    AddressListSerializer,
+    AddressListAssignmentSerializer,
+    AddressSetSerializer,
+    AddressSetAssignmentSerializer,
     AddressSerializer,
     AddressAssignmentSerializer,
     SecurityZoneSerializer,
@@ -23,6 +27,10 @@ from .serializers import (
 )
 
 from netbox_security.models import (
+    AddressList,
+    AddressListAssignment,
+    AddressSet,
+    AddressSetAssignment,
     Address,
     AddressAssignment,
     SecurityZone,
@@ -43,6 +51,10 @@ from netbox_security.models import (
 )
 
 from netbox_security.filtersets import (
+    AddressListFilterSet,
+    AddressListAssignmentFilterSet,
+    AddressSetFilterSet,
+    AddressSetAssignmentFilterSet,
     AddressFilterSet,
     AddressAssignmentFilterSet,
     SecurityZoneFilterSet,
@@ -66,6 +78,30 @@ from netbox_security.filtersets import (
 class NetBoxSecurityRootView(APIRootView):
     def get_view_name(self):
         return "NetBoxSecurity"
+
+
+class AddressListViewSet(NetBoxModelViewSet):
+    queryset = AddressList.objects.all()
+    serializer_class = AddressListSerializer
+    filterset_class = AddressListFilterSet
+
+
+class AddressListAssignmentViewSet(NetBoxModelViewSet):
+    queryset = AddressListAssignment.objects.all()
+    serializer_class = AddressListAssignmentSerializer
+    filterset_class = AddressListAssignmentFilterSet
+
+
+class AddressSetViewSet(NetBoxModelViewSet):
+    queryset = AddressSet.objects.prefetch_related("tenant", "tags")
+    serializer_class = AddressSetSerializer
+    filterset_class = AddressSetFilterSet
+
+
+class AddressSetAssignmentViewSet(NetBoxModelViewSet):
+    queryset = AddressSetAssignment.objects.all()
+    serializer_class = AddressSetAssignmentSerializer
+    filterset_class = AddressSetAssignmentFilterSet
 
 
 class AddressViewSet(NetBoxModelViewSet):
