@@ -4,8 +4,26 @@ from netbox.plugins import PluginMenuButton, PluginMenuItem, PluginMenu
 
 plugin_settings = settings.PLUGINS_CONFIG.get("netbox_security", {})
 
-
-security_menu_items = (
+address_menu_items = (
+    PluginMenuItem(
+        link="plugins:netbox_security:addressset_list",
+        link_text=_("Address Sets"),
+        permissions=["netbox_security.view_addressset"],
+        buttons=(
+            PluginMenuButton(
+                "plugins:netbox_security:addressset_add",
+                _("Add"),
+                "mdi mdi-plus-thick",
+                permissions=["netbox_security.add_addressset"],
+            ),
+            PluginMenuButton(
+                "plugins:netbox_security:addressset_import",
+                _("Import"),
+                "mdi mdi-upload",
+                permissions=["netbox_security.add_addressset"],
+            ),
+        ),
+    ),
     PluginMenuItem(
         link="plugins:netbox_security:address_list",
         link_text=_("Addresses"),
@@ -25,6 +43,8 @@ security_menu_items = (
             ),
         ),
     ),
+)
+security_menu_items = (
     PluginMenuItem(
         link="plugins:netbox_security:securityzone_list",
         link_text=_("Security Zones"),
@@ -185,6 +205,7 @@ if plugin_settings.get("top_level_menu"):
     menu = PluginMenu(
         label=_("Security"),
         groups=(
+            (_("Address Book"), address_menu_items),
             (_("Security Zones"), security_menu_items),
             (_("NAT Pools"), pool_menu_items),
             (_("NAT Rules"), rule_menu_items),
@@ -194,5 +215,5 @@ if plugin_settings.get("top_level_menu"):
     )
 else:
     menu_items = (
-        security_menu_items + pool_menu_items + rule_menu_items + firewall_menu_items
+        address_menu_items + security_menu_items + pool_menu_items + rule_menu_items + firewall_menu_items
     )

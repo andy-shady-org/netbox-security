@@ -1,22 +1,11 @@
-from .serializers_.Address import AddressSerializer, AddressAssignmentSerializer
-from .serializers_.SecurityZone import (
-    SecurityZoneSerializer,
-    SecurityZoneAssignmentSerializer,
-)
-from .serializers_.SecurityZonePolicy import SecurityZonePolicySerializer
-from .serializers_.NatPool import NatPoolSerializer, NatPoolAssignmentSerializer
-from .serializers_.NatPoolMember import NatPoolMemberSerializer
-from .serializers_.NatRuleSet import (
-    NatRuleSetSerializer,
-    NatRuleSetAssignmentSerializer,
-)
-from .serializers_.NatRule import NatRuleSerializer, NatRuleAssignmentSerializer
-from .serializers_.FirewallFilter import (
-    FirewallFilterSerializer,
-    FirewallFilterAssignmentSerializer,
-)
-from .serializers_.FirewallFilterRule import (
-    FirewallFilterRuleSerializer,
-    FirewallRuleFromSettingSerializer,
-    FirewallRuleThenSettingSerializer,
-)
+from .serializers_.address import *
+from .serializers_.address_set import *
+from .serializers_.address_list import *
+from .serializers_.security_zone import *
+from .serializers_.security_zone_policy import *
+from .serializers_.nat_pool import *
+from .serializers_.nat_pool_member import *
+from .serializers_.nat_rule_set import *
+from .serializers_.nat_rule import *
+from .serializers_.firewall_filter import *
+from .serializers_.firewall_filter_rule import *

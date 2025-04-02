@@ -1,35 +1,12 @@
-from .NatPool import (
-    NatPoolTable,
-    NatPoolDeviceAssignmentTable,
-    NatPoolVirtualDeviceContextAssignmentTable,
-)
-from .NatPoolMember import NatPoolMemberTable
-from .NatRule import NatRuleTable, NatRuleAssignmentTable
-from .NatRuleSet import (
-    NatRuleSetTable,
-    NatRuleSetDeviceAssignmentTable,
-    NatRuleSetVirtualDeviceContextAssignmentTable,
-)
-from .SecurityZone import (
-    SecurityZoneTable,
-    SecurityZoneDeviceAssignmentTable,
-    SecurityZoneVirtualDeviceContextAssignmentTable,
-    SecurityZoneInterfaceAssignmentTable,
-)
-from .SecurityZonePolicy import SecurityZonePolicyTable
-from .Address import (
-    AddressTable,
-    AddressDeviceAssignmentTable,
-    AddressVirtualDeviceContextAssignmentTable,
-    AddressSecurityZoneAssignmentTable,
-)
-from .FirewallFilter import (
-    FirewallFilterTable,
-    FirewallFilterDeviceAssignmentTable,
-    FirewallFilterVirtualDeviceContextAssignmentTable,
-)
-from .FirewallFilterRule import (
-    FirewallFilterRuleTable,
-    FirewallRuleFromSettingTable,
-    FirewallRuleThenSettingTable,
-)
+from .nat_pool import *
+from .nat_pool_member import *
+from .nat_rule import *
+from .nat_rule_set import *
+from .security_zone import *
+from .security_zone_policy import *
+from .address_set import *
+from .address import *
+from .address_list import *
+from .firewall_filter import *
+from .firewall_filter_rule import *
+

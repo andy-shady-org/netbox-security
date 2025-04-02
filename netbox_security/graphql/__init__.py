@@ -1,5 +1,7 @@
 from .schema import (
     NetBoxSecurityAddressQuery,
+    NetBoxSecurityAddressSetQuery,
+    NetBoxSecurityAddressListQuery,
     NetBoxSecuritySecurityZoneQuery,
     NetBoxSecuritySecurityZonePolicyQuery,
     NetBoxSecurityNatPoolQuery,
@@ -10,6 +12,8 @@ from .schema import (
 
 schema = [
     NetBoxSecurityAddressQuery,
+    NetBoxSecurityAddressSetQuery,
+    NetBoxSecurityAddressListQuery,
     NetBoxSecuritySecurityZoneQuery,
     NetBoxSecuritySecurityZonePolicyQuery,
     NetBoxSecurityNatPoolQuery,

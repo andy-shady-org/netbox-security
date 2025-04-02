@@ -4,6 +4,11 @@ Constants for filters
 
 from django.db.models import Q
 
+ADDRESS_ASSIGNMENT_MODELS = Q(
+    Q(app_label="netbox_security", model="address"),
+    Q(app_label="netbox_security", model="addressset"),
+)
+
 RULESET_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device"),
     Q(app_label="dcim", model="virtualdevicecontext"),

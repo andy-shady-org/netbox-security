@@ -2,6 +2,10 @@ from netbox.api.routers import NetBoxRouter
 
 from .views import (
     NetBoxSecurityRootView,
+    AddressListViewSet,
+    AddressListAssignmentViewSet,
+    AddressSetViewSet,
+    AddressSetAssignmentViewSet,
     AddressViewSet,
     AddressAssignmentViewSet,
     SecurityZoneViewSet,
@@ -26,6 +30,8 @@ app_name = "netbox_security"
 router = NetBoxRouter()
 router.APIRootView = NetBoxSecurityRootView
 router.register("address", AddressViewSet)
+router.register("address-set", AddressSetViewSet)
+router.register("address-list", AddressListViewSet)
 router.register("security-zone", SecurityZoneViewSet)
 router.register("security-zone-policy", SecurityZonePolicyViewSet)
 router.register("nat-pool", NatPoolViewSet)
@@ -37,6 +43,8 @@ router.register("firewall-filter-rule", FirewallFilterRuleViewSet)
 router.register("firewall-filter-rule-from-setting", FirewallRuleFromSettingViewSet)
 router.register("firewall-filter-rule-then-setting", FirewallRuleThenSettingViewSet)
 router.register("address-assignments", AddressAssignmentViewSet)
+router.register("address-set-assignments", AddressSetAssignmentViewSet)
+router.register("address-list-assignments", AddressListAssignmentViewSet)
 router.register("security-zone-assignments", SecurityZoneAssignmentViewSet)
 router.register("nat-pool-assignments", NatPoolAssignmentViewSet)
 router.register("nat-rule-set-assignments", NatRuleSetAssignmentViewSet)

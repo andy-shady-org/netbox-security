@@ -1,13 +1,11 @@
-from .NatPool import NatPoolFilterSet, NatPoolAssignmentFilterSet
-from .NatPoolMember import NatPoolMemberFilterSet
-from .NatRule import NatRuleFilterSet, NatRuleAssignmentFilterSet
-from .NatRuleSet import NatRuleSetFilterSet, NatRuleSetAssignmentFilterSet
-from .SecurityZone import SecurityZoneFilterSet, SecurityZoneAssignmentFilterSet
-from .SecurityZonePolicy import SecurityZonePolicyFilterSet
-from .Address import AddressFilterSet, AddressAssignmentFilterSet
-from .FirewallFilter import FirewallFilterFilterSet, FirewallFilterAssignmentFilterSet
-from .FirewallFilterRule import (
-    FirewallFilterRuleFilterSet,
-    FirewallFilterRuleFromSettingFilterSet,
-    FirewallFilterRuleThenSettingFilterSet,
-)
+from .nat_pool import *
+from .nat_pool_member import *
+from .nat_rule import *
+from .nat_rule_set import *
+from .security_zone import *
+from .security_zone_policy import *
+from .address_set import *
+from .address import *
+from .address_list import *
+from .firewall_filter import *
+from .firewall_filter_rule import *
