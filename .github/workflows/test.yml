@@ -33,7 +33,7 @@ jobs:
 
         steps:
           - name: Checkout code
-            uses: actions/checkout@release-v4.1.11
+            uses: actions/checkout@main
             with:
                 path: netbox-security
 
