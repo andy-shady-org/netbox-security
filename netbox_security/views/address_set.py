@@ -37,9 +37,7 @@ class AddressSetView(generic.ObjectView):
     template_name = "netbox_security/addressset.html"
 
     def get_extra_context(self, request, instance):
-        address_table = AddressTable(
-            instance.addresses.all(), orderable=False
-        )
+        address_table = AddressTable(instance.addresses.all(), orderable=False)
         return {
             "address_table": address_table,
         }

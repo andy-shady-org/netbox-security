@@ -16,7 +16,7 @@ from utilities.forms.fields import (
     TagFilterField,
     CommentField,
     CSVModelMultipleChoiceField,
-    CSVModelChoiceField
+    CSVModelChoiceField,
 )
 
 from tenancy.models import Tenant
@@ -39,9 +39,7 @@ __all__ = (
 class AddressSetForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
     addresses = DynamicModelMultipleChoiceField(
-        required=True,
-        label=_("Addresses"),
-        queryset=Address.objects.all()
+        required=True, label=_("Addresses"), queryset=Address.objects.all()
     )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
@@ -72,9 +70,7 @@ class AddressSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
     addresses = DynamicModelMultipleChoiceField(
-        required=False,
-        label=_("Addresses"),
-        queryset=Address.objects.all()
+        required=False, label=_("Addresses"), queryset=Address.objects.all()
     )
     tags = TagFilterField(model)
 
@@ -122,8 +118,7 @@ class AddressSetBulkEditForm(NetBoxModelBulkEditForm):
 
 class AddressSetAssignmentForm(forms.ModelForm):
     address_set = DynamicModelChoiceField(
-        label=_("AddressSet"),
-        queryset=AddressSet.objects.all()
+        label=_("AddressSet"), queryset=AddressSet.objects.all()
     )
 
     fieldsets = (FieldSet(ObjectAttribute("assigned_object"), "address_set"),)

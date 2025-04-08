@@ -52,7 +52,9 @@ class AddressSetAssignment(NetBoxModel):
     assigned_object = GenericForeignKey(
         ct_field="assigned_object_type", fk_field="assigned_object_id"
     )
-    address_set = models.ForeignKey(to="netbox_security.AddressSet", on_delete=models.CASCADE)
+    address_set = models.ForeignKey(
+        to="netbox_security.AddressSet", on_delete=models.CASCADE
+    )
 
     clone_fields = ("assigned_object_type", "assigned_object_id")
 

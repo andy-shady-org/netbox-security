@@ -63,7 +63,9 @@ class AddressListFilterSet(NetBoxModelFilterSet):
         )
 
     def filter_addressset(self, queryset, name, value):
-        if not (addresses := AddressSet.objects.filter(**{f"{name}__in": value})).exists():
+        if not (
+            addresses := AddressSet.objects.filter(**{f"{name}__in": value})
+        ).exists():
             return queryset.none()
         return queryset.filter(
             assigned_object_type=ContentType.objects.get_for_model(AddressSet),
@@ -121,17 +123,25 @@ class AddressListAssignmentFilterSet(NetBoxModelFilterSet):
         )
 
     def filter_context(self, queryset, name, value):
-        if not (devices := VirtualDeviceContext.objects.filter(**{f"{name}__in": value})).exists():
+        if not (
+            devices := VirtualDeviceContext.objects.filter(**{f"{name}__in": value})
+        ).exists():
             return queryset.none()
         return queryset.filter(
-            assigned_object_type=ContentType.objects.get_for_model(VirtualDeviceContext),
+            assigned_object_type=ContentType.objects.get_for_model(
+                VirtualDeviceContext
+            ),
             assigned_object_id__in=devices.values_list("id", flat=True),
         )
 
     def filter_zone(self, queryset, name, value):
-        if not (zones := SecurityZone.objects.filter(**{f"{name}__in": value})).exists():
+        if not (
+            zones := SecurityZone.objects.filter(**{f"{name}__in": value})
+        ).exists():
             return queryset.none()
         return queryset.filter(
-            assigned_object_type=ContentType.objects.get_for_model(VirtualDeviceContext),
+            assigned_object_type=ContentType.objects.get_for_model(
+                VirtualDeviceContext
+            ),
             assigned_object_id__in=zones.values_list("id", flat=True),
         )

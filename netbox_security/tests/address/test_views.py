@@ -31,7 +31,8 @@ class AddressViewTestCase(
         tags = create_tags("Alpha", "Bravo", "Charlie")
 
         cls.form_data = {
-            "name": "address-4", "value": IPNetwork("1.1.1.4/32"),
+            "name": "address-4",
+            "value": IPNetwork("1.1.1.4/32"),
             "tags": [t.pk for t in tags],
         }
 

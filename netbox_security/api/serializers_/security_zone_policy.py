@@ -89,7 +89,11 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
             )
             error_message["source_zones"] = [error_message_mismatch_zones]
             error_message["destination_zones"] = [error_message_mismatch_zones]
-        if source_address and destination_address and set(source_address) & set(destination_address):
+        if (
+            source_address
+            and destination_address
+            and set(source_address) & set(destination_address)
+        ):
             error_message_mismatch_zones = (
                 "Cannot have the same source and destination addresses within a policy"
             )

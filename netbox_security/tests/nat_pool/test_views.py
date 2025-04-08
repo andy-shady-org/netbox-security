@@ -23,16 +23,30 @@ class NatPoolViewTestCase(
     @classmethod
     def setUpTestData(cls):
         cls.pools = (
-            NatPool(name="pool-1", pool_type=PoolTypeChoices.ADDRESS, status=IPAddressStatusChoices.STATUS_ACTIVE),
-            NatPool(name="pool-2", pool_type=PoolTypeChoices.ADDRESS, status=IPAddressStatusChoices.STATUS_ACTIVE),
-            NatPool(name="pool-3", pool_type=PoolTypeChoices.ADDRESS, status=IPAddressStatusChoices.STATUS_ACTIVE),
+            NatPool(
+                name="pool-1",
+                pool_type=PoolTypeChoices.ADDRESS,
+                status=IPAddressStatusChoices.STATUS_ACTIVE,
+            ),
+            NatPool(
+                name="pool-2",
+                pool_type=PoolTypeChoices.ADDRESS,
+                status=IPAddressStatusChoices.STATUS_ACTIVE,
+            ),
+            NatPool(
+                name="pool-3",
+                pool_type=PoolTypeChoices.ADDRESS,
+                status=IPAddressStatusChoices.STATUS_ACTIVE,
+            ),
         )
         NatPool.objects.bulk_create(cls.pools)
 
         tags = create_tags("Alpha", "Bravo", "Charlie")
 
         cls.form_data = {
-            "name": "pool-4", "pool_type": "address", "status": "active",
+            "name": "pool-4",
+            "pool_type": "address",
+            "status": "active",
             "tags": [t.pk for t in tags],
         }
 

@@ -47,7 +47,7 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
         size=20,
         verbose_name=_("Applications"),
         blank=True,
-        null=True
+        null=True,
     )
     actions = ArrayField(
         models.CharField(
@@ -84,4 +84,3 @@ class SecurityZonePolicyIndex(SearchIndex):
         ("name", 100),
         ("description", 500),
     )
-

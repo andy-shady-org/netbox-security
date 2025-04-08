@@ -38,7 +38,8 @@ class AddressSetViewTestCase(
         tags = create_tags("Alpha", "Bravo", "Charlie")
 
         cls.form_data = {
-            "name": "address-4", "addresses": [cls.addresses[0].pk, cls.addresses[1].pk],
+            "name": "address-4",
+            "addresses": [cls.addresses[0].pk, cls.addresses[1].pk],
             "tags": [t.pk for t in tags],
         }
 

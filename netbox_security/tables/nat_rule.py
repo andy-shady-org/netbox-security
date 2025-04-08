@@ -27,12 +27,24 @@ class NatRuleTable(NetBoxTable):
     source_type = ChoiceFieldColumn()
     destination_type = ChoiceFieldColumn()
     custom_interface = ChoiceFieldColumn()
-    source_addresses = ManyToManyColumn(orderable=False, linkify=True, verbose_name=_("Source Addresses"))
-    destination_addresses = ManyToManyColumn(orderable=False, linkify=True, verbose_name=_("Destination Addresses"))
-    source_prefixes = ManyToManyColumn(orderable=False, linkify=True, verbose_name=_("Source Prefixes"))
-    destination_prefixes = ManyToManyColumn(orderable=False, linkify=True, verbose_name=_("Destination Prefixes"))
-    source_ranges = ManyToManyColumn(orderable=False, linkify=True, verbose_name=_("Source Ranges"))
-    destination_ranges = ManyToManyColumn(orderable=False, linkify=True, verbose_name=_("Destination Ranges"))
+    source_addresses = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Source Addresses")
+    )
+    destination_addresses = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Destination Addresses")
+    )
+    source_prefixes = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Source Prefixes")
+    )
+    destination_prefixes = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Destination Prefixes")
+    )
+    source_ranges = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Source Ranges")
+    )
+    destination_ranges = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Destination Ranges")
+    )
     source_ports = tables.Column(
         accessor=tables.A("source_port_list"),
         order_by=tables.A("source_ports"),

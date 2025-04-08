@@ -23,16 +23,30 @@ class NatRuleSetViewTestCase(
     @classmethod
     def setUpTestData(cls):
         cls.rules = (
-            NatRuleSet(name="set-4", nat_type=NatTypeChoices.TYPE_STATIC, direction=RuleDirectionChoices.DIRECTION_INBOUND),
-            NatRuleSet(name="set-5", nat_type=NatTypeChoices.TYPE_STATIC, direction=RuleDirectionChoices.DIRECTION_INBOUND),
-            NatRuleSet(name="set-6", nat_type=NatTypeChoices.TYPE_STATIC, direction=RuleDirectionChoices.DIRECTION_INBOUND),
+            NatRuleSet(
+                name="set-4",
+                nat_type=NatTypeChoices.TYPE_STATIC,
+                direction=RuleDirectionChoices.DIRECTION_INBOUND,
+            ),
+            NatRuleSet(
+                name="set-5",
+                nat_type=NatTypeChoices.TYPE_STATIC,
+                direction=RuleDirectionChoices.DIRECTION_INBOUND,
+            ),
+            NatRuleSet(
+                name="set-6",
+                nat_type=NatTypeChoices.TYPE_STATIC,
+                direction=RuleDirectionChoices.DIRECTION_INBOUND,
+            ),
         )
         NatRuleSet.objects.bulk_create(cls.rules)
 
         tags = create_tags("Alpha", "Bravo", "Charlie")
 
         cls.form_data = {
-            "name": "set-4", "nat_type": "static", "direction": "inbound",
+            "name": "set-4",
+            "nat_type": "static",
+            "direction": "inbound",
             "tags": [t.pk for t in tags],
         }
 

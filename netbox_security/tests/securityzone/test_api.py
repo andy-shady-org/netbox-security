@@ -1,7 +1,12 @@
 from utilities.testing import APIViewTestCases
 from netbox_security.tests.custom import APITestCase, NetBoxSecurityGraphQLMixin
 from django.contrib.contenttypes.models import ContentType
-from netbox_security.models import SecurityZone, SecurityZonePolicy, Address, AddressList
+from netbox_security.models import (
+    SecurityZone,
+    SecurityZonePolicy,
+    Address,
+    AddressList,
+)
 
 
 class SecurityZoneAPITestCase(
@@ -50,8 +55,20 @@ class SecurityZonePolicyAPITestCase(
 ):
     model = SecurityZonePolicy
 
-    brief_fields = ["actions", "application", "description", "destination_address", "destination_zone",
-                    "display", "id", "index", "name", "source_address", "source_zone", "url",]
+    brief_fields = [
+        "actions",
+        "application",
+        "description",
+        "destination_address",
+        "destination_zone",
+        "display",
+        "id",
+        "index",
+        "name",
+        "source_address",
+        "source_zone",
+        "url",
+    ]
 
     bulk_update_data = {
         "description": "Test Security Zone Policy",
@@ -66,16 +83,22 @@ class SecurityZonePolicyAPITestCase(
         SecurityZone.objects.bulk_create(cls.zones)
 
         cls.policies = (
-            SecurityZonePolicy(name="policy-5", index=5,
-                               source_zone=cls.zones[0],
-                               destination_zone=cls.zones[1],
-                               actions=["permit", "count", "log"],
-                               application=['test-1', 'test-2']),
-            SecurityZonePolicy(name="policy-6", index=6,
-                               source_zone=cls.zones[0],
-                               destination_zone=cls.zones[1],
-                               actions=["permit", "count", "log"],
-                               application=['test-1', 'test-2']),
+            SecurityZonePolicy(
+                name="policy-5",
+                index=5,
+                source_zone=cls.zones[0],
+                destination_zone=cls.zones[1],
+                actions=["permit", "count", "log"],
+                application=["test-1", "test-2"],
+            ),
+            SecurityZonePolicy(
+                name="policy-6",
+                index=6,
+                source_zone=cls.zones[0],
+                destination_zone=cls.zones[1],
+                actions=["permit", "count", "log"],
+                application=["test-1", "test-2"],
+            ),
         )
         SecurityZonePolicy.objects.bulk_create(cls.policies)
 
@@ -87,27 +110,71 @@ class SecurityZonePolicyAPITestCase(
         Address.objects.bulk_create(cls.addresses)
 
         cls.addresses_lists = (
-            AddressList(name="address-list-1", assigned_object_id=cls.addresses[0].pk, assigned_object_type=ContentType.objects.get(app_label='netbox_security', model='address')),
-            AddressList(name="address-list-2", assigned_object_id=cls.addresses[1].pk, assigned_object_type=ContentType.objects.get(app_label='netbox_security', model='address')),
-            AddressList(name="address-list-3", assigned_object_id=cls.addresses[2].pk, assigned_object_type=ContentType.objects.get(app_label='netbox_security', model='address')),
+            AddressList(
+                name="address-list-1",
+                assigned_object_id=cls.addresses[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="address"
+                ),
+            ),
+            AddressList(
+                name="address-list-2",
+                assigned_object_id=cls.addresses[1].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="address"
+                ),
+            ),
+            AddressList(
+                name="address-list-3",
+                assigned_object_id=cls.addresses[2].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="address"
+                ),
+            ),
         )
         cls.destination_addresses = (cls.addresses_lists[1], cls.addresses_lists[2])
         AddressList.objects.bulk_create(cls.addresses_lists)
 
-        cls.policy = SecurityZonePolicy.objects.create(name="policy-8", index=8,
-                                                       source_zone=cls.zones[0],
-                                                       destination_zone=cls.zones[1],
-                                                       actions=["permit", "count", "log"],
-                                                       application=['test-1', 'test-2'])
+        cls.policy = SecurityZonePolicy.objects.create(
+            name="policy-8",
+            index=8,
+            source_zone=cls.zones[0],
+            destination_zone=cls.zones[1],
+            actions=["permit", "count", "log"],
+            application=["test-1", "test-2"],
+        )
         cls.policy.source_address.add(cls.addresses_lists[0])
         cls.policy.destination_address.add(cls.addresses_lists[1])
         cls.policy.destination_address.set(cls.destination_addresses)
 
         cls.create_data = [
-            {"name": "policy-1", "index": 1, "actions": ["permit", "count", "log"], "application": ["test-1", "test-2"], "source_zone": cls.zones[0].pk, "destination_zone": cls.zones[1].pk},
-            {"name": "policy-2", "index": 2, "actions": ["permit", "count", "log"], "application": ["test-1", "test-2"], "source_zone": cls.zones[0].pk, "destination_zone": cls.zones[1].pk},
-            {"name": "policy-3", "index": 3, "actions": ["permit", "count", "log"], "application": ["test-1", "test-2"], "source_zone": cls.zones[0].pk, "destination_zone": cls.zones[1].pk},
+            {
+                "name": "policy-1",
+                "index": 1,
+                "actions": ["permit", "count", "log"],
+                "application": ["test-1", "test-2"],
+                "source_zone": cls.zones[0].pk,
+                "destination_zone": cls.zones[1].pk,
+            },
+            {
+                "name": "policy-2",
+                "index": 2,
+                "actions": ["permit", "count", "log"],
+                "application": ["test-1", "test-2"],
+                "source_zone": cls.zones[0].pk,
+                "destination_zone": cls.zones[1].pk,
+            },
+            {
+                "name": "policy-3",
+                "index": 3,
+                "actions": ["permit", "count", "log"],
+                "application": ["test-1", "test-2"],
+                "source_zone": cls.zones[0].pk,
+                "destination_zone": cls.zones[1].pk,
+            },
         ]
 
     def test_policy(self):
-        self.assertEqual(set(self.policy.destination_address.all()), set(self.destination_addresses))
+        self.assertEqual(
+            set(self.policy.destination_address.all()), set(self.destination_addresses)
+        )

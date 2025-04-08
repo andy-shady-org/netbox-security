@@ -4,7 +4,10 @@ from tenancy.models import Tenant, TenantGroup
 from utilities.testing import ChangeLoggedFilterSetTests
 
 from netbox_security.models import SecurityZone, SecurityZonePolicy
-from netbox_security.filtersets import SecurityZoneFilterSet, SecurityZonePolicyFilterSet
+from netbox_security.filtersets import (
+    SecurityZoneFilterSet,
+    SecurityZonePolicyFilterSet,
+)
 
 
 class SecurityZoneFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
@@ -79,21 +82,30 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
             zone.save()
 
         cls.policies = (
-            SecurityZonePolicy(name="policy-1", index=5,
-                               source_zone=cls.zones[0],
-                               destination_zone=cls.zones[1],
-                               actions=["permit", "count", "log"],
-                               application=['test-1', 'test-2']),
-            SecurityZonePolicy(name="policy-2", index=6,
-                               source_zone=cls.zones[0],
-                               destination_zone=cls.zones[1],
-                               actions=["permit", "count", "log"],
-                               application=['test-1', 'test-2']),
-            SecurityZonePolicy(name="policy-3", index=6,
-                               source_zone=cls.zones[0],
-                               destination_zone=cls.zones[1],
-                               actions=["permit", "count", "log"],
-                               application=['test-1', 'test-2']),
+            SecurityZonePolicy(
+                name="policy-1",
+                index=5,
+                source_zone=cls.zones[0],
+                destination_zone=cls.zones[1],
+                actions=["permit", "count", "log"],
+                application=["test-1", "test-2"],
+            ),
+            SecurityZonePolicy(
+                name="policy-2",
+                index=6,
+                source_zone=cls.zones[0],
+                destination_zone=cls.zones[1],
+                actions=["permit", "count", "log"],
+                application=["test-1", "test-2"],
+            ),
+            SecurityZonePolicy(
+                name="policy-3",
+                index=6,
+                source_zone=cls.zones[0],
+                destination_zone=cls.zones[1],
+                actions=["permit", "count", "log"],
+                application=["test-1", "test-2"],
+            ),
         )
         for policy in cls.policies:
             policy.save()

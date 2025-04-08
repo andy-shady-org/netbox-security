@@ -215,5 +215,9 @@ if plugin_settings.get("top_level_menu"):
     )
 else:
     menu_items = (
-        address_menu_items + security_menu_items + pool_menu_items + rule_menu_items + firewall_menu_items
+        address_menu_items
+        + security_menu_items
+        + pool_menu_items
+        + rule_menu_items
+        + firewall_menu_items
     )
