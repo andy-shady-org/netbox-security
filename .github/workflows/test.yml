@@ -33,7 +33,7 @@ jobs:
 
         steps:
           - name: Checkout code
-            uses: actions/checkout@main
+            uses: actions/checkout@release-v4.1.11
             with:
                 path: netbox-security
 
@@ -43,7 +43,7 @@ jobs:
                 python-version: ${{ matrix.python-version }}
 
           - name: Checkout NetBox
-            uses: actions/checkout@v4.1.11
+            uses: actions/checkout@main
             with:
                 repository: "netbox-community/netbox"
                 path: netbox

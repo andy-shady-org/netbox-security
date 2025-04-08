@@ -34,6 +34,7 @@ __all__ = (
 )
 
 
+@register_model_view(NatRuleSet)
 class NatRuleSetView(generic.ObjectView):
     queryset = NatRuleSet.objects.all()
     template_name = "netbox_security/natruleset.html"
@@ -51,6 +52,7 @@ class NatRuleSetView(generic.ObjectView):
         }
 
 
+@register_model_view(NatRuleSet, "list", path="", detail=False)
 class NatRuleSetListView(generic.ObjectListView):
     queryset = NatRuleSet.objects.annotate(rule_count=Count("natrule_rules"))
     filterset = NatRuleSetFilterSet
@@ -58,16 +60,20 @@ class NatRuleSetListView(generic.ObjectListView):
     table = NatRuleSetTable
 
 
+@register_model_view(NatRuleSet, "add", detail=False)
+@register_model_view(NatRuleSet, "edit")
 class NatRuleSetEditView(generic.ObjectEditView):
     queryset = NatRuleSet.objects.all()
     form = NatRuleSetForm
 
 
+@register_model_view(NatRuleSet, "bulk_delete", path="delete", detail=False)
 class NatRuleSetBulkDeleteView(generic.BulkDeleteView):
     queryset = NatRuleSet.objects.all()
     table = NatRuleSetTable
 
 
+@register_model_view(NatRuleSet, "bulk_edit", path="edit", detail=False)
 class NatRuleSetBulkEditView(generic.BulkEditView):
     queryset = NatRuleSet.objects.all()
     filterset = NatRuleSetFilterSet
@@ -75,11 +81,13 @@ class NatRuleSetBulkEditView(generic.BulkEditView):
     form = NatRuleSetBulkEditForm
 
 
+@register_model_view(NatRuleSet, "bulk_import", detail=False)
 class NatRuleSetBulkImportView(generic.BulkImportView):
     queryset = NatRuleSet.objects.all()
     model_form = NatRuleSetImportForm
 
 
+@register_model_view(NatRuleSet, "delete")
 class NatRuleSetDeleteView(generic.ObjectDeleteView):
     queryset = NatRuleSet.objects.all()
     default_return_url = "plugins:netbox_security:natruleset_list"

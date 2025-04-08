@@ -32,11 +32,13 @@ __all__ = (
 )
 
 
+@register_model_view(Address)
 class AddressView(generic.ObjectView):
     queryset = Address.objects.all()
     template_name = "netbox_security/address.html"
 
 
+@register_model_view(Address, "list", path="", detail=False)
 class AddressListView(generic.ObjectListView):
     queryset = Address.objects.all()
     filterset = AddressFilterSet
@@ -44,16 +46,20 @@ class AddressListView(generic.ObjectListView):
     table = AddressTable
 
 
+@register_model_view(Address, "add", detail=False)
+@register_model_view(Address, "edit")
 class AddressEditView(generic.ObjectEditView):
     queryset = Address.objects.all()
     form = AddressForm
 
 
+@register_model_view(Address, "delete")
 class AddressDeleteView(generic.ObjectDeleteView):
     queryset = Address.objects.all()
     default_return_url = "plugins:netbox_security:address_list"
 
 
+@register_model_view(Address, "bulk_edit", path="edit", detail=False)
 class AddressBulkEditView(generic.BulkEditView):
     queryset = Address.objects.all()
     filterset = AddressFilterSet
@@ -61,12 +67,14 @@ class AddressBulkEditView(generic.BulkEditView):
     form = AddressBulkEditForm
 
 
+@register_model_view(Address, "bulk_delete", path="delete", detail=False)
 class AddressBulkDeleteView(generic.BulkDeleteView):
     queryset = Address.objects.all()
     table = AddressTable
     default_return_url = "plugins:netbox_security:address_list"
 
 
+@register_model_view(Address, "bulk_import", detail=False)
 class AddressBulkImportView(generic.BulkImportView):
     queryset = Address.objects.all()
     model_form = AddressImportForm

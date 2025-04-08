@@ -28,6 +28,7 @@ __all__ = (
 )
 
 
+@register_model_view(SecurityZonePolicy)
 class SecurityZonePolicyView(generic.ObjectView):
     queryset = SecurityZonePolicy.objects.all()
     template_name = "netbox_security/securityzonepolicy.html"
@@ -45,6 +46,7 @@ class SecurityZonePolicyView(generic.ObjectView):
         }
 
 
+@register_model_view(SecurityZonePolicy, "list", path="", detail=False)
 class SecurityZonePolicyListView(generic.ObjectListView):
     queryset = SecurityZonePolicy.objects.all()
     filterset = SecurityZonePolicyFilterSet
@@ -52,16 +54,20 @@ class SecurityZonePolicyListView(generic.ObjectListView):
     table = SecurityZonePolicyTable
 
 
+@register_model_view(SecurityZonePolicy, "add", detail=False)
+@register_model_view(SecurityZonePolicy, "edit")
 class SecurityZonePolicyEditView(generic.ObjectEditView):
     queryset = SecurityZonePolicy.objects.all()
     form = SecurityZonePolicyForm
 
 
+@register_model_view(SecurityZonePolicy, "delete")
 class SecurityZonePolicyDeleteView(generic.ObjectDeleteView):
     queryset = SecurityZonePolicy.objects.all()
     default_return_url = "plugins:netbox_security:securityzonepolicy_list"
 
 
+@register_model_view(SecurityZonePolicy, "bulk_edit", path="edit", detail=False)
 class SecurityZonePolicyBulkEditView(generic.BulkEditView):
     queryset = SecurityZonePolicy.objects.all()
     filterset = SecurityZonePolicyFilterSet
@@ -69,12 +75,14 @@ class SecurityZonePolicyBulkEditView(generic.BulkEditView):
     form = SecurityZonePolicyBulkEditForm
 
 
+@register_model_view(SecurityZonePolicy, "bulk_delete", path="delete", detail=False)
 class SecurityZonePolicyBulkDeleteView(generic.BulkDeleteView):
     queryset = SecurityZonePolicy.objects.all()
     table = SecurityZonePolicyTable
     default_return_url = "plugins:netbox_security:securityzonepolicy_list"
 
 
+@register_model_view(SecurityZonePolicy, "bulk_import", detail=False)
 class SecurityZonePolicyBulkImportView(generic.BulkImportView):
     queryset = SecurityZonePolicy.objects.all()
     model_form = SecurityZonePolicyImportForm
