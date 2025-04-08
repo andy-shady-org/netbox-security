@@ -43,7 +43,7 @@ jobs:
                 python-version: ${{ matrix.python-version }}
 
           - name: Checkout NetBox
-            uses: actions/checkout@main
+            uses: actions/checkout@v4.1.11
             with:
                 repository: "netbox-community/netbox"
                 path: netbox
