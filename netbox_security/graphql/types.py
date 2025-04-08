@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, List
 
 import strawberry
 import strawberry_django
@@ -17,6 +17,7 @@ from netbox_security.models import (
     NatPoolMember,
     NatRuleSet,
     NatRule,
+    FirewallFilter,
 )
 
 from .filters import (
@@ -29,28 +30,29 @@ from .filters import (
     NetBoxSecurityNatPoolMemberFilter,
     NetBoxSecurityNatRuleSetFilter,
     NetBoxSecurityNatRuleFilter,
+    NetBoxSecurityFirewallFilterFilter,
 )
 
 
 @strawberry_django.type(Address, fields="__all__", filters=NetBoxSecurityAddressFilter)
 class NetBoxSecurityAddressType(NetBoxObjectType):
-    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
     value: str
 
 
 @strawberry_django.type(AddressSet, fields="__all__", filters=NetBoxSecurityAddressSetFilter)
 class NetBoxSecurityAddressSetType(NetBoxObjectType):
-    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
-    addresses: Annotated[
+    addresses:  List[Annotated[
         "NetBoxSecurityAddressType", strawberry.lazy("netbox_security.graphql.types")
-    ]
+    ]]
 
 
 @strawberry_django.type(AddressList, fields="__all__", filters=NetBoxSecurityAddressListFilter)
 class NetBoxSecurityAddressListType(NetBoxObjectType):
-    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
     value: str
 
@@ -60,7 +62,7 @@ class NetBoxSecurityAddressListType(NetBoxObjectType):
 )
 class NetBoxSecuritySecurityZoneType(NetBoxObjectType):
     name: str
-    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
 
 @strawberry_django.type(
@@ -68,27 +70,24 @@ class NetBoxSecuritySecurityZoneType(NetBoxObjectType):
 )
 class NetBoxSecuritySecurityZonePolicyType(NetBoxObjectType):
     name: str
-    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
     source_zone: Annotated[
-        "NetBoxSecuritySecurityZoneType",
-        strawberry.lazy("netbox_security.graphql.types"),
-    ]
+        "NetBoxSecuritySecurityZoneType", strawberry.lazy("netbox_security.graphql.types")
+    ] | None
     destination_zone: Annotated[
-        "NetBoxSecuritySecurityZoneType",
-        strawberry.lazy("netbox_security.graphql.types"),
-    ]
-    source_address: Annotated[
+        "NetBoxSecuritySecurityZoneType", strawberry.lazy("netbox_security.graphql.types")
+    ] | None
+    source_address: List[Annotated[
         "NetBoxSecurityAddressType", strawberry.lazy("netbox_security.graphql.types")
-    ]
-    destination_address: Annotated[
+    ]] | None
+    destination_address: List[Annotated[
         "NetBoxSecurityAddressType", strawberry.lazy("netbox_security.graphql.types")
-    ]
+    ]] | None
 
 
 @strawberry_django.type(NatPool, fields="__all__", filters=NetBoxSecurityNatPoolFilter)
 class NetBoxSecurityNatPoolType(NetBoxObjectType):
     name: str
-    pool_type: int
+    pool_type: str
     status: str
 
 
@@ -109,16 +108,16 @@ class NetBoxSecurityNatPoolMemberType(NetBoxObjectType):
     NatRuleSet, fields="__all__", filters=NetBoxSecurityNatRuleSetFilter
 )
 class NetBoxSecurityNatRuleSetType(NetBoxObjectType):
-    source_zones: Annotated[
+    source_zones:  List[Annotated[
         "NetBoxSecuritySecurityZoneType",
         strawberry.lazy("netbox_security.graphql.types"),
-    ]
-    destination_zones: Annotated[
+    ]]
+    destination_zones:  List[Annotated[
         "NetBoxSecuritySecurityZoneType",
         strawberry.lazy("netbox_security.graphql.types"),
-    ]
+    ]]
     name: str
-    nat_type: int
+    nat_type: str
     direction: str
 
 
@@ -134,10 +133,10 @@ class NetBoxSecurityNatRuleType(NetBoxObjectType):
     destination_addresses: Annotated[
         "IPAddressType", strawberry.lazy("ipam.graphql.types")
     ]
-    source_prefixes: Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")]
-    destination_prefixes: Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")]
-    source_ranges: Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")]
-    destination_ranges: Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")]
+    source_prefixes:  List[Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")]]
+    destination_prefixes:  List[Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")]]
+    source_ranges:  List[Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")]]
+    destination_ranges:  List[Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")]]
     source_pool: Annotated[
         "NetBoxSecurityNatPoolType", strawberry.lazy("netbox_security.graphql.types")
     ]
@@ -147,3 +146,10 @@ class NetBoxSecurityNatRuleType(NetBoxObjectType):
     status: str
     source_type: int
     destination_type: int
+
+
+@strawberry_django.type(FirewallFilter, fields="__all__", filters=NetBoxSecurityFirewallFilterFilter)
+class NetBoxSecurityFirewallFilterType(NetBoxObjectType):
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+    name: str
+    family: str

@@ -25,23 +25,25 @@ from netbox_security.choices import AddressTypeChoices, RuleStatusChoices
 class NatRuleFilterSet(NetBoxModelFilterSet):
     rule_set_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatRuleSet.objects.all(),
-        field_name="rule_set__id",
+        field_name="rule_set",
         to_field_name="id",
         label=_("Rule Set (ID)"),
     )
     rule_set = django_filters.ModelMultipleChoiceFilter(
         queryset=NatRuleSet.objects.all(),
-        field_name="rule_set__name",
+        field_name="rule_set",
         to_field_name="name",
         label=_("Rule Set (ID)"),
     )
     pool_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
+        field_name="pool",
+        to_field_name="id",
         label=_("NAT Pool (ID)"),
     )
     pool = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
-        field_name="pool__name",
+        field_name="pool",
         to_field_name="name",
         label=_("NAT Pool (Name)"),
     )

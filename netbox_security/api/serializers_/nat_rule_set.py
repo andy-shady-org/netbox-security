@@ -71,12 +71,13 @@ class NatRuleSetSerializer(NetBoxModelSerializer):
         error_message = {}
         source_zones = data.get("source_zones")
         destination_zones = data.get("destination_zones")
-        if set(source_zones) & set(destination_zones):
-            error_message_mismatch_zones = (
-                "Cannot have the same source and destination zones within a rule"
-            )
-            error_message["source_zones"] = [error_message_mismatch_zones]
-            error_message["destination_zones"] = [error_message_mismatch_zones]
+        if source_zones and destination_zones:
+            if set(source_zones) & set(destination_zones):
+                error_message_mismatch_zones = (
+                    "Cannot have the same source and destination zones within a rule"
+                )
+                error_message["source_zones"] = [error_message_mismatch_zones]
+                error_message["destination_zones"] = [error_message_mismatch_zones]
         if error_message:
             raise ValidationError(error_message)
         super().validate(data)

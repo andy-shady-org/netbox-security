@@ -29,7 +29,7 @@ class SecurityZone(ContactsMixin, PrimaryModel):
 
     class Meta:
         verbose_name_plural = "Security Zones"
-        ordering = ["name"]
+        ordering = ["name",]
 
     def __str__(self):
         return self.name

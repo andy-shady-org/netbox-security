@@ -32,21 +32,29 @@ class NatRuleSet(ContactsMixin, PrimaryModel):
 
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=200, blank=True)
-    nat_type = models.CharField(max_length=30, choices=NatTypeChoices)
+    nat_type = models.CharField(
+        max_length=30,
+        choices=NatTypeChoices,
+        default=NatTypeChoices.TYPE_STATIC
+    )
     source_zones = models.ManyToManyField(
-        to="netbox_security.SecurityZone", blank=True, related_name="rule_source_zones"
+        to="netbox_security.SecurityZone",
+        blank=True,
+        related_name="%(class)s_source_zones"
     )
     destination_zones = models.ManyToManyField(
         to="netbox_security.SecurityZone",
         blank=True,
-        related_name="rule_destination_zones",
+        related_name="%(class)s_destination_zones",
     )
     direction = models.CharField(
         max_length=30,
         choices=RuleDirectionChoices,
         default=RuleDirectionChoices.DIRECTION_INBOUND,
     )
-    prerequisite_models = ("dcim.Device",)
+    prerequisite_models = (
+        "dcim.Device",
+    )
 
     class Meta:
         verbose_name_plural = "NAT Rule Sets"

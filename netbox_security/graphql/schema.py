@@ -13,29 +13,30 @@ from .types import (
     NetBoxSecurityNatPoolMemberType,
     NetBoxSecurityNatRuleSetType,
     NetBoxSecurityNatRuleType,
+    NetBoxSecurityFirewallFilterType,
 )
 
 
 @strawberry.type(name="Query")
 class NetBoxSecurityAddressQuery:
-    netbox_security_addresslist: NetBoxSecurityAddressType = strawberry_django.field()
-    netbox_security_addresslist_list: List[NetBoxSecurityAddressType] = (
+    netbox_security_address: NetBoxSecurityAddressType = strawberry_django.field()
+    netbox_security_address_list: List[NetBoxSecurityAddressType] = (
         strawberry_django.field()
     )
 
 
 @strawberry.type(name="Query")
 class NetBoxSecurityAddressSetQuery:
-    netbox_security_addresssetlist: NetBoxSecurityAddressSetType = strawberry_django.field()
-    netbox_security_addresssetlist_list: List[NetBoxSecurityAddressSetType] = (
+    netbox_security_addressset: NetBoxSecurityAddressSetType = strawberry_django.field()
+    netbox_security_addressset_list: List[NetBoxSecurityAddressSetType] = (
         strawberry_django.field()
     )
 
 
 @strawberry.type(name="Query")
 class NetBoxSecurityAddressListQuery:
-    netbox_security_addresslistlist: NetBoxSecurityAddressListType = strawberry_django.field()
-    netbox_security_addresslistlist_list: List[NetBoxSecurityAddressListType] = (
+    netbox_security_addresslist: NetBoxSecurityAddressListType = strawberry_django.field()
+    netbox_security_addresslist_list: List[NetBoxSecurityAddressListType] = (
         strawberry_django.field()
     )
 
@@ -79,16 +80,24 @@ class NetBoxSecurityNatPoolMemberQuery:
 
 
 @strawberry.type(name="Query")
-class NetBoxSecurityNatRuleSetQuery:
-    netbox_security_natrule: NetBoxSecurityNatRuleSetType = strawberry_django.field()
-    netbox_security_natrule_list: List[NetBoxSecurityNatRuleSetType] = (
+class NetBoxSecurityNatRuleQuery:
+    netbox_security_natrule: NetBoxSecurityNatRuleType = strawberry_django.field()
+    netbox_security_natrule_list: List[NetBoxSecurityNatRuleType] = (
         strawberry_django.field()
     )
 
 
 @strawberry.type(name="Query")
-class NetBoxSecurityNatRuleQuery:
-    netbox_security_natruleset: NetBoxSecurityNatRuleType = strawberry_django.field()
-    netbox_security_natruleset_list: List[NetBoxSecurityNatRuleType] = (
+class NetBoxSecurityNatRuleSetQuery:
+    netbox_security_natruleset: NetBoxSecurityNatRuleSetType = strawberry_django.field()
+    netbox_security_natruleset_list: List[NetBoxSecurityNatRuleSetType] = (
+        strawberry_django.field()
+    )
+
+
+@strawberry.type(name="Query")
+class NetBoxSecurityFirewallFilterQuery:
+    netbox_security_firewallfilter: NetBoxSecurityFirewallFilterType = strawberry_django.field()
+    netbox_security_firewallfilter_list: List[NetBoxSecurityFirewallFilterType] = (
         strawberry_django.field()
     )

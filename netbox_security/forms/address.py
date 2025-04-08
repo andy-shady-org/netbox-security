@@ -15,8 +15,10 @@ from utilities.forms.fields import (
     DynamicModelChoiceField,
     TagFilterField,
     CommentField,
+    CSVModelChoiceField,
 )
 
+from tenancy.models import Tenant
 
 from netbox_security.models import (
     Address,
@@ -71,6 +73,12 @@ class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
 
 
 class AddressImportForm(NetBoxModelImportForm):
+    tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        to_field_name="name",
+        label=_("Tenant"),
+    )
 
     class Meta:
         model = Address
@@ -87,6 +95,11 @@ class AddressBulkEditForm(NetBoxModelBulkEditForm):
     model = Address
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
+    tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("Tenant"),
+    )
     nullable_fields = []
     fieldsets = (
         FieldSet("name", "value", "description"),

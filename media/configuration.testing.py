@@ -8,7 +8,7 @@ ALLOWED_HOSTS = ["*"]
 DATABASE = {
     "NAME": "netbox",
     "USER": "netbox",
-    "PASSWORD": "netbox",
+    "PASSWORD": "technolabs.123",
     "HOST": "localhost",
     "PORT": "",
     "CONN_MAX_AGE": 300,

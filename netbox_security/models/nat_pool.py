@@ -28,7 +28,9 @@ class NatPool(ContactsMixin, PrimaryModel):
 
     name = models.CharField(max_length=100)
     pool_type = models.CharField(
-        max_length=30, choices=PoolTypeChoices, default=PoolTypeChoices.ADDRESS
+        max_length=30,
+        choices=PoolTypeChoices,
+        default=PoolTypeChoices.ADDRESS
     )
     status = models.CharField(
         max_length=50,

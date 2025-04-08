@@ -16,13 +16,13 @@ from netbox_security.models import (
 class NatPoolMemberFilterSet(NetBoxModelFilterSet):
     pool_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
-        field_name="pool__id",
+        field_name="pool",
         to_field_name="id",
         label=_("NAT Pool (ID)"),
     )
     pool = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
-        field_name="pool__name",
+        field_name="pool",
         to_field_name="name",
         label=_("NAT Pool (Name)"),
     )
@@ -31,37 +31,37 @@ class NatPoolMemberFilterSet(NetBoxModelFilterSet):
         required=False,
     )
     address = django_filters.ModelMultipleChoiceFilter(
-        field_name="address__address",
+        field_name="address",
         queryset=IPAddress.objects.all(),
         to_field_name="address",
         label=_("Address"),
     )
     address_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="address__id",
+        field_name="address",
         queryset=IPAddress.objects.all(),
         to_field_name="id",
         label=_("Address (ID)"),
     )
     prefix = django_filters.ModelMultipleChoiceFilter(
-        field_name="prefix__prefix",
+        field_name="prefix",
         queryset=Prefix.objects.all(),
         to_field_name="prefix",
         label=_("Prefix"),
     )
     prefix_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="prefix__id",
+        field_name="prefix",
         queryset=Prefix.objects.all(),
         to_field_name="id",
         label=_("Prefix (ID)"),
     )
     address_range = django_filters.ModelMultipleChoiceFilter(
-        field_name="address_range__start_address",
+        field_name="address_range",
         queryset=IPRange.objects.all(),
         to_field_name="start_address",
         label=_("IPRange (Start Address)"),
     )
     address_range_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="address_range__id",
+        field_name="address_range",
         queryset=IPRange.objects.all(),
         to_field_name="id",
         label=_("IPRange (ID)"),

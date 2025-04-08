@@ -15,8 +15,10 @@ from utilities.forms.fields import (
     TagFilterField,
     CommentField,
     CSVChoiceField,
+    CSVModelChoiceField,
 )
 
+from tenancy.models import Tenant
 
 from netbox_security.models import (
     FirewallFilter,
@@ -77,7 +79,17 @@ class FirewallFilterFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
 
 
 class FirewallFilterImportForm(NetBoxModelImportForm):
-    family = CSVChoiceField(choices=FamilyChoices, help_text=_("Family"))
+    family = CSVChoiceField(
+        choices=FamilyChoices,
+        help_text=_("Family"),
+        required=False,
+    )
+    tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        to_field_name="name",
+        label=_("Tenant"),
+    )
 
     class Meta:
         model = FirewallFilter

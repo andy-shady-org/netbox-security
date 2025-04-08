@@ -8,6 +8,7 @@ from .schema import (
     NetBoxSecurityNatPoolMemberQuery,
     NetBoxSecurityNatRuleSetQuery,
     NetBoxSecurityNatRuleQuery,
+    NetBoxSecurityFirewallFilterQuery,
 )
 
 schema = [
@@ -20,4 +21,5 @@ schema = [
     NetBoxSecurityNatPoolMemberQuery,
     NetBoxSecurityNatRuleSetQuery,
     NetBoxSecurityNatRuleQuery,
+    NetBoxSecurityFirewallFilterQuery,
 ]

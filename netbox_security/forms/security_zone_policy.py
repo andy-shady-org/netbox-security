@@ -17,6 +17,8 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
     TagFilterField,
     CommentField,
+    CSVMultipleChoiceField,
+
 )
 
 from tenancy.models import Tenant
@@ -40,18 +42,23 @@ __all__ = (
 
 class SecurityZonePolicyForm(NetBoxModelForm):
     name = forms.CharField(max_length=100, required=True)
+    index = forms.IntegerField(required=True)
     description = forms.CharField(max_length=200, required=False)
     source_zone = DynamicModelChoiceField(
         queryset=SecurityZone.objects.all(),
+        required=True,
     )
     destination_zone = DynamicModelChoiceField(
         queryset=SecurityZone.objects.all(),
+        required=True,
     )
     source_address = DynamicModelMultipleChoiceField(
         queryset=AddressList.objects.all(),
+        required=False,
     )
     destination_address = DynamicModelMultipleChoiceField(
         queryset=AddressList.objects.all(),
+        required=False,
     )
     application = SimpleArrayField(
         forms.CharField(max_length=50),
@@ -103,12 +110,13 @@ class SecurityZonePolicyForm(NetBoxModelForm):
             )
             error_message["source_zone"] = [error_message_mismatch_zones]
             error_message["destination_zone"] = [error_message_mismatch_zones]
-        if set(source_address) & set(destination_address):
-            error_message_mismatch_zones = (
-                "Cannot have the same source and destination addresses within a policy"
-            )
-            error_message["source_address"] = [error_message_mismatch_zones]
-            error_message["destination_address"] = [error_message_mismatch_zones]
+        if source_address and destination_address:
+            if set(source_address) & set(destination_address):
+                error_message_mismatch_zones = (
+                    "Cannot have the same source and destination addresses within a policy"
+                )
+                error_message["source_address"] = [error_message_mismatch_zones]
+                error_message["destination_address"] = [error_message_mismatch_zones]
         if error_message:
             raise forms.ValidationError(error_message)
         return self.cleaned_data
@@ -153,25 +161,38 @@ class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
 
 
 class SecurityZonePolicyImportForm(NetBoxModelImportForm):
-    tenant = CSVModelChoiceField(
-        queryset=Tenant.objects.all(),
-        required=False,
+    index = forms.IntegerField(
+        required=True,
+        label=_("Index"),
     )
     source_zone = CSVModelChoiceField(
         queryset=SecurityZone.objects.all(),
-        required=False,
+        to_field_name="name",
+        required=True,
     )
     destination_zone = CSVModelChoiceField(
         queryset=SecurityZone.objects.all(),
-        required=False,
+        to_field_name="name",
+        required=True,
     )
     source_address = CSVModelMultipleChoiceField(
         queryset=AddressList.objects.all(),
+        to_field_name="name",
         required=False,
     )
     destination_address = CSVModelMultipleChoiceField(
         queryset=AddressList.objects.all(),
+        to_field_name="name",
         required=False,
+    )
+    actions = CSVMultipleChoiceField(
+        choices=ActionChoices,
+        required=True,
+    )
+    application = SimpleArrayField(
+        forms.CharField(max_length=50),
+        help_text=_("Comma-separated list of applications."),
+        required=True,
     )
 
     class Meta:
@@ -185,7 +206,7 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
             "destination_zone",
             "destination_address",
             "application",
-            "tenant",
+            "actions",
             "tags",
         )
 
@@ -213,6 +234,7 @@ class SecurityZonePolicyBulkEditForm(NetBoxModelBulkEditForm):
     nullable_fields = ["description"]
     fieldsets = (
         FieldSet("description"),
-        FieldSet("tenant_group", "tenant", name=_("Tenancy")),
+        FieldSet("source_zone", "destination_zone", name="Security Zones"),
+        FieldSet("source_address", "destination_address", name="Address Lists"),
         FieldSet("tags", name=_("Tags")),
     )

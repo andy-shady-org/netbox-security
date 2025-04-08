@@ -39,10 +39,10 @@ class NatRuleSetForm(NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=200, required=False)
     nat_type = forms.ChoiceField(
-        required=True, choices=NatTypeChoices, widget=forms.Select()
+        required=True, choices=NatTypeChoices
     )
     direction = forms.ChoiceField(
-        required=True, choices=RuleDirectionChoices, widget=forms.Select()
+        required=True, choices=RuleDirectionChoices
     )
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
@@ -77,12 +77,13 @@ class NatRuleSetForm(NetBoxModelForm):
         error_message = {}
         source_zones = self.cleaned_data.get("source_zones")
         destination_zones = self.cleaned_data.get("destination_zones")
-        if set(source_zones) & set(destination_zones):
-            error_message_mismatch_zones = (
-                "Cannot have the same source and destination zones within a rule"
-            )
-            error_message["source_zones"] = [error_message_mismatch_zones]
-            error_message["destination_zones"] = [error_message_mismatch_zones]
+        if source_zones and destination_zones:
+            if set(source_zones) & set(destination_zones):
+                error_message_mismatch_zones = (
+                    "Cannot have the same source and destination zones within a rule"
+                )
+                error_message["source_zones"] = [error_message_mismatch_zones]
+                error_message["destination_zones"] = [error_message_mismatch_zones]
         if error_message:
             raise forms.ValidationError(error_message)
         return self.cleaned_data
@@ -105,7 +106,8 @@ class NatRuleSetFilterForm(NetBoxModelFilterSetForm):
         required=False,
     )
     direction = forms.ChoiceField(
-        required=False, choices=RuleDirectionChoices, widget=forms.Select()
+        required=False,
+        choices=RuleDirectionChoices
     )
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
@@ -119,14 +121,24 @@ class NatRuleSetFilterForm(NetBoxModelFilterSetForm):
 
 
 class NatRuleSetImportForm(NetBoxModelImportForm):
-    nat_type = CSVChoiceField(choices=NatTypeChoices, help_text=_("NAT Type"))
-    direction = CSVChoiceField(choices=RuleDirectionChoices, help_text=_("Direction"))
+    nat_type = CSVChoiceField(
+        choices=NatTypeChoices,
+        help_text=_("NAT Type"),
+        required=False,
+    )
+    direction = CSVChoiceField(
+        choices=RuleDirectionChoices,
+        help_text=_("Direction"),
+        required=False,
+    )
     source_zones = CSVModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
+        to_field_name="name",
         required=False,
     )
     destination_zones = CSVModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
+        to_field_name="name",
         required=False,
     )
 
@@ -134,6 +146,7 @@ class NatRuleSetImportForm(NetBoxModelImportForm):
         model = NatRuleSet
         fields = (
             "name",
+            "description",
             "nat_type",
             "direction",
             "source_zones",
@@ -143,12 +156,18 @@ class NatRuleSetImportForm(NetBoxModelImportForm):
 
 
 class NatRuleSetBulkEditForm(NetBoxModelBulkEditForm):
-    description = forms.CharField(max_length=200, required=False)
+    model = NatRuleSet
+    description = forms.CharField(
+        max_length=200,
+        required=False
+    )
     nat_type = forms.ChoiceField(
-        required=False, choices=NatTypeChoices, widget=forms.Select()
+        required=False,
+        choices=NatTypeChoices
     )
     direction = forms.ChoiceField(
-        required=False, choices=RuleDirectionChoices, widget=forms.Select()
+        required=False,
+        choices=RuleDirectionChoices
     )
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
@@ -158,9 +177,7 @@ class NatRuleSetBulkEditForm(NetBoxModelBulkEditForm):
         queryset=SecurityZone.objects.all(),
         required=False,
     )
-    tag = TagFilterField(NatRuleSet)
-
-    model = NatRuleSet
+    tag = TagFilterField(model)
     nullable_fields = [
         "description",
     ]

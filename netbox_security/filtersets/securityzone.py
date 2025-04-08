@@ -15,10 +15,28 @@ from dcim.models import Device, VirtualDeviceContext, Interface
 from netbox_security.models import (
     SecurityZone,
     SecurityZoneAssignment,
+    NatRuleSet,
 )
 
 
 class SecurityZoneFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+    natruleset_source_zones_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="natruleset_source_zones",
+        queryset=NatRuleSet.objects.all(),
+        to_field_name="id",
+        label=_("Source Zones"),
+    )
+    natruleset_destination_zones_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="natruleset_destination_zones",
+        queryset=NatRuleSet.objects.all(),
+        to_field_name="id",
+        label=_("Source Zones"),
+    )
+    nat_rule_set_id = django_filters.ModelMultipleChoiceFilter(
+        method="filter_ruleset_zones",
+        queryset=NatRuleSet.objects.all(),
+        label=_("Nat Ruleset Zones"),
+    )
 
     class Meta:
         model = SecurityZone
@@ -30,6 +48,13 @@ class SecurityZoneFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
             return queryset
         qs_filter = Q(name__icontains=value) | Q(description__icontains=value)
         return queryset.filter(qs_filter)
+
+    def filter_ruleset_zones(self, queryset, name, value):
+        if not value:
+            return queryset
+        source_zones = {ruleset.source_zones.pk for ruleset in value}
+        destination_zones = {ruleset.destination_zones.pk for ruleset in value}
+        return queryset.filter(pk__in=[source_zones, destination_zones])
 
 
 class SecurityZoneAssignmentFilterSet(NetBoxModelFilterSet):

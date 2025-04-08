@@ -134,7 +134,6 @@ class SecurityZonePolicyViewSet(NetBoxModelViewSet):
         "destination_zone",
         "source_address",
         "destination_address",
-        "tenant",
         "tags",
     )
     serializer_class = SecurityZonePolicySerializer

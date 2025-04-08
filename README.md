@@ -82,7 +82,7 @@ For further information, please refer to the full documentation: [Using NetBox S
 
 ## Credits
 
-- Thanks to Peter Eckel for providing some lovely examples which I've happily borrowed.
+- Thanks to Peter Eckel for providing some lovely examples which I've happily borrowed, and for providing excellent guidance.
 - Thanks to Dan Sheppard for the abstracted field generation stuff which I also used.
 - Thanks to Kris Beevers and Mark Coleman at Netbox Labs for encouragement and engagement.
 

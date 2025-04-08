@@ -16,6 +16,7 @@ from dcim.models import Device, VirtualDeviceContext
 
 from netbox_security.models import (
     Address,
+    AddressSet,
     AddressAssignment,
     SecurityZone,
 )
@@ -25,6 +26,19 @@ class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
     value = django_filters.CharFilter(
         method="filter_value",
         label=_("Value"),
+    )
+    address_set_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=AddressSet.objects.all(),
+        field_name="addressset_addresses",
+        to_field_name="id",
+        label=_("Address Set (ID)"),
+    )
+
+    address_set = django_filters.ModelMultipleChoiceFilter(
+        queryset=AddressSet.objects.all(),
+        field_name="addressset_addresses",
+        to_field_name="name",
+        label=_("Address Set (Name)"),
     )
 
     class Meta:

@@ -15,6 +15,8 @@ from utilities.forms.fields import (
     CommentField,
 )
 
+from ipam.choices import IPAddressStatusChoices
+
 from netbox_security.choices import PoolTypeChoices
 
 from netbox_security.models import (
@@ -35,11 +37,14 @@ __all__ = (
 class NatPoolForm(NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
     pool_type = forms.ChoiceField(
-        required=False, choices=PoolTypeChoices, widget=forms.Select()
+        required=False, choices=PoolTypeChoices
+    )
+    status = forms.ChoiceField(
+        required=False, choices=IPAddressStatusChoices
     )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
-        FieldSet("name", "pool_type", "description"),
+        FieldSet("name", "pool_type", "status", "description"),
         FieldSet("tags", name=_("Tags")),
     )
     comments = CommentField()
@@ -49,6 +54,7 @@ class NatPoolForm(NetBoxModelForm):
         fields = [
             "name",
             "pool_type",
+            "status",
             "description",
             "comments",
             "tags",
@@ -59,26 +65,33 @@ class NatPoolFilterForm(NetBoxModelFilterSetForm):
     model = NatPool
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "pool_type"),
+        FieldSet("name", "pool_type", "status"),
     )
     pool_type = forms.ChoiceField(
-        required=False, choices=PoolTypeChoices, widget=forms.Select()
+        required=False, choices=PoolTypeChoices
+    )
+    status = forms.ChoiceField(
+        required=False, choices=IPAddressStatusChoices
     )
     tags = TagFilterField(model)
 
 
 class NatPoolImportForm(NetBoxModelImportForm):
     pool_type = CSVChoiceField(choices=PoolTypeChoices, help_text=_("NAT Pool Type"))
+    status = CSVChoiceField(choices=IPAddressStatusChoices, help_text=_("Status"), required=False)
 
     class Meta:
         model = NatPool
-        fields = ("name", "pool_type", "description", "tags")
+        fields = ("name", "pool_type", "description", "status", "tags")
 
 
 class NatPoolBulkEditForm(NetBoxModelBulkEditForm):
     model = NatPool
     pool_type = forms.ChoiceField(
-        required=False, choices=PoolTypeChoices, widget=forms.Select()
+        required=False, choices=PoolTypeChoices
+    )
+    status = forms.ChoiceField(
+        required=False, choices=IPAddressStatusChoices
     )
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
