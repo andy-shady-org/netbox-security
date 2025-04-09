@@ -79,26 +79,21 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
 
     def validate(self, data):
         error_message = {}
-        source_zone = data.get("source_zone")
-        destination_zone = data.get("destination_zone")
-        source_address = data.get("source_address")
-        destination_address = data.get("destination_address")
-        if source_zone and destination_zone and source_zone == destination_zone:
-            error_message_mismatch_zones = (
-                "Cannot have the same source and destination zones within a policy"
-            )
-            error_message["source_zones"] = [error_message_mismatch_zones]
-            error_message["destination_zones"] = [error_message_mismatch_zones]
-        if (
-            source_address
-            and destination_address
-            and set(source_address) & set(destination_address)
-        ):
-            error_message_mismatch_zones = (
-                "Cannot have the same source and destination addresses within a policy"
-            )
-            error_message["source_address"] = [error_message_mismatch_zones]
-            error_message["destination_address"] = [error_message_mismatch_zones]
+        if isinstance(data, dict):
+            if (source_zone := data.get("source_zone")) is not None and (destination_zone := data.get("destination_zone")) is not None:
+                if source_zone == destination_zone:
+                    error_message_mismatch_zones = (
+                        "Cannot have the same source and destination zones within a policy"
+                    )
+                    error_message["source_zones"] = [error_message_mismatch_zones]
+                    error_message["destination_zones"] = [error_message_mismatch_zones]
+            if (source_address := data.get("source_address")) is not None and (destination_address := data.get("destination_address")) is not None:
+                if set(source_address) & set(destination_address):
+                    error_message_mismatch_zones = (
+                        "Cannot have the same source and destination addresses within a policy"
+                    )
+                    error_message["source_address"] = [error_message_mismatch_zones]
+                    error_message["destination_address"] = [error_message_mismatch_zones]
         if error_message:
             raise ValidationError(error_message)
         return super().validate(data)

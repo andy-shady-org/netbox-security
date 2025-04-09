@@ -9,7 +9,7 @@ from netbox.api.fields import ContentTypeField
 from netbox.api.serializers import NetBoxModelSerializer
 from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
-
+from ipam.api.field_serializers import IPNetworkField
 from netbox_security.models import Address, AddressAssignment
 
 
@@ -18,6 +18,7 @@ class AddressSerializer(NetBoxModelSerializer):
         view_name="plugins-api:netbox_security-api:address-detail"
     )
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+    value = IPNetworkField()
 
     class Meta:
         model = Address

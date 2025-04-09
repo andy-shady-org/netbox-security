@@ -36,15 +36,16 @@ class NatRule(ContactsMixin, PrimaryModel):
 
     rule_set = models.ForeignKey(
         to="netbox_security.NatRuleSet",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         blank=True,
         null=True,
         related_name="%(class)s_rules",
     )
     pool = models.ForeignKey(
         to="netbox_security.NatPool",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         null=True,
+        blank=True,
     )
     name = models.CharField(max_length=100)
     status = models.CharField(
@@ -86,14 +87,16 @@ class NatRule(ContactsMixin, PrimaryModel):
     )
     source_pool = models.ForeignKey(
         to="netbox_security.NatPool",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="%(class)s_source_pool",
     )
     destination_pool = models.ForeignKey(
         to="netbox_security.NatPool",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="%(class)s_destination_pool",
     )
     source_ports = ArrayField(
@@ -104,6 +107,7 @@ class NatRule(ContactsMixin, PrimaryModel):
             ]
         ),
         null=True,
+        blank=True,
         verbose_name=_("Source Port numbers"),
     )
     destination_ports = ArrayField(
@@ -114,6 +118,7 @@ class NatRule(ContactsMixin, PrimaryModel):
             ]
         ),
         null=True,
+        blank=True,
         verbose_name=_("Destination Port numbers"),
     )
     custom_interface = models.CharField(

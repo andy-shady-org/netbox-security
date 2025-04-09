@@ -66,9 +66,13 @@ class NatPoolMemberFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("IPRange (ID)"),
     )
-    source_port = NumericArrayFilter(field_name="source_ports", lookup_expr="contains")
-    destination_port = NumericArrayFilter(
-        field_name="destination_ports", lookup_expr="contains"
+    source_ports = NumericArrayFilter(
+        field_name="source_ports",
+        lookup_expr="contains"
+    )
+    destination_ports = NumericArrayFilter(
+        field_name="destination_ports",
+        lookup_expr="contains"
     )
 
     class Meta:

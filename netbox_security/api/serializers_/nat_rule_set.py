@@ -69,19 +69,17 @@ class NatRuleSetSerializer(NetBoxModelSerializer):
 
     def validate(self, data):
         error_message = {}
-        source_zones = data.get("source_zones")
-        destination_zones = data.get("destination_zones")
-        if source_zones and destination_zones:
-            if set(source_zones) & set(destination_zones):
-                error_message_mismatch_zones = (
-                    "Cannot have the same source and destination zones within a rule"
-                )
-                error_message["source_zones"] = [error_message_mismatch_zones]
-                error_message["destination_zones"] = [error_message_mismatch_zones]
+        if isinstance(data, dict):
+            if (source_zones := data.get("source_zones")) is not None and (destination_zones := data.get("destination_zones")) is not None:
+                if set(source_zones) & set(destination_zones):
+                    error_message_mismatch_zones = (
+                        "Cannot have the same source and destination zones within a rule"
+                    )
+                    error_message["source_zones"] = [error_message_mismatch_zones]
+                    error_message["destination_zones"] = [error_message_mismatch_zones]
         if error_message:
             raise ValidationError(error_message)
-        super().validate(data)
-        return data
+        return super().validate(data)
 
     def create(self, validated_data):
         source_zones = validated_data.pop("source_zones", None)

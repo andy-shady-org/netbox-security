@@ -124,11 +124,12 @@ class NetBoxSecurityNatPoolType(NetBoxObjectType):
 class NetBoxSecurityNatPoolMemberType(NetBoxObjectType):
     pool: Annotated[
         "NetBoxSecurityNatPoolType", strawberry.lazy("netbox_security.graphql.types")
-    ]
-    address: Annotated["IPAddressType", strawberry.lazy("ipam.graphql.types")]
-    prefix: Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")]
-    address_range: Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")]
+    ] | None
+    address: Annotated["IPAddressType", strawberry.lazy("ipam.graphql.types")] | None
+    prefix: Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")]  | None
+    address_range: Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")] | None
     status: str
+    name: str
 
 
 @strawberry_django.type(
@@ -156,33 +157,33 @@ class NetBoxSecurityNatRuleSetType(NetBoxObjectType):
 class NetBoxSecurityNatRuleType(NetBoxObjectType):
     rule_set: Annotated[
         "NetBoxSecurityNatRuleSetType", strawberry.lazy("netbox_security.graphql.types")
-    ]
+    ] | None
     pool: Annotated[
         "NetBoxSecurityNatPoolType", strawberry.lazy("netbox_security.graphql.types")
-    ]
-    source_addresses: Annotated["IPAddressType", strawberry.lazy("ipam.graphql.types")]
-    destination_addresses: Annotated[
+    ] | None
+    source_addresses: List[Annotated["IPAddressType", strawberry.lazy("ipam.graphql.types")]] | None
+    destination_addresses: List[Annotated[
         "IPAddressType", strawberry.lazy("ipam.graphql.types")
-    ]
+    ]] | None
     source_prefixes: List[
         Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")]
-    ]
+    ] | None
     destination_prefixes: List[
         Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")]
-    ]
-    source_ranges: List[Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")]]
+    ] | None
+    source_ranges: List[Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")]] | None
     destination_ranges: List[
         Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")]
-    ]
+    ] | None
     source_pool: Annotated[
         "NetBoxSecurityNatPoolType", strawberry.lazy("netbox_security.graphql.types")
-    ]
+    ] | None
     destination_pool: Annotated[
         "NetBoxSecurityNatPoolType", strawberry.lazy("netbox_security.graphql.types")
-    ]
+    ] | None
     status: str
-    source_type: int
-    destination_type: int
+    source_type: str
+    destination_type: str
 
 
 @strawberry_django.type(
