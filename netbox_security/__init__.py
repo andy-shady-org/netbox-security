@@ -12,7 +12,7 @@ class SecurityConfig(PluginConfig):
     author_email = "andy@shady.org"
     base_url = "netbox-security"
     required_settings = []
-    min_version = "4.1.0"
+    min_version = "4.2.0"
     default_settings = {
         "top_level_menu": True,
         "virtual_ext_page": "left",

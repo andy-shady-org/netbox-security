@@ -36,12 +36,8 @@ __all__ = (
 
 class NatPoolForm(NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
-    pool_type = forms.ChoiceField(
-        required=False, choices=PoolTypeChoices
-    )
-    status = forms.ChoiceField(
-        required=False, choices=IPAddressStatusChoices
-    )
+    pool_type = forms.ChoiceField(required=False, choices=PoolTypeChoices)
+    status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
         FieldSet("name", "pool_type", "status", "description"),
@@ -67,18 +63,16 @@ class NatPoolFilterForm(NetBoxModelFilterSetForm):
         FieldSet("q", "filter_id", "tag"),
         FieldSet("name", "pool_type", "status"),
     )
-    pool_type = forms.ChoiceField(
-        required=False, choices=PoolTypeChoices
-    )
-    status = forms.ChoiceField(
-        required=False, choices=IPAddressStatusChoices
-    )
+    pool_type = forms.ChoiceField(required=False, choices=PoolTypeChoices)
+    status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
     tags = TagFilterField(model)
 
 
 class NatPoolImportForm(NetBoxModelImportForm):
     pool_type = CSVChoiceField(choices=PoolTypeChoices, help_text=_("NAT Pool Type"))
-    status = CSVChoiceField(choices=IPAddressStatusChoices, help_text=_("Status"), required=False)
+    status = CSVChoiceField(
+        choices=IPAddressStatusChoices, help_text=_("Status"), required=False
+    )
 
     class Meta:
         model = NatPool
@@ -87,12 +81,8 @@ class NatPoolImportForm(NetBoxModelImportForm):
 
 class NatPoolBulkEditForm(NetBoxModelBulkEditForm):
     model = NatPool
-    pool_type = forms.ChoiceField(
-        required=False, choices=PoolTypeChoices
-    )
-    status = forms.ChoiceField(
-        required=False, choices=IPAddressStatusChoices
-    )
+    pool_type = forms.ChoiceField(required=False, choices=PoolTypeChoices)
+    status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
     nullable_fields = [

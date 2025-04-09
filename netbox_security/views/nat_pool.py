@@ -36,6 +36,7 @@ __all__ = (
 )
 
 
+@register_model_view(NatPool)
 class NatPoolView(generic.ObjectView):
     queryset = NatPool.objects.annotate(member_count=Count("natpoolmember_pools"))
     template_name = "netbox_security/natpool.html"
@@ -47,6 +48,7 @@ class NatPoolView(generic.ObjectView):
         return {"related_session_table": sess_table}
 
 
+@register_model_view(NatPool, "list", path="", detail=False)
 class NatPoolListView(generic.ObjectListView):
     queryset = NatPool.objects.all()
     filterset = NatPoolFilterSet
@@ -54,16 +56,20 @@ class NatPoolListView(generic.ObjectListView):
     table = NatPoolTable
 
 
+@register_model_view(NatPool, "add", detail=False)
+@register_model_view(NatPool, "edit")
 class NatPoolEditView(generic.ObjectEditView):
     queryset = NatPool.objects.all()
     form = NatPoolForm
 
 
+@register_model_view(NatPool, "delete")
 class NatPoolDeleteView(generic.ObjectDeleteView):
     queryset = NatPool.objects.all()
     default_return_url = "plugins:netbox_security:natpool_list"
 
 
+@register_model_view(NatPool, "bulk_edit", path="edit", detail=False)
 class NatPoolBulkEditView(generic.BulkEditView):
     queryset = NatPool.objects.all()
     filterset = NatPoolFilterSet
@@ -71,11 +77,13 @@ class NatPoolBulkEditView(generic.BulkEditView):
     form = NatPoolBulkEditForm
 
 
+@register_model_view(NatPool, "bulk_import", detail=False)
 class NatPoolBulkImportView(generic.BulkImportView):
     queryset = NatPool.objects.all()
     model_form = NatPoolImportForm
 
 
+@register_model_view(NatPool, "bulk_delete", path="delete", detail=False)
 class NatPoolBulkDeleteView(generic.BulkDeleteView):
     queryset = NatPool.objects.all()
     table = NatPoolTable

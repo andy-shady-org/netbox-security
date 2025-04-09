@@ -37,6 +37,7 @@ __all__ = (
 )
 
 
+@register_model_view(FirewallFilter)
 class FirewallFilterView(generic.ObjectView):
     queryset = FirewallFilter.objects.all()
     template_name = "netbox_security/firewallfilter.html"
@@ -50,6 +51,7 @@ class FirewallFilterView(generic.ObjectView):
         }
 
 
+@register_model_view(FirewallFilter, "list", path="", detail=False)
 class FirewallFilterListView(generic.ObjectListView):
     queryset = FirewallFilter.objects.all()
     filterset = FirewallFilterFilterSet
@@ -57,16 +59,20 @@ class FirewallFilterListView(generic.ObjectListView):
     table = FirewallFilterTable
 
 
+@register_model_view(FirewallFilter, "add", detail=False)
+@register_model_view(FirewallFilter, "edit")
 class FirewallFilterEditView(generic.ObjectEditView):
     queryset = FirewallFilter.objects.all()
     form = FirewallFilterForm
 
 
+@register_model_view(FirewallFilter, "delete")
 class FirewallFilterDeleteView(generic.ObjectDeleteView):
     queryset = FirewallFilter.objects.all()
     default_return_url = "plugins:netbox_security:firewallfilter_list"
 
 
+@register_model_view(FirewallFilter, "bulk_edit", path="edit", detail=False)
 class FirewallFilterBulkEditView(generic.BulkEditView):
     queryset = FirewallFilter.objects.all()
     filterset = FirewallFilterFilterSet
@@ -74,12 +80,14 @@ class FirewallFilterBulkEditView(generic.BulkEditView):
     form = FirewallFilterBulkEditForm
 
 
+@register_model_view(FirewallFilter, "bulk_delete", path="delete", detail=False)
 class FirewallFilterBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallFilter.objects.all()
     table = FirewallFilterTable
     default_return_url = "plugins:netbox_security:firewallfilter_list"
 
 
+@register_model_view(FirewallFilter, "bulk_import", detail=False)
 class FirewallFilterBulkImportView(generic.BulkImportView):
     queryset = FirewallFilter.objects.all()
     model_form = FirewallFilterImportForm

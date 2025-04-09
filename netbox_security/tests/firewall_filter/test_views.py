@@ -31,7 +31,8 @@ class FirewallFilterViewTestCase(
         tags = create_tags("Alpha", "Bravo", "Charlie")
 
         cls.form_data = {
-            "name": "filter-4", "family": "inet",
+            "name": "filter-4",
+            "family": "inet",
             "tags": [t.pk for t in tags],
         }
 

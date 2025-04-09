@@ -35,7 +35,9 @@ class NetBoxSecurityAddressSetQuery:
 
 @strawberry.type(name="Query")
 class NetBoxSecurityAddressListQuery:
-    netbox_security_addresslist: NetBoxSecurityAddressListType = strawberry_django.field()
+    netbox_security_addresslist: NetBoxSecurityAddressListType = (
+        strawberry_django.field()
+    )
     netbox_security_addresslist_list: List[NetBoxSecurityAddressListType] = (
         strawberry_django.field()
     )
@@ -97,7 +99,9 @@ class NetBoxSecurityNatRuleSetQuery:
 
 @strawberry.type(name="Query")
 class NetBoxSecurityFirewallFilterQuery:
-    netbox_security_firewallfilter: NetBoxSecurityFirewallFilterType = strawberry_django.field()
+    netbox_security_firewallfilter: NetBoxSecurityFirewallFilterType = (
+        strawberry_django.field()
+    )
     netbox_security_firewallfilter_list: List[NetBoxSecurityFirewallFilterType] = (
         strawberry_django.field()
     )

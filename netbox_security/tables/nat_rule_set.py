@@ -23,8 +23,12 @@ class NatRuleSetTable(NetBoxTable):
     name = tables.LinkColumn()
     description = tables.LinkColumn()
     nat_type = ChoiceFieldColumn()
-    source_zones = ManyToManyColumn(orderable=False, linkify=True, verbose_name=_("Source Zones"))
-    destination_zones = ManyToManyColumn(orderable=False, linkify=True, verbose_name=_("Destination Zones"))
+    source_zones = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Source Zones")
+    )
+    destination_zones = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Destination Zones")
+    )
     direction = ChoiceFieldColumn()
     rule_count = tables.Column()
     tags = TagColumn(url_name="plugins:netbox_security:natruleset_list")

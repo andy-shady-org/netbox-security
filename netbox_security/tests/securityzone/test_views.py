@@ -2,7 +2,12 @@ from utilities.testing import ViewTestCases, create_tags
 from django.contrib.contenttypes.models import ContentType
 
 from netbox_security.tests.custom import ModelViewTestCase
-from netbox_security.models import SecurityZone, SecurityZonePolicy, Address, AddressList
+from netbox_security.models import (
+    SecurityZone,
+    SecurityZonePolicy,
+    Address,
+    AddressList,
+)
 
 
 class SecurityZoneViewTestCase(
@@ -90,33 +95,66 @@ class SecurityZonePolicyViewTestCase(
         Address.objects.bulk_create(cls.addresses)
 
         cls.source_addresses = (
-            AddressList(name="address-list-1", assigned_object_id=cls.addresses[0].pk, assigned_object_type=ContentType.objects.get(app_label='netbox_security', model='address')),
-            AddressList(name="address-list-2", assigned_object_id=cls.addresses[1].pk, assigned_object_type=ContentType.objects.get(app_label='netbox_security', model='address'))
+            AddressList(
+                name="address-list-1",
+                assigned_object_id=cls.addresses[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="address"
+                ),
+            ),
+            AddressList(
+                name="address-list-2",
+                assigned_object_id=cls.addresses[1].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="address"
+                ),
+            ),
         )
         AddressList.objects.bulk_create(cls.source_addresses)
 
         cls.destination_addresses = (
-            AddressList(name="address-list-3", assigned_object_id=cls.addresses[2].pk, assigned_object_type=ContentType.objects.get(app_label='netbox_security', model='address')),
-            AddressList(name="address-list-4", assigned_object_id=cls.addresses[3].pk, assigned_object_type=ContentType.objects.get(app_label='netbox_security', model='address')),
+            AddressList(
+                name="address-list-3",
+                assigned_object_id=cls.addresses[2].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="address"
+                ),
+            ),
+            AddressList(
+                name="address-list-4",
+                assigned_object_id=cls.addresses[3].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="address"
+                ),
+            ),
         )
         AddressList.objects.bulk_create(cls.destination_addresses)
 
         cls.policies = (
-            SecurityZonePolicy(name="policy-1", index=5,
-                               source_zone=cls.zones[0],
-                               destination_zone=cls.zones[1],
-                               actions=["permit", "count", "log"],
-                               application=['test-1', 'test-2']),
-            SecurityZonePolicy(name="policy-2", index=6,
-                               source_zone=cls.zones[0],
-                               destination_zone=cls.zones[1],
-                               actions=["permit", "count", "log"],
-                               application=['test-1', 'test-2']),
-            SecurityZonePolicy(name="policy-3", index=7,
-                               source_zone=cls.zones[0],
-                               destination_zone=cls.zones[1],
-                               actions=["permit", "count", "log"],
-                               application=['test-1', 'test-2']),
+            SecurityZonePolicy(
+                name="policy-1",
+                index=5,
+                source_zone=cls.zones[0],
+                destination_zone=cls.zones[1],
+                actions=["permit", "count", "log"],
+                application=["test-1", "test-2"],
+            ),
+            SecurityZonePolicy(
+                name="policy-2",
+                index=6,
+                source_zone=cls.zones[0],
+                destination_zone=cls.zones[1],
+                actions=["permit", "count", "log"],
+                application=["test-1", "test-2"],
+            ),
+            SecurityZonePolicy(
+                name="policy-3",
+                index=7,
+                source_zone=cls.zones[0],
+                destination_zone=cls.zones[1],
+                actions=["permit", "count", "log"],
+                application=["test-1", "test-2"],
+            ),
         )
         SecurityZonePolicy.objects.bulk_create(cls.policies)
         for policy in cls.policies:
@@ -129,7 +167,10 @@ class SecurityZonePolicyViewTestCase(
             "source_zone": cls.zones[0].pk,
             "destination_zone": cls.zones[1].pk,
             "source_address": [cls.source_addresses[0].pk, cls.source_addresses[1].pk],
-            "destination_address": [cls.destination_addresses[0].pk, cls.destination_addresses[1].pk],
+            "destination_address": [
+                cls.destination_addresses[0].pk,
+                cls.destination_addresses[1].pk,
+            ],
             "actions": ["permit", "count", "log"],
             "application": "test-1,test-2",
             "tags": [t.pk for t in tags],

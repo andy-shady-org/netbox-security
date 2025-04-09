@@ -1,8 +1,6 @@
 from utilities.choices import ChoiceSet
 
-__all__ = (
-    "ActionChoices",
-)
+__all__ = ("ActionChoices",)
 
 
 class ActionChoices(ChoiceSet):

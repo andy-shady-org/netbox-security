@@ -17,7 +17,7 @@ address_menu_items = (
                 permissions=["netbox_security.add_addressset"],
             ),
             PluginMenuButton(
-                "plugins:netbox_security:addressset_import",
+                "plugins:netbox_security:addressset_bulk_import",
                 _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_security.add_addressset"],
@@ -36,7 +36,7 @@ address_menu_items = (
                 permissions=["netbox_security.add_address"],
             ),
             PluginMenuButton(
-                "plugins:netbox_security:address_import",
+                "plugins:netbox_security:address_bulk_import",
                 _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_security.add_address"],
@@ -57,7 +57,7 @@ security_menu_items = (
                 permissions=["netbox_security.add_securityzone"],
             ),
             PluginMenuButton(
-                "plugins:netbox_security:securityzone_import",
+                "plugins:netbox_security:securityzone_bulk_import",
                 _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_security.add_securityzone"],
@@ -76,7 +76,7 @@ security_menu_items = (
                 permissions=["netbox_security.add_securityzonepolicy"],
             ),
             PluginMenuButton(
-                "plugins:netbox_security:securityzonepolicy_import",
+                "plugins:netbox_security:securityzonepolicy_bulk_import",
                 _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_security.add_securityzonepolicy"],
@@ -97,7 +97,7 @@ pool_menu_items = (
                 permissions=["netbox_security.add_natpool"],
             ),
             PluginMenuButton(
-                "plugins:netbox_security:natpool_import",
+                "plugins:netbox_security:natpool_bulk_import",
                 _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_security.add_natpool"],
@@ -116,7 +116,7 @@ pool_menu_items = (
                 permissions=["netbox_security.add_natpoolmember"],
             ),
             PluginMenuButton(
-                "plugins:netbox_security:natpoolmember_import",
+                "plugins:netbox_security:natpoolmember_bulk_import",
                 _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_security.add_natpoolmember"],
@@ -137,7 +137,7 @@ rule_menu_items = (
                 permissions=["netbox_security.add_natruleset"],
             ),
             PluginMenuButton(
-                "plugins:netbox_security:natruleset_import",
+                "plugins:netbox_security:natruleset_bulk_import",
                 _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_security.add_natruleset"],
@@ -156,7 +156,7 @@ rule_menu_items = (
                 permissions=["netbox_security.add_natrule"],
             ),
             PluginMenuButton(
-                "plugins:netbox_security:natrule_import",
+                "plugins:netbox_security:natrule_bulk_import",
                 _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_security.add_natrule"],
@@ -178,7 +178,7 @@ firewall_menu_items = (
                 permissions=["netbox_security.add_firewallfilter"],
             ),
             PluginMenuButton(
-                "plugins:netbox_security:firewallfilter_import",
+                "plugins:netbox_security:firewallfilter_bulk_import",
                 _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_security.add_firewallfilter"],
@@ -215,5 +215,9 @@ if plugin_settings.get("top_level_menu"):
     )
 else:
     menu_items = (
-        address_menu_items + security_menu_items + pool_menu_items + rule_menu_items + firewall_menu_items
+        address_menu_items
+        + security_menu_items
+        + pool_menu_items
+        + rule_menu_items
+        + firewall_menu_items
     )

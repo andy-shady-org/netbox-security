@@ -1,8 +1,6 @@
 from utilities.choices import ChoiceSet
 
-__all__ = (
-    "PoolTypeChoices",
-)
+__all__ = ("PoolTypeChoices",)
 
 
 class PoolTypeChoices(ChoiceSet):

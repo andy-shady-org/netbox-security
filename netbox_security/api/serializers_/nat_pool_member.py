@@ -41,4 +41,4 @@ class NatPoolMemberSerializer(NetBoxModelSerializer):
             "created",
             "last_updated",
         )
-        brief_field = ("id", "url", "display", "name", "status")
+        brief_fields = ("id", "url", "display", "name", "pool", "status")

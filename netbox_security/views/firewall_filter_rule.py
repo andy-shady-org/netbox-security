@@ -37,11 +37,13 @@ __all__ = (
 )
 
 
+@register_model_view(FirewallFilterRule)
 class FirewallFilterRuleView(generic.ObjectView):
     queryset = FirewallFilterRule.objects.all()
     template_name = "netbox_security/firewallfilterrule.html"
 
 
+@register_model_view(FirewallFilterRule, "list", path="", detail=False)
 class FirewallFilterRuleListView(generic.ObjectListView):
     queryset = FirewallFilterRule.objects.all()
     filterset = FirewallFilterRuleFilterSet
@@ -49,16 +51,20 @@ class FirewallFilterRuleListView(generic.ObjectListView):
     table = FirewallFilterRuleTable
 
 
+@register_model_view(FirewallFilterRule, "add", detail=False)
+@register_model_view(FirewallFilterRule, "edit")
 class FirewallFilterRuleEditView(generic.ObjectEditView):
     queryset = FirewallFilterRule.objects.all()
     form = FirewallFilterRuleForm
 
 
+@register_model_view(FirewallFilterRule, "delete")
 class FirewallFilterRuleDeleteView(generic.ObjectDeleteView):
     queryset = FirewallFilterRule.objects.all()
     default_return_url = "plugins:netbox_security:firewallfilterrule_list"
 
 
+@register_model_view(FirewallFilterRule, "bulk_delete", path="delete", detail=False)
 class FirewallFilterRuleBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallFilterRule.objects.all()
     table = FirewallFilterRuleTable

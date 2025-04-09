@@ -32,19 +32,19 @@ __all__ = (
 )
 
 
+@register_model_view(AddressSet)
 class AddressSetView(generic.ObjectView):
     queryset = AddressSet.objects.all()
     template_name = "netbox_security/addressset.html"
 
     def get_extra_context(self, request, instance):
-        address_table = AddressTable(
-            instance.addresses.all(), orderable=False
-        )
+        address_table = AddressTable(instance.addresses.all(), orderable=False)
         return {
             "address_table": address_table,
         }
 
 
+@register_model_view(AddressSet, "list", path="", detail=False)
 class AddressSetListView(generic.ObjectListView):
     queryset = AddressSet.objects.all()
     filterset = AddressSetFilterSet
@@ -52,16 +52,20 @@ class AddressSetListView(generic.ObjectListView):
     table = AddressSetTable
 
 
+@register_model_view(AddressSet, "add", detail=False)
+@register_model_view(AddressSet, "edit")
 class AddressSetEditView(generic.ObjectEditView):
     queryset = AddressSet.objects.all()
     form = AddressSetForm
 
 
+@register_model_view(AddressSet, "delete")
 class AddressSetDeleteView(generic.ObjectDeleteView):
     queryset = AddressSet.objects.all()
     default_return_url = "plugins:netbox_security:addressset_list"
 
 
+@register_model_view(AddressSet, "bulk_edit", path="edit", detail=False)
 class AddressSetBulkEditView(generic.BulkEditView):
     queryset = AddressSet.objects.all()
     filterset = AddressSetFilterSet
@@ -69,12 +73,14 @@ class AddressSetBulkEditView(generic.BulkEditView):
     form = AddressSetBulkEditForm
 
 
+@register_model_view(AddressSet, "bulk_delete", path="delete", detail=False)
 class AddressSetBulkDeleteView(generic.BulkDeleteView):
     queryset = AddressSet.objects.all()
     table = AddressSetTable
     default_return_url = "plugins:netbox_security:addressset_list"
 
 
+@register_model_view(AddressSet, "bulk_import", detail=False)
 class AddressSetBulkImportView(generic.BulkImportView):
     queryset = AddressSet.objects.all()
     model_form = AddressSetImportForm

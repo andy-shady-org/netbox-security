@@ -38,12 +38,8 @@ __all__ = (
 class NatRuleSetForm(NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=200, required=False)
-    nat_type = forms.ChoiceField(
-        required=True, choices=NatTypeChoices
-    )
-    direction = forms.ChoiceField(
-        required=True, choices=RuleDirectionChoices
-    )
+    nat_type = forms.ChoiceField(required=True, choices=NatTypeChoices)
+    direction = forms.ChoiceField(required=True, choices=RuleDirectionChoices)
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
         required=False,
@@ -105,10 +101,7 @@ class NatRuleSetFilterForm(NetBoxModelFilterSetForm):
         choices=NatTypeChoices,
         required=False,
     )
-    direction = forms.ChoiceField(
-        required=False,
-        choices=RuleDirectionChoices
-    )
+    direction = forms.ChoiceField(required=False, choices=RuleDirectionChoices)
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
         required=False,
@@ -157,18 +150,9 @@ class NatRuleSetImportForm(NetBoxModelImportForm):
 
 class NatRuleSetBulkEditForm(NetBoxModelBulkEditForm):
     model = NatRuleSet
-    description = forms.CharField(
-        max_length=200,
-        required=False
-    )
-    nat_type = forms.ChoiceField(
-        required=False,
-        choices=NatTypeChoices
-    )
-    direction = forms.ChoiceField(
-        required=False,
-        choices=RuleDirectionChoices
-    )
+    description = forms.CharField(max_length=200, required=False)
+    nat_type = forms.ChoiceField(required=False, choices=NatTypeChoices)
+    direction = forms.ChoiceField(required=False, choices=RuleDirectionChoices)
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
         required=False,

@@ -20,9 +20,7 @@ __all__ = (
 
 class AddressListForm(forms.ModelForm):
     name = forms.CharField(max_length=64, required=True)
-    fieldsets = (
-        FieldSet(ObjectAttribute("assigned_object"), "name"),
-    )
+    fieldsets = (FieldSet(ObjectAttribute("assigned_object"), "name"),)
 
     class Meta:
         model = AddressList
@@ -34,8 +32,7 @@ class AddressListForm(forms.ModelForm):
 
 class AddressListAssignmentForm(forms.ModelForm):
     address_list = DynamicModelChoiceField(
-        label=_("AddressList"),
-        queryset=AddressList.objects.all()
+        label=_("AddressList"), queryset=AddressList.objects.all()
     )
 
     fieldsets = (FieldSet(ObjectAttribute("assigned_object"), "address_list"),)

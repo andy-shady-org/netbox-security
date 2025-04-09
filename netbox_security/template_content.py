@@ -57,9 +57,7 @@ class AddressContextInfo(PluginTemplateExtension):
         address_table = AddressListAddressTable(address_lists)
         return self.render(
             "netbox_security/address/extend.html",
-            extra_context={
-                "related_address_table": address_table
-            }
+            extra_context={"related_address_table": address_table},
         )
 
 
@@ -90,9 +88,7 @@ class AddressSetContextInfo(PluginTemplateExtension):
         address_table = AddressListAddressSetTable(address_lists)
         return self.render(
             "netbox_security/address/extend.html",
-            extra_context={
-                "related_address_table": address_table
-            }
+            extra_context={"related_address_table": address_table},
         )
 
 
@@ -133,10 +129,18 @@ class VirtualDeviceContextInfo(PluginTemplateExtension):
         zone_table = SecurityZoneVirtualDeviceContextAssignmentTable(zone_assignments)
         address_assignments = AddressAssignment.objects.filter(virtualdevicecontext=obj)
         address_table = AddressVirtualDeviceContextAssignmentTable(address_assignments)
-        addressset_assignments = AddressSetAssignment.objects.filter(virtualdevicecontext=obj)
-        addressset_table = AddressSetVirtualDeviceContextAssignmentTable(addressset_assignments)
-        firewall_filter_assignments = FirewallFilterAssignment.objects.filter(virtualdevicecontext=obj)
-        firewall_filter_table = FirewallFilterVirtualDeviceContextAssignmentTable(firewall_filter_assignments)
+        addressset_assignments = AddressSetAssignment.objects.filter(
+            virtualdevicecontext=obj
+        )
+        addressset_table = AddressSetVirtualDeviceContextAssignmentTable(
+            addressset_assignments
+        )
+        firewall_filter_assignments = FirewallFilterAssignment.objects.filter(
+            virtualdevicecontext=obj
+        )
+        firewall_filter_table = FirewallFilterVirtualDeviceContextAssignmentTable(
+            firewall_filter_assignments
+        )
         return self.render(
             "netbox_security/device/device_extend.html",
             extra_context={
@@ -183,8 +187,12 @@ class DeviceInfo(PluginTemplateExtension):
         address_table = AddressDeviceAssignmentTable(address_assignments)
         addressset_assignments = AddressSetAssignment.objects.filter(device=obj)
         addressset_table = AddressSetDeviceAssignmentTable(addressset_assignments)
-        firewall_filter_assignments = FirewallFilterAssignment.objects.filter(device=obj)
-        firewall_filter_table = FirewallFilterDeviceAssignmentTable(firewall_filter_assignments)
+        firewall_filter_assignments = FirewallFilterAssignment.objects.filter(
+            device=obj
+        )
+        firewall_filter_table = FirewallFilterDeviceAssignmentTable(
+            firewall_filter_assignments
+        )
         return self.render(
             "netbox_security/device/device_extend.html",
             extra_context={
@@ -235,4 +243,10 @@ class InterfaceInfo(PluginTemplateExtension):
         )
 
 
-template_extensions = [AddressContextInfo, AddressSetContextInfo, VirtualDeviceContextInfo, DeviceInfo, InterfaceInfo]
+template_extensions = [
+    AddressContextInfo,
+    AddressSetContextInfo,
+    VirtualDeviceContextInfo,
+    DeviceInfo,
+    InterfaceInfo,
+]

@@ -18,7 +18,9 @@ __all__ = (
 
 class AddressSetTable(TenancyColumnsMixin, NetBoxTable):
     name = tables.LinkColumn()
-    addresses = ManyToManyColumn(orderable=False, linkify=True, verbose_name=_("Addresses"))
+    addresses = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Addresses")
+    )
     tags = TagColumn(url_name="plugins:netbox_security:addressset_list")
 
     class Meta(NetBoxTable.Meta):

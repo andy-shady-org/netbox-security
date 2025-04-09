@@ -18,7 +18,6 @@ from utilities.forms.fields import (
     TagFilterField,
     CommentField,
     CSVMultipleChoiceField,
-
 )
 
 from tenancy.models import Tenant
@@ -112,9 +111,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
             error_message["destination_zone"] = [error_message_mismatch_zones]
         if source_address and destination_address:
             if set(source_address) & set(destination_address):
-                error_message_mismatch_zones = (
-                    "Cannot have the same source and destination addresses within a policy"
-                )
+                error_message_mismatch_zones = "Cannot have the same source and destination addresses within a policy"
                 error_message["source_address"] = [error_message_mismatch_zones]
                 error_message["destination_address"] = [error_message_mismatch_zones]
         if error_message:

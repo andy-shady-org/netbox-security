@@ -1,0 +1,71 @@
+name: Test with all supported NetBox versions
+
+on:
+  - push
+  - pull_request
+
+jobs:
+    test-netbox:
+        runs-on: ubuntu-latest
+
+        strategy:
+          matrix:
+            python-version: ["3.10", "3.11", "3.12"]
+
+        services:
+            redis:
+                image: redis
+                ports:
+                  - 6379:6379
+
+            postgres:
+                image: postgres
+                env:
+                    POSTGRES_USER: netbox
+                    POSTGRES_PASSWORD: netbox
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+                ports:
+                  - 5432:5432
+
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@main
+            with:
+                path: netbox-security
+
+          - name: Set up Python ${{ matrix.python-version }}
+            uses: actions/setup-python@main
+            with:
+                python-version: ${{ matrix.python-version }}
+
+          - name: Checkout NetBox
+            uses: actions/checkout@main
+            with:
+                repository: "netbox-community/netbox"
+                path: netbox
+                ref: main
+
+          - name: Install NetBox Security
+            working-directory: netbox-security
+            run: |
+                # include tests directory for test
+                sed -i 's/exclude/#exclude/g' pyproject.toml
+                pip install .
+
+          - name: Set up configuration
+            working-directory: netbox
+            run: |
+                ln -s $(pwd)/../netbox-security/media/configuration.testing.py netbox/netbox/configuration.py
+
+                python -m pip install --upgrade pip
+                python -m pip install tblib
+                pip install -r requirements.txt -U
+
+          - name: Run tests
+            working-directory: netbox
+            run: |
+                python netbox/manage.py test netbox_security.tests --parallel -v2

@@ -41,7 +41,7 @@ class NatPoolMemberForm(NetBoxModelForm):
         queryset=NatPool.objects.all(),
         required=True,
     )
-    status = forms.ChoiceField(choices=IPAddressStatusChoices, widget=forms.Select())
+    status = forms.ChoiceField(choices=IPAddressStatusChoices)
     address = DynamicModelChoiceField(
         queryset=IPAddress.objects.all(),
         required=False,
@@ -142,23 +142,31 @@ class NatPoolMemberFilterForm(NetBoxModelFilterSetForm):
     model = NatPoolMember
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "pool_type"),
+        FieldSet("name", "pool_type", "status"),
         FieldSet("address", "prefix", "address_range", name=_("IPAM")),
         FieldSet("source_ports", "destination_ports", name=_("Ports")),
+    )
+    status = forms.MultipleChoiceField(
+        choices=IPAddressStatusChoices,
+        required=False,
     )
     pool = DynamicModelMultipleChoiceField(
         queryset=NatPool.objects.all(),
         required=False,
     )
-    address = DynamicModelChoiceField(queryset=IPAddress.objects.all(), required=False)
-    prefix = DynamicModelChoiceField(queryset=Prefix.objects.all(), required=False)
-    address_range = DynamicModelChoiceField(
+    address = DynamicModelMultipleChoiceField(
+        queryset=IPAddress.objects.all(), required=False
+    )
+    prefix = DynamicModelMultipleChoiceField(
+        queryset=Prefix.objects.all(), required=False
+    )
+    address_range = DynamicModelMultipleChoiceField(
         queryset=IPRange.objects.all(), required=False
     )
-    source_port = forms.IntegerField(
+    source_ports = forms.IntegerField(
         required=False,
     )
-    destination_port = forms.IntegerField(
+    destination_ports = forms.IntegerField(
         required=False,
     )
     tags = TagFilterField(model)
@@ -190,12 +198,27 @@ class NatPoolMemberImportForm(NetBoxModelImportForm):
         help_text=_("IPv4 or IPv6 start address (with mask)"),
     )
     status = CSVChoiceField(choices=IPAddressStatusChoices, help_text=_("Status"))
+    source_ports = NumericArrayField(
+        label=_("Source Ports"),
+        base_field=forms.IntegerField(
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
+        ),
+        required=False,
+    )
+    destination_ports = NumericArrayField(
+        label=_("Destination Ports"),
+        base_field=forms.IntegerField(
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
+        ),
+        required=False,
+    )
 
     class Meta:
         model = NatPoolMember
         fields = (
             "name",
             "pool",
+            "status",
             "address",
             "prefix",
             "address_range",
@@ -206,16 +229,31 @@ class NatPoolMemberImportForm(NetBoxModelImportForm):
 
 
 class NatPoolMemberBulkEditForm(NetBoxModelBulkEditForm):
-    model = NatPool
-    pool = DynamicModelMultipleChoiceField(
-        queryset=NatPool.objects.all(), required=False
+    model = NatPoolMember
+    pool = DynamicModelChoiceField(queryset=NatPool.objects.all(), required=False)
+    status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
+    source_ports = NumericArrayField(
+        label=_("Source Ports"),
+        base_field=forms.IntegerField(
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
+        ),
+        required=False,
     )
-    status = forms.ChoiceField(
-        required=False, choices=IPAddressStatusChoices, widget=forms.Select()
+    destination_ports = NumericArrayField(
+        label=_("Destination Ports"),
+        base_field=forms.IntegerField(
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
+        ),
+        required=False,
     )
     tags = TagFilterField(model)
     nullable_fields = []
     fieldsets = (
-        FieldSet("pool", "status"),
+        FieldSet(
+            "pool",
+            "status",
+            "source_ports",
+            "destination_ports",
+        ),
         FieldSet("tags", name=_("Tags")),
     )

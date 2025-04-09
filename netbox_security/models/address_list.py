@@ -7,7 +7,10 @@ from netbox.models.features import ContactsMixin
 from dcim.models import Device, VirtualDeviceContext
 from netbox.search import SearchIndex, register_search
 
-from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS, ADDRESSLIST_ASSIGNMENT_MODELS
+from netbox_security.constants import (
+    ADDRESS_ASSIGNMENT_MODELS,
+    ADDRESSLIST_ASSIGNMENT_MODELS,
+)
 from netbox_security.models import SecurityZone, Address, AddressSet
 
 
@@ -20,7 +23,7 @@ class AddressList(NetBoxModel):
         to="contenttypes.ContentType",
         limit_choices_to=ADDRESS_ASSIGNMENT_MODELS,
         on_delete=models.CASCADE,
-        related_name='+',
+        related_name="+",
         blank=True,
         null=True,
     )
@@ -62,7 +65,9 @@ class AddressListAssignment(NetBoxModel):
     assigned_object = GenericForeignKey(
         ct_field="assigned_object_type", fk_field="assigned_object_id"
     )
-    address_list = models.ForeignKey(to="netbox_security.AddressList", on_delete=models.CASCADE)
+    address_list = models.ForeignKey(
+        to="netbox_security.AddressList", on_delete=models.CASCADE
+    )
 
     clone_fields = ("assigned_object_type", "assigned_object_id")
 
@@ -95,9 +100,7 @@ class AddressListAssignment(NetBoxModel):
 @register_search
 class AddressListIndex(SearchIndex):
     model = AddressList
-    fields = (
-        ("name", 100),
-    )
+    fields = (("name", 100),)
 
 
 GenericRelation(

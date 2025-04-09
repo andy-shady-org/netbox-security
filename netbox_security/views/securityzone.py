@@ -34,6 +34,7 @@ __all__ = (
 )
 
 
+@register_model_view(SecurityZone)
 class SecurityZoneView(generic.ObjectView):
     queryset = SecurityZone.objects.all()
     template_name = "netbox_security/securityzone.html"
@@ -51,6 +52,7 @@ class SecurityZoneView(generic.ObjectView):
         }
 
 
+@register_model_view(SecurityZone, "list", path="", detail=False)
 class SecurityZoneListView(generic.ObjectListView):
     queryset = SecurityZone.objects.all()
     filterset = SecurityZoneFilterSet
@@ -58,16 +60,20 @@ class SecurityZoneListView(generic.ObjectListView):
     table = SecurityZoneTable
 
 
+@register_model_view(SecurityZone, "add", detail=False)
+@register_model_view(SecurityZone, "edit")
 class SecurityZoneEditView(generic.ObjectEditView):
     queryset = SecurityZone.objects.all()
     form = SecurityZoneForm
 
 
+@register_model_view(SecurityZone, "delete")
 class SecurityZoneDeleteView(generic.ObjectDeleteView):
     queryset = SecurityZone.objects.all()
     default_return_url = "plugins:netbox_security:securityzone_list"
 
 
+@register_model_view(SecurityZone, "bulk_edit", path="edit", detail=False)
 class SecurityZoneBulkEditView(generic.BulkEditView):
     queryset = SecurityZone.objects.all()
     filterset = SecurityZoneFilterSet
@@ -75,12 +81,14 @@ class SecurityZoneBulkEditView(generic.BulkEditView):
     form = SecurityZoneBulkEditForm
 
 
+@register_model_view(SecurityZone, "bulk_delete", path="delete", detail=False)
 class SecurityZoneBulkDeleteView(generic.BulkDeleteView):
     queryset = SecurityZone.objects.all()
     table = SecurityZoneTable
     default_return_url = "plugins:netbox_security:securityzone_list"
 
 
+@register_model_view(SecurityZone, "bulk_import", detail=False)
 class SecurityZoneBulkImportView(generic.BulkImportView):
     queryset = SecurityZone.objects.all()
     model_form = SecurityZoneImportForm

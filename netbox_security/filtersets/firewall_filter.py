@@ -83,9 +83,13 @@ class FirewallFilterAssignmentFilterSet(NetBoxModelFilterSet):
         )
 
     def filter_context(self, queryset, name, value):
-        if not (devices := VirtualDeviceContext.objects.filter(**{f"{name}__in": value})).exists():
+        if not (
+            devices := VirtualDeviceContext.objects.filter(**{f"{name}__in": value})
+        ).exists():
             return queryset.none()
         return queryset.filter(
-            assigned_object_type=ContentType.objects.get_for_model(VirtualDeviceContext),
+            assigned_object_type=ContentType.objects.get_for_model(
+                VirtualDeviceContext
+            ),
             assigned_object_id__in=devices.values_list("id", flat=True),
         )
