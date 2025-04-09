@@ -56,16 +56,14 @@ class NatPoolMemberForm(NetBoxModelForm):
     )
     source_ports = NumericArrayField(
         base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN,
-            max_value=SERVICE_PORT_MAX
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
         ),
         help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
         required=False,
     )
     destination_ports = NumericArrayField(
         base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN,
-            max_value=SERVICE_PORT_MAX
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
         ),
         help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
         required=False,
@@ -157,16 +155,13 @@ class NatPoolMemberFilterForm(NetBoxModelFilterSetForm):
         required=False,
     )
     address = DynamicModelMultipleChoiceField(
-        queryset=IPAddress.objects.all(),
-        required=False
+        queryset=IPAddress.objects.all(), required=False
     )
     prefix = DynamicModelMultipleChoiceField(
-        queryset=Prefix.objects.all(),
-        required=False
+        queryset=Prefix.objects.all(), required=False
     )
     address_range = DynamicModelMultipleChoiceField(
-        queryset=IPRange.objects.all(),
-        required=False
+        queryset=IPRange.objects.all(), required=False
     )
     source_ports = forms.IntegerField(
         required=False,
@@ -204,20 +199,18 @@ class NatPoolMemberImportForm(NetBoxModelImportForm):
     )
     status = CSVChoiceField(choices=IPAddressStatusChoices, help_text=_("Status"))
     source_ports = NumericArrayField(
-        label=_('Source Ports'),
+        label=_("Source Ports"),
         base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN,
-            max_value=SERVICE_PORT_MAX
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
         ),
-        required=False
+        required=False,
     )
     destination_ports = NumericArrayField(
-        label=_('Destination Ports'),
+        label=_("Destination Ports"),
         base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN,
-            max_value=SERVICE_PORT_MAX
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
         ),
-        required=False
+        required=False,
     )
 
     class Meta:
@@ -237,31 +230,30 @@ class NatPoolMemberImportForm(NetBoxModelImportForm):
 
 class NatPoolMemberBulkEditForm(NetBoxModelBulkEditForm):
     model = NatPoolMember
-    pool = DynamicModelChoiceField(
-        queryset=NatPool.objects.all(), required=False
-    )
-    status = forms.ChoiceField(
-        required=False, choices=IPAddressStatusChoices
-    )
+    pool = DynamicModelChoiceField(queryset=NatPool.objects.all(), required=False)
+    status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
     source_ports = NumericArrayField(
-        label=_('Source Ports'),
+        label=_("Source Ports"),
         base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN,
-            max_value=SERVICE_PORT_MAX
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
         ),
-        required=False
+        required=False,
     )
     destination_ports = NumericArrayField(
-        label=_('Destination Ports'),
+        label=_("Destination Ports"),
         base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN,
-            max_value=SERVICE_PORT_MAX
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
         ),
-        required=False
+        required=False,
     )
     tags = TagFilterField(model)
     nullable_fields = []
     fieldsets = (
-        FieldSet("pool", "status", "source_ports", "destination_ports",),
+        FieldSet(
+            "pool",
+            "status",
+            "source_ports",
+            "destination_ports",
+        ),
         FieldSet("tags", name=_("Tags")),
     )

@@ -145,19 +145,19 @@ class NatPoolMemberViewTestCase(
                 start_address="1.1.1.2/24",
                 end_address="1.1.1.5/24",
                 status="active",
-                size=4
+                size=4,
             ),
             IPRange(
                 start_address="1.1.2.2/24",
                 end_address="1.1.2.5/24",
                 status="active",
-                size=4
+                size=4,
             ),
             IPRange(
                 start_address="1.1.3.2/24",
                 end_address="1.1.3.5/24",
                 status="active",
-                size=4
+                size=4,
             ),
         )
         IPRange.objects.bulk_create(cls.ranges)
@@ -202,9 +202,7 @@ class NatPoolMemberViewTestCase(
             "tags": [t.pk for t in tags],
         }
 
-        cls.bulk_edit_data = {
-            "status": IPAddressStatusChoices.STATUS_RESERVED
-        }
+        cls.bulk_edit_data = {"status": IPAddressStatusChoices.STATUS_RESERVED}
 
         cls.csv_data = (
             "name,pool,status,address,prefix,address_range,source_ports,destination_ports",

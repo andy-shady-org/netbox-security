@@ -14,516 +14,1419 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
-        ('extras', '0123_journalentry_kind_default'),
-        ('ipam', '0076_natural_ordering'),
-        ('tenancy', '0017_natural_ordering'),
+        ("contenttypes", "0002_remove_content_type_name"),
+        ("extras", "0123_journalentry_kind_default"),
+        ("ipam", "0076_natural_ordering"),
+        ("tenancy", "0017_natural_ordering"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Address',
+            name="Address",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('comments', models.TextField(blank=True)),
-                ('name', models.CharField(max_length=200)),
-                ('value', ipam.fields.IPNetworkField(blank=True, null=True)),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
-                ('tenant', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_related', to='tenancy.tenant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("comments", models.TextField(blank=True)),
+                ("name", models.CharField(max_length=200)),
+                ("value", ipam.fields.IPNetworkField(blank=True, null=True)),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
+                (
+                    "tenant",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_related",
+                        to="tenancy.tenant",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Addresses',
-                'ordering': ('name', 'value'),
-                'unique_together': {('name', 'value')},
+                "verbose_name_plural": "Addresses",
+                "ordering": ("name", "value"),
+                "unique_together": {("name", "value")},
             },
         ),
         migrations.CreateModel(
-            name='AddressList',
+            name="AddressList",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('name', models.CharField(max_length=200)),
-                ('assigned_object_id', models.PositiveBigIntegerField(blank=True, null=True)),
-                ('assigned_object_type', models.ForeignKey(blank=True, limit_choices_to=models.Q(models.Q(('app_label', 'netbox_security'), ('model', 'address')), models.Q(('app_label', 'netbox_security'), ('model', 'addressset'))), null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='contenttypes.contenttype')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                (
+                    "assigned_object_id",
+                    models.PositiveBigIntegerField(blank=True, null=True),
+                ),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        blank=True,
+                        limit_choices_to=models.Q(
+                            models.Q(
+                                ("app_label", "netbox_security"), ("model", "address")
+                            ),
+                            models.Q(
+                                ("app_label", "netbox_security"),
+                                ("model", "addressset"),
+                            ),
+                        ),
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Address Lists',
+                "verbose_name_plural": "Address Lists",
             },
         ),
         migrations.CreateModel(
-            name='AddressListAssignment',
+            name="AddressListAssignment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('assigned_object_id', models.PositiveBigIntegerField()),
-                ('address_list', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='netbox_security.addresslist')),
-                ('assigned_object_type', models.ForeignKey(limit_choices_to=models.Q(models.Q(('app_label', 'dcim'), ('model', 'device')), models.Q(('app_label', 'dcim'), ('model', 'virtualdevicecontext')), models.Q(('app_label', 'netbox_security'), ('model', 'securityzone'))), on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("assigned_object_id", models.PositiveBigIntegerField()),
+                (
+                    "address_list",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="netbox_security.addresslist",
+                    ),
+                ),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        limit_choices_to=models.Q(
+                            models.Q(("app_label", "dcim"), ("model", "device")),
+                            models.Q(
+                                ("app_label", "dcim"), ("model", "virtualdevicecontext")
+                            ),
+                            models.Q(
+                                ("app_label", "netbox_security"),
+                                ("model", "securityzone"),
+                            ),
+                        ),
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Address List Assignment',
-                'verbose_name_plural': 'Address List Assignments',
+                "verbose_name": "Address List Assignment",
+                "verbose_name_plural": "Address List Assignments",
             },
         ),
         migrations.CreateModel(
-            name='AddressSet',
+            name="AddressSet",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('comments', models.TextField(blank=True)),
-                ('name', models.CharField(max_length=200)),
-                ('addresses', models.ManyToManyField(related_name='%(class)s_addresses', to='netbox_security.address')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
-                ('tenant', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_related', to='tenancy.tenant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("comments", models.TextField(blank=True)),
+                ("name", models.CharField(max_length=200)),
+                (
+                    "addresses",
+                    models.ManyToManyField(
+                        related_name="%(class)s_addresses", to="netbox_security.address"
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
+                (
+                    "tenant",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_related",
+                        to="tenancy.tenant",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Address Sets',
-                'ordering': ('name',),
+                "verbose_name_plural": "Address Sets",
+                "ordering": ("name",),
             },
         ),
         migrations.CreateModel(
-            name='AddressSetAssignment',
+            name="AddressSetAssignment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('assigned_object_id', models.PositiveBigIntegerField()),
-                ('address_set', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='netbox_security.addressset')),
-                ('assigned_object_type', models.ForeignKey(limit_choices_to=models.Q(models.Q(('app_label', 'dcim'), ('model', 'device')), models.Q(('app_label', 'dcim'), ('model', 'virtualdevicecontext')), models.Q(('app_label', 'netbox_security'), ('model', 'securityzone'))), on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("assigned_object_id", models.PositiveBigIntegerField()),
+                (
+                    "address_set",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="netbox_security.addressset",
+                    ),
+                ),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        limit_choices_to=models.Q(
+                            models.Q(("app_label", "dcim"), ("model", "device")),
+                            models.Q(
+                                ("app_label", "dcim"), ("model", "virtualdevicecontext")
+                            ),
+                            models.Q(
+                                ("app_label", "netbox_security"),
+                                ("model", "securityzone"),
+                            ),
+                        ),
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Address Set Assignment',
-                'verbose_name_plural': 'Address Set Assignments',
+                "verbose_name": "Address Set Assignment",
+                "verbose_name_plural": "Address Set Assignments",
             },
         ),
         migrations.CreateModel(
-            name='FirewallFilter',
+            name="FirewallFilter",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('comments', models.TextField(blank=True)),
-                ('name', models.CharField(max_length=200)),
-                ('family', models.CharField(blank=True, default='inet', max_length=20, null=True)),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
-                ('tenant', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_related', to='tenancy.tenant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("comments", models.TextField(blank=True)),
+                ("name", models.CharField(max_length=200)),
+                (
+                    "family",
+                    models.CharField(
+                        blank=True, default="inet", max_length=20, null=True
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
+                (
+                    "tenant",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_related",
+                        to="tenancy.tenant",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Firewall Filters',
-                'ordering': ('name', 'family'),
+                "verbose_name_plural": "Firewall Filters",
+                "ordering": ("name", "family"),
             },
         ),
         migrations.CreateModel(
-            name='FirewallFilterAssignment',
+            name="FirewallFilterAssignment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('assigned_object_id', models.PositiveBigIntegerField()),
-                ('assigned_object_type', models.ForeignKey(limit_choices_to=models.Q(models.Q(('app_label', 'dcim'), ('model', 'device')), models.Q(('app_label', 'dcim'), ('model', 'virtualdevicecontext'))), on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('firewall_filter', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='netbox_security.firewallfilter')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("assigned_object_id", models.PositiveBigIntegerField()),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        limit_choices_to=models.Q(
+                            models.Q(("app_label", "dcim"), ("model", "device")),
+                            models.Q(
+                                ("app_label", "dcim"), ("model", "virtualdevicecontext")
+                            ),
+                        ),
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "firewall_filter",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="netbox_security.firewallfilter",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Firewall Filter Assignment',
-                'verbose_name_plural': 'Firewall Filter Assignments',
+                "verbose_name": "Firewall Filter Assignment",
+                "verbose_name_plural": "Firewall Filter Assignments",
             },
         ),
         migrations.CreateModel(
-            name='FirewallFilterRule',
+            name="FirewallFilterRule",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('comments', models.TextField(blank=True)),
-                ('name', models.CharField(max_length=200)),
-                ('index', models.PositiveIntegerField()),
-                ('filter', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_rules', to='netbox_security.firewallfilter')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("comments", models.TextField(blank=True)),
+                ("name", models.CharField(max_length=200)),
+                ("index", models.PositiveIntegerField()),
+                (
+                    "filter",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="%(class)s_rules",
+                        to="netbox_security.firewallfilter",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Firewall Filter Rule',
-                'ordering': ['index', 'name'],
+                "verbose_name": "Firewall Filter Rule",
+                "ordering": ["index", "name"],
             },
         ),
         migrations.CreateModel(
-            name='FirewallRuleFromSetting',
+            name="FirewallRuleFromSetting",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('comments', models.TextField(blank=True)),
-                ('assigned_object_id', models.PositiveBigIntegerField(blank=True, null=True)),
-                ('value', models.CharField()),
-                ('key', models.CharField()),
-                ('assigned_object_type', models.ForeignKey(blank=True, limit_choices_to=models.Q(models.Q(('app_label', 'netbox_security'), ('model', 'firewallfilterrule'))), null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='contenttypes.contenttype')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("comments", models.TextField(blank=True)),
+                (
+                    "assigned_object_id",
+                    models.PositiveBigIntegerField(blank=True, null=True),
+                ),
+                ("value", models.CharField()),
+                ("key", models.CharField()),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        blank=True,
+                        limit_choices_to=models.Q(
+                            models.Q(
+                                ("app_label", "netbox_security"),
+                                ("model", "firewallfilterrule"),
+                            )
+                        ),
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Firewall Filter Rule Setting',
+                "verbose_name": "Firewall Filter Rule Setting",
             },
         ),
         migrations.CreateModel(
-            name='FirewallRuleThenSetting',
+            name="FirewallRuleThenSetting",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('comments', models.TextField(blank=True)),
-                ('assigned_object_id', models.PositiveBigIntegerField(blank=True, null=True)),
-                ('value', models.CharField()),
-                ('key', models.CharField()),
-                ('assigned_object_type', models.ForeignKey(blank=True, limit_choices_to=models.Q(models.Q(('app_label', 'netbox_security'), ('model', 'firewallfilterrule'))), null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='contenttypes.contenttype')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("comments", models.TextField(blank=True)),
+                (
+                    "assigned_object_id",
+                    models.PositiveBigIntegerField(blank=True, null=True),
+                ),
+                ("value", models.CharField()),
+                ("key", models.CharField()),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        blank=True,
+                        limit_choices_to=models.Q(
+                            models.Q(
+                                ("app_label", "netbox_security"),
+                                ("model", "firewallfilterrule"),
+                            )
+                        ),
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Firewall Filter Rule Setting',
+                "verbose_name": "Firewall Filter Rule Setting",
             },
         ),
         migrations.CreateModel(
-            name='NatPool',
+            name="NatPool",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('comments', models.TextField(blank=True)),
-                ('name', models.CharField(max_length=100)),
-                ('pool_type', models.CharField(default='address', max_length=30)),
-                ('status', models.CharField(default='active', max_length=50)),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("comments", models.TextField(blank=True)),
+                ("name", models.CharField(max_length=100)),
+                ("pool_type", models.CharField(default="address", max_length=30)),
+                ("status", models.CharField(default="active", max_length=50)),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'NAT Pool',
-                'verbose_name_plural': 'NAT Pools',
+                "verbose_name": "NAT Pool",
+                "verbose_name_plural": "NAT Pools",
             },
         ),
         migrations.CreateModel(
-            name='NatPoolAssignment',
+            name="NatPoolAssignment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('assigned_object_id', models.PositiveBigIntegerField()),
-                ('assigned_object_type', models.ForeignKey(limit_choices_to=models.Q(models.Q(('app_label', 'dcim'), ('model', 'device')), models.Q(('app_label', 'dcim'), ('model', 'virtualdevicecontext'))), on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('pool', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='netbox_security.natpool')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("assigned_object_id", models.PositiveBigIntegerField()),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        limit_choices_to=models.Q(
+                            models.Q(("app_label", "dcim"), ("model", "device")),
+                            models.Q(
+                                ("app_label", "dcim"), ("model", "virtualdevicecontext")
+                            ),
+                        ),
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "pool",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="netbox_security.natpool",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'NAT Pool assignment',
-                'verbose_name_plural': 'NAT Pool assignments',
+                "verbose_name": "NAT Pool assignment",
+                "verbose_name_plural": "NAT Pool assignments",
             },
         ),
         migrations.CreateModel(
-            name='NatPoolMember',
+            name="NatPoolMember",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('name', models.CharField(max_length=100)),
-                ('status', models.CharField(default='active', max_length=50)),
-                ('source_ports', django.contrib.postgres.fields.ArrayField(base_field=models.PositiveIntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(65535)]), null=True, size=None)),
-                ('destination_ports', django.contrib.postgres.fields.ArrayField(base_field=models.PositiveIntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(65535)]), null=True, size=None)),
-                ('address', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ipam.ipaddress')),
-                ('address_range', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ipam.iprange')),
-                ('pool', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_pools', to='netbox_security.natpool')),
-                ('prefix', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='ipam.prefix')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("status", models.CharField(default="active", max_length=50)),
+                (
+                    "source_ports",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.PositiveIntegerField(
+                            validators=[
+                                django.core.validators.MinValueValidator(1),
+                                django.core.validators.MaxValueValidator(65535),
+                            ]
+                        ),
+                        null=True,
+                        size=None,
+                    ),
+                ),
+                (
+                    "destination_ports",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.PositiveIntegerField(
+                            validators=[
+                                django.core.validators.MinValueValidator(1),
+                                django.core.validators.MaxValueValidator(65535),
+                            ]
+                        ),
+                        null=True,
+                        size=None,
+                    ),
+                ),
+                (
+                    "address",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="ipam.ipaddress",
+                    ),
+                ),
+                (
+                    "address_range",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="ipam.iprange",
+                    ),
+                ),
+                (
+                    "pool",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="%(class)s_pools",
+                        to="netbox_security.natpool",
+                    ),
+                ),
+                (
+                    "prefix",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="ipam.prefix",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'NAT Pool Member',
-                'verbose_name_plural': 'NAT Pool Members',
-                'ordering': ('pool', 'name'),
+                "verbose_name": "NAT Pool Member",
+                "verbose_name_plural": "NAT Pool Members",
+                "ordering": ("pool", "name"),
             },
         ),
         migrations.CreateModel(
-            name='NatRule',
+            name="NatRule",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('comments', models.TextField(blank=True)),
-                ('name', models.CharField(max_length=100)),
-                ('status', models.CharField(default='active', max_length=50)),
-                ('source_type', models.CharField(default='static', max_length=50)),
-                ('destination_type', models.CharField(default='static', max_length=50)),
-                ('source_ports', django.contrib.postgres.fields.ArrayField(base_field=models.PositiveIntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(65535)]), blank=True, null=True, size=None)),
-                ('destination_ports', django.contrib.postgres.fields.ArrayField(base_field=models.PositiveIntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(65535)]), blank=True, null=True, size=None)),
-                ('custom_interface', models.CharField(blank=True, default='', max_length=50, null=True)),
-                ('destination_addresses', models.ManyToManyField(blank=True, related_name='%(class)s_destination_addresses', to='ipam.ipaddress')),
-                ('destination_pool', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_destination_pool', to='netbox_security.natpool')),
-                ('destination_prefixes', models.ManyToManyField(blank=True, related_name='%(class)s_destination_prefixes', to='ipam.prefix')),
-                ('destination_ranges', models.ManyToManyField(blank=True, related_name='%(class)s_destination_ranges', to='ipam.iprange')),
-                ('pool', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='netbox_security.natpool')),
-                ('source_addresses', models.ManyToManyField(blank=True, related_name='%(class)s_source_addresses', to='ipam.ipaddress')),
-                ('source_pool', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_source_pool', to='netbox_security.natpool')),
-                ('source_prefixes', models.ManyToManyField(blank=True, related_name='%(class)s_source_prefixes', to='ipam.prefix')),
-                ('source_ranges', models.ManyToManyField(blank=True, related_name='%(class)s_source_ranges', to='ipam.iprange')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("comments", models.TextField(blank=True)),
+                ("name", models.CharField(max_length=100)),
+                ("status", models.CharField(default="active", max_length=50)),
+                ("source_type", models.CharField(default="static", max_length=50)),
+                ("destination_type", models.CharField(default="static", max_length=50)),
+                (
+                    "source_ports",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.PositiveIntegerField(
+                            validators=[
+                                django.core.validators.MinValueValidator(1),
+                                django.core.validators.MaxValueValidator(65535),
+                            ]
+                        ),
+                        blank=True,
+                        null=True,
+                        size=None,
+                    ),
+                ),
+                (
+                    "destination_ports",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.PositiveIntegerField(
+                            validators=[
+                                django.core.validators.MinValueValidator(1),
+                                django.core.validators.MaxValueValidator(65535),
+                            ]
+                        ),
+                        blank=True,
+                        null=True,
+                        size=None,
+                    ),
+                ),
+                (
+                    "custom_interface",
+                    models.CharField(blank=True, default="", max_length=50, null=True),
+                ),
+                (
+                    "destination_addresses",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="%(class)s_destination_addresses",
+                        to="ipam.ipaddress",
+                    ),
+                ),
+                (
+                    "destination_pool",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_destination_pool",
+                        to="netbox_security.natpool",
+                    ),
+                ),
+                (
+                    "destination_prefixes",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="%(class)s_destination_prefixes",
+                        to="ipam.prefix",
+                    ),
+                ),
+                (
+                    "destination_ranges",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="%(class)s_destination_ranges",
+                        to="ipam.iprange",
+                    ),
+                ),
+                (
+                    "pool",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="netbox_security.natpool",
+                    ),
+                ),
+                (
+                    "source_addresses",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="%(class)s_source_addresses",
+                        to="ipam.ipaddress",
+                    ),
+                ),
+                (
+                    "source_pool",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_source_pool",
+                        to="netbox_security.natpool",
+                    ),
+                ),
+                (
+                    "source_prefixes",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="%(class)s_source_prefixes",
+                        to="ipam.prefix",
+                    ),
+                ),
+                (
+                    "source_ranges",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="%(class)s_source_ranges",
+                        to="ipam.iprange",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'NAT Rules',
+                "verbose_name_plural": "NAT Rules",
             },
         ),
         migrations.CreateModel(
-            name='NatRuleAssignment',
+            name="NatRuleAssignment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('assigned_object_id', models.PositiveBigIntegerField(blank=True, null=True)),
-                ('assigned_object_type', models.ForeignKey(limit_choices_to=models.Q(models.Q(('app_label', 'dcim'), ('model', 'interface'))), on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('rule', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='netbox_security.natrule')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                (
+                    "assigned_object_id",
+                    models.PositiveBigIntegerField(blank=True, null=True),
+                ),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        limit_choices_to=models.Q(
+                            models.Q(("app_label", "dcim"), ("model", "interface"))
+                        ),
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "rule",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="netbox_security.natrule",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'NAT Pool assignment',
-                'verbose_name_plural': 'NAT Ruleset assignments',
+                "verbose_name": "NAT Pool assignment",
+                "verbose_name_plural": "NAT Ruleset assignments",
             },
         ),
         migrations.CreateModel(
-            name='NatRuleSet',
+            name="NatRuleSet",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('comments', models.TextField(blank=True)),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('nat_type', models.CharField(default='static', max_length=30)),
-                ('direction', models.CharField(default='inbound', max_length=30)),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("comments", models.TextField(blank=True)),
+                ("name", models.CharField(max_length=100)),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("nat_type", models.CharField(default="static", max_length=30)),
+                ("direction", models.CharField(default="inbound", max_length=30)),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'NAT Rule Sets',
+                "verbose_name_plural": "NAT Rule Sets",
             },
         ),
         migrations.AddField(
-            model_name='natrule',
-            name='rule_set',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_rules', to='netbox_security.natruleset'),
+            model_name="natrule",
+            name="rule_set",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="%(class)s_rules",
+                to="netbox_security.natruleset",
+            ),
         ),
         migrations.CreateModel(
-            name='NatRuleSetAssignment',
+            name="NatRuleSetAssignment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('assigned_object_id', models.PositiveBigIntegerField()),
-                ('assigned_object_type', models.ForeignKey(limit_choices_to=models.Q(models.Q(('app_label', 'dcim'), ('model', 'device')), models.Q(('app_label', 'dcim'), ('model', 'virtualdevicecontext'))), on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('ruleset', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='netbox_security.natruleset')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("assigned_object_id", models.PositiveBigIntegerField()),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        limit_choices_to=models.Q(
+                            models.Q(("app_label", "dcim"), ("model", "device")),
+                            models.Q(
+                                ("app_label", "dcim"), ("model", "virtualdevicecontext")
+                            ),
+                        ),
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "ruleset",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="netbox_security.natruleset",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'NAT Pool assignment',
-                'verbose_name_plural': 'NAT Ruleset assignments',
+                "verbose_name": "NAT Pool assignment",
+                "verbose_name_plural": "NAT Ruleset assignments",
             },
         ),
         migrations.CreateModel(
-            name='SecurityZone',
+            name="SecurityZone",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('comments', models.TextField(blank=True)),
-                ('name', models.CharField(max_length=100)),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
-                ('tenant', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_related', to='tenancy.tenant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("comments", models.TextField(blank=True)),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
+                (
+                    "tenant",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="%(class)s_related",
+                        to="tenancy.tenant",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Security Zones',
-                'ordering': ['name'],
+                "verbose_name_plural": "Security Zones",
+                "ordering": ["name"],
             },
         ),
         migrations.AddField(
-            model_name='natruleset',
-            name='destination_zones',
-            field=models.ManyToManyField(blank=True, related_name='%(class)s_destination_zones', to='netbox_security.securityzone'),
+            model_name="natruleset",
+            name="destination_zones",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="%(class)s_destination_zones",
+                to="netbox_security.securityzone",
+            ),
         ),
         migrations.AddField(
-            model_name='natruleset',
-            name='source_zones',
-            field=models.ManyToManyField(blank=True, related_name='%(class)s_source_zones', to='netbox_security.securityzone'),
+            model_name="natruleset",
+            name="source_zones",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="%(class)s_source_zones",
+                to="netbox_security.securityzone",
+            ),
         ),
         migrations.CreateModel(
-            name='SecurityZoneAssignment',
+            name="SecurityZoneAssignment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('assigned_object_id', models.PositiveBigIntegerField(blank=True, null=True)),
-                ('assigned_object_type', models.ForeignKey(limit_choices_to=models.Q(models.Q(('app_label', 'dcim'), ('model', 'device')), models.Q(('app_label', 'dcim'), ('model', 'virtualdevicecontext')), models.Q(('app_label', 'dcim'), ('model', 'interface'))), on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
-                ('zone', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='netbox_security.securityzone')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                (
+                    "assigned_object_id",
+                    models.PositiveBigIntegerField(blank=True, null=True),
+                ),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        limit_choices_to=models.Q(
+                            models.Q(("app_label", "dcim"), ("model", "device")),
+                            models.Q(
+                                ("app_label", "dcim"), ("model", "virtualdevicecontext")
+                            ),
+                            models.Q(("app_label", "dcim"), ("model", "interface")),
+                        ),
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
+                (
+                    "zone",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="netbox_security.securityzone",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Security Zone assignment',
-                'verbose_name_plural': 'Security Zone assignments',
+                "verbose_name": "Security Zone assignment",
+                "verbose_name_plural": "Security Zone assignments",
             },
         ),
         migrations.CreateModel(
-            name='SecurityZonePolicy',
+            name="SecurityZonePolicy",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('description', models.CharField(blank=True, max_length=200)),
-                ('comments', models.TextField(blank=True)),
-                ('name', models.CharField(max_length=100)),
-                ('index', models.PositiveIntegerField()),
-                ('application', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(blank=True, max_length=50, null=True), blank=True, null=True, size=20)),
-                ('actions', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(blank=True, default='permit', max_length=20, null=True), size=4)),
-                ('destination_address', models.ManyToManyField(related_name='%(class)s_destination_address', to='netbox_security.addresslist')),
-                ('destination_zone', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='destination_zone_policies', to='netbox_security.securityzone')),
-                ('source_address', models.ManyToManyField(related_name='%(class)s_source_address', to='netbox_security.addresslist')),
-                ('source_zone', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='source_zone_policies', to='netbox_security.securityzone')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=200)),
+                ("comments", models.TextField(blank=True)),
+                ("name", models.CharField(max_length=100)),
+                ("index", models.PositiveIntegerField()),
+                (
+                    "application",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(
+                            blank=True, max_length=50, null=True
+                        ),
+                        blank=True,
+                        null=True,
+                        size=20,
+                    ),
+                ),
+                (
+                    "actions",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(
+                            blank=True, default="permit", max_length=20, null=True
+                        ),
+                        size=4,
+                    ),
+                ),
+                (
+                    "destination_address",
+                    models.ManyToManyField(
+                        related_name="%(class)s_destination_address",
+                        to="netbox_security.addresslist",
+                    ),
+                ),
+                (
+                    "destination_zone",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="destination_zone_policies",
+                        to="netbox_security.securityzone",
+                    ),
+                ),
+                (
+                    "source_address",
+                    models.ManyToManyField(
+                        related_name="%(class)s_source_address",
+                        to="netbox_security.addresslist",
+                    ),
+                ),
+                (
+                    "source_zone",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="source_zone_policies",
+                        to="netbox_security.securityzone",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Security Zone Policies',
-                'ordering': ['index', 'name'],
+                "verbose_name_plural": "Security Zone Policies",
+                "ordering": ["index", "name"],
             },
         ),
         migrations.CreateModel(
-            name='AddressAssignment',
+            name="AddressAssignment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True, null=True)),
-                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=utilities.json.CustomFieldJSONEncoder)),
-                ('assigned_object_id', models.PositiveBigIntegerField()),
-                ('address', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='netbox_security.address')),
-                ('assigned_object_type', models.ForeignKey(limit_choices_to=models.Q(models.Q(('app_label', 'dcim'), ('model', 'device')), models.Q(('app_label', 'dcim'), ('model', 'virtualdevicecontext')), models.Q(('app_label', 'netbox_security'), ('model', 'securityzone'))), on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True, null=True)),
+                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "custom_field_data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        encoder=utilities.json.CustomFieldJSONEncoder,
+                    ),
+                ),
+                ("assigned_object_id", models.PositiveBigIntegerField()),
+                (
+                    "address",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="netbox_security.address",
+                    ),
+                ),
+                (
+                    "assigned_object_type",
+                    models.ForeignKey(
+                        limit_choices_to=models.Q(
+                            models.Q(("app_label", "dcim"), ("model", "device")),
+                            models.Q(
+                                ("app_label", "dcim"), ("model", "virtualdevicecontext")
+                            ),
+                            models.Q(
+                                ("app_label", "netbox_security"),
+                                ("model", "securityzone"),
+                            ),
+                        ),
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        through="extras.TaggedItem", to="extras.Tag"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Address Assignment',
-                'verbose_name_plural': 'Address Assignments',
-                'indexes': [models.Index(fields=['assigned_object_type', 'assigned_object_id'], name='netbox_secu_assigne_1c1278_idx')],
-                'constraints': [models.UniqueConstraint(fields=('assigned_object_type', 'assigned_object_id', 'address'), name='netbox_security_addressassignment_unique_address')],
+                "verbose_name": "Address Assignment",
+                "verbose_name_plural": "Address Assignments",
+                "indexes": [
+                    models.Index(
+                        fields=["assigned_object_type", "assigned_object_id"],
+                        name="netbox_secu_assigne_1c1278_idx",
+                    )
+                ],
+                "constraints": [
+                    models.UniqueConstraint(
+                        fields=(
+                            "assigned_object_type",
+                            "assigned_object_id",
+                            "address",
+                        ),
+                        name="netbox_security_addressassignment_unique_address",
+                    )
+                ],
             },
         ),
         migrations.AddIndex(
-            model_name='addresslist',
-            index=models.Index(fields=['assigned_object_type', 'assigned_object_id'], name='netbox_secu_assigne_26e081_idx'),
+            model_name="addresslist",
+            index=models.Index(
+                fields=["assigned_object_type", "assigned_object_id"],
+                name="netbox_secu_assigne_26e081_idx",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='addresslist',
-            constraint=models.UniqueConstraint(fields=('assigned_object_type', 'assigned_object_id', 'name'), name='netbox_security_addresslist_unique_address'),
+            model_name="addresslist",
+            constraint=models.UniqueConstraint(
+                fields=("assigned_object_type", "assigned_object_id", "name"),
+                name="netbox_security_addresslist_unique_address",
+            ),
         ),
         migrations.AddIndex(
-            model_name='addresslistassignment',
-            index=models.Index(fields=['assigned_object_type', 'assigned_object_id'], name='netbox_secu_assigne_91447d_idx'),
+            model_name="addresslistassignment",
+            index=models.Index(
+                fields=["assigned_object_type", "assigned_object_id"],
+                name="netbox_secu_assigne_91447d_idx",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='addresslistassignment',
-            constraint=models.UniqueConstraint(fields=('assigned_object_type', 'assigned_object_id', 'address_list'), name='netbox_security_addresslistassignment_unique_address'),
+            model_name="addresslistassignment",
+            constraint=models.UniqueConstraint(
+                fields=("assigned_object_type", "assigned_object_id", "address_list"),
+                name="netbox_security_addresslistassignment_unique_address",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='addressset',
-            unique_together={('name',)},
+            name="addressset",
+            unique_together={("name",)},
         ),
         migrations.AddIndex(
-            model_name='addresssetassignment',
-            index=models.Index(fields=['assigned_object_type', 'assigned_object_id'], name='netbox_secu_assigne_35e4b2_idx'),
+            model_name="addresssetassignment",
+            index=models.Index(
+                fields=["assigned_object_type", "assigned_object_id"],
+                name="netbox_secu_assigne_35e4b2_idx",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='addresssetassignment',
-            constraint=models.UniqueConstraint(fields=('assigned_object_type', 'assigned_object_id', 'address_set'), name='netbox_security_addresssetassignment_unique_address'),
+            model_name="addresssetassignment",
+            constraint=models.UniqueConstraint(
+                fields=("assigned_object_type", "assigned_object_id", "address_set"),
+                name="netbox_security_addresssetassignment_unique_address",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='firewallfilter',
-            unique_together={('name', 'family', 'tenant')},
+            name="firewallfilter",
+            unique_together={("name", "family", "tenant")},
         ),
         migrations.AddIndex(
-            model_name='firewallfilterassignment',
-            index=models.Index(fields=['assigned_object_type', 'assigned_object_id'], name='netbox_secu_assigne_047e80_idx'),
+            model_name="firewallfilterassignment",
+            index=models.Index(
+                fields=["assigned_object_type", "assigned_object_id"],
+                name="netbox_secu_assigne_047e80_idx",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='firewallfilterassignment',
-            constraint=models.UniqueConstraint(fields=('assigned_object_type', 'assigned_object_id', 'firewall_filter'), name='netbox_security_firewallfilterassignment_unique_firewall_filter'),
+            model_name="firewallfilterassignment",
+            constraint=models.UniqueConstraint(
+                fields=(
+                    "assigned_object_type",
+                    "assigned_object_id",
+                    "firewall_filter",
+                ),
+                name="netbox_security_firewallfilterassignment_unique_firewall_filter",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='natpool',
-            unique_together={('name', 'pool_type')},
+            name="natpool",
+            unique_together={("name", "pool_type")},
         ),
         migrations.AddIndex(
-            model_name='natpoolassignment',
-            index=models.Index(fields=['assigned_object_type', 'assigned_object_id'], name='netbox_secu_assigne_c1df9b_idx'),
+            model_name="natpoolassignment",
+            index=models.Index(
+                fields=["assigned_object_type", "assigned_object_id"],
+                name="netbox_secu_assigne_c1df9b_idx",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='natpoolassignment',
-            constraint=models.UniqueConstraint(fields=('assigned_object_type', 'assigned_object_id', 'pool'), name='netbox_security_natpoolassignment_unique_nat_pool'),
+            model_name="natpoolassignment",
+            constraint=models.UniqueConstraint(
+                fields=("assigned_object_type", "assigned_object_id", "pool"),
+                name="netbox_security_natpoolassignment_unique_nat_pool",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='natpoolmember',
-            unique_together={('pool', 'name')},
+            name="natpoolmember",
+            unique_together={("pool", "name")},
         ),
         migrations.AddIndex(
-            model_name='natruleassignment',
-            index=models.Index(fields=['assigned_object_type', 'assigned_object_id'], name='netbox_secu_assigne_a25a66_idx'),
+            model_name="natruleassignment",
+            index=models.Index(
+                fields=["assigned_object_type", "assigned_object_id"],
+                name="netbox_secu_assigne_a25a66_idx",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='natruleassignment',
-            constraint=models.UniqueConstraint(fields=('assigned_object_type', 'assigned_object_id', 'rule'), name='netbox_security_natruleassignment_unique_nat_rule'),
+            model_name="natruleassignment",
+            constraint=models.UniqueConstraint(
+                fields=("assigned_object_type", "assigned_object_id", "rule"),
+                name="netbox_security_natruleassignment_unique_nat_rule",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='natrule',
-            unique_together={('rule_set', 'name')},
+            name="natrule",
+            unique_together={("rule_set", "name")},
         ),
         migrations.AddIndex(
-            model_name='natrulesetassignment',
-            index=models.Index(fields=['assigned_object_type', 'assigned_object_id'], name='netbox_secu_assigne_7dcf96_idx'),
+            model_name="natrulesetassignment",
+            index=models.Index(
+                fields=["assigned_object_type", "assigned_object_id"],
+                name="netbox_secu_assigne_7dcf96_idx",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='natrulesetassignment',
-            constraint=models.UniqueConstraint(fields=('assigned_object_type', 'assigned_object_id', 'ruleset'), name='netbox_security_natrulesetassignment_unique_nat_rule_set'),
+            model_name="natrulesetassignment",
+            constraint=models.UniqueConstraint(
+                fields=("assigned_object_type", "assigned_object_id", "ruleset"),
+                name="netbox_security_natrulesetassignment_unique_nat_rule_set",
+            ),
         ),
         migrations.AddIndex(
-            model_name='securityzoneassignment',
-            index=models.Index(fields=['assigned_object_type', 'assigned_object_id'], name='netbox_secu_assigne_fecaf1_idx'),
+            model_name="securityzoneassignment",
+            index=models.Index(
+                fields=["assigned_object_type", "assigned_object_id"],
+                name="netbox_secu_assigne_fecaf1_idx",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='securityzoneassignment',
-            constraint=models.UniqueConstraint(fields=('assigned_object_type', 'assigned_object_id', 'zone'), name='netbox_security_securityzoneassignment_unique_security_zone'),
+            model_name="securityzoneassignment",
+            constraint=models.UniqueConstraint(
+                fields=("assigned_object_type", "assigned_object_id", "zone"),
+                name="netbox_security_securityzoneassignment_unique_security_zone",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='securityzonepolicy',
-            unique_together={('name', 'source_zone', 'destination_zone')},
+            name="securityzonepolicy",
+            unique_together={("name", "source_zone", "destination_zone")},
         ),
     ]

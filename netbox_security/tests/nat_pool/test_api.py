@@ -154,19 +154,19 @@ class NatPoolMemberAPITestCase(
                 start_address="1.1.1.2/24",
                 end_address="1.1.1.5/24",
                 status="active",
-                size=4
+                size=4,
             ),
             IPRange(
                 start_address="1.1.2.2/24",
                 end_address="1.1.2.5/24",
                 status="active",
-                size=4
+                size=4,
             ),
             IPRange(
                 start_address="1.1.3.2/24",
                 end_address="1.1.3.5/24",
                 status="active",
-                size=4
+                size=4,
             ),
         )
         IPRange.objects.bulk_create(cls.ranges)

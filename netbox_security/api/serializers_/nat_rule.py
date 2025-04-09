@@ -103,12 +103,22 @@ class NatRuleSerializer(NetBoxModelSerializer):
             "created",
             "last_updated",
         )
-        brief_fields = ("id", "url", "display", "rule_set", "name", "description", "status")
+        brief_fields = (
+            "id",
+            "url",
+            "display",
+            "rule_set",
+            "name",
+            "description",
+            "status",
+        )
 
     def validate(self, data):
         error_message = {}
         if isinstance(data, dict):
-            if (source_addresses := data.get("source_addresses")) is not None and (destination_addresses := data.get("destination_addresses")) is not None:
+            if (source_addresses := data.get("source_addresses")) is not None and (
+                destination_addresses := data.get("destination_addresses")
+            ) is not None:
                 if set(destination_addresses) & set(source_addresses):
                     error_address_entry = f"Source and Destination addresses cannot match: {source_addresses} - {destination_addresses}"
                     error_message |= {
@@ -116,7 +126,9 @@ class NatRuleSerializer(NetBoxModelSerializer):
                         "source_addresses": [error_address_entry],
                     }
 
-            if (source_prefixes := data.get("source_prefixes")) is not None and (destination_prefixes := data.get("destination_prefixes")) is not None:
+            if (source_prefixes := data.get("source_prefixes")) is not None and (
+                destination_prefixes := data.get("destination_prefixes")
+            ) is not None:
                 if set(destination_prefixes) & set(source_prefixes):
                     error_prefix_entry = "Source and Destination prefixes cannot match."
                     error_message |= {
@@ -124,7 +136,9 @@ class NatRuleSerializer(NetBoxModelSerializer):
                         "source_prefixes": [error_prefix_entry],
                     }
 
-            if (source_pool := data.get("source_pool")) is not None and (destination_pool := data.get("destination_pool")) is not None:
+            if (source_pool := data.get("source_pool")) is not None and (
+                destination_pool := data.get("destination_pool")
+            ) is not None:
                 if destination_pool == source_pool:
                     error_prefix_entry = "Source and Destination pools cannot match."
                     error_message |= {
@@ -132,7 +146,9 @@ class NatRuleSerializer(NetBoxModelSerializer):
                         "source_pool": [error_prefix_entry],
                     }
 
-            if (source_ranges := data.get("source_ranges")) is not None and (destination_ranges := data.get("destination_ranges")) is not None:
+            if (source_ranges := data.get("source_ranges")) is not None and (
+                destination_ranges := data.get("destination_ranges")
+            ) is not None:
                 if set(destination_ranges) & set(source_ranges):
                     error_prefix_entry = "Source and Destination ranges cannot match."
                     error_message |= {
