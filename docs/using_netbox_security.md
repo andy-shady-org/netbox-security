@@ -125,7 +125,9 @@ In addition, further object types are using to handle Many-to-Many relationships
 As Objects can be associated to devices, virtual device contexts and interfaces for the purposes of forming a relationship between the object and the device/interface, the ability to create these relationships is handled on the device or interface view.
 A series of association 'cards' have been placed on these views to allow for these to be created or viewed.
 
-In the case of an interface association, this is a special case, where NAT rules may contain an outbound interface. The purpose of this specific association is to assign an interface to the NAT rule so that it can be modelled as such.
+In the case of an interface association, there is a special case, where NAT rules may contain an outbound interface. The purpose of this NAT rule associations are to assign an interface to the NAT rule so that it can be modelled as such.
+
+For security zones, a device may be associated to a security zone, which may also contain interfaces from the same device. As such, security zones may be associated to both a device and an interface.
 
 ### ScreenShots
 
