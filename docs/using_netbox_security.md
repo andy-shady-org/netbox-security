@@ -120,6 +120,21 @@ In addition, further object types are using to handle Many-to-Many relationships
 * NatRuleAssignment -> Interface (Used for outbound interface assignments)
 * FirewallFilterAssignment -> Device and VirtualDeviceContext
 
+### Device and Interface Associations
+
+As Objects can be associated to devices, virtual device contexts and interfaces for the purposes of forming a relationship between the object and the device/interface, the ability to create these relationships is handled on the device or interface view.
+A series of association 'cards' have been placed on these views to allow for these to be created or viewed.
+
+In the case of an interface association, this is a special case, where NAT rules may contain an outbound interface. The purpose of this specific association is to assign an interface to the NAT rule so that it can be modelled as such.
+
+### ScreenShots
+
+Devices
+![Device Associations](img/device.png)
+
+Interfaces
+![Interface Associations](img/interface.png)
+
 
 ### Addresses, Address Sets and Address Lists
 
@@ -326,4 +341,3 @@ Firewall Filters
 Firewall Filter Rules
 ![List Firewall Filter Rules](img/firewall-rule-list.png)
 ![View Firewall Filter Rule](img/firewall-rule.png)
-
