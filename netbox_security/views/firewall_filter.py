@@ -98,7 +98,7 @@ class FirewallFilterContactsView(ObjectContactsView):
     queryset = FirewallFilter.objects.all()
 
 
-@register_model_view(FirewallFilterAssignment, "add")
+@register_model_view(FirewallFilterAssignment, "add", detail=False)
 @register_model_view(FirewallFilterAssignment, "edit")
 class FirewallFilterAssignmentEditView(generic.ObjectEditView):
     queryset = FirewallFilterAssignment.objects.all()

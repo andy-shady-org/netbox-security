@@ -112,7 +112,7 @@ class NatPoolContactsView(ObjectContactsView):
     queryset = NatPool.objects.all()
 
 
-@register_model_view(NatPoolAssignment, "add")
+@register_model_view(NatPoolAssignment, "add", detail=False)
 @register_model_view(NatPoolAssignment, "edit")
 class NatPoolAssignmentEditView(generic.ObjectEditView):
     queryset = NatPoolAssignment.objects.all()
