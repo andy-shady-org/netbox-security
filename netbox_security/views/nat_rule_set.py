@@ -115,7 +115,7 @@ class NatRuleSetRulesView(generic.ObjectChildrenView):
         return self.child_model.objects.filter(rule_set=parent)
 
 
-@register_model_view(NatRuleSetAssignment, "add")
+@register_model_view(NatRuleSetAssignment, "add", detail=False)
 @register_model_view(NatRuleSetAssignment, "edit")
 class NatRuleSetAssignmentEditView(generic.ObjectEditView):
     queryset = NatRuleSetAssignment.objects.all()
