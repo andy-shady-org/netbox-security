@@ -85,7 +85,7 @@ class AddressContactsView(ObjectContactsView):
     queryset = Address.objects.all()
 
 
-@register_model_view(AddressAssignment, "add")
+@register_model_view(AddressAssignment, "add", detail=False)
 @register_model_view(AddressAssignment, "edit")
 class AddressAssignmentEditView(generic.ObjectEditView):
     queryset = AddressAssignment.objects.all()

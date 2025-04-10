@@ -99,7 +99,7 @@ class SecurityZoneContactsView(ObjectContactsView):
     queryset = SecurityZone.objects.all()
 
 
-@register_model_view(SecurityZoneAssignment, "add")
+@register_model_view(SecurityZoneAssignment, "add", detail=False)
 @register_model_view(SecurityZoneAssignment, "edit")
 class SecurityZoneAssignmentEditView(generic.ObjectEditView):
     queryset = SecurityZoneAssignment.objects.all()

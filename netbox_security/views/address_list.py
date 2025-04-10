@@ -47,7 +47,7 @@ class AddressListDeleteView(generic.ObjectDeleteView):
     queryset = AddressList.objects.all()
 
 
-@register_model_view(AddressListAssignment, "add")
+@register_model_view(AddressListAssignment, "add", detail=False)
 @register_model_view(AddressListAssignment, "edit")
 class AddressListAssignmentEditView(generic.ObjectEditView):
     queryset = AddressListAssignment.objects.all()
