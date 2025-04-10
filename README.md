@@ -3,12 +3,16 @@
 
 <div align="center">
 <a href="https://pypi.org/project/netbox-security/"><img src="https://img.shields.io/pypi/v/netbox-security" alt="PyPi"/></a>
+<a href="https://github.com/andy-shady-org/netbox-security/stargazers"><img src="https://img.shields.io/github/stars/andy-shady-org/netbox-security?style=flat" alt="Stars Badge"/></a>
 <a href="https://github.com/andy-shady-org/netbox-security/network/members"><img src="https://img.shields.io/github/forks/andy-shady-org/netbox-security?style=flat" alt="Forks Badge"/></a>
 <a href="https://github.com/andy-shady-org/netbox-security/issues"><img src="https://img.shields.io/github/issues/andy-shady-org/netbox-security" alt="Issues Badge"/></a>
 <a href="https://github.com/andy-shady-org/netbox-security/pulls"><img src="https://img.shields.io/github/issues-pr/andy-shady-org/netbox-security" alt="Pull Requests Badge"/></a>
 <a href="https://github.com/andy-shady-org/netbox-security/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/andy-shady-org/netbox-security?color=2b9348"></a>
 <a href="https://github.com/andy-shady-org/netbox-security/blob/master/LICENSE"><img src="https://img.shields.io/github/license/andy-shady-org/netbox-security?color=2b9348" alt="License Badge"/></a>
 <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code Style Black"/></a>
+<a href="https://pepy.tech/project/netbox-security"><img alt="Downloads" src="https://static.pepy.tech/badge/netbox-security"></a>
+<a href="https://pepy.tech/project/netbox-security"><img alt="Downloads/Week" src="https://static.pepy.tech/badge/netbox-security/month"></a>
+<a href="https://pepy.tech/project/netbox-security"><img alt="Downloads/Month" src="https://static.pepy.tech/badge/netbox-security/week"></a>
 </div>
 
 
