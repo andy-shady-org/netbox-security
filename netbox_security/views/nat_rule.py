@@ -115,7 +115,7 @@ class NatRuleContactsView(ObjectContactsView):
 
 
 @register_model_view(NatRuleAssignment, "edit")
-@register_model_view(NatRuleAssignment, "add")
+@register_model_view(NatRuleAssignment, "add", detail=False)
 class NatRuleAssignmentEditView(generic.ObjectEditView):
     queryset = NatRuleAssignment.objects.all()
     form = NatRuleAssignmentForm
