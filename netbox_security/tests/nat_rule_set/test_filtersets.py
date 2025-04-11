@@ -56,6 +56,8 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 source_type=AddressTypeChoices.STATIC,
                 destination_type=AddressTypeChoices.STATIC,
                 status=RuleStatusChoices.STATUS_ACTIVE,
+                source_ports=[1, 2, 3],
+                destination_ports=[1, 2, 3],
             ),
             NatRule(
                 name="rule-2",
@@ -63,6 +65,8 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 source_type=AddressTypeChoices.STATIC,
                 destination_type=AddressTypeChoices.STATIC,
                 status=RuleStatusChoices.STATUS_ACTIVE,
+                source_ports=[1, 2, 3],
+                destination_ports=[1, 2, 3],
             ),
             NatRule(
                 name="rule-3",
@@ -70,6 +74,8 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 source_type=AddressTypeChoices.STATIC,
                 destination_type=AddressTypeChoices.STATIC,
                 status=RuleStatusChoices.STATUS_ACTIVE,
+                source_ports=[1, 2, 3, 4],
+                destination_ports=[1, 2, 3, 4],
             ),
         )
         NatRule.objects.bulk_create(cls.rules)
@@ -85,3 +91,14 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
         params = {"natrule_id": [self.rules[2].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+
+    def test_ports(self):
+        params = {"source_ports": [1, 2]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+        params = {"source_ports": 4}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"destination_ports": [1, 2]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+        params = {"destination_ports": 4}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
