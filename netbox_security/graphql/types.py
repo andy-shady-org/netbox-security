@@ -210,6 +210,8 @@ class NetBoxSecurityNatRuleType(NetBoxObjectType):
     status: str
     source_type: str
     destination_type: str
+    source_ports: List[int] | None
+    destination_ports: List[int] | None
 
 
 @strawberry_django.type(

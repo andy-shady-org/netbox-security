@@ -266,7 +266,11 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
     source_type = forms.MultipleChoiceField(
         choices=AddressTypeChoices, required=False, widget=forms.Select()
     )
-    source_port = forms.IntegerField(
+    source_ports = NumericArrayField(
+        base_field=forms.IntegerField(
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
+        ),
+        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
         required=False,
     )
     destination_addresses = DynamicModelMultipleChoiceField(
@@ -285,7 +289,11 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
         queryset=NatPool.objects.all(),
         required=False,
     )
-    destination_port = forms.IntegerField(
+    destination_ports = NumericArrayField(
+        base_field=forms.IntegerField(
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
+        ),
+        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
         required=False,
     )
     pool = DynamicModelMultipleChoiceField(
