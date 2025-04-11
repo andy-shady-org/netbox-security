@@ -5,6 +5,8 @@ from rest_framework.serializers import (
     SerializerMethodField,
     JSONField,
     ValidationError,
+    ListField,
+    IntegerField,
 )
 from drf_spectacular.utils import extend_schema_field
 
@@ -72,6 +74,18 @@ class NatRuleSerializer(NetBoxModelSerializer):
     source_pool = NatPoolSerializer(nested=True, required=False, allow_null=True)
     destination_pool = NatPoolSerializer(nested=True, required=False, allow_null=True)
     pool = NatPoolSerializer(nested=True, required=False, allow_null=True)
+    source_ports = ListField(
+        child=IntegerField(),
+        required=False,
+        allow_empty=True,
+        default=[],
+    )
+    destination_ports = ListField(
+        child=IntegerField(),
+        required=False,
+        allow_empty=True,
+        default=[],
+    )
 
     class Meta:
         model = NatRule

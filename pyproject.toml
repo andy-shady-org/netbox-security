@@ -1,6 +1,6 @@
 [project]
 name = "netbox-security"
-version = "1.0.1"
+version = "1.0.2"
 description = "NetBox Security is a NetBox plugin that enhances device and interface models with security specific data"
 authors = [
     {name="Andy Wilson", email="andy@shady.org"},

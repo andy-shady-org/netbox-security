@@ -155,6 +155,8 @@ class NatRuleAPITestCase(
                 "source_type": AddressTypeChoices.STATIC,
                 "destination_type": AddressTypeChoices.STATIC,
                 "status": RuleStatusChoices.STATUS_ACTIVE,
+                "source_ports": [1, 2, 3],
+                "destination_ports": [1, 2, 3],
             },
             {
                 "name": "rule-4",
@@ -162,6 +164,8 @@ class NatRuleAPITestCase(
                 "source_type": AddressTypeChoices.STATIC,
                 "destination_type": AddressTypeChoices.STATIC,
                 "status": RuleStatusChoices.STATUS_ACTIVE,
+                "source_ports": [1, 2, 3],
+                "destination_ports": [1, 2, 3],
             },
             {
                 "name": "rule-5",
@@ -169,5 +173,7 @@ class NatRuleAPITestCase(
                 "source_type": AddressTypeChoices.STATIC,
                 "destination_type": AddressTypeChoices.STATIC,
                 "status": RuleStatusChoices.STATUS_ACTIVE,
+                "source_ports": [1, 2, 3],
+                "destination_ports": [1, 2, 3],
             },
         ]
