@@ -101,4 +101,3 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
         params = {"destination_ports": 4}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
-
