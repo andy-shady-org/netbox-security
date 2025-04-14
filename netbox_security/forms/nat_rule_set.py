@@ -38,8 +38,8 @@ __all__ = (
 class NatRuleSetForm(NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=200, required=False)
-    nat_type = forms.ChoiceField(required=True, choices=NatTypeChoices)
-    direction = forms.ChoiceField(required=True, choices=RuleDirectionChoices)
+    nat_type = forms.ChoiceField(required=False, choices=NatTypeChoices)
+    direction = forms.ChoiceField(required=False, choices=RuleDirectionChoices)
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
         required=False,
@@ -71,9 +71,9 @@ class NatRuleSetForm(NetBoxModelForm):
     def clean(self):
         super().clean()
         error_message = {}
-        source_zones = self.cleaned_data.get("source_zones")
-        destination_zones = self.cleaned_data.get("destination_zones")
-        if source_zones and destination_zones:
+        if (source_zones := self.cleaned_data.get("source_zones")) is not None and (
+            destination_zones := self.cleaned_data.get("destination_zones")
+        ) is not None:
             if set(source_zones) & set(destination_zones):
                 error_message_mismatch_zones = (
                     "Cannot have the same source and destination zones within a rule"
@@ -114,6 +114,8 @@ class NatRuleSetFilterForm(NetBoxModelFilterSetForm):
 
 
 class NatRuleSetImportForm(NetBoxModelImportForm):
+    name = forms.CharField(max_length=64, required=True)
+    description = forms.CharField(max_length=200, required=False)
     nat_type = CSVChoiceField(
         choices=NatTypeChoices,
         help_text=_("NAT Type"),
@@ -146,6 +148,22 @@ class NatRuleSetImportForm(NetBoxModelImportForm):
             "destination_zones",
             "tags",
         )
+
+    def clean(self):
+        super().clean()
+        error_message = {}
+        if (source_zones := self.cleaned_data.get("source_zones")) is not None and (
+            destination_zones := self.cleaned_data.get("destination_zones")
+        ) is not None:
+            if set(source_zones) & set(destination_zones):
+                error_message_mismatch_zones = (
+                    "Cannot have the same source and destination zones within a rule"
+                )
+                error_message["source_zones"] = [error_message_mismatch_zones]
+                error_message["destination_zones"] = [error_message_mismatch_zones]
+        if error_message:
+            raise forms.ValidationError(error_message)
+        return self.cleaned_data
 
 
 class NatRuleSetBulkEditForm(NetBoxModelBulkEditForm):

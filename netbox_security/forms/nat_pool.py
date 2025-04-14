@@ -36,7 +36,9 @@ __all__ = (
 
 class NatPoolForm(NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
-    pool_type = forms.ChoiceField(required=False, choices=PoolTypeChoices)
+    pool_type = forms.ChoiceField(
+        required=False, choices=PoolTypeChoices, help_text=_("NAT Pool Type")
+    )
     status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
@@ -63,12 +65,16 @@ class NatPoolFilterForm(NetBoxModelFilterSetForm):
         FieldSet("q", "filter_id", "tag"),
         FieldSet("name", "pool_type", "status"),
     )
-    pool_type = forms.ChoiceField(required=False, choices=PoolTypeChoices)
+    pool_type = forms.ChoiceField(
+        required=False, choices=PoolTypeChoices, help_text=_("NAT Pool Type")
+    )
     status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
     tags = TagFilterField(model)
 
 
 class NatPoolImportForm(NetBoxModelImportForm):
+    name = forms.CharField(max_length=200, required=True)
+    description = forms.CharField(max_length=200, required=False)
     pool_type = CSVChoiceField(choices=PoolTypeChoices, help_text=_("NAT Pool Type"))
     status = CSVChoiceField(
         choices=IPAddressStatusChoices, help_text=_("Status"), required=False
@@ -89,7 +95,7 @@ class NatPoolBulkEditForm(NetBoxModelBulkEditForm):
         "description",
     ]
     fieldsets = (
-        FieldSet("pool_type", "description"),
+        FieldSet("pool_type", "status", "description"),
         FieldSet("tags", name=_("Tags")),
     )
 
