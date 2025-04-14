@@ -36,7 +36,9 @@ __all__ = (
 
 class NatPoolForm(NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
-    pool_type = forms.ChoiceField(required=False, choices=PoolTypeChoices, help_text=_("NAT Pool Type"))
+    pool_type = forms.ChoiceField(
+        required=False, choices=PoolTypeChoices, help_text=_("NAT Pool Type")
+    )
     status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
@@ -63,7 +65,9 @@ class NatPoolFilterForm(NetBoxModelFilterSetForm):
         FieldSet("q", "filter_id", "tag"),
         FieldSet("name", "pool_type", "status"),
     )
-    pool_type = forms.ChoiceField(required=False, choices=PoolTypeChoices, help_text=_("NAT Pool Type"))
+    pool_type = forms.ChoiceField(
+        required=False, choices=PoolTypeChoices, help_text=_("NAT Pool Type")
+    )
     status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
     tags = TagFilterField(model)
 

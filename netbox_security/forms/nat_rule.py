@@ -52,15 +52,9 @@ class NatRuleForm(NetBoxModelForm):
     )
     name = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=200, required=False)
-    status = forms.ChoiceField(
-        required=False, choices=RuleStatusChoices
-    )
-    source_type = forms.ChoiceField(
-        required=False, choices=AddressTypeChoices
-    )
-    destination_type = forms.ChoiceField(
-        required=False, choices=AddressTypeChoices
-    )
+    status = forms.ChoiceField(required=False, choices=RuleStatusChoices)
+    source_type = forms.ChoiceField(required=False, choices=AddressTypeChoices)
+    destination_type = forms.ChoiceField(required=False, choices=AddressTypeChoices)
     custom_interface = forms.ChoiceField(
         required=False,
         choices=CustomInterfaceChoices,
@@ -174,7 +168,11 @@ class NatRuleForm(NetBoxModelForm):
     def clean(self):
         super().clean()
         error_message = {}
-        if (source_addresses := self.cleaned_data.get("source_addresses")) is not None and (destination_addresses := self.cleaned_data.get("destination_addresses")):
+        if (
+            source_addresses := self.cleaned_data.get("source_addresses")
+        ) is not None and (
+            destination_addresses := self.cleaned_data.get("destination_addresses")
+        ):
             if set(destination_addresses) & set(source_addresses):
                 error_address_entry = f"Source and Destination addresses cannot match: {source_addresses} - {destination_addresses}"
                 error_message |= {
@@ -182,7 +180,11 @@ class NatRuleForm(NetBoxModelForm):
                     "source_addresses": [error_address_entry],
                 }
 
-        if (source_prefixes := self.cleaned_data.get("source_prefixes")) is not None and (destination_prefixes := self.cleaned_data.get("destination_prefixes")):
+        if (
+            source_prefixes := self.cleaned_data.get("source_prefixes")
+        ) is not None and (
+            destination_prefixes := self.cleaned_data.get("destination_prefixes")
+        ):
             if set(destination_prefixes) & set(source_prefixes):
                 error_prefix_entry = "Source and Destination prefixes cannot match."
                 error_message |= {
@@ -190,7 +192,9 @@ class NatRuleForm(NetBoxModelForm):
                     "source_prefixes": [error_prefix_entry],
                 }
 
-        if (source_ranges := self.cleaned_data.get("source_ranges")) is not None and (destination_ranges := self.cleaned_data.get("destination_ranges")):
+        if (source_ranges := self.cleaned_data.get("source_ranges")) is not None and (
+            destination_ranges := self.cleaned_data.get("destination_ranges")
+        ):
             if set(destination_ranges) & set(source_ranges):
                 error_prefix_entry = "Source and Destination ranges cannot match."
                 error_message |= {
@@ -198,7 +202,9 @@ class NatRuleForm(NetBoxModelForm):
                     "source_ranges": [error_prefix_entry],
                 }
 
-        if (source_pool := self.cleaned_data.get("source_pool")) is not None and (destination_pool := self.cleaned_data.get("destination_pool")):
+        if (source_pool := self.cleaned_data.get("source_pool")) is not None and (
+            destination_pool := self.cleaned_data.get("destination_pool")
+        ):
             if destination_pool == source_pool:
                 error_prefix_entry = "Source and Destination pools cannot match."
                 error_message |= {
@@ -397,7 +403,11 @@ class NatRuleImportForm(NetBoxModelImportForm):
     def clean(self):
         super().clean()
         error_message = {}
-        if (source_addresses := self.cleaned_data.get("source_addresses")) is not None and (destination_addresses := self.cleaned_data.get("destination_addresses")):
+        if (
+            source_addresses := self.cleaned_data.get("source_addresses")
+        ) is not None and (
+            destination_addresses := self.cleaned_data.get("destination_addresses")
+        ):
             if set(destination_addresses) & set(source_addresses):
                 error_address_entry = f"Source and Destination addresses cannot match: {source_addresses} - {destination_addresses}"
                 error_message |= {
@@ -405,7 +415,11 @@ class NatRuleImportForm(NetBoxModelImportForm):
                     "source_addresses": [error_address_entry],
                 }
 
-        if (source_prefixes := self.cleaned_data.get("source_prefixes")) is not None and (destination_prefixes := self.cleaned_data.get("destination_prefixes")):
+        if (
+            source_prefixes := self.cleaned_data.get("source_prefixes")
+        ) is not None and (
+            destination_prefixes := self.cleaned_data.get("destination_prefixes")
+        ):
             if set(destination_prefixes) & set(source_prefixes):
                 error_prefix_entry = "Source and Destination prefixes cannot match."
                 error_message |= {
@@ -413,7 +427,9 @@ class NatRuleImportForm(NetBoxModelImportForm):
                     "source_prefixes": [error_prefix_entry],
                 }
 
-        if (source_ranges := self.cleaned_data.get("source_ranges")) is not None and (destination_ranges := self.cleaned_data.get("destination_ranges")):
+        if (source_ranges := self.cleaned_data.get("source_ranges")) is not None and (
+            destination_ranges := self.cleaned_data.get("destination_ranges")
+        ):
             if set(destination_ranges) & set(source_ranges):
                 error_prefix_entry = "Source and Destination ranges cannot match."
                 error_message |= {
@@ -421,7 +437,9 @@ class NatRuleImportForm(NetBoxModelImportForm):
                     "source_ranges": [error_prefix_entry],
                 }
 
-        if (source_pool := self.cleaned_data.get("source_pool")) is not None and (destination_pool := self.cleaned_data.get("destination_pool")):
+        if (source_pool := self.cleaned_data.get("source_pool")) is not None and (
+            destination_pool := self.cleaned_data.get("destination_pool")
+        ):
             if destination_pool == source_pool:
                 error_prefix_entry = "Source and Destination pools cannot match."
                 error_message |= {
@@ -440,12 +458,8 @@ class NatRuleBulkEditForm(NetBoxModelBulkEditForm):
         queryset=NatRuleSet.objects.all(), required=False
     )
     description = forms.CharField(max_length=200, required=False)
-    source_type = forms.ChoiceField(
-        required=False, choices=AddressTypeChoices
-    )
-    destination_type = forms.ChoiceField(
-        required=False, choices=AddressTypeChoices
-    )
+    source_type = forms.ChoiceField(required=False, choices=AddressTypeChoices)
+    destination_type = forms.ChoiceField(required=False, choices=AddressTypeChoices)
     source_pool = DynamicModelChoiceField(
         queryset=NatPool.objects.all(),
         required=False,

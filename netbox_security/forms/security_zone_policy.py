@@ -98,7 +98,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
         super().clean()
         error_message = {}
         if (source_zone := self.cleaned_data.get("source_zone")) is not None and (
-                destination_zone := self.cleaned_data.get("destination_zone")
+            destination_zone := self.cleaned_data.get("destination_zone")
         ) is not None:
             if source_zone == destination_zone:
                 error_message_mismatch_zones = (
@@ -107,7 +107,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
                 error_message["source_zone"] = [error_message_mismatch_zones]
                 error_message["destination_zone"] = [error_message_mismatch_zones]
         if (source_address := self.cleaned_data.get("source_address")) is not None and (
-                destination_address := self.cleaned_data.get("destination_address")
+            destination_address := self.cleaned_data.get("destination_address")
         ) is not None:
             if set(source_address) & set(destination_address):
                 error_message_mismatch_zones = "Cannot have the same source and destination addresses within a policy"
@@ -210,7 +210,7 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
         super().clean()
         error_message = {}
         if (source_zone := self.cleaned_data.get("source_zone")) is not None and (
-                destination_zone := self.cleaned_data.get("destination_zone")
+            destination_zone := self.cleaned_data.get("destination_zone")
         ) is not None:
             if source_zone == destination_zone:
                 error_message_mismatch_zones = (
@@ -219,7 +219,7 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
                 error_message["source_zone"] = [error_message_mismatch_zones]
                 error_message["destination_zone"] = [error_message_mismatch_zones]
         if (source_address := self.cleaned_data.get("source_address")) is not None and (
-                destination_address := self.cleaned_data.get("destination_address")
+            destination_address := self.cleaned_data.get("destination_address")
         ) is not None:
             if set(source_address) & set(destination_address):
                 error_message_mismatch_zones = "Cannot have the same source and destination addresses within a policy"

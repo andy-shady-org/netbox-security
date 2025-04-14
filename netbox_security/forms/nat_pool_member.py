@@ -103,9 +103,7 @@ class NatPoolMemberForm(NetBoxModelForm):
             try:
                 ip = IPAddress.objects.get(address=str(address))
             except MultipleObjectsReturned:
-                ip = IPAddress.objects.filter(
-                    address=str(address)
-                ).first()
+                ip = IPAddress.objects.filter(address=str(address)).first()
             except ObjectDoesNotExist:
                 ip = IPAddress.objects.create(address=str(address))
             self.cleaned_data["address"] = ip
@@ -116,9 +114,7 @@ class NatPoolMemberForm(NetBoxModelForm):
             try:
                 network = Prefix.objects.get(prefix=str(prefix))
             except MultipleObjectsReturned:
-                network = Prefix.objects.filter(
-                    prefix=str(prefix)
-                ).first()
+                network = Prefix.objects.filter(prefix=str(prefix)).first()
             except ObjectDoesNotExist:
                 network = Prefix.objects.create(prefix=str(prefix))
             self.cleaned_data["prefix"] = network
@@ -233,9 +229,7 @@ class NatPoolMemberImportForm(NetBoxModelImportForm):
             try:
                 ip = IPAddress.objects.get(address=str(address))
             except MultipleObjectsReturned:
-                ip = IPAddress.objects.filter(
-                    address=str(address)
-                ).first()
+                ip = IPAddress.objects.filter(address=str(address)).first()
             except ObjectDoesNotExist:
                 ip = IPAddress.objects.create(address=str(address))
             self.cleaned_data["address"] = ip
@@ -246,9 +240,7 @@ class NatPoolMemberImportForm(NetBoxModelImportForm):
             try:
                 network = Prefix.objects.get(prefix=str(prefix))
             except MultipleObjectsReturned:
-                network = Prefix.objects.filter(
-                    prefix=str(prefix)
-                ).first()
+                network = Prefix.objects.filter(prefix=str(prefix)).first()
             except ObjectDoesNotExist:
                 network = Prefix.objects.create(prefix=str(prefix))
             self.cleaned_data["prefix"] = network

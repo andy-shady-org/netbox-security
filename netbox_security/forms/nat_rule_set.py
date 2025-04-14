@@ -72,7 +72,7 @@ class NatRuleSetForm(NetBoxModelForm):
         super().clean()
         error_message = {}
         if (source_zones := self.cleaned_data.get("source_zones")) is not None and (
-                destination_zones := self.cleaned_data.get("destination_zones")
+            destination_zones := self.cleaned_data.get("destination_zones")
         ) is not None:
             if set(source_zones) & set(destination_zones):
                 error_message_mismatch_zones = (
@@ -153,7 +153,7 @@ class NatRuleSetImportForm(NetBoxModelImportForm):
         super().clean()
         error_message = {}
         if (source_zones := self.cleaned_data.get("source_zones")) is not None and (
-                destination_zones := self.cleaned_data.get("destination_zones")
+            destination_zones := self.cleaned_data.get("destination_zones")
         ) is not None:
             if set(source_zones) & set(destination_zones):
                 error_message_mismatch_zones = (
