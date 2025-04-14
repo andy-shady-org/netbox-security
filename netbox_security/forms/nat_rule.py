@@ -18,6 +18,7 @@ from utilities.forms.fields import (
     CSVChoiceField,
     NumericArrayField,
     CSVModelChoiceField,
+    CSVModelMultipleChoiceField,
     CommentField,
 )
 
@@ -51,15 +52,9 @@ class NatRuleForm(NetBoxModelForm):
     )
     name = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=200, required=False)
-    status = forms.ChoiceField(
-        required=False, choices=RuleStatusChoices, widget=forms.Select()
-    )
-    source_type = forms.ChoiceField(
-        required=False, choices=AddressTypeChoices, widget=forms.Select()
-    )
-    destination_type = forms.ChoiceField(
-        required=False, choices=AddressTypeChoices, widget=forms.Select()
-    )
+    status = forms.ChoiceField(required=False, choices=RuleStatusChoices)
+    source_type = forms.ChoiceField(required=False, choices=AddressTypeChoices)
+    destination_type = forms.ChoiceField(required=False, choices=AddressTypeChoices)
     custom_interface = forms.ChoiceField(
         required=False,
         choices=CustomInterfaceChoices,
@@ -173,15 +168,11 @@ class NatRuleForm(NetBoxModelForm):
     def clean(self):
         super().clean()
         error_message = {}
-        source_addresses = self.cleaned_data.get("source_addresses")
-        destination_addresses = self.cleaned_data.get("destination_addresses")
-        source_prefixes = self.cleaned_data.get("source_prefixes")
-        destination_prefixes = self.cleaned_data.get("destination_prefixes")
-        source_pool = self.cleaned_data.get("source_pool")
-        destination_pool = self.cleaned_data.get("destination_pool")
-        source_ranges = self.cleaned_data.get("source_ranges")
-        destination_ranges = self.cleaned_data.get("destination_ranges")
-        if destination_addresses and source_addresses:
+        if (
+            source_addresses := self.cleaned_data.get("source_addresses")
+        ) is not None and (
+            destination_addresses := self.cleaned_data.get("destination_addresses")
+        ):
             if set(destination_addresses) & set(source_addresses):
                 error_address_entry = f"Source and Destination addresses cannot match: {source_addresses} - {destination_addresses}"
                 error_message |= {
@@ -189,7 +180,11 @@ class NatRuleForm(NetBoxModelForm):
                     "source_addresses": [error_address_entry],
                 }
 
-        if destination_prefixes and source_prefixes:
+        if (
+            source_prefixes := self.cleaned_data.get("source_prefixes")
+        ) is not None and (
+            destination_prefixes := self.cleaned_data.get("destination_prefixes")
+        ):
             if set(destination_prefixes) & set(source_prefixes):
                 error_prefix_entry = "Source and Destination prefixes cannot match."
                 error_message |= {
@@ -197,7 +192,9 @@ class NatRuleForm(NetBoxModelForm):
                     "source_prefixes": [error_prefix_entry],
                 }
 
-        if destination_ranges and source_ranges:
+        if (source_ranges := self.cleaned_data.get("source_ranges")) is not None and (
+            destination_ranges := self.cleaned_data.get("destination_ranges")
+        ):
             if set(destination_ranges) & set(source_ranges):
                 error_prefix_entry = "Source and Destination ranges cannot match."
                 error_message |= {
@@ -205,7 +202,9 @@ class NatRuleForm(NetBoxModelForm):
                     "source_ranges": [error_prefix_entry],
                 }
 
-        if destination_pool and source_pool:
+        if (source_pool := self.cleaned_data.get("source_pool")) is not None and (
+            destination_pool := self.cleaned_data.get("destination_pool")
+        ):
             if destination_pool == source_pool:
                 error_prefix_entry = "Source and Destination pools cannot match."
                 error_message |= {
@@ -307,9 +306,10 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
 
 
 class NatRuleImportForm(NetBoxModelImportForm):
+    name = forms.CharField(max_length=200, required=True)
     rule_set = CSVModelChoiceField(
         queryset=NatRuleSet.objects.all(),
-        required=False,
+        required=True,
         to_field_name="name",
         help_text=_("NAT Ruleset (Name)"),
     )
@@ -319,6 +319,62 @@ class NatRuleImportForm(NetBoxModelImportForm):
     )
     destination_type = CSVChoiceField(
         choices=AddressTypeChoices, required=False, help_text=_("Destination Type")
+    )
+    custom_interface = CSVChoiceField(
+        required=False,
+        choices=CustomInterfaceChoices,
+        widget=forms.Select(),
+        help_text=_("Standard Interface assignment via Device -> Interface view"),
+    )
+    source_addresses = CSVModelMultipleChoiceField(
+        queryset=IPAddress.objects.all(),
+        required=False,
+    )
+    destination_addresses = CSVModelMultipleChoiceField(
+        queryset=IPAddress.objects.all(),
+        required=False,
+    )
+    source_prefixes = CSVModelMultipleChoiceField(
+        queryset=Prefix.objects.all(),
+        required=False,
+    )
+    destination_prefixes = CSVModelMultipleChoiceField(
+        queryset=Prefix.objects.all(),
+        required=False,
+    )
+    source_ranges = CSVModelMultipleChoiceField(
+        queryset=IPRange.objects.all(),
+        required=False,
+    )
+    destination_ranges = CSVModelMultipleChoiceField(
+        queryset=IPRange.objects.all(),
+        required=False,
+    )
+    source_ports = NumericArrayField(
+        base_field=forms.IntegerField(
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
+        ),
+        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
+        required=False,
+    )
+    destination_ports = NumericArrayField(
+        base_field=forms.IntegerField(
+            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
+        ),
+        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
+        required=False,
+    )
+    source_pool = CSVModelChoiceField(
+        queryset=NatPool.objects.all(),
+        required=False,
+    )
+    destination_pool = CSVModelChoiceField(
+        queryset=NatPool.objects.all(),
+        required=False,
+    )
+    pool = CSVModelChoiceField(
+        queryset=NatPool.objects.all(),
+        required=False,
     )
 
     class Meta:
@@ -330,8 +386,70 @@ class NatRuleImportForm(NetBoxModelImportForm):
             "description",
             "source_type",
             "destination_type",
+            "source_addresses",
+            "destination_addresses",
+            "source_prefixes",
+            "destination_prefixes",
+            "source_pool",
+            "destination_pool",
+            "source_ranges",
+            "destination_ranges",
+            "source_ports",
+            "destination_ports",
+            "pool",
             "tags",
         )
+
+    def clean(self):
+        super().clean()
+        error_message = {}
+        if (
+            source_addresses := self.cleaned_data.get("source_addresses")
+        ) is not None and (
+            destination_addresses := self.cleaned_data.get("destination_addresses")
+        ):
+            if set(destination_addresses) & set(source_addresses):
+                error_address_entry = f"Source and Destination addresses cannot match: {source_addresses} - {destination_addresses}"
+                error_message |= {
+                    "destination_addresses": [error_address_entry],
+                    "source_addresses": [error_address_entry],
+                }
+
+        if (
+            source_prefixes := self.cleaned_data.get("source_prefixes")
+        ) is not None and (
+            destination_prefixes := self.cleaned_data.get("destination_prefixes")
+        ):
+            if set(destination_prefixes) & set(source_prefixes):
+                error_prefix_entry = "Source and Destination prefixes cannot match."
+                error_message |= {
+                    "destination_prefixes": [error_prefix_entry],
+                    "source_prefixes": [error_prefix_entry],
+                }
+
+        if (source_ranges := self.cleaned_data.get("source_ranges")) is not None and (
+            destination_ranges := self.cleaned_data.get("destination_ranges")
+        ):
+            if set(destination_ranges) & set(source_ranges):
+                error_prefix_entry = "Source and Destination ranges cannot match."
+                error_message |= {
+                    "destination_ranges": [error_prefix_entry],
+                    "source_ranges": [error_prefix_entry],
+                }
+
+        if (source_pool := self.cleaned_data.get("source_pool")) is not None and (
+            destination_pool := self.cleaned_data.get("destination_pool")
+        ):
+            if destination_pool == source_pool:
+                error_prefix_entry = "Source and Destination pools cannot match."
+                error_message |= {
+                    "destination_pool": [error_prefix_entry],
+                    "source_pool": [error_prefix_entry],
+                }
+
+        if error_message:
+            raise forms.ValidationError(error_message)
+        return self.cleaned_data
 
 
 class NatRuleBulkEditForm(NetBoxModelBulkEditForm):
@@ -340,12 +458,34 @@ class NatRuleBulkEditForm(NetBoxModelBulkEditForm):
         queryset=NatRuleSet.objects.all(), required=False
     )
     description = forms.CharField(max_length=200, required=False)
+    source_type = forms.ChoiceField(required=False, choices=AddressTypeChoices)
+    destination_type = forms.ChoiceField(required=False, choices=AddressTypeChoices)
+    source_pool = DynamicModelChoiceField(
+        queryset=NatPool.objects.all(),
+        required=False,
+    )
+    destination_pool = DynamicModelChoiceField(
+        queryset=NatPool.objects.all(),
+        required=False,
+    )
+    pool = DynamicModelChoiceField(
+        queryset=NatPool.objects.all(),
+        required=False,
+    )
     tags = TagFilterField(model)
     nullable_fields = [
         "description",
     ]
     fieldsets = (
-        FieldSet("rule_set", "description"),
+        FieldSet(
+            "rule_set",
+            "description",
+            "source_type",
+            "destination_type",
+            "source_pool",
+            "destination_pool",
+            "pool",
+        ),
         FieldSet("tags", name=_("Tags")),
     )
 

@@ -18,7 +18,7 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
 )
 
-from tenancy.models import Tenant
+from tenancy.models import Tenant, TenantGroup
 
 from netbox_security.models import (
     FirewallFilter,
@@ -79,6 +79,8 @@ class FirewallFilterFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
 
 
 class FirewallFilterImportForm(NetBoxModelImportForm):
+    name = forms.CharField(max_length=200, required=True)
+    description = forms.CharField(max_length=200, required=False)
     family = CSVChoiceField(
         choices=FamilyChoices,
         help_text=_("Family"),
@@ -105,10 +107,24 @@ class FirewallFilterImportForm(NetBoxModelImportForm):
 class FirewallFilterBulkEditForm(NetBoxModelBulkEditForm):
     model = FirewallFilter
     description = forms.CharField(max_length=200, required=False)
+    family = forms.ChoiceField(
+        required=False,
+        choices=FamilyChoices,
+    )
+    tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label=_("Tenant Group"),
+    )
+    tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("Tenant"),
+    )
     tags = TagFilterField(model)
-    nullable_fields = []
+    nullable_fields = ["description", "tenant"]
     fieldsets = (
-        FieldSet("name", "family", "description"),
+        FieldSet("family", "description"),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
