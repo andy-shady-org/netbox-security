@@ -18,7 +18,7 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
 )
 
-from tenancy.models import Tenant
+from tenancy.models import Tenant, TenantGroup
 
 from netbox_security.models import (
     Address,
@@ -37,7 +37,7 @@ __all__ = (
 class AddressForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
     value = IPNetworkFormField(
-        required=False,
+        required=True,
         label=_("Value"),
         help_text=_("The IP address or prefix value in x.x.x.x/yy format"),
     )
@@ -73,11 +73,18 @@ class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
 
 
 class AddressImportForm(NetBoxModelImportForm):
+    name = forms.CharField(max_length=200, required=True)
+    description = forms.CharField(max_length=200, required=False)
     tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
         to_field_name="name",
         label=_("Tenant"),
+    )
+    value = forms.CharField(
+        max_length=64,
+        required=True,
+        help_text=_("The IP address or prefix value in x.x.x.x/yy format"),
     )
 
     class Meta:
@@ -95,14 +102,24 @@ class AddressBulkEditForm(NetBoxModelBulkEditForm):
     model = Address
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
+    tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label=_("Tenant Group"),
+    )
     tenant = DynamicModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
         label=_("Tenant"),
     )
-    nullable_fields = []
+    value = forms.CharField(
+        max_length=64,
+        required=False,
+        help_text=_("The IP address or prefix value in x.x.x.x/yy format"),
+    )
+    nullable_fields = ["description", "tenant"]
     fieldsets = (
-        FieldSet("name", "value", "description"),
+        FieldSet("value", "description"),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )

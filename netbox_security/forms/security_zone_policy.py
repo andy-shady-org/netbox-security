@@ -20,8 +20,6 @@ from utilities.forms.fields import (
     CSVMultipleChoiceField,
 )
 
-from tenancy.models import Tenant
-
 from netbox_security.models import (
     SecurityZonePolicy,
     SecurityZone,
@@ -99,17 +97,18 @@ class SecurityZonePolicyForm(NetBoxModelForm):
     def clean(self):
         super().clean()
         error_message = {}
-        source_zone = self.cleaned_data.get("source_zone")
-        destination_zone = self.cleaned_data.get("destination_zone")
-        source_address = self.cleaned_data.get("source_address")
-        destination_address = self.cleaned_data.get("destination_address")
-        if source_zone == destination_zone:
-            error_message_mismatch_zones = (
-                "Cannot have the same source and destination zone within a policy"
-            )
-            error_message["source_zone"] = [error_message_mismatch_zones]
-            error_message["destination_zone"] = [error_message_mismatch_zones]
-        if source_address and destination_address:
+        if (source_zone := self.cleaned_data.get("source_zone")) is not None and (
+                destination_zone := self.cleaned_data.get("destination_zone")
+        ) is not None:
+            if source_zone == destination_zone:
+                error_message_mismatch_zones = (
+                    "Cannot have the same source and destination zone within a policy"
+                )
+                error_message["source_zone"] = [error_message_mismatch_zones]
+                error_message["destination_zone"] = [error_message_mismatch_zones]
+        if (source_address := self.cleaned_data.get("source_address")) is not None and (
+                destination_address := self.cleaned_data.get("destination_address")
+        ) is not None:
             if set(source_address) & set(destination_address):
                 error_message_mismatch_zones = "Cannot have the same source and destination addresses within a policy"
                 error_message["source_address"] = [error_message_mismatch_zones]
@@ -206,6 +205,29 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
             "actions",
             "tags",
         )
+
+    def clean(self):
+        super().clean()
+        error_message = {}
+        if (source_zone := self.cleaned_data.get("source_zone")) is not None and (
+                destination_zone := self.cleaned_data.get("destination_zone")
+        ) is not None:
+            if source_zone == destination_zone:
+                error_message_mismatch_zones = (
+                    "Cannot have the same source and destination zone within a policy"
+                )
+                error_message["source_zone"] = [error_message_mismatch_zones]
+                error_message["destination_zone"] = [error_message_mismatch_zones]
+        if (source_address := self.cleaned_data.get("source_address")) is not None and (
+                destination_address := self.cleaned_data.get("destination_address")
+        ) is not None:
+            if set(source_address) & set(destination_address):
+                error_message_mismatch_zones = "Cannot have the same source and destination addresses within a policy"
+                error_message["source_address"] = [error_message_mismatch_zones]
+                error_message["destination_address"] = [error_message_mismatch_zones]
+        if error_message:
+            raise forms.ValidationError(error_message)
+        return self.cleaned_data
 
 
 class SecurityZonePolicyBulkEditForm(NetBoxModelBulkEditForm):

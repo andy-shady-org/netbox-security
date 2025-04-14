@@ -99,40 +99,40 @@ class NatPoolMemberForm(NetBoxModelForm):
         ]
 
     def clean_address(self):
-        if "address" in self.cleaned_data and self.cleaned_data["address"]:
+        if (address := self.cleaned_data.get("address")) is not None:
             try:
-                ip = IPAddress.objects.get(address=str(self.cleaned_data["address"]))
+                ip = IPAddress.objects.get(address=str(address))
             except MultipleObjectsReturned:
                 ip = IPAddress.objects.filter(
-                    address=str(self.cleaned_data["address"])
+                    address=str(address)
                 ).first()
             except ObjectDoesNotExist:
-                ip = IPAddress.objects.create(address=str(self.cleaned_data["address"]))
+                ip = IPAddress.objects.create(address=str(address))
             self.cleaned_data["address"] = ip
             return self.cleaned_data["address"]
 
     def clean_prefix(self):
-        if "prefix" in self.cleaned_data and self.cleaned_data["prefix"]:
+        if (prefix := self.cleaned_data.get("prefix")) is not None:
             try:
-                network = Prefix.objects.get(prefix=str(self.cleaned_data["prefix"]))
+                network = Prefix.objects.get(prefix=str(prefix))
             except MultipleObjectsReturned:
                 network = Prefix.objects.filter(
-                    prefix=str(self.cleaned_data["prefix"])
+                    prefix=str(prefix)
                 ).first()
             except ObjectDoesNotExist:
-                network = Prefix.objects.create(prefix=str(self.cleaned_data["prefix"]))
+                network = Prefix.objects.create(prefix=str(prefix))
             self.cleaned_data["prefix"] = network
             return self.cleaned_data["prefix"]
 
     def clean_address_range(self):
-        if "address_range" in self.cleaned_data and self.cleaned_data["address_range"]:
+        if (address_range := self.cleaned_data.get("address_range")) is not None:
             try:
                 address_range = IPRange.objects.get(
-                    start_address=str(self.cleaned_data["address_range"].start_address)
+                    start_address=str(address_range.start_address)
                 )
             except MultipleObjectsReturned:
                 address_range = IPRange.objects.filter(
-                    start_address=str(self.cleaned_data["address_range"].start_address)
+                    start_address=str(address_range.start_address)
                 ).first()
             self.cleaned_data["address_range"] = address_range
             return self.cleaned_data["address_range"]
@@ -173,9 +173,10 @@ class NatPoolMemberFilterForm(NetBoxModelFilterSetForm):
 
 
 class NatPoolMemberImportForm(NetBoxModelImportForm):
+    name = forms.CharField(max_length=200, required=True)
     pool = CSVModelChoiceField(
         queryset=NatPool.objects.all(),
-        required=False,
+        required=True,
         to_field_name="name",
         help_text=_("NAT Pool (Name)"),
     )
@@ -226,6 +227,32 @@ class NatPoolMemberImportForm(NetBoxModelImportForm):
             "destination_ports",
             "tags",
         )
+
+    def clean_address(self):
+        if (address := self.cleaned_data.get("address")) is not None:
+            try:
+                ip = IPAddress.objects.get(address=str(address))
+            except MultipleObjectsReturned:
+                ip = IPAddress.objects.filter(
+                    address=str(address)
+                ).first()
+            except ObjectDoesNotExist:
+                ip = IPAddress.objects.create(address=str(address))
+            self.cleaned_data["address"] = ip
+            return self.cleaned_data["address"]
+
+    def clean_prefix(self):
+        if (prefix := self.cleaned_data.get("prefix")) is not None:
+            try:
+                network = Prefix.objects.get(prefix=str(prefix))
+            except MultipleObjectsReturned:
+                network = Prefix.objects.filter(
+                    prefix=str(prefix)
+                ).first()
+            except ObjectDoesNotExist:
+                network = Prefix.objects.create(prefix=str(prefix))
+            self.cleaned_data["prefix"] = network
+            return self.cleaned_data["prefix"]
 
 
 class NatPoolMemberBulkEditForm(NetBoxModelBulkEditForm):

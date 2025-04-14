@@ -17,7 +17,7 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
 )
 
-from tenancy.models import Tenant
+from tenancy.models import Tenant, TenantGroup
 
 from netbox_security.models import (
     SecurityZone,
@@ -88,13 +88,18 @@ class SecurityZoneImportForm(NetBoxModelImportForm):
 class SecurityZoneBulkEditForm(NetBoxModelBulkEditForm):
     model = SecurityZone
     description = forms.CharField(max_length=200, required=False)
+    tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label=_("Tenant Group"),
+    )
     tenant = DynamicModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
         label=_("Tenant"),
     )
     tags = TagFilterField(model)
-    nullable_fields = ["description"]
+    nullable_fields = ["description", "tenant"]
     fieldsets = (
         FieldSet("description"),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
