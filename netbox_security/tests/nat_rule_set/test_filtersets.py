@@ -296,13 +296,25 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"rule_set_id": [self.rule_sets[0].pk, self.rule_sets[1].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-        params = {"rule_set_id": [self.rule_sets[0].pk, self.rule_sets[1].pk, self.rule_sets[2].pk]}
+        params = {
+            "rule_set_id": [
+                self.rule_sets[0].pk,
+                self.rule_sets[1].pk,
+                self.rule_sets[2].pk,
+            ]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
         params = {"rule_set": [self.rule_sets[0].name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"rule_set": [self.rule_sets[0].name, self.rule_sets[1].name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-        params = {"rule_set": [self.rule_sets[0].name, self.rule_sets[1].name, self.rule_sets[2].name]}
+        params = {
+            "rule_set": [
+                self.rule_sets[0].name,
+                self.rule_sets[1].name,
+                self.rule_sets[2].name,
+            ]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
     def test_pool(self):
@@ -326,17 +338,26 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"source_address": [self.addresses[0].address]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
-        params = {"source_address": [self.addresses[0].address, self.addresses[1].address]}
+        params = {
+            "source_address": [self.addresses[0].address, self.addresses[1].address]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_destination_addresses(self):
         params = {"destination_address_id": [self.addresses[2].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
-        params = {"destination_address_id": [self.addresses[2].pk, self.addresses[3].pk]}
+        params = {
+            "destination_address_id": [self.addresses[2].pk, self.addresses[3].pk]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_address": [self.addresses[2].address]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
-        params = {"destination_address": [self.addresses[2].address, self.addresses[3].address]}
+        params = {
+            "destination_address": [
+                self.addresses[2].address,
+                self.addresses[3].address,
+            ]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_source_prefixes(self):
@@ -356,7 +377,9 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_prefix": [self.prefixes[2].prefix]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
-        params = {"destination_prefix": [self.prefixes[2].prefix, self.prefixes[3].prefix]}
+        params = {
+            "destination_prefix": [self.prefixes[2].prefix, self.prefixes[3].prefix]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_source_ranges(self):
@@ -366,7 +389,9 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"source_range": [self.ranges[0].start_address]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
-        params = {"source_range": [self.ranges[0].start_address, self.ranges[1].start_address]}
+        params = {
+            "source_range": [self.ranges[0].start_address, self.ranges[1].start_address]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_destination_ranges(self):
@@ -376,7 +401,12 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_range": [self.ranges[2].start_address]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
-        params = {"destination_range": [self.ranges[2].start_address, self.ranges[3].start_address]}
+        params = {
+            "destination_range": [
+                self.ranges[2].start_address,
+                self.ranges[3].start_address,
+            ]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_source_pool(self):
@@ -384,13 +414,17 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"source_pool_id": [self.pools[1].pk, self.pools[2].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-        params = {"source_pool_id": [self.pools[0].pk, self.pools[1].pk, self.pools[2].pk]}
+        params = {
+            "source_pool_id": [self.pools[0].pk, self.pools[1].pk, self.pools[2].pk]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
         params = {"source_pool": [self.pools[1].name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"source_pool": [self.pools[1].name, self.pools[2].name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-        params = {"source_pool": [self.pools[0].pk, self.pools[1].name, self.pools[2].name]}
+        params = {
+            "source_pool": [self.pools[0].pk, self.pools[1].name, self.pools[2].name]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
     def test_destination_pool(self):
@@ -398,13 +432,25 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_pool_id": [self.pools[1].pk, self.pools[2].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-        params = {"destination_pool_id": [self.pools[0].pk, self.pools[1].pk, self.pools[2].pk]}
+        params = {
+            "destination_pool_id": [
+                self.pools[0].pk,
+                self.pools[1].pk,
+                self.pools[2].pk,
+            ]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
         params = {"destination_pool": [self.pools[1].name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_pool": [self.pools[1].name, self.pools[2].name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-        params = {"destination_pool": [self.pools[0].name, self.pools[1].name, self.pools[2].name]}
+        params = {
+            "destination_pool": [
+                self.pools[0].name,
+                self.pools[1].name,
+                self.pools[2].name,
+            ]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
     def test_status(self):
@@ -412,7 +458,12 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"status": [RuleStatusChoices.STATUS_ACTIVE]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-        params = {"status": [RuleStatusChoices.STATUS_RESERVED, RuleStatusChoices.STATUS_ACTIVE]}
+        params = {
+            "status": [
+                RuleStatusChoices.STATUS_RESERVED,
+                RuleStatusChoices.STATUS_ACTIVE,
+            ]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
     def test_source_type(self):
@@ -420,7 +471,9 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"source_type": [AddressTypeChoices.STATIC]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-        params = {"source_type": [AddressTypeChoices.DYNAMIC, AddressTypeChoices.STATIC]}
+        params = {
+            "source_type": [AddressTypeChoices.DYNAMIC, AddressTypeChoices.STATIC]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
     def test_destination_type(self):
@@ -428,7 +481,9 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_type": [AddressTypeChoices.STATIC]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-        params = {"destination_type": [AddressTypeChoices.DYNAMIC, AddressTypeChoices.STATIC]}
+        params = {
+            "destination_type": [AddressTypeChoices.DYNAMIC, AddressTypeChoices.STATIC]
+        }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
     def test_ports(self):
