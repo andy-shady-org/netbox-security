@@ -8,7 +8,7 @@ from dcim.models import Device, VirtualDeviceContext
 from ipam.fields import IPNetworkField
 from netbox.search import SearchIndex, register_search
 
-from netbox_security.constants import ADDRESSLIST_ASSIGNMENT_MODELS
+from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
 from netbox_security.models import SecurityZone
 
 
@@ -45,7 +45,7 @@ class Address(ContactsMixin, PrimaryModel):
 class AddressAssignment(NetBoxModel):
     assigned_object_type = models.ForeignKey(
         to="contenttypes.ContentType",
-        limit_choices_to=ADDRESSLIST_ASSIGNMENT_MODELS,
+        limit_choices_to=ADDRESS_ASSIGNMENT_MODELS,
         on_delete=models.CASCADE,
     )
     assigned_object_id = models.PositiveBigIntegerField()

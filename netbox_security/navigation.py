@@ -196,6 +196,12 @@ firewall_menu_items = (
                 "mdi mdi-plus-thick",
                 permissions=["netbox_security.add_firewallfilterrule"],
             ),
+            PluginMenuButton(
+                "plugins:netbox_security:firewallfilterrule_bulk_import",
+                _("Import"),
+                "mdi mdi-upload",
+                permissions=["netbox_security.add_firewallfilterrule"],
+            ),
         ),
     ),
 )

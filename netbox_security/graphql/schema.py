@@ -14,6 +14,7 @@ from .types import (
     NetBoxSecurityNatRuleSetType,
     NetBoxSecurityNatRuleType,
     NetBoxSecurityFirewallFilterType,
+    NetBoxSecurityFirewallFilterRuleType,
 )
 
 
@@ -105,3 +106,13 @@ class NetBoxSecurityFirewallFilterQuery:
     netbox_security_firewallfilter_list: List[NetBoxSecurityFirewallFilterType] = (
         strawberry_django.field()
     )
+
+
+@strawberry.type(name="Query")
+class NetBoxSecurityFirewallFilterRuleQuery:
+    netbox_security_firewallfilterrule: NetBoxSecurityFirewallFilterRuleType = (
+        strawberry_django.field()
+    )
+    netbox_security_firewallfilterrule_list: List[
+        NetBoxSecurityFirewallFilterRuleType
+    ] = strawberry_django.field()

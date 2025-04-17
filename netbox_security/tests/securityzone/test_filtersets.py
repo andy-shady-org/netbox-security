@@ -1,12 +1,24 @@
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
 from tenancy.models import Tenant, TenantGroup
 from utilities.testing import ChangeLoggedFilterSetTests
 
-from netbox_security.models import SecurityZone, SecurityZonePolicy
+from netbox_security.models import (
+    SecurityZonePolicy,
+    SecurityZone,
+    Address,
+    AddressSet,
+    AddressList,
+    NatRuleSet,
+)
+
 from netbox_security.filtersets import (
     SecurityZoneFilterSet,
     SecurityZonePolicyFilterSet,
+    RuleDirectionChoices,
+    NatTypeChoices,
+    ActionChoices,
 )
 
 
@@ -35,9 +47,32 @@ class SecurityZoneFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
             SecurityZone(name="DMZ", tenant=cls.tenants[0]),
             SecurityZone(name="INTERNAL", tenant=cls.tenants[1]),
             SecurityZone(name="PUBLIC", tenant=cls.tenants[2]),
+            SecurityZone(name="EXTERNAL"),
         )
         for zone in cls.zones:
             zone.save()
+
+        cls.rule_sets = (
+            NatRuleSet(
+                name="set-4",
+                nat_type=NatTypeChoices.TYPE_IPV4,
+                direction=RuleDirectionChoices.DIRECTION_INBOUND,
+            ),
+            NatRuleSet(
+                name="set-5",
+                nat_type=NatTypeChoices.TYPE_IPV4,
+                direction=RuleDirectionChoices.DIRECTION_INBOUND,
+            ),
+            NatRuleSet(
+                name="set-6",
+                nat_type=NatTypeChoices.TYPE_STATIC,
+                direction=RuleDirectionChoices.DIRECTION_OUTBOUND,
+            ),
+        )
+        for item in cls.rule_sets:
+            item.save()
+            item.source_zones.set([cls.zones[0], cls.zones[1]])
+            item.destination_zones.set([cls.zones[2], cls.zones[3]])
 
     def test_name(self):
         params = {"name": ["DMZ", "INTERNAL"]}
@@ -59,13 +94,13 @@ class SecurityZoneFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
-    def test_zones(self):
-        params = {"securityzone_id": [self.zones[0].pk]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
-        params = {"securityzone_id": [self.zones[1].pk]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
-        params = {"securityzone_id": [self.zones[2].pk]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+    def test_natruleset_source_zones(self):
+        params = {"natruleset_source_zone_id": [self.rule_sets[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 4)
+
+    def test_natruleset_destination_zones(self):
+        params = {"natruleset_destination_zone_id": [self.rule_sets[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 4)
 
 
 class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
@@ -81,21 +116,64 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         for zone in cls.zones:
             zone.save()
 
+        cls.addresses = (
+            Address(name="address-1", value="1.1.1.4/32"),
+            Address(name="address-2", value="1.1.1.5/32"),
+            Address(name="address-3", value="1.1.1.6/32"),
+        )
+        Address.objects.bulk_create(cls.addresses)
+
+        cls.address_sets = (
+            AddressSet(name="address-set-1"),
+            AddressSet(name="address-set-2"),
+        )
+        AddressSet.objects.bulk_create(cls.address_sets)
+        cls.address_sets[0].addresses.add(cls.addresses[0])
+        cls.address_sets[1].addresses.add(cls.addresses[1])
+
+        cls.assignments = (
+            AddressList(
+                name="address-list-1",
+                assigned_object=cls.address_sets[0],
+                assigned_object_type=ContentType.objects.get_by_natural_key(
+                    "netbox_security", "addressset"
+                ),
+                assigned_object_id=cls.addresses[0].pk,
+            ),
+            AddressList(
+                name="address-list-2",
+                assigned_object=cls.address_sets[1],
+                assigned_object_type=ContentType.objects.get_by_natural_key(
+                    "netbox_security", "addressset"
+                ),
+                assigned_object_id=cls.address_sets[1].pk,
+            ),
+            AddressList(
+                name="address-list-3",
+                assigned_object=cls.addresses[2],
+                assigned_object_type=ContentType.objects.get_by_natural_key(
+                    "netbox_security", "address"
+                ),
+                assigned_object_id=cls.addresses[2].pk,
+            ),
+        )
+        for assignment in cls.assignments:
+            assignment.save()
         cls.policies = (
             SecurityZonePolicy(
                 name="policy-1",
                 index=5,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                actions=["permit", "count", "log"],
+                actions=[ActionChoices.PERMIT, ActionChoices.COUNT, ActionChoices.LOG],
                 application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
                 name="policy-2",
                 index=6,
-                source_zone=cls.zones[0],
-                destination_zone=cls.zones[1],
-                actions=["permit", "count", "log"],
+                source_zone=cls.zones[1],
+                destination_zone=cls.zones[0],
+                actions=[ActionChoices.PERMIT, ActionChoices.COUNT, ActionChoices.LOG],
                 application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
@@ -103,27 +181,67 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 index=6,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                actions=["permit", "count", "log"],
+                actions=[ActionChoices.DENY, ActionChoices.COUNT, ActionChoices.LOG],
                 application=["test-1", "test-2"],
             ),
         )
         for policy in cls.policies:
             policy.save()
+        cls.policies[0].source_address.add(cls.assignments[0])
+        cls.policies[0].destination_address.add(cls.assignments[1])
+        cls.policies[1].source_address.add(cls.assignments[1])
+        cls.policies[1].destination_address.add(cls.assignments[0])
+        cls.policies[2].source_address.add(cls.assignments[2])
+        cls.policies[2].destination_address.add(cls.assignments[0])
 
     def test_name(self):
         params = {"name": ["policy-1", "policy-2"]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
-    def test_zone(self):
-        params = {"securityzone_id": [self.zones[0].pk, self.zones[1].pk]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
-        params = {"securityzone": [self.zones[0].name, self.zones[1].name]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+    def test_source_zone(self):
+        params = {"source_zone_id": [self.zones[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"source_zone_id": [self.zones[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"source_zone": [self.zones[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"source_zone": [self.zones[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
-    def test_policies(self):
-        params = {"securityzonepolicy_id": [self.policies[0].pk]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
-        params = {"securityzonepolicy_id": [self.policies[1].pk]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
-        params = {"securityzonepolicy_id": [self.policies[2].pk]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+    def test_destination_zone(self):
+        params = {"destination_zone_id": [self.zones[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"destination_zone_id": [self.zones[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"destination_zone": [self.zones[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"destination_zone": [self.zones[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_source_address(self):
+        params = {"source_address_id": [self.assignments[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"source_address_id": [self.assignments[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"source_address_id": [self.assignments[2].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"source_address": [self.assignments[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"source_address": [self.assignments[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"source_address": [self.assignments[2].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_destination_address(self):
+        params = {"destination_address_id": [self.assignments[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"destination_address_id": [self.assignments[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"destination_address_id": [self.assignments[2].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
+        params = {"destination_address": [self.assignments[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"destination_address": [self.assignments[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"destination_address": [self.assignments[2].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)

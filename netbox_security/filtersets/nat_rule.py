@@ -31,9 +31,9 @@ class NatRuleFilterSet(NetBoxModelFilterSet):
     )
     rule_set = django_filters.ModelMultipleChoiceFilter(
         queryset=NatRuleSet.objects.all(),
-        field_name="rule_set",
+        field_name="rule_set__name",
         to_field_name="name",
-        label=_("Rule Set (ID)"),
+        label=_("Rule Set (Name)"),
     )
     pool_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
@@ -43,7 +43,7 @@ class NatRuleFilterSet(NetBoxModelFilterSet):
     )
     pool = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
-        field_name="pool",
+        field_name="pool__name",
         to_field_name="name",
         label=_("NAT Pool (Name)"),
     )
@@ -59,95 +59,95 @@ class NatRuleFilterSet(NetBoxModelFilterSet):
         choices=AddressTypeChoices,
         required=False,
     )
-    source_addresses_id = django_filters.ModelMultipleChoiceFilter(
+    source_address_id = django_filters.ModelMultipleChoiceFilter(
         queryset=IPAddress.objects.all(),
         field_name="source_addresses",
         to_field_name="id",
-        label=_("Source Addresses (ID)"),
+        label=_("Source Address (ID)"),
     )
-    source_addresses = django_filters.ModelMultipleChoiceFilter(
+    source_address = django_filters.ModelMultipleChoiceFilter(
         queryset=IPAddress.objects.all(),
-        field_name="source_addresses",
+        field_name="source_addresses__address",
         to_field_name="address",
-        label=_("Source Addresses (Address)"),
+        label=_("Source Address (Address)"),
     )
-    destination_addresses_id = django_filters.ModelMultipleChoiceFilter(
+    destination_address_id = django_filters.ModelMultipleChoiceFilter(
         queryset=IPAddress.objects.all(),
         field_name="destination_addresses",
         to_field_name="id",
-        label=_("Destination Addresses (ID)"),
+        label=_("Destination Address (ID)"),
     )
-    destination_addresses = django_filters.ModelMultipleChoiceFilter(
+    destination_address = django_filters.ModelMultipleChoiceFilter(
         queryset=IPAddress.objects.all(),
-        field_name="destination_addresses",
+        field_name="destination_addresses__address",
         to_field_name="address",
-        label=_("Destination Addresses (Address)"),
+        label=_("Destination Address (Address)"),
     )
     ip_address_id = django_filters.ModelMultipleChoiceFilter(
         queryset=IPAddress.objects.all(),
-        field_name="source_prefixes",
+        field_name="source_addresses",
         to_field_name="id",
-        label=_("Source Addresses (ID)"),
+        label=_("Source Address (ID)"),
     )
-    source_prefixes_id = django_filters.ModelMultipleChoiceFilter(
+    source_prefix_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Prefix.objects.all(),
         field_name="source_prefixes",
         to_field_name="id",
-        label=_("Source Prefixes (ID)"),
+        label=_("Source Prefix (ID)"),
     )
-    source_prefixes = django_filters.ModelMultipleChoiceFilter(
+    source_prefix = django_filters.ModelMultipleChoiceFilter(
         queryset=Prefix.objects.all(),
-        field_name="source_prefixes",
+        field_name="source_prefixes__prefix",
         to_field_name="prefix",
-        label=_("Source Prefixes (Prefix)"),
+        label=_("Source Prefix (Prefix)"),
     )
-    destination_prefixes_id = django_filters.ModelMultipleChoiceFilter(
+    destination_prefix_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Prefix.objects.all(),
         field_name="destination_prefixes",
         to_field_name="id",
-        label=_("Destination Prefixes (ID)"),
+        label=_("Destination Prefix (ID)"),
     )
-    destination_prefixes = django_filters.ModelMultipleChoiceFilter(
+    destination_prefix = django_filters.ModelMultipleChoiceFilter(
         queryset=Prefix.objects.all(),
-        field_name="destination_prefixes",
+        field_name="destination_prefixes__prefix",
         to_field_name="prefix",
-        label=_("Destination Prefixes (Prefix)"),
+        label=_("Destination Prefix (Prefix)"),
     )
     prefix_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Prefix.objects.all(),
         field_name="source_prefixes",
-        to_field_name="prefix",
-        label=_("Source Prefixes (ID)"),
+        to_field_name="id",
+        label=_("Source Prefix (ID)"),
     )
-    destination_ranges_id = django_filters.ModelMultipleChoiceFilter(
+    destination_range_id = django_filters.ModelMultipleChoiceFilter(
         queryset=IPRange.objects.all(),
         field_name="destination_ranges",
         to_field_name="id",
-        label=_("Destination Ranges (ID)"),
+        label=_("Destination Range (ID)"),
     )
-    destination_ranges = django_filters.ModelMultipleChoiceFilter(
+    destination_range = django_filters.ModelMultipleChoiceFilter(
         queryset=IPRange.objects.all(),
-        field_name="destination_ranges",
+        field_name="destination_ranges__start_address",
         to_field_name="start_address",
-        label=_("Destination Ranges (Start Address)"),
+        label=_("Destination Range (Start Address)"),
     )
-    source_ranges_id = django_filters.ModelMultipleChoiceFilter(
+    source_range_id = django_filters.ModelMultipleChoiceFilter(
         queryset=IPRange.objects.all(),
         field_name="source_ranges",
         to_field_name="id",
-        label=_("Source Ranges (ID)"),
+        label=_("Source Range (ID)"),
     )
-    source_ranges = django_filters.ModelMultipleChoiceFilter(
+    source_range = django_filters.ModelMultipleChoiceFilter(
         queryset=IPRange.objects.all(),
-        field_name="source_ranges",
+        field_name="source_ranges__start_address",
         to_field_name="start_address",
-        label=_("Source Ranges (Start Address)"),
+        label=_("Source Range (Start Address)"),
     )
     ip_range_id = django_filters.ModelMultipleChoiceFilter(
         queryset=IPRange.objects.all(),
         field_name="source_ranges",
         to_field_name="id",
-        label=_("Source Ranges (ID)"),
+        label=_("Source Range (ID)"),
     )
     source_ports = NumericArrayFilter(field_name="source_ports", lookup_expr="contains")
     destination_ports = NumericArrayFilter(
@@ -161,7 +161,7 @@ class NatRuleFilterSet(NetBoxModelFilterSet):
     )
     source_pool = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
-        field_name="source_pool",
+        field_name="source_pool__name",
         to_field_name="name",
         label=_("Source Pool (Name)"),
     )
@@ -173,7 +173,7 @@ class NatRuleFilterSet(NetBoxModelFilterSet):
     )
     destination_pool = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
-        field_name="destination_pool",
+        field_name="destination_pool__name",
         to_field_name="name",
         label=_("Destination Pool (Name)"),
     )

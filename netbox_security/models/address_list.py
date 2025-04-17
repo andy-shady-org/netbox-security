@@ -1,15 +1,13 @@
-from django.urls import reverse
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-from netbox.models import PrimaryModel, NetBoxModel
-from netbox.models.features import ContactsMixin
+from netbox.models import NetBoxModel
 from dcim.models import Device, VirtualDeviceContext
 from netbox.search import SearchIndex, register_search
 
 from netbox_security.constants import (
     ADDRESS_ASSIGNMENT_MODELS,
-    ADDRESSLIST_ASSIGNMENT_MODELS,
+    ADDRESS_LIST_ASSIGNMENT_MODELS,
 )
 from netbox_security.models import SecurityZone, Address, AddressSet
 
@@ -21,7 +19,7 @@ class AddressList(NetBoxModel):
     name = models.CharField(max_length=200)
     assigned_object_type = models.ForeignKey(
         to="contenttypes.ContentType",
-        limit_choices_to=ADDRESS_ASSIGNMENT_MODELS,
+        limit_choices_to=ADDRESS_LIST_ASSIGNMENT_MODELS,
         on_delete=models.CASCADE,
         related_name="+",
         blank=True,
@@ -58,7 +56,7 @@ class AddressList(NetBoxModel):
 class AddressListAssignment(NetBoxModel):
     assigned_object_type = models.ForeignKey(
         to="contenttypes.ContentType",
-        limit_choices_to=ADDRESSLIST_ASSIGNMENT_MODELS,
+        limit_choices_to=ADDRESS_ASSIGNMENT_MODELS,
         on_delete=models.CASCADE,
     )
     assigned_object_id = models.PositiveBigIntegerField()
