@@ -21,23 +21,17 @@ from netbox_security.models import (
 
 
 class AddressSetFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
-    addresses_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Address.objects.all(),
-        field_name="addresses",
-        to_field_name="id",
-        label=_("Address (ID)"),
-    )
-    addresses = django_filters.ModelMultipleChoiceFilter(
-        queryset=Address.objects.all(),
-        field_name="addresses",
-        to_field_name="name",
-        label=_("Address (Name)"),
-    )
     address_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Address.objects.all(),
         field_name="addresses",
         to_field_name="id",
         label=_("Address (ID)"),
+    )
+    address = django_filters.ModelMultipleChoiceFilter(
+        queryset=Address.objects.all(),
+        field_name="addresses__name",
+        to_field_name="name",
+        label=_("Address (Name)"),
     )
 
     class Meta:

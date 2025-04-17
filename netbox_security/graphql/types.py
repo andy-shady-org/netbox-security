@@ -18,6 +18,7 @@ from netbox_security.models import (
     NatRuleSet,
     NatRule,
     FirewallFilter,
+    FirewallFilterRule,
 )
 
 from .filters import (
@@ -31,6 +32,7 @@ from .filters import (
     NetBoxSecurityNatRuleSetFilter,
     NetBoxSecurityNatRuleFilter,
     NetBoxSecurityFirewallFilterFilter,
+    NetBoxSecurityFirewallFilterRuleFilter,
 )
 
 
@@ -221,3 +223,18 @@ class NetBoxSecurityFirewallFilterType(NetBoxObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
     family: str
+
+
+@strawberry_django.type(
+    FirewallFilterRule, fields="__all__", filters=NetBoxSecurityFirewallFilterRuleFilter
+)
+class NetBoxSecurityFirewallFilterRuleType(NetBoxObjectType):
+    firewall_filter: (
+        Annotated[
+            "NetBoxSecurityFirewallFilterType",
+            strawberry.lazy("netbox_security.graphql.types"),
+        ]
+        | None
+    )
+    name: str
+    index: int

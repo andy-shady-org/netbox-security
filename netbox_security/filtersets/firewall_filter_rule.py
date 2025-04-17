@@ -24,21 +24,22 @@ __all__ = (
 
 
 class FirewallFilterRuleFilterSet(NetBoxModelFilterSet):
-    filter_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="filter",
+    firewall_filter_id = django_filters.ModelMultipleChoiceFilter(
         queryset=FirewallFilter.objects.all(),
+        field_name="firewall_filter",
+        to_field_name="id",
         label=_("Firewall Filter (ID)"),
     )
-    filter = django_filters.ModelMultipleChoiceFilter(
-        field_name="filter__name",
+    firewall_filter = django_filters.ModelMultipleChoiceFilter(
         queryset=FirewallFilter.objects.all(),
+        field_name="firewall_filter__name",
         to_field_name="name",
-        label=_("Firewall Filter (name)"),
+        label=_("Firewall Filter (Name)"),
     )
 
     class Meta:
         model = FirewallFilterRule
-        fields = ["name", "description", "index"]
+        fields = ["id", "name", "description", "index"]
 
     def search(self, queryset, name, value):
         if not value.strip():

@@ -6,8 +6,7 @@ from netbox.filtersets import NetBoxModelFilterSet
 from netbox_security.models import (
     SecurityZonePolicy,
     SecurityZone,
-    Address,
-    AddressSet,
+    AddressList,
 )
 
 from netbox_security.choices import ActionChoices
@@ -22,7 +21,7 @@ class SecurityZonePolicyFilterSet(NetBoxModelFilterSet):
     )
     source_zone = django_filters.ModelMultipleChoiceFilter(
         queryset=SecurityZone.objects.all(),
-        field_name="source_zone",
+        field_name="source_zone__name",
         to_field_name="name",
         label=_("Source Zone (Name)"),
     )
@@ -34,38 +33,39 @@ class SecurityZonePolicyFilterSet(NetBoxModelFilterSet):
     )
     destination_zone = django_filters.ModelMultipleChoiceFilter(
         queryset=SecurityZone.objects.all(),
-        field_name="destination_zone",
+        field_name="destination_zone__name",
         to_field_name="name",
         label=_("Destination Zone (Name)"),
     )
     source_address_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Address.objects.all(),
+        queryset=AddressList.objects.all(),
         field_name="source_address",
         to_field_name="id",
         label=_("Source Address (ID)"),
     )
     source_address = django_filters.ModelMultipleChoiceFilter(
-        queryset=Address.objects.all(),
-        field_name="source_address",
+        queryset=AddressList.objects.all(),
+        field_name="source_address__name",
         to_field_name="name",
         label=_("Source Address (Name)"),
     )
     destination_address_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Address.objects.all(),
+        queryset=AddressList.objects.all(),
         field_name="destination_address",
         to_field_name="id",
         label=_("Destination Address (ID)"),
     )
     destination_address = django_filters.ModelMultipleChoiceFilter(
-        queryset=Address.objects.all(),
-        field_name="destination_address",
+        queryset=AddressList.objects.all(),
+        field_name="destination_address__name",
         to_field_name="name",
         label=_("Destination Address (Name)"),
     )
     address_list_id = django_filters.ModelMultipleChoiceFilter(
-        method="filter_addresses",
-        queryset=Address.objects.all(),
-        label=_("Nat Ruleset Zones"),
+        queryset=AddressList.objects.all(),
+        field_name="source_address",
+        to_field_name="id",
+        label=_("Source Address (ID)"),
     )
     actions = django_filters.MultipleChoiceFilter(
         choices=ActionChoices,
@@ -91,10 +91,3 @@ class SecurityZonePolicyFilterSet(NetBoxModelFilterSet):
             | Q(application__contains=[value])
         )
         return queryset.filter(qs_filter)
-
-    def filter_addresses(self, queryset, name, value):
-        if not value:
-            return queryset
-        source_addresses = {address.source_address.pk for address in value}
-        destination_addresses = {address.destination_address.pk for address in value}
-        return queryset.filter(pk__in=[source_addresses, destination_addresses])

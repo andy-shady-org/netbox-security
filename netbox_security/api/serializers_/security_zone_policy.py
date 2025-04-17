@@ -39,7 +39,6 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
         child=ChoiceField(choices=ActionChoices, required=False),
         required=True,
     )
-    # actions = MultipleChoiceField(choices=ActionChoices, required=False, many=True)
 
     class Meta:
         model = SecurityZonePolicy
