@@ -34,13 +34,6 @@ class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         label=_("Address Set (ID)"),
     )
 
-    address_set = django_filters.ModelMultipleChoiceFilter(
-        queryset=AddressSet.objects.all(),
-        field_name="addressset_addresses",
-        to_field_name="name",
-        label=_("Address Set (Name)"),
-    )
-
     class Meta:
         model = Address
         fields = ["id", "name", "description"]
@@ -57,7 +50,7 @@ class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
             return queryset
         try:
             query = str(IPNetwork(value).cidr)
-            return queryset.filter(prefix=query)
+            return queryset.filter(value=query)
         except (AddrFormatError, ValueError):
             return queryset.none()
 

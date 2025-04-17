@@ -77,7 +77,7 @@ class FirewallRuleThenSetting(FirewallRuleSettingMixin):
 
 class FirewallFilterRule(ContactsMixin, PrimaryModel):
     name = models.CharField(max_length=200)
-    filter = models.ForeignKey(
+    firewall_filter = models.ForeignKey(
         to="netbox_security.FirewallFilter",
         on_delete=models.CASCADE,
         related_name="%(class)s_rules",
@@ -103,7 +103,7 @@ class FirewallFilterRule(ContactsMixin, PrimaryModel):
         ordering = ["index", "name"]
 
     def __str__(self):
-        return f"{self.filter}: {self.name}"
+        return f"{self.name}"
 
     def get_absolute_url(self):
         return reverse("plugins:netbox_security:firewallfilterrule", args=[self.pk])
@@ -114,6 +114,6 @@ class FirewallFilterRuleIndex(SearchIndex):
     model = FirewallFilterRule
     fields = (
         ("name", 100),
-        ("filter", 300),
+        ("firewall_filter", 300),
         ("description", 500),
     )

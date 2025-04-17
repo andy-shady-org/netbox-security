@@ -22,19 +22,9 @@ class NatPoolMemberFilterSet(NetBoxModelFilterSet):
     )
     pool = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
-        field_name="pool",
+        field_name="pool__name",
         to_field_name="name",
         label=_("NAT Pool (Name)"),
-    )
-    status = django_filters.MultipleChoiceFilter(
-        choices=IPAddressStatusChoices,
-        required=False,
-    )
-    address = django_filters.ModelMultipleChoiceFilter(
-        field_name="address",
-        queryset=IPAddress.objects.all(),
-        to_field_name="address",
-        label=_("Address"),
     )
     address_id = django_filters.ModelMultipleChoiceFilter(
         field_name="address",
@@ -42,11 +32,11 @@ class NatPoolMemberFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("Address (ID)"),
     )
-    prefix = django_filters.ModelMultipleChoiceFilter(
-        field_name="prefix",
-        queryset=Prefix.objects.all(),
-        to_field_name="prefix",
-        label=_("Prefix"),
+    address = django_filters.ModelMultipleChoiceFilter(
+        field_name="address__address",
+        queryset=IPAddress.objects.all(),
+        to_field_name="address",
+        label=_("Address"),
     )
     prefix_id = django_filters.ModelMultipleChoiceFilter(
         field_name="prefix",
@@ -54,17 +44,27 @@ class NatPoolMemberFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("Prefix (ID)"),
     )
-    address_range = django_filters.ModelMultipleChoiceFilter(
-        field_name="address_range",
-        queryset=IPRange.objects.all(),
-        to_field_name="start_address",
-        label=_("IPRange (Start Address)"),
+    prefix = django_filters.ModelMultipleChoiceFilter(
+        field_name="prefix__prefix",
+        queryset=Prefix.objects.all(),
+        to_field_name="prefix",
+        label=_("Prefix (Prefix)"),
     )
     address_range_id = django_filters.ModelMultipleChoiceFilter(
         field_name="address_range",
         queryset=IPRange.objects.all(),
         to_field_name="id",
         label=_("IPRange (ID)"),
+    )
+    address_range = django_filters.ModelMultipleChoiceFilter(
+        field_name="address_range__start_address",
+        queryset=IPRange.objects.all(),
+        to_field_name="start_address",
+        label=_("IPRange (Start Address)"),
+    )
+    status = django_filters.MultipleChoiceFilter(
+        choices=IPAddressStatusChoices,
+        required=False,
     )
     source_ports = NumericArrayFilter(field_name="source_ports", lookup_expr="contains")
     destination_ports = NumericArrayFilter(

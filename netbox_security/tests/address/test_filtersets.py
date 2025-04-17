@@ -1,10 +1,11 @@
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
 from tenancy.models import Tenant, TenantGroup
 from utilities.testing import ChangeLoggedFilterSetTests
 
-from netbox_security.models import Address
-from netbox_security.filtersets import AddressFilterSet
+from netbox_security.models import Address, AddressList, AddressSet
+from netbox_security.filtersets import AddressFilterSet, AddressListFilterSet
 
 
 class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
@@ -29,15 +30,38 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         Tenant.objects.bulk_create(cls.tenants)
 
         cls.addresses = (
-            Address(name="address-4", value="1.1.1.4/32", tenant=cls.tenants[0]),
-            Address(name="address-5", value="1.1.1.5/32", tenant=cls.tenants[1]),
-            Address(name="address-6", value="1.1.1.6/32", tenant=cls.tenants[2]),
+            Address(name="address-1", value="1.1.1.4/32", tenant=cls.tenants[0]),
+            Address(name="address-2", value="1.1.1.5/32", tenant=cls.tenants[1]),
+            Address(name="address-3", value="1.1.1.6/32", tenant=cls.tenants[2]),
         )
         for address in cls.addresses:
             address.save()
 
+        cls.address_sets = (
+            AddressSet(name="address-set-1", tenant=cls.tenants[0]),
+            AddressSet(name="address-set-2", tenant=cls.tenants[1]),
+            AddressSet(name="address-set-3", tenant=cls.tenants[2]),
+        )
+        AddressSet.objects.bulk_create(cls.address_sets)
+        cls.address_sets[0].addresses.set(cls.addresses)
+        cls.address_sets[1].addresses.set(cls.addresses)
+        cls.address_sets[2].addresses.set(cls.addresses)
+
+        cls.assignments = (
+            AddressList(
+                name="address-list-1",
+                assigned_object=cls.addresses[0],
+                assigned_object_type=ContentType.objects.get_by_natural_key(
+                    "netbox_security", "address"
+                ),
+                assigned_object_id=cls.addresses[0].pk,
+            ),
+        )
+        for assignment in cls.assignments:
+            assignment.save()
+
     def test_name(self):
-        params = {"name": ["address-4", "address-5"]}
+        params = {"name": ["address-1", "address-2"]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_tenant(self):
@@ -57,9 +81,23 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_addresses(self):
+        params = {
+            "address_set_id": [
+                self.address_sets[0].pk,
+                self.address_sets[1].pk,
+                self.address_sets[2].pk,
+            ]
+        }
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+        params = {"value": self.addresses[0].value}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_assignment(self):
+        self.filterset = AddressListFilterSet
+        self.queryset = AddressList.objects.all()
+        params = {"name": [self.assignments[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"address_id": [self.addresses[0].pk]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
-        params = {"address_id": [self.addresses[1].pk]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
-        params = {"address_id": [self.addresses[2].pk]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"address": [self.addresses[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)

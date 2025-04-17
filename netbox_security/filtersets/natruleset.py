@@ -31,34 +31,35 @@ class NatRuleSetFilterSet(NetBoxModelFilterSet):
         choices=RuleDirectionChoices,
         required=False,
     )
-    source_zones_id = django_filters.ModelMultipleChoiceFilter(
+    source_zone_id = django_filters.ModelMultipleChoiceFilter(
         queryset=SecurityZone.objects.all(),
         field_name="source_zones",
         to_field_name="id",
-        label=_("Source Zones (ID)"),
+        label=_("Source Zone (ID)"),
     )
-    source_zones = django_filters.ModelMultipleChoiceFilter(
+    source_zone = django_filters.ModelMultipleChoiceFilter(
         queryset=SecurityZone.objects.all(),
         field_name="source_zones__name",
         to_field_name="name",
-        label=_("Source Zones (Name)"),
+        label=_("Source Zone (Name)"),
     )
-    destination_zones_id = django_filters.ModelMultipleChoiceFilter(
+    destination_zone_id = django_filters.ModelMultipleChoiceFilter(
         queryset=SecurityZone.objects.all(),
         field_name="destination_zones",
         to_field_name="id",
-        label=_("Destination Zones (ID)"),
+        label=_("Destination Zone (ID)"),
     )
-    destination_zones = django_filters.ModelMultipleChoiceFilter(
+    destination_zone = django_filters.ModelMultipleChoiceFilter(
         queryset=SecurityZone.objects.all(),
         field_name="destination_zones__name",
         to_field_name="name",
-        label=_("Destination Zones (Name)"),
+        label=_("Destination Zone (Name)"),
     )
     security_zone_id = django_filters.ModelMultipleChoiceFilter(
-        method="filter_zones",
         queryset=SecurityZone.objects.all(),
-        label=_("Source/Destination Zones (ID)"),
+        field_name="source_zones",
+        to_field_name="id",
+        label=_("Source Zone (ID)"),
     )
 
     class Meta:
@@ -71,13 +72,6 @@ class NatRuleSetFilterSet(NetBoxModelFilterSet):
             return queryset
         qs_filter = Q(name__icontains=value) | Q(description__icontains=value)
         return queryset.filter(qs_filter)
-
-    def filter_zones(self, queryset, name, value):
-        if not value:
-            return queryset
-        source_zones = {ruleset.source_zones.pk for ruleset in value}
-        destination_zones = {ruleset.destination_zones.pk for ruleset in value}
-        return queryset.filter(pk__in=[source_zones, destination_zones])
 
 
 class NatRuleSetAssignmentFilterSet(NetBoxModelFilterSet):

@@ -22,11 +22,11 @@
                     <td>{{ object.description|placeholder }}</td>
                 </tr>
                 {% endif %}
-                {% if object.filter %}
+                {% if object.firewall_filter %}
                 <tr>
                     <th scope="row">{% trans "Firewall Filter" %}</th>
                     <td>
-                        {{ object.filter|linkify|placeholder }}
+                        {{ object.firewall_filter|linkify|placeholder }}
                     </td>
                 </tr>
                 {% endif %}

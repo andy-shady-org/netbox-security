@@ -18,6 +18,8 @@ from netbox_security.models import (
 from netbox_security.forms import (
     FirewallFilterRuleFilterForm,
     FirewallFilterRuleForm,
+    FirewallFilterRuleBulkEditForm,
+    FirewallFilterRuleImportForm,
 )
 
 
@@ -26,11 +28,13 @@ __all__ = (
     "FirewallFilterRuleListView",
     "FirewallFilterRuleEditView",
     "FirewallFilterRuleDeleteView",
+    "FirewallFilterRuleBulkEditView",
     "FirewallFilterRuleBulkDeleteView",
     "FirewallFilterRuleContactsView",
     "FirewallRuleFromSettingView",
     "FirewallRuleFromSettingDeleteView",
     "FirewallRuleFromSettingBulkDeleteView",
+    "FirewallFilterRuleBulkImportView",
     "FirewallRuleThenSettingView",
     "FirewallRuleThenSettingDeleteView",
     "FirewallRuleThenSettingBulkDeleteView",
@@ -64,6 +68,14 @@ class FirewallFilterRuleDeleteView(generic.ObjectDeleteView):
     default_return_url = "plugins:netbox_security:firewallfilterrule_list"
 
 
+@register_model_view(FirewallFilterRule, "bulk_edit", path="edit", detail=False)
+class FirewallFilterRuleBulkEditView(generic.BulkEditView):
+    queryset = FirewallFilterRule.objects.all()
+    filterset = FirewallFilterRuleFilterSet
+    table = FirewallFilterRuleTable
+    form = FirewallFilterRuleBulkEditForm
+
+
 @register_model_view(FirewallFilterRule, "bulk_delete", path="delete", detail=False)
 class FirewallFilterRuleBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallFilterRule.objects.all()
@@ -92,6 +104,12 @@ class FirewallRuleFromSettingBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallFilterRule.objects.all()
     table = FirewallRuleFromSettingTable
     default_return_url = "plugins:netbox_security:firewallfilterrule_list"
+
+
+@register_model_view(FirewallFilterRule, "bulk_import", detail=False)
+class FirewallFilterRuleBulkImportView(generic.BulkImportView):
+    queryset = FirewallFilterRule.objects.all()
+    model_form = FirewallFilterRuleImportForm
 
 
 @register_model_view(FirewallRuleThenSetting)

@@ -97,9 +97,9 @@ class FirewallFilterRuleSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:firewallfilterrule-detail"
     )
-    filter = FirewallFilterSerializer(nested=True)
-    from_settings = FirewallRuleFromSettingSerializer(many=True)
-    then_settings = FirewallRuleThenSettingSerializer(many=True)
+    firewall_filter = FirewallFilterSerializer(nested=True, required=True)
+    from_settings = FirewallRuleFromSettingSerializer(required=False, many=True)
+    then_settings = FirewallRuleThenSettingSerializer(required=False, many=True)
 
     class Meta:
         model = FirewallFilterRule
@@ -109,7 +109,7 @@ class FirewallFilterRuleSerializer(NetBoxModelSerializer):
             "display",
             "name",
             "index",
-            "filter",
+            "firewall_filter",
             "from_settings",
             "then_settings",
             "description",
@@ -121,6 +121,7 @@ class FirewallFilterRuleSerializer(NetBoxModelSerializer):
             "id",
             "display",
             "name",
+            "description",
             "index",
-            "filter",
+            "firewall_filter",
         )

@@ -13,6 +13,7 @@ from netbox_security.models import (
     NatRuleSet,
     NatRule,
     FirewallFilter,
+    FirewallFilterRule,
 )
 
 from netbox_security.filtersets import (
@@ -26,6 +27,7 @@ from netbox_security.filtersets import (
     NatRuleSetFilterSet,
     NatRuleFilterSet,
     FirewallFilterFilterSet,
+    FirewallFilterRuleFilterSet,
 )
 
 
@@ -86,4 +88,10 @@ class NetBoxSecurityNatRuleFilter(BaseFilterMixin):
 @strawberry_django.filter(FirewallFilter, lookups=True)
 @autotype_decorator(FirewallFilterFilterSet)
 class NetBoxSecurityFirewallFilterFilter(BaseFilterMixin):
+    pass
+
+
+@strawberry_django.filter(FirewallFilterRule, lookups=True)
+@autotype_decorator(FirewallFilterRuleFilterSet)
+class NetBoxSecurityFirewallFilterRuleFilter(BaseFilterMixin):
     pass
