@@ -93,18 +93,20 @@ class NatPoolBulkDeleteView(generic.BulkDeleteView):
 @register_model_view(NatPool, name="members")
 class NatPoolNatPoolMembersView(generic.ObjectChildrenView):
     template_name = "netbox_security/natpool_members.html"
-    queryset = NatPool.objects.all()
+    queryset = NatPool.objects.all().prefetch_related("natpoolmember_pools")
     child_model = NatPoolMember
     table = NatPoolMemberTable
     filterset = NatPoolMemberFilterSet
     actions = []
     tab = ViewTab(
         label=_("NAT Pool Members"),
-        badge=lambda obj: NatPoolMember.objects.filter(pool=obj).count(),
+        permission="netbox_security.view_natpoolmember",
+        badge=lambda obj: obj.natpoolmember_pools.count(),
+        hide_if_empty=True,
     )
 
     def get_children(self, request, parent):
-        return self.child_model.objects.filter(pool=parent)
+        return parent.natpoolmember_pools
 
 
 @register_model_view(NatPool, "contacts")

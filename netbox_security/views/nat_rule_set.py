@@ -101,18 +101,20 @@ class NatRuleSetContactsView(ObjectContactsView):
 @register_model_view(NatRuleSet, name="rules")
 class NatRuleSetRulesView(generic.ObjectChildrenView):
     template_name = "netbox_security/natruleset_rules.html"
-    queryset = NatRuleSet.objects.all()
+    queryset = NatRuleSet.objects.all().prefetch_related("natrule_rules")
     child_model = NatRule
     table = NatRuleTable
     filterset = NatRuleFilterSet
     actions = []
     tab = ViewTab(
         label=_("NAT Rules"),
-        badge=lambda obj: NatRule.objects.filter(rule_set=obj).count(),
+        permission="netbox_security.view_natrule",
+        badge=lambda obj: obj.natrule_rules.count(),
+        hide_if_empty=True,
     )
 
     def get_children(self, request, parent):
-        return self.child_model.objects.filter(rule_set=parent)
+        return parent.natrule_rules
 
 
 @register_model_view(NatRuleSetAssignment, "add", detail=False)
