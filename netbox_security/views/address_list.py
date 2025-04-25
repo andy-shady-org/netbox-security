@@ -19,7 +19,7 @@ __all__ = (
 )
 
 
-@register_model_view(AddressList, "add")
+@register_model_view(AddressList, "add", detail=False)
 @register_model_view(AddressList, "edit")
 class AddressListEditView(generic.ObjectEditView):
     queryset = AddressList.objects.all()
