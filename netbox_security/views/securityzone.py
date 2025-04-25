@@ -2,7 +2,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
-from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view
 
 from netbox_security.tables import SecurityZoneTable
@@ -28,7 +27,6 @@ __all__ = (
     "SecurityZoneBulkEditView",
     "SecurityZoneBulkDeleteView",
     "SecurityZoneBulkImportView",
-    "SecurityZoneContactsView",
     "SecurityZoneAssignmentEditView",
     "SecurityZoneAssignmentDeleteView",
 )
@@ -92,11 +90,6 @@ class SecurityZoneBulkDeleteView(generic.BulkDeleteView):
 class SecurityZoneBulkImportView(generic.BulkImportView):
     queryset = SecurityZone.objects.all()
     model_form = SecurityZoneImportForm
-
-
-@register_model_view(SecurityZone, "contacts")
-class SecurityZoneContactsView(ObjectContactsView):
-    queryset = SecurityZone.objects.all()
 
 
 @register_model_view(SecurityZoneAssignment, "add", detail=False)

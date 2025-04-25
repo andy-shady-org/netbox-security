@@ -5,7 +5,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from utilities.views import register_model_view, ViewTab
-from tenancy.views import ObjectContactsView
 
 from netbox_security.models import NatRuleSet, NatRuleSetAssignment, NatRule
 from netbox_security.tables import NatRuleSetTable, NatRuleTable, SecurityZoneTable
@@ -27,7 +26,6 @@ __all__ = (
     "NatRuleSetBulkEditView",
     "NatRuleSetBulkImportView",
     "NatRuleSetBulkDeleteView",
-    "NatRuleSetContactsView",
     "NatRuleSetRulesView",
     "NatRuleSetAssignmentEditView",
     "NatRuleSetAssignmentDeleteView",
@@ -91,11 +89,6 @@ class NatRuleSetBulkImportView(generic.BulkImportView):
 class NatRuleSetDeleteView(generic.ObjectDeleteView):
     queryset = NatRuleSet.objects.all()
     default_return_url = "plugins:netbox_security:natruleset_list"
-
-
-@register_model_view(NatRuleSet, "contacts")
-class NatRuleSetContactsView(ObjectContactsView):
-    queryset = NatRuleSet.objects.all()
 
 
 @register_model_view(NatRuleSet, name="rules")

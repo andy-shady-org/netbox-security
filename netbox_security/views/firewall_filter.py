@@ -2,7 +2,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
-from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view
 
 from netbox_security.tables import FirewallFilterTable
@@ -31,7 +30,6 @@ __all__ = (
     "FirewallFilterBulkEditView",
     "FirewallFilterBulkDeleteView",
     "FirewallFilterBulkImportView",
-    "FirewallFilterContactsView",
     "FirewallFilterAssignmentEditView",
     "FirewallFilterAssignmentDeleteView",
 )
@@ -91,11 +89,6 @@ class FirewallFilterBulkDeleteView(generic.BulkDeleteView):
 class FirewallFilterBulkImportView(generic.BulkImportView):
     queryset = FirewallFilter.objects.all()
     model_form = FirewallFilterImportForm
-
-
-@register_model_view(FirewallFilter, "contacts")
-class FirewallFilterContactsView(ObjectContactsView):
-    queryset = FirewallFilter.objects.all()
 
 
 @register_model_view(FirewallFilterAssignment, "add", detail=False)

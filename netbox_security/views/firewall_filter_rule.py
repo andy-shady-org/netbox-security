@@ -1,5 +1,4 @@
 from netbox.views import generic
-from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view
 
 from netbox_security.tables import (
@@ -30,7 +29,6 @@ __all__ = (
     "FirewallFilterRuleDeleteView",
     "FirewallFilterRuleBulkEditView",
     "FirewallFilterRuleBulkDeleteView",
-    "FirewallFilterRuleContactsView",
     "FirewallRuleFromSettingView",
     "FirewallRuleFromSettingDeleteView",
     "FirewallRuleFromSettingBulkDeleteView",
@@ -81,11 +79,6 @@ class FirewallFilterRuleBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallFilterRule.objects.all()
     table = FirewallFilterRuleTable
     default_return_url = "plugins:netbox_security:firewallfilterrule_list"
-
-
-@register_model_view(FirewallFilterRule, "contacts")
-class FirewallFilterRuleContactsView(ObjectContactsView):
-    queryset = FirewallFilterRule.objects.all()
 
 
 @register_model_view(FirewallRuleFromSetting)

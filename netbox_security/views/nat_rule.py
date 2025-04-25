@@ -2,7 +2,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
-from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view
 from ipam.tables import PrefixTable, IPAddressTable, IPRangeTable
 
@@ -29,7 +28,6 @@ __all__ = (
     "NatRuleBulkEditView",
     "NatRuleBulkDeleteView",
     "NatRuleBulkImportView",
-    "NatRuleContactsView",
     "NatRuleAssignmentEditView",
     "NatRuleAssignmentDeleteView",
 )
@@ -107,11 +105,6 @@ class NatRuleBulkImportView(generic.BulkImportView):
 class NatRuleBulkDeleteView(generic.BulkDeleteView):
     queryset = NatRule.objects.all()
     table = NatRuleTable
-
-
-@register_model_view(NatRule, "contacts")
-class NatRuleContactsView(ObjectContactsView):
-    queryset = NatRule.objects.all()
 
 
 @register_model_view(NatRuleAssignment, "edit")

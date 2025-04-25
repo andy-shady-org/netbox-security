@@ -1,5 +1,4 @@
 from netbox.views import generic
-from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view
 
 from netbox_security.tables import SecurityZonePolicyTable, AddressListTable
@@ -89,5 +88,5 @@ class SecurityZonePolicyBulkImportView(generic.BulkImportView):
 
 
 @register_model_view(SecurityZonePolicy, "contacts")
-class SecurityZonePolicyContactsView(ObjectContactsView):
+class SecurityZonePolicyContactsView(generic.ObjectContactsView):
     queryset = SecurityZonePolicy.objects.all()

@@ -5,7 +5,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
-from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view, ViewTab
 
 from netbox_security.models import NatPool, NatPoolMember, NatPoolAssignment
@@ -30,7 +29,6 @@ __all__ = (
     "NatPoolBulkDeleteView",
     "NatPoolBulkImportView",
     "NatPoolNatPoolMembersView",
-    "NatPoolContactsView",
     "NatPoolAssignmentEditView",
     "NatPoolAssignmentDeleteView",
 )
@@ -107,11 +105,6 @@ class NatPoolNatPoolMembersView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         return parent.natpoolmember_pools
-
-
-@register_model_view(NatPool, "contacts")
-class NatPoolContactsView(ObjectContactsView):
-    queryset = NatPool.objects.all()
 
 
 @register_model_view(NatPoolAssignment, "add", detail=False)
