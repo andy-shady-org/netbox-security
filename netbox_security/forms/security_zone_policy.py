@@ -62,7 +62,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
         help_text=_("Comma-separated list of applications."),
         required=True,
     )
-    actions = forms.MultipleChoiceField(
+    policy_actions = forms.MultipleChoiceField(
         choices=ActionChoices,
         required=True,
     )
@@ -73,7 +73,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
             "destination_zone", "destination_address", name=_("Destination Assignment")
         ),
         FieldSet("application", name=_("Application")),
-        FieldSet("actions", name=_("Actions")),
+        FieldSet("policy_actions", name=_("Policy Actions")),
         FieldSet("tags", name=_("Tags")),
     )
     comments = CommentField()
@@ -88,7 +88,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
             "destination_zone",
             "destination_address",
             "application",
-            "actions",
+            "policy_actions",
             "description",
             "comments",
             "tags",
@@ -130,7 +130,7 @@ class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
             "destination_address",
             name=_("Source/Destination Assignment"),
         ),
-        FieldSet("actions", name=_("Actions")),
+        FieldSet("policy_actions", name=_("Policy Actions")),
     )
     index = forms.IntegerField(required=False)
     source_zone = DynamicModelMultipleChoiceField(
@@ -149,7 +149,7 @@ class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
         queryset=AddressList.objects.all(),
         required=False,
     )
-    actions = forms.MultipleChoiceField(
+    policy_actions = forms.MultipleChoiceField(
         choices=ActionChoices,
         required=True,
     )
@@ -181,7 +181,7 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
         to_field_name="name",
         required=False,
     )
-    actions = CSVMultipleChoiceField(
+    policy_actions = CSVMultipleChoiceField(
         choices=ActionChoices,
         required=True,
     )
@@ -202,7 +202,7 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
             "destination_zone",
             "destination_address",
             "application",
-            "actions",
+            "policy_actions",
             "tags",
         )
 

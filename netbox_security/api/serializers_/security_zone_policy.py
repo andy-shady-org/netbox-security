@@ -35,7 +35,7 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
         allow_empty=True,
         default=[],
     )
-    actions = ListField(
+    policy_actions = ListField(
         child=ChoiceField(choices=ActionChoices, required=False),
         required=True,
     )
@@ -54,7 +54,7 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
             "destination_zone",
             "destination_address",
             "application",
-            "actions",
+            "policy_actions",
             "comments",
             "tags",
             "custom_fields",
@@ -73,7 +73,7 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
             "destination_zone",
             "destination_address",
             "application",
-            "actions",
+            "policy_actions",
         )
 
     def validate(self, data):

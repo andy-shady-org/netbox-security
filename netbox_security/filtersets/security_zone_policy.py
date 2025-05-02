@@ -67,7 +67,7 @@ class SecurityZonePolicyFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("Source Address (ID)"),
     )
-    actions = django_filters.MultipleChoiceFilter(
+    policy_actions = django_filters.MultipleChoiceFilter(
         choices=ActionChoices,
         required=False,
     )
