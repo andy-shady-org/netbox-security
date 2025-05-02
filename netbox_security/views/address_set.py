@@ -2,7 +2,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
-from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view
 
 from netbox_security.tables import AddressSetTable, AddressTable
@@ -26,7 +25,6 @@ __all__ = (
     "AddressSetBulkEditView",
     "AddressSetBulkDeleteView",
     "AddressSetBulkImportView",
-    "AddressSetContactsView",
     "AddressSetAssignmentEditView",
     "AddressSetAssignmentDeleteView",
 )
@@ -62,7 +60,6 @@ class AddressSetEditView(generic.ObjectEditView):
 @register_model_view(AddressSet, "delete")
 class AddressSetDeleteView(generic.ObjectDeleteView):
     queryset = AddressSet.objects.all()
-    default_return_url = "plugins:netbox_security:addressset_list"
 
 
 @register_model_view(AddressSet, "bulk_edit", path="edit", detail=False)
@@ -77,18 +74,12 @@ class AddressSetBulkEditView(generic.BulkEditView):
 class AddressSetBulkDeleteView(generic.BulkDeleteView):
     queryset = AddressSet.objects.all()
     table = AddressSetTable
-    default_return_url = "plugins:netbox_security:addressset_list"
 
 
 @register_model_view(AddressSet, "bulk_import", detail=False)
 class AddressSetBulkImportView(generic.BulkImportView):
     queryset = AddressSet.objects.all()
     model_form = AddressSetImportForm
-
-
-@register_model_view(AddressSet, "contacts")
-class AddressSetContactsView(ObjectContactsView):
-    queryset = AddressSet.objects.all()
 
 
 @register_model_view(AddressSetAssignment, "add", detail=False)

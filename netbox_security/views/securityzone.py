@@ -1,8 +1,8 @@
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 
 from netbox.views import generic
-from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view
 
 from netbox_security.tables import SecurityZoneTable
@@ -28,7 +28,6 @@ __all__ = (
     "SecurityZoneBulkEditView",
     "SecurityZoneBulkDeleteView",
     "SecurityZoneBulkImportView",
-    "SecurityZoneContactsView",
     "SecurityZoneAssignmentEditView",
     "SecurityZoneAssignmentDeleteView",
 )
@@ -36,7 +35,10 @@ __all__ = (
 
 @register_model_view(SecurityZone)
 class SecurityZoneView(generic.ObjectView):
-    queryset = SecurityZone.objects.all()
+    queryset = SecurityZone.objects.annotate(
+        source_policy_count=Count("source_zone_policies"),
+        destination_policy_count=Count("destination_zone_policies"),
+    )
     template_name = "netbox_security/securityzone.html"
 
     def get_extra_context(self, request, instance):
@@ -54,7 +56,10 @@ class SecurityZoneView(generic.ObjectView):
 
 @register_model_view(SecurityZone, "list", path="", detail=False)
 class SecurityZoneListView(generic.ObjectListView):
-    queryset = SecurityZone.objects.all()
+    queryset = SecurityZone.objects.annotate(
+        source_policy_count=Count("source_zone_policies"),
+        destination_policy_count=Count("destination_zone_policies"),
+    )
     filterset = SecurityZoneFilterSet
     filterset_form = SecurityZoneFilterForm
     table = SecurityZoneTable
@@ -70,7 +75,6 @@ class SecurityZoneEditView(generic.ObjectEditView):
 @register_model_view(SecurityZone, "delete")
 class SecurityZoneDeleteView(generic.ObjectDeleteView):
     queryset = SecurityZone.objects.all()
-    default_return_url = "plugins:netbox_security:securityzone_list"
 
 
 @register_model_view(SecurityZone, "bulk_edit", path="edit", detail=False)
@@ -85,18 +89,12 @@ class SecurityZoneBulkEditView(generic.BulkEditView):
 class SecurityZoneBulkDeleteView(generic.BulkDeleteView):
     queryset = SecurityZone.objects.all()
     table = SecurityZoneTable
-    default_return_url = "plugins:netbox_security:securityzone_list"
 
 
 @register_model_view(SecurityZone, "bulk_import", detail=False)
 class SecurityZoneBulkImportView(generic.BulkImportView):
     queryset = SecurityZone.objects.all()
     model_form = SecurityZoneImportForm
-
-
-@register_model_view(SecurityZone, "contacts")
-class SecurityZoneContactsView(ObjectContactsView):
-    queryset = SecurityZone.objects.all()
 
 
 @register_model_view(SecurityZoneAssignment, "add", detail=False)

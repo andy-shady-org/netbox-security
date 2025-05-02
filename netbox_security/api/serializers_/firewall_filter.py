@@ -3,6 +3,7 @@ from rest_framework.serializers import (
     HyperlinkedIdentityField,
     SerializerMethodField,
     JSONField,
+    IntegerField,
 )
 from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
@@ -17,6 +18,7 @@ class FirewallFilterSerializer(NetBoxModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:firewallfilter-detail"
     )
+    rule_count = IntegerField(read_only=True)
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
@@ -27,6 +29,7 @@ class FirewallFilterSerializer(NetBoxModelSerializer):
             "display",
             "name",
             "family",
+            "rule_count",
             "description",
             "tenant",
             "comments",
@@ -41,6 +44,7 @@ class FirewallFilterSerializer(NetBoxModelSerializer):
             "display",
             "name",
             "family",
+            "rule_count",
             "description",
         )
 

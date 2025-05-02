@@ -46,7 +46,6 @@ class NatPoolMemberEditView(generic.ObjectEditView):
 @register_model_view(NatPoolMember, "delete")
 class NatPoolMemberDeleteView(generic.ObjectDeleteView):
     queryset = NatPoolMember.objects.all()
-    default_return_url = "plugins:netbox_security:natpoolmember_list"
 
 
 @register_model_view(NatPoolMember, "bulk_edit", path="edit", detail=False)
@@ -67,4 +66,3 @@ class NatPoolMemberBulkImportView(generic.BulkImportView):
 class NatPoolMemberBulkDeleteView(generic.BulkDeleteView):
     queryset = NatPoolMember.objects.all()
     table = NatPoolMemberTable
-    default_return_url = "plugins:netbox_security:natpoolmember_list"

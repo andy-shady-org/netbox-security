@@ -25,7 +25,15 @@ class FirewallFilterAPITestCase(
 ):
     model = FirewallFilter
 
-    brief_fields = ["description", "display", "family", "id", "name", "url"]
+    brief_fields = [
+        "description",
+        "display",
+        "family",
+        "id",
+        "name",
+        "rule_count",
+        "url",
+    ]
 
     create_data = [
         {"name": "filter-1", "family": FamilyChoices.INET},

@@ -24,6 +24,14 @@
                     <th scope="row">{% trans "Name" %}</th>
                     <td>{{ object.name }}</td>
                 </tr>
+                <tr>
+                    <td>{% trans "Source Policy Count" %}</td>
+                    <td>{{ object.source_policy_count|placeholder }}</td>
+                </tr>
+                <tr>
+                    <td>{% trans "Destination Policy Count" %}</td>
+                    <td>{{ object.destination_policy_count|placeholder }}</td>
+                </tr>
                 {% if object.description %}
                 <tr>
                     <th scope="row">{% trans "Description" %}</th>
@@ -44,10 +52,14 @@
             </table>
         </div>
         {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col-md-6">
         {% include 'inc/panels/tags.html' %}
         {% include 'inc/panels/comments.html' %}
     </div>
-    <div class="col col-md-6">
+</div>
+<div class="row">
+    <div class="col col-md-12">
         <div class="card">
             <h5 class="card-header">
                 Source Policies

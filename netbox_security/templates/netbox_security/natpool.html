@@ -39,7 +39,7 @@
                     <td>{{ object.description|placeholder }}</td>
                 </tr>
                 <tr>
-                    <td>% trans "Member Count" %}</td>
+                    <td>{% trans "Member Count" %}</td>
                     <td>{{ object.member_count|placeholder }}</td>
                 </tr>
             </table>
@@ -49,16 +49,6 @@
     <div class="col-md-6">
         {% include 'inc/panels/tags.html' %}
         {% include 'inc/panels/comments.html' %}
-    </div>
-</div>
-<div class="row mb-3">
-    <div class="col-md-12">
-        <div class="card">
-            <h5 class="card-header">
-                {% trans "Pool Members" %}
-            </h5>
-            {% render_table related_session_table 'inc/table.html' %}
-        </div>
     </div>
 </div>
 {% endblock %}

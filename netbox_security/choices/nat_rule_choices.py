@@ -54,12 +54,12 @@ class RuleStatusChoices(ChoiceSet):
 class CustomInterfaceChoices(ChoiceSet):
     INTERFACE = "interface"
     NAT_OFF = "off"
-    NONE = ""
+    NONE = "None"
 
     CHOICES = (
         (INTERFACE, "Interface", "blue"),
         (NAT_OFF, "Off", "cyan"),
-        (NONE, "", "red"),
+        (NONE, "None", "red"),
     )
 
 

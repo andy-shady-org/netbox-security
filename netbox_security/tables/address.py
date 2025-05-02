@@ -29,7 +29,6 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
             "description",
             "value",
             "tenant",
-            "tags",
         )
 
 

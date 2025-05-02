@@ -36,13 +36,13 @@ class SecurityZonePolicyTable(NetBoxTable):
     source_address = tables.TemplateColumn(template_code=LOOPS, orderable=False)
     destination_address = tables.TemplateColumn(template_code=LOOPS, orderable=False)
     application = ArrayColumn()
-    actions = tables.TemplateColumn(template_code=ACTIONS, orderable=False)
+    policy_actions = tables.TemplateColumn(template_code=ACTIONS, orderable=False)
     tags = TagColumn(url_name="plugins:netbox_security:securityzone_list")
 
     class Meta(NetBoxTable.Meta):
         model = SecurityZonePolicy
         fields = (
-            "pk",
+            "id",
             "index",
             "name",
             "source_zone",
@@ -50,12 +50,11 @@ class SecurityZonePolicyTable(NetBoxTable):
             "source_address",
             "destination_address",
             "application",
-            "actions",
+            "policy_actions",
             "description",
             "tags",
         )
         default_columns = (
-            "pk",
             "index",
             "name",
             "source_zone",
@@ -63,5 +62,5 @@ class SecurityZonePolicyTable(NetBoxTable):
             "source_address",
             "destination_address",
             "application",
-            "actions",
+            "policy_actions",
         )
