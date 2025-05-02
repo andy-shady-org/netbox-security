@@ -117,7 +117,10 @@ class AddressAssignmentViewSet(NetBoxModelViewSet):
 
 
 class SecurityZoneViewSet(NetBoxModelViewSet):
-    queryset = SecurityZone.objects.prefetch_related("tenant", "tags")
+    queryset = SecurityZone.objects.prefetch_related("tenant", "tags").annotate(
+        source_policy_count=Count("source_zone_policies"),
+        destination_policy_count=Count("destination_zone_policies"),
+    )
     serializer_class = SecurityZoneSerializer
     filterset_class = SecurityZoneFilterSet
 
@@ -200,7 +203,9 @@ class NatRuleAssignmentViewSet(NetBoxModelViewSet):
 
 
 class FirewallFilterViewSet(NetBoxModelViewSet):
-    queryset = FirewallFilter.objects.prefetch_related("tenant", "tags")
+    queryset = FirewallFilter.objects.prefetch_related("tenant", "tags").annotate(
+        rule_count=Count("firewallfilterrule_rules")
+    )
     serializer_class = FirewallFilterSerializer
     filterset_class = FirewallFilterFilterSet
 

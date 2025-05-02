@@ -81,7 +81,7 @@ class NatRuleTable(NetBoxTable):
             "destination_pool",
             "tags",
         )
-        default_columns = ("pk", "name", "status", "pool", "tags")
+        default_columns = ("pk", "name", "status", "rule_set", "description", "pool")
 
 
 class NatRuleAssignmentTable(NetBoxTable):

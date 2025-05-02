@@ -49,7 +49,7 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
         blank=True,
         null=True,
     )
-    actions = ArrayField(
+    policy_actions = ArrayField(
         models.CharField(
             max_length=20,
             blank=True,
@@ -58,7 +58,7 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
             default=ActionChoices.PERMIT,
         ),
         size=4,
-        verbose_name=_("Actions"),
+        verbose_name=_("Policy Actions"),
     )
     prerequisite_models = (
         "netbox_security.SecurityZone",

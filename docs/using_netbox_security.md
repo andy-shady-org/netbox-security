@@ -30,6 +30,7 @@ NetBox Security is compatible with the following NetBox versions.
 | NetBox Version | NetBox Security Version |
 |----------------|-------------------------|
 | NetBox 4.2     | \>= 1.0.2               |
+| NetBox 4.3     | \>= 1.1.0               |
 
 
 ### Installation of NetBox Security

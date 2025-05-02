@@ -20,6 +20,10 @@
                     <th scope="row">{% trans "Name" %}</th>
                     <td>{{ object.name }}</td>
                 </tr>
+                <tr>
+                    <td>{% trans "Rule Count" %}</td>
+                    <td>{{ object.rule_count|placeholder }}</td>
+                </tr>
                 {% if object.description %}
                 <tr>
                     <th scope="row">{% trans "Description" %}</th>

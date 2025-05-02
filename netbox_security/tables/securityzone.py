@@ -18,15 +18,27 @@ __all__ = (
 
 class SecurityZoneTable(TenancyColumnsMixin, NetBoxTable):
     name = tables.LinkColumn()
+    source_policy_count = tables.Column()
+    destination_policy_count = tables.Column()
     tags = TagColumn(url_name="plugins:netbox_security:securityzone_list")
 
     class Meta(NetBoxTable.Meta):
         model = SecurityZone
-        fields = ("pk", "name", "description", "tenant", "tags")
+        fields = (
+            "pk",
+            "name",
+            "description",
+            "source_policy_count",
+            "destination_policy_count",
+            "tenant",
+            "tags",
+        )
         default_columns = (
             "pk",
             "name",
             "description",
+            "source_policy_count",
+            "destination_policy_count",
             "tenant",
             "tags",
         )

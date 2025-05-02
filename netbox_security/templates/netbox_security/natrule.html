@@ -24,16 +24,6 @@
                     <td>{{ object.name }}</td>
                 </tr>
                 <tr>
-                    <td>Device</td>
-                    <td>
-                        {% if object.rule_set.assigned_object %}
-                        <a href="{{ object.rule_set.assigned_object.get_absolute_url }}">{{ object.rule_set.assigned_object }}</a>
-                        {% else %}
-                        <span class="text-muted">None</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
                     <td>Outbound Interface/Pool</td>
                     <td>
                         {% if object.assigned_object %}

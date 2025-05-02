@@ -22,12 +22,13 @@ class NatPoolTable(NetBoxTable):
     pool_type = ChoiceFieldColumn(default=CHOICE_LABEL, verbose_name=_("NAT Pool Type"))
     status = ChoiceFieldColumn(default=CHOICE_LABEL, verbose_name=_("Status"))
     description = tables.LinkColumn()
+    member_count = tables.Column()
     tags = TagColumn(url_name="plugins:netbox_security:natpool_list")
 
     class Meta(NetBoxTable.Meta):
         model = NatPool
-        fields = ("pk", "name", "pool_type", "description", "tags")
-        default_columns = ("pk", "name", "pool_type", "description")
+        fields = ("pk", "name", "pool_type", "member_count", "description", "tags")
+        default_columns = ("pk", "name", "pool_type", "member_count", "description")
 
 
 class NatPoolDeviceAssignmentTable(NetBoxTable):

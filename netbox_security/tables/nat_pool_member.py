@@ -35,6 +35,7 @@ class NatPoolMemberTable(NetBoxTable):
             "pk",
             "name",
             "pool",
+            "status",
             "address",
             "prefix",
             "address_range",
@@ -43,8 +44,9 @@ class NatPoolMemberTable(NetBoxTable):
             "tags",
         )
         default_columns = (
-            "pk",
             "name",
+            "status",
+            "pool",
             "address",
             "prefix",
             "address_range",

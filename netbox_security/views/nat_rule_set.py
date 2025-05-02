@@ -5,7 +5,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from utilities.views import register_model_view, ViewTab
-from tenancy.views import ObjectContactsView
 
 from netbox_security.models import NatRuleSet, NatRuleSetAssignment, NatRule
 from netbox_security.tables import NatRuleSetTable, NatRuleTable, SecurityZoneTable
@@ -27,7 +26,6 @@ __all__ = (
     "NatRuleSetBulkEditView",
     "NatRuleSetBulkImportView",
     "NatRuleSetBulkDeleteView",
-    "NatRuleSetContactsView",
     "NatRuleSetRulesView",
     "NatRuleSetAssignmentEditView",
     "NatRuleSetAssignmentDeleteView",
@@ -36,7 +34,7 @@ __all__ = (
 
 @register_model_view(NatRuleSet)
 class NatRuleSetView(generic.ObjectView):
-    queryset = NatRuleSet.objects.all()
+    queryset = NatRuleSet.objects.annotate(rule_count=Count("natrule_rules"))
     template_name = "netbox_security/natruleset.html"
 
     def get_extra_context(self, request, instance):
@@ -90,29 +88,24 @@ class NatRuleSetBulkImportView(generic.BulkImportView):
 @register_model_view(NatRuleSet, "delete")
 class NatRuleSetDeleteView(generic.ObjectDeleteView):
     queryset = NatRuleSet.objects.all()
-    default_return_url = "plugins:netbox_security:natruleset_list"
-
-
-@register_model_view(NatRuleSet, "contacts")
-class NatRuleSetContactsView(ObjectContactsView):
-    queryset = NatRuleSet.objects.all()
 
 
 @register_model_view(NatRuleSet, name="rules")
 class NatRuleSetRulesView(generic.ObjectChildrenView):
     template_name = "netbox_security/natruleset_rules.html"
-    queryset = NatRuleSet.objects.all()
+    queryset = NatRuleSet.objects.all().prefetch_related("natrule_rules")
     child_model = NatRule
     table = NatRuleTable
     filterset = NatRuleFilterSet
-    actions = []
     tab = ViewTab(
         label=_("NAT Rules"),
-        badge=lambda obj: NatRule.objects.filter(rule_set=obj).count(),
+        permission="netbox_security.view_natrule",
+        badge=lambda obj: obj.natrule_rules.count(),
+        hide_if_empty=True,
     )
 
     def get_children(self, request, parent):
-        return self.child_model.objects.filter(rule_set=parent)
+        return parent.natrule_rules
 
 
 @register_model_view(NatRuleSetAssignment, "add", detail=False)

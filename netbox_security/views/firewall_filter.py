@@ -1,8 +1,8 @@
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 
 from netbox.views import generic
-from tenancy.views import ObjectContactsView
 from utilities.views import register_model_view
 
 from netbox_security.tables import FirewallFilterTable
@@ -31,7 +31,6 @@ __all__ = (
     "FirewallFilterBulkEditView",
     "FirewallFilterBulkDeleteView",
     "FirewallFilterBulkImportView",
-    "FirewallFilterContactsView",
     "FirewallFilterAssignmentEditView",
     "FirewallFilterAssignmentDeleteView",
 )
@@ -39,7 +38,9 @@ __all__ = (
 
 @register_model_view(FirewallFilter)
 class FirewallFilterView(generic.ObjectView):
-    queryset = FirewallFilter.objects.all()
+    queryset = FirewallFilter.objects.annotate(
+        rule_count=Count("firewallfilterrule_rules")
+    )
     template_name = "netbox_security/firewallfilter.html"
 
     def get_extra_context(self, request, instance):
@@ -53,7 +54,9 @@ class FirewallFilterView(generic.ObjectView):
 
 @register_model_view(FirewallFilter, "list", path="", detail=False)
 class FirewallFilterListView(generic.ObjectListView):
-    queryset = FirewallFilter.objects.all()
+    queryset = FirewallFilter.objects.annotate(
+        rule_count=Count("firewallfilterrule_rules")
+    )
     filterset = FirewallFilterFilterSet
     filterset_form = FirewallFilterFilterForm
     table = FirewallFilterTable
@@ -69,7 +72,6 @@ class FirewallFilterEditView(generic.ObjectEditView):
 @register_model_view(FirewallFilter, "delete")
 class FirewallFilterDeleteView(generic.ObjectDeleteView):
     queryset = FirewallFilter.objects.all()
-    default_return_url = "plugins:netbox_security:firewallfilter_list"
 
 
 @register_model_view(FirewallFilter, "bulk_edit", path="edit", detail=False)
@@ -84,18 +86,12 @@ class FirewallFilterBulkEditView(generic.BulkEditView):
 class FirewallFilterBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallFilter.objects.all()
     table = FirewallFilterTable
-    default_return_url = "plugins:netbox_security:firewallfilter_list"
 
 
 @register_model_view(FirewallFilter, "bulk_import", detail=False)
 class FirewallFilterBulkImportView(generic.BulkImportView):
     queryset = FirewallFilter.objects.all()
     model_form = FirewallFilterImportForm
-
-
-@register_model_view(FirewallFilter, "contacts")
-class FirewallFilterContactsView(ObjectContactsView):
-    queryset = FirewallFilter.objects.all()
 
 
 @register_model_view(FirewallFilterAssignment, "add", detail=False)
