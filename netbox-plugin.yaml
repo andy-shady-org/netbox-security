@@ -9,7 +9,7 @@ compatibility:
     netbox_max: 4.2.9
   - release: 1.0.4
     netbox_min: 4.2.0
-    netbox_max: 4.2.7
+    netbox_max: 4.2.8
   - release: 1.0.3
     netbox_min: 4.2.0
     netbox_max: 4.2.7
