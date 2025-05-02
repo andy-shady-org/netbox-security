@@ -39,16 +39,10 @@ class NatPoolView(generic.ObjectView):
     queryset = NatPool.objects.annotate(member_count=Count("natpoolmember_pools"))
     template_name = "netbox_security/natpool.html"
 
-    def get_extra_context(self, request, instance):
-        sess = NatPoolMember.objects.filter(Q(pool=instance))
-        sess = sess.distinct()
-        sess_table = NatPoolMemberTable(sess)
-        return {"related_session_table": sess_table}
-
 
 @register_model_view(NatPool, "list", path="", detail=False)
 class NatPoolListView(generic.ObjectListView):
-    queryset = NatPool.objects.all()
+    queryset = NatPool.objects.annotate(member_count=Count("natpoolmember_pools"))
     filterset = NatPoolFilterSet
     filterset_form = NatPoolFilterForm
     table = NatPoolTable
@@ -64,7 +58,6 @@ class NatPoolEditView(generic.ObjectEditView):
 @register_model_view(NatPool, "delete")
 class NatPoolDeleteView(generic.ObjectDeleteView):
     queryset = NatPool.objects.all()
-    default_return_url = "plugins:netbox_security:natpool_list"
 
 
 @register_model_view(NatPool, "bulk_edit", path="edit", detail=False)
@@ -85,7 +78,6 @@ class NatPoolBulkImportView(generic.BulkImportView):
 class NatPoolBulkDeleteView(generic.BulkDeleteView):
     queryset = NatPool.objects.all()
     table = NatPoolTable
-    default_return_url = "plugins:netbox_security:natpool_list"
 
 
 @register_model_view(NatPool, name="members")
@@ -95,7 +87,6 @@ class NatPoolNatPoolMembersView(generic.ObjectChildrenView):
     child_model = NatPoolMember
     table = NatPoolMemberTable
     filterset = NatPoolMemberFilterSet
-    actions = []
     tab = ViewTab(
         label=_("NAT Pool Members"),
         permission="netbox_security.view_natpoolmember",

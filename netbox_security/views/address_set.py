@@ -60,7 +60,6 @@ class AddressSetEditView(generic.ObjectEditView):
 @register_model_view(AddressSet, "delete")
 class AddressSetDeleteView(generic.ObjectDeleteView):
     queryset = AddressSet.objects.all()
-    default_return_url = "plugins:netbox_security:addressset_list"
 
 
 @register_model_view(AddressSet, "bulk_edit", path="edit", detail=False)
@@ -75,7 +74,6 @@ class AddressSetBulkEditView(generic.BulkEditView):
 class AddressSetBulkDeleteView(generic.BulkDeleteView):
     queryset = AddressSet.objects.all()
     table = AddressSetTable
-    default_return_url = "plugins:netbox_security:addressset_list"
 
 
 @register_model_view(AddressSet, "bulk_import", detail=False)

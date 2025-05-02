@@ -63,7 +63,6 @@ class FirewallFilterRuleEditView(generic.ObjectEditView):
 @register_model_view(FirewallFilterRule, "delete")
 class FirewallFilterRuleDeleteView(generic.ObjectDeleteView):
     queryset = FirewallFilterRule.objects.all()
-    default_return_url = "plugins:netbox_security:firewallfilterrule_list"
 
 
 @register_model_view(FirewallFilterRule, "bulk_edit", path="edit", detail=False)
@@ -78,7 +77,6 @@ class FirewallFilterRuleBulkEditView(generic.BulkEditView):
 class FirewallFilterRuleBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallFilterRule.objects.all()
     table = FirewallFilterRuleTable
-    default_return_url = "plugins:netbox_security:firewallfilterrule_list"
 
 
 @register_model_view(FirewallRuleFromSetting)
@@ -89,14 +87,12 @@ class FirewallRuleFromSettingView(generic.ObjectView):
 @register_model_view(FirewallRuleFromSetting, "delete")
 class FirewallRuleFromSettingDeleteView(generic.ObjectDeleteView):
     queryset = FirewallRuleFromSetting.objects.all()
-    default_return_url = "plugins:netbox_security:firewallfilterrule_list"
 
 
 @register_model_view(FirewallRuleFromSetting, "bulk_delete", path="delete")
 class FirewallRuleFromSettingBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallFilterRule.objects.all()
     table = FirewallRuleFromSettingTable
-    default_return_url = "plugins:netbox_security:firewallfilterrule_list"
 
 
 @register_model_view(FirewallFilterRule, "bulk_import", detail=False)
@@ -113,11 +109,9 @@ class FirewallRuleThenSettingView(generic.ObjectView):
 @register_model_view(FirewallRuleThenSetting, "delete")
 class FirewallRuleThenSettingDeleteView(generic.ObjectDeleteView):
     queryset = FirewallRuleThenSetting.objects.all()
-    default_return_url = "plugins:netbox_security:firewallfilterrule_list"
 
 
 @register_model_view(FirewallRuleThenSetting, "bulk_delete", path="delete")
 class FirewallRuleThenSettingBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallRuleThenSetting.objects.all()
     table = FirewallRuleThenSettingTable
-    default_return_url = "plugins:netbox_security:firewallfilterrule_list"

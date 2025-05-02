@@ -34,7 +34,7 @@ __all__ = (
 
 @register_model_view(NatRuleSet)
 class NatRuleSetView(generic.ObjectView):
-    queryset = NatRuleSet.objects.all()
+    queryset = NatRuleSet.objects.annotate(rule_count=Count("natrule_rules"))
     template_name = "netbox_security/natruleset.html"
 
     def get_extra_context(self, request, instance):
@@ -88,7 +88,6 @@ class NatRuleSetBulkImportView(generic.BulkImportView):
 @register_model_view(NatRuleSet, "delete")
 class NatRuleSetDeleteView(generic.ObjectDeleteView):
     queryset = NatRuleSet.objects.all()
-    default_return_url = "plugins:netbox_security:natruleset_list"
 
 
 @register_model_view(NatRuleSet, name="rules")
@@ -98,7 +97,6 @@ class NatRuleSetRulesView(generic.ObjectChildrenView):
     child_model = NatRule
     table = NatRuleTable
     filterset = NatRuleFilterSet
-    actions = []
     tab = ViewTab(
         label=_("NAT Rules"),
         permission="netbox_security.view_natrule",

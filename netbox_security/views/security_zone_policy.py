@@ -23,7 +23,6 @@ __all__ = (
     "SecurityZonePolicyBulkEditView",
     "SecurityZonePolicyBulkDeleteView",
     "SecurityZonePolicyBulkImportView",
-    "SecurityZonePolicyContactsView",
 )
 
 
@@ -63,7 +62,6 @@ class SecurityZonePolicyEditView(generic.ObjectEditView):
 @register_model_view(SecurityZonePolicy, "delete")
 class SecurityZonePolicyDeleteView(generic.ObjectDeleteView):
     queryset = SecurityZonePolicy.objects.all()
-    default_return_url = "plugins:netbox_security:securityzonepolicy_list"
 
 
 @register_model_view(SecurityZonePolicy, "bulk_edit", path="edit", detail=False)
@@ -78,15 +76,9 @@ class SecurityZonePolicyBulkEditView(generic.BulkEditView):
 class SecurityZonePolicyBulkDeleteView(generic.BulkDeleteView):
     queryset = SecurityZonePolicy.objects.all()
     table = SecurityZonePolicyTable
-    default_return_url = "plugins:netbox_security:securityzonepolicy_list"
 
 
 @register_model_view(SecurityZonePolicy, "bulk_import", detail=False)
 class SecurityZonePolicyBulkImportView(generic.BulkImportView):
     queryset = SecurityZonePolicy.objects.all()
     model_form = SecurityZonePolicyImportForm
-
-
-@register_model_view(SecurityZonePolicy, "contacts")
-class SecurityZonePolicyContactsView(generic.ObjectContactsView):
-    queryset = SecurityZonePolicy.objects.all()
