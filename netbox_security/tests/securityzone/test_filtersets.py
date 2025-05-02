@@ -165,7 +165,11 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 index=5,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                actions=[ActionChoices.PERMIT, ActionChoices.COUNT, ActionChoices.LOG],
+                policy_actions=[
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
                 application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
@@ -173,7 +177,11 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 index=6,
                 source_zone=cls.zones[1],
                 destination_zone=cls.zones[0],
-                actions=[ActionChoices.PERMIT, ActionChoices.COUNT, ActionChoices.LOG],
+                policy_actions=[
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
                 application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
@@ -181,7 +189,11 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 index=6,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                actions=[ActionChoices.DENY, ActionChoices.COUNT, ActionChoices.LOG],
+                policy_actions=[
+                    ActionChoices.DENY,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
                 application=["test-1", "test-2"],
             ),
         )

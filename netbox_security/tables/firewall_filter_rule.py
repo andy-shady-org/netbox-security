@@ -15,24 +15,24 @@ __all__ = (
 
 class FirewallFilterRuleTable(NetBoxTable):
     name = tables.LinkColumn()
-    filter = tables.LinkColumn()
+    firewall_filter = tables.LinkColumn()
     tags = TagColumn(url_name="plugins:netbox_security:firewallfilterrule_list")
 
     class Meta(NetBoxTable.Meta):
         model = FirewallFilterRule
-        fields = ("pk", "id", "name", "index", "firewall_filter")
-        default_columns = ("pk", "id", "name", "index", "firewall_filter")
+        fields = ("pk", "name", "index", "firewall_filter", "tags")
+        default_columns = ("pk", "name", "index", "firewall_filter")
 
 
 class FirewallRuleFromSettingTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = FirewallRuleFromSetting
-        fields = ("pk", "id", "assigned_object", "key", "value")
-        default_columns = ("pk", "id", "assigned_object", "key", "value")
+        fields = ("pk", "assigned_object", "key", "value")
+        default_columns = ("pk", "assigned_object", "key", "value")
 
 
 class FirewallRuleThenSettingTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = FirewallRuleFromSetting
-        fields = ("pk", "id", "assigned_object", "key", "value")
-        default_columns = ("pk", "id", "assigned_object", "key", "value")
+        fields = ("pk", "assigned_object", "key", "value")
+        default_columns = ("pk", "assigned_object", "key", "value")

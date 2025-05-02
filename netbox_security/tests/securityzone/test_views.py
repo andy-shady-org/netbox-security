@@ -136,7 +136,7 @@ class SecurityZonePolicyViewTestCase(
                 index=5,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                actions=["permit", "count", "log"],
+                policy_actions=["permit", "count", "log"],
                 application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
@@ -144,7 +144,7 @@ class SecurityZonePolicyViewTestCase(
                 index=6,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                actions=["permit", "count", "log"],
+                policy_actions=["permit", "count", "log"],
                 application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
@@ -152,7 +152,7 @@ class SecurityZonePolicyViewTestCase(
                 index=7,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                actions=["permit", "count", "log"],
+                policy_actions=["permit", "count", "log"],
                 application=["test-1", "test-2"],
             ),
         )
@@ -171,7 +171,7 @@ class SecurityZonePolicyViewTestCase(
                 cls.destination_addresses[0].pk,
                 cls.destination_addresses[1].pk,
             ],
-            "actions": ["permit", "count", "log"],
+            "policy_actions": ["permit", "count", "log"],
             "application": "test-1,test-2",
             "tags": [t.pk for t in tags],
         }
@@ -181,7 +181,7 @@ class SecurityZonePolicyViewTestCase(
         }
 
         cls.csv_data = (
-            "name,index,source_zone,destination_zone,actions,application",
+            "name,index,source_zone,destination_zone,policy_actions,application",
             f'TEST-POLICY4,1,{cls.zones[0].name},{cls.zones[1].name},"permit,count","test-1,test-2"',
             f'TEST-POLICY5,2,{cls.zones[0].name},{cls.zones[1].name},"permit,count","test-1,test-2"',
             f'TEST-POLICY6,3,{cls.zones[0].name},{cls.zones[1].name},"permit,count","test-1,test-2"',

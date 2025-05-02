@@ -21,7 +21,15 @@ class SecurityZoneAPITestCase(
 ):
     model = SecurityZone
 
-    brief_fields = ["description", "display", "id", "name", "url"]
+    brief_fields = [
+        "description",
+        "destination_policy_count",
+        "display",
+        "id",
+        "name",
+        "source_policy_count",
+        "url",
+    ]
 
     create_data = [
         {"name": "DMZ"},
@@ -56,7 +64,6 @@ class SecurityZonePolicyAPITestCase(
     model = SecurityZonePolicy
 
     brief_fields = [
-        "actions",
         "application",
         "description",
         "destination_address",
@@ -65,6 +72,7 @@ class SecurityZonePolicyAPITestCase(
         "id",
         "index",
         "name",
+        "policy_actions",
         "source_address",
         "source_zone",
         "url",
@@ -88,7 +96,7 @@ class SecurityZonePolicyAPITestCase(
                 index=5,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                actions=["permit", "count", "log"],
+                policy_actions=["permit", "count", "log"],
                 application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
@@ -96,7 +104,7 @@ class SecurityZonePolicyAPITestCase(
                 index=6,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                actions=["permit", "count", "log"],
+                policy_actions=["permit", "count", "log"],
                 application=["test-1", "test-2"],
             ),
         )
@@ -140,7 +148,7 @@ class SecurityZonePolicyAPITestCase(
             index=8,
             source_zone=cls.zones[0],
             destination_zone=cls.zones[1],
-            actions=["permit", "count", "log"],
+            policy_actions=["permit", "count", "log"],
             application=["test-1", "test-2"],
         )
         cls.policy.source_address.add(cls.addresses_lists[0])
@@ -151,7 +159,7 @@ class SecurityZonePolicyAPITestCase(
             {
                 "name": "policy-1",
                 "index": 1,
-                "actions": ["permit", "count", "log"],
+                "policy_actions": ["permit", "count", "log"],
                 "application": ["test-1", "test-2"],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
@@ -159,7 +167,7 @@ class SecurityZonePolicyAPITestCase(
             {
                 "name": "policy-2",
                 "index": 2,
-                "actions": ["permit", "count", "log"],
+                "policy_actions": ["permit", "count", "log"],
                 "application": ["test-1", "test-2"],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
@@ -167,7 +175,7 @@ class SecurityZonePolicyAPITestCase(
             {
                 "name": "policy-3",
                 "index": 3,
-                "actions": ["permit", "count", "log"],
+                "policy_actions": ["permit", "count", "log"],
                 "application": ["test-1", "test-2"],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,

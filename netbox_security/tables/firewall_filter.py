@@ -18,18 +18,19 @@ __all__ = (
 class FirewallFilterTable(TenancyColumnsMixin, NetBoxTable):
     name = tables.LinkColumn()
     family = ChoiceFieldColumn(verbose_name=_("Family"))
+    rule_count = tables.Column()
     tags = TagColumn(url_name="plugins:netbox_security:firewallfilter_list")
 
     class Meta(NetBoxTable.Meta):
         model = FirewallFilter
-        fields = ("pk", "name", "description", "family", "tenant", "tags")
+        fields = ("pk", "name", "description", "family", "rule_count", "tenant", "tags")
         default_columns = (
             "pk",
             "name",
             "description",
             "family",
+            "rule_count",
             "tenant",
-            "tags",
         )
 
 
