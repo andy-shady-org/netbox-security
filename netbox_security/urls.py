@@ -100,6 +100,15 @@ urlpatterns = [
         "firewall-filter/<int:pk>/",
         include(get_model_urls("netbox_security", "firewallfilter")),
     ),
+    # Policers
+    path(
+        "policer/",
+        include(get_model_urls("netbox_security", "policer", detail=False)),
+    ),
+    path(
+        "policer/<int:pk>/",
+        include(get_model_urls("netbox_security", "policer")),
+    ),
     # Firewall Filter Rules
     path(
         "firewall-filter-rule/",

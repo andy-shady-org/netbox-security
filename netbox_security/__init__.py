@@ -6,7 +6,7 @@ from .version import __version__
 class SecurityConfig(PluginConfig):
     name = "netbox_security"
     verbose_name = _("Netbox Security")
-    description = _("Subsystem for tracking Security and NAT related objects")
+    description = _("A Netbox plugin for tracking Security and NAT related objects")
     version = __version__
     author = "Andy Wilson"
     author_email = "andy@shady.org"

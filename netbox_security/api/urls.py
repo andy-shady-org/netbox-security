@@ -18,6 +18,7 @@ from .views import (
     NatRuleSetAssignmentViewSet,
     NatRuleViewSet,
     NatRuleAssignmentViewSet,
+    PolicerViewSet,
     FirewallFilterViewSet,
     FirewallFilterAssignmentViewSet,
     FirewallFilterRuleViewSet,
@@ -38,6 +39,7 @@ router.register("nat-pool", NatPoolViewSet)
 router.register("nat-pool-member", NatPoolMemberViewSet)
 router.register("nat-rule-set", NatRuleSetViewSet)
 router.register("nat-rule", NatRuleViewSet)
+router.register("policer", PolicerViewSet)
 router.register("firewall-filter", FirewallFilterViewSet)
 router.register("firewall-filter-rule", FirewallFilterRuleViewSet)
 router.register("firewall-filter-rule-from-setting", FirewallRuleFromSettingViewSet)

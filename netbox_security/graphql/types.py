@@ -19,6 +19,7 @@ from netbox_security.models import (
     NatRule,
     FirewallFilter,
     FirewallFilterRule,
+    Policer,
 )
 
 from .filters import (
@@ -31,6 +32,7 @@ from .filters import (
     NetBoxSecurityNatPoolMemberFilter,
     NetBoxSecurityNatRuleSetFilter,
     NetBoxSecurityNatRuleFilter,
+    NetBoxSecurityPolicerFilter,
     NetBoxSecurityFirewallFilterFilter,
     NetBoxSecurityFirewallFilterRuleFilter,
 )
@@ -214,6 +216,12 @@ class NetBoxSecurityNatRuleType(NetBoxObjectType):
     destination_type: str
     source_ports: List[int] | None
     destination_ports: List[int] | None
+
+
+@strawberry_django.type(Policer, fields="__all__", filters=NetBoxSecurityPolicerFilter)
+class NetBoxSecurityPolicerType(NetBoxObjectType):
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+    name: str
 
 
 @strawberry_django.type(

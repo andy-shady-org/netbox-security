@@ -109,6 +109,7 @@ NetBox Security can manage ten different object types:
 * NatRule
 * FirewallFilter
 * FirewallFilterRule
+* Policer
 
 In addition, further object types are using to handle Many-to-Many relationships with Netbox Device, VirtualDeviceContext and Interface object types. These assignment objects are:
 
@@ -276,7 +277,7 @@ In addition, a NAT Rule may be assigned to an outbound interface, and therefore 
 
 #### Permissions
 
-The following Django permissions are applicable to NatPool objects:
+The following Django permissions are applicable to NatRuleSet objects:
 
 | Permission                          | Action                  |
 |-------------------------------------|-------------------------|
@@ -285,7 +286,7 @@ The following Django permissions are applicable to NatPool objects:
 | `netbox_security.delete_natruleset` | Delete a view object    |
 | `netbox_security.view_natruleset`   | View view information   |
 
-The following Django permissions are applicable to NATPoolMember objects:
+The following Django permissions are applicable to NATRule objects:
 
 | Permission                       | Action                  |
 |----------------------------------|-------------------------|
@@ -306,7 +307,7 @@ NAT Rules
 ![View NAT Rule](img/nat-rule.png)
 
 
-### Firewall Filters and Firewall Rules
+### Firewall Filters, Firewall Rules and Policers
 
 Firewall filters are essentially containers for firewall rules. Different vendors have different types of firewall rules, and 
 Cisco Access Lists has been covered in an alternate Netbox plugin.
@@ -316,7 +317,7 @@ Firewall Filter assignments are stored within the FirewallFilterAssignment table
 
 #### Permissions
 
-The following Django permissions are applicable to NatPool objects:
+The following Django permissions are applicable to Firewall Filter objects:
 
 | Permission                              | Action                  |
 |-----------------------------------------|-------------------------|
@@ -325,7 +326,7 @@ The following Django permissions are applicable to NatPool objects:
 | `netbox_security.delete_firewallfilter` | Delete a view object    |
 | `netbox_security.view_firewallfilter`   | View view information   |
 
-The following Django permissions are applicable to NATPoolMember objects:
+The following Django permissions are applicable to Firewall Filter Rule objects:
 
 | Permission                                   | Action                  |
 |----------------------------------------------|-------------------------|
@@ -333,6 +334,15 @@ The following Django permissions are applicable to NATPoolMember objects:
 | `netbox_security.change_firewallfilterrule`  | Edit view information   |
 | `netbox_security.delete_firewallfilterrule`  | Delete a view object    |
 | `netbox_security.view_firewallfilterrule`    | View view information   |
+
+The following Django permissions are applicable to Policer objects:
+
+| Permission                       | Action                  |
+|----------------------------------|-------------------------|
+| `netbox_security.add_policer`    | Create new view objects |
+| `netbox_security.change_policer` | Edit view information   |
+| `netbox_security.delete_policer` | Delete a view object    |
+| `netbox_security.view_policer`   | View view information   |
 
 
 #### ScreenShots
