@@ -204,6 +204,25 @@ firewall_menu_items = (
             ),
         ),
     ),
+    PluginMenuItem(
+        link="plugins:netbox_security:policer_list",
+        link_text="Firewall Policers",
+        permissions=["netbox_security.view_policer"],
+        buttons=(
+            PluginMenuButton(
+                "plugins:netbox_security:policer_add",
+                _("Add"),
+                "mdi mdi-plus-thick",
+                permissions=["netbox_security.add_policer"],
+            ),
+            PluginMenuButton(
+                "plugins:netbox_security:policer_bulk_import",
+                _("Import"),
+                "mdi mdi-upload",
+                permissions=["netbox_security.add_policer"],
+            ),
+        ),
+    ),
 )
 
 

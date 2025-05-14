@@ -1,0 +1,80 @@
+{% extends 'generic/object.html' %}
+{% load i18n %}
+{% load plugins %}
+
+{% block content %}
+<div class="row">
+    <div class="col col-md-6">
+        <div class="card">
+            <h5 class="card-header">{% trans "Policers" %}</h5>
+            <table class="table table-hover attr-table">
+                <tr>
+                    <th scope="row">{% trans "Name" %}</th>
+                    <td>{{ object.name }}</td>
+                </tr>
+                {% if object.description %}
+                <tr>
+                    <th scope="row">{% trans "Description" %}</th>
+                    <td>{{ object.description|placeholder }}</td>
+                </tr>
+                {% endif %}
+                {% if object.tenant %}
+                <tr>
+                    <th scope="row">{% trans "Tenant" %}</th>
+                    <td>
+                        {% if object.tenant.group %}
+                            {{ object.tenant.group|linkify }} /
+                        {% endif %}
+                        {{ object.tenant|linkify|placeholder }}
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th scope="row">{% trans "Logical Interface Policer" %}</th>
+                    <td>{% checkmark object.logical_interface_policer %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Physical Interface Policer" %}</th>
+                    <td>{% checkmark object.physical_interface_policer %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Bandwidth Limit" %}</th>
+                    <td>{{ object.bandwidth_limit|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Bandwidth Percent" %}</th>
+                    <td>{{ object.bandwidth_percent|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Burst Size Limit" %}</th>
+                    <td>{{ object.burst_size_limit|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Discard" %}</th>
+                    <td>{% checkmark object.discard %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Out of Profile" %}</th>
+                    <td>{% checkmark object.out_of_profile %}</td>
+                </tr>
+                <tr>
+                    <td>{% trans "Loss Priority" %}</td>
+                    <td>{% badge object.get_loss_priority_display bg_color=object.get_loss_priority_color %}</td>
+                </tr>
+                <tr>
+                    <td>{% trans "Forwarding Class" %}</td>
+                    <td>{% badge object.get_forwarding_class_display bg_color=object.get_forwarding_class_color %}</td>
+                </tr>
+            </table>
+        </div>
+        {% include 'inc/panels/custom_fields.html' %}
+        {% plugin_left_page object %}
+    </div>
+    <div class="col col-md-6">
+        {% include 'inc/panels/comments.html' %}
+        {% include 'inc/panels/tags.html' %}
+        {% plugin_right_page object %}
+    </div>
+    {% plugin_full_width_page object %}
+</div>
+{% endblock %}

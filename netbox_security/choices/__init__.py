@@ -12,7 +12,7 @@ from .firewall_filter_choices import (
     FirewallRuleFromSettingChoices,
     FirewallRuleThenSettingChoices,
 )
-
+from .policer_choices import ForwardingClassChoices, LossPriorityChoices
 
 __all__ = [
     "AddressTypeChoices",
@@ -25,4 +25,6 @@ __all__ = [
     "PoolTypeChoices",
     "RuleDirectionChoices",
     "FamilyChoices",
+    "ForwardingClassChoices",
+    "LossPriorityChoices",
 ]

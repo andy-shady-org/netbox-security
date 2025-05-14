@@ -13,6 +13,7 @@ from .types import (
     NetBoxSecurityNatPoolMemberType,
     NetBoxSecurityNatRuleSetType,
     NetBoxSecurityNatRuleType,
+    NetBoxSecurityPolicerType,
     NetBoxSecurityFirewallFilterType,
     NetBoxSecurityFirewallFilterRuleType,
 )
@@ -94,6 +95,14 @@ class NetBoxSecurityNatRuleQuery:
 class NetBoxSecurityNatRuleSetQuery:
     netbox_security_natruleset: NetBoxSecurityNatRuleSetType = strawberry_django.field()
     netbox_security_natruleset_list: List[NetBoxSecurityNatRuleSetType] = (
+        strawberry_django.field()
+    )
+
+
+@strawberry.type(name="Query")
+class NetBoxSecurityPolicerQuery:
+    netbox_security_policer: NetBoxSecurityPolicerType = strawberry_django.field()
+    netbox_security_policer_list: List[NetBoxSecurityPolicerType] = (
         strawberry_django.field()
     )
 

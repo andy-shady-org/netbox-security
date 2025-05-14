@@ -9,3 +9,4 @@ from .serializers_.nat_rule_set import *
 from .serializers_.nat_rule import *
 from .serializers_.firewall_filter import *
 from .serializers_.firewall_filter_rule import *
+from .serializers_.policer import *

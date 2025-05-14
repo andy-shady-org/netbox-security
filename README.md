@@ -29,6 +29,7 @@ This plugin provides following Models:
 * NAT Rules
 * Firewall Filters
 * Firewall Filter Rules
+* Firewall Policers
 
 ## Compatibility
 

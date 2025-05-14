@@ -28,7 +28,7 @@ class SecurityZone(ContactsMixin, PrimaryModel):
     )
 
     class Meta:
-        verbose_name_plural = "Security Zones"
+        verbose_name_plural = _("Security Zones")
         ordering = [
             "name",
         ]

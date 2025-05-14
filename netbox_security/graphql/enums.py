@@ -11,6 +11,8 @@ from netbox_security.choices import (
     CustomInterfaceChoices,
     AddressTypeChoices,
     ActionChoices,
+    LossPriorityChoices,
+    ForwardingClassChoices,
 )
 
 __all__ = (
@@ -24,6 +26,8 @@ __all__ = (
     "NetBoxSecurityCustomInterfaceEnum",
     "NetBoxSecurityAddressTypeEnum",
     "NetBoxSecurityActionEnum",
+    "NetBoxSecurityLossPriorityEnum",
+    "NetBoxSecurityForwardingClassEnum",
 )
 
 
@@ -41,3 +45,5 @@ NetBoxSecurityRuleStatusEnum = strawberry.enum(RuleStatusChoices.as_enum())
 NetBoxSecurityCustomInterfaceEnum = strawberry.enum(CustomInterfaceChoices.as_enum())
 NetBoxSecurityAddressTypeEnum = strawberry.enum(AddressTypeChoices.as_enum())
 NetBoxSecurityActionEnum = strawberry.enum(ActionChoices.as_enum())
+NetBoxSecurityLossPriorityEnum = strawberry.enum(LossPriorityChoices.as_enum())
+NetBoxSecurityForwardingClassEnum = strawberry.enum(ForwardingClassChoices.as_enum())

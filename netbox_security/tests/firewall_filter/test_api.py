@@ -3,13 +3,9 @@ from netbox_security.tests.custom import APITestCase, NetBoxSecurityGraphQLMixin
 from netbox_security.models import (
     FirewallFilter,
     FirewallFilterRule,
-    FirewallRuleFromSetting,
-    FirewallRuleThenSetting,
 )
 from netbox_security.choices import (
     FamilyChoices,
-    FirewallRuleFromSettingChoices,
-    FirewallRuleThenSettingChoices,
 )
 
 
