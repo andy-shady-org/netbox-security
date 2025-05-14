@@ -1,13 +1,10 @@
 import django_tables2 as tables
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from netbox.tables import NetBoxTable
 from netbox.tables.columns import ChoiceFieldColumn, TagColumn, ActionsColumn
 
 from netbox_security.models import NatPool, NatPoolAssignment
-
-CHOICE_LABEL = mark_safe('<span class="label label-info">{{ value }}</span>')
 
 
 __all__ = (
@@ -19,8 +16,8 @@ __all__ = (
 
 class NatPoolTable(NetBoxTable):
     name = tables.LinkColumn()
-    pool_type = ChoiceFieldColumn(default=CHOICE_LABEL, verbose_name=_("NAT Pool Type"))
-    status = ChoiceFieldColumn(default=CHOICE_LABEL, verbose_name=_("Status"))
+    pool_type = ChoiceFieldColumn()
+    status = ChoiceFieldColumn()
     description = tables.LinkColumn()
     member_count = tables.Column()
     tags = TagColumn(url_name="plugins:netbox_security:natpool_list")
