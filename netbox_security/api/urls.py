@@ -21,6 +21,7 @@ from .views import (
     PolicerViewSet,
     FirewallFilterViewSet,
     FirewallFilterAssignmentViewSet,
+    PolicerAssignmentViewSet,
     FirewallFilterRuleViewSet,
     FirewallRuleFromSettingViewSet,
     FirewallRuleThenSettingViewSet,
@@ -52,5 +53,6 @@ router.register("nat-pool-assignments", NatPoolAssignmentViewSet)
 router.register("nat-rule-set-assignments", NatRuleSetAssignmentViewSet)
 router.register("nat-rule-assignments", NatRuleAssignmentViewSet)
 router.register("firewall-filter-assignments", FirewallFilterAssignmentViewSet)
+router.register("policer-assignments", PolicerAssignmentViewSet)
 
 urlpatterns = router.urls

@@ -131,4 +131,25 @@
         </div>
     </div>
 </div>
-
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Firewall Policers" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_policer %}
+                        <a href="{% url 'plugins:netbox_security:policer_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Firewall Policer" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_policerassignment %}
+                        <a href="{% url 'plugins:netbox_security:policerassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Firewall Policer" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% render_table related_firewall_policer_table 'inc/table.html' %}
+        </div>
+    </div>
+</div>

@@ -43,3 +43,8 @@ FILTER_ASSIGNMENT_MODELS = Q(
 FILTER_SETTING_ASSIGNMENT_MODELS = Q(
     Q(app_label="netbox_security", model="firewallfilterrule"),
 )
+
+POLICER_ASSIGNMENT_MODELS = Q(
+    Q(app_label="dcim", model="device"),
+    Q(app_label="dcim", model="virtualdevicecontext"),
+)

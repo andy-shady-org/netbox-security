@@ -1,13 +1,20 @@
+from django.contrib.contenttypes.models import ContentType
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
-    IntegerField,
     BooleanField,
     ChoiceField,
+    SerializerMethodField,
+    JSONField,
+    IntegerField,
 )
+from drf_spectacular.utils import extend_schema_field
+
+from netbox.api.fields import ContentTypeField
 from netbox.api.serializers import NetBoxModelSerializer
 from tenancy.api.serializers import TenantSerializer
+from utilities.api import get_serializer_for_model
 
-from netbox_security.models import Policer
+from netbox_security.models import Policer, PolicerAssignment
 from netbox_security.choices import (
     LossPriorityChoices,
     ForwardingClassChoices,
@@ -69,3 +76,39 @@ class PolicerSerializer(NetBoxModelSerializer):
             "out_of_profile",
             "description",
         )
+
+
+class PolicerAssignmentSerializer(NetBoxModelSerializer):
+    policer = PolicerSerializer(nested=True, required=True, allow_null=False)
+    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object = SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = PolicerAssignment
+        fields = [
+            "id",
+            "url",
+            "display",
+            "policer",
+            "assigned_object_type",
+            "assigned_object_id",
+            "assigned_object",
+            "created",
+            "last_updated",
+        ]
+        brief_fields = (
+            "id",
+            "url",
+            "display",
+            "policer",
+            "assigned_object_type",
+            "assigned_object_id",
+        )
+
+    @extend_schema_field(JSONField(allow_null=True))
+    def get_assigned_object(self, obj):
+        if obj.assigned_object is None:
+            return None
+        serializer = get_serializer_for_model(obj.assigned_object)
+        context = {"request": self.context["request"]}
+        return serializer(obj.assigned_object, nested=True, context=context).data

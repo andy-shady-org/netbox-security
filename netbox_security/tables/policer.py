@@ -1,13 +1,18 @@
 import django_tables2 as tables
+from django.utils.translation import gettext_lazy as _
 
 from netbox.tables import NetBoxTable
-from netbox.tables.columns import TagColumn, ChoiceFieldColumn
+from netbox.tables.columns import TagColumn, ChoiceFieldColumn, ActionsColumn
 from tenancy.tables import TenancyColumnsMixin
 
-from netbox_security.models import Policer
+from netbox_security.models import Policer, PolicerAssignment
 
 
-__all__ = ("PolicerTable",)
+__all__ = (
+    "PolicerTable",
+    "PolicerDeviceAssignmentTable",
+    "PolicerVirtualDeviceContextAssignmentTable",
+)
 
 
 class PolicerTable(TenancyColumnsMixin, NetBoxTable):
@@ -58,3 +63,39 @@ class PolicerTable(TenancyColumnsMixin, NetBoxTable):
             "tenant",
             "tags",
         )
+
+
+class PolicerDeviceAssignmentTable(NetBoxTable):
+    assigned_object = tables.Column(
+        linkify=True,
+        orderable=False,
+        verbose_name=_("Device"),
+    )
+    policer = tables.Column(verbose_name=_("Policer"), linkify=True)
+    actions = ActionsColumn(actions=("edit", "delete"))
+
+    class Meta(NetBoxTable.Meta):
+        model = PolicerAssignment
+        fields = ("pk", "policer", "assigned_object")
+        exclude = ("id",)
+
+
+class PolicerVirtualDeviceContextAssignmentTable(NetBoxTable):
+    assigned_object_parent = tables.Column(
+        accessor=tables.A("assigned_object__device"),
+        linkify=True,
+        orderable=False,
+        verbose_name=_("Parent"),
+    )
+    assigned_object = tables.Column(
+        linkify=True,
+        orderable=False,
+        verbose_name=_("Virtual Device Context"),
+    )
+    policer = tables.Column(verbose_name=_("Policer"), linkify=True)
+    actions = ActionsColumn(actions=("edit", "delete"))
+
+    class Meta(NetBoxTable.Meta):
+        model = PolicerAssignment
+        fields = ("pk", "policer", "assigned_object", "assigned_object_parent")
+        exclude = ("id",)

@@ -20,6 +20,7 @@ from .serializers import (
     NatRuleSerializer,
     NatRuleAssignmentSerializer,
     PolicerSerializer,
+    PolicerAssignmentSerializer,
     FirewallFilterSerializer,
     FirewallFilterAssignmentSerializer,
     FirewallFilterRuleSerializer,
@@ -45,6 +46,7 @@ from netbox_security.models import (
     NatRule,
     NatRuleAssignment,
     Policer,
+    PolicerAssignment,
     FirewallFilter,
     FirewallFilterAssignment,
     FirewallFilterRule,
@@ -70,6 +72,7 @@ from netbox_security.filtersets import (
     NatRuleFilterSet,
     NatRuleAssignmentFilterSet,
     PolicerFilterSet,
+    PolicerAssignmentFilterSet,
     FirewallFilterFilterSet,
     FirewallFilterAssignmentFilterSet,
     FirewallFilterRuleFilterSet,
@@ -209,6 +212,12 @@ class PolicerViewSet(NetBoxModelViewSet):
     queryset = Policer.objects.all()
     serializer_class = PolicerSerializer
     filterset_class = PolicerFilterSet
+
+
+class PolicerAssignmentViewSet(NetBoxModelViewSet):
+    queryset = PolicerAssignment.objects.all()
+    serializer_class = PolicerAssignmentSerializer
+    filterset_class = PolicerAssignmentFilterSet
 
 
 class FirewallFilterViewSet(NetBoxModelViewSet):
