@@ -222,4 +222,13 @@ urlpatterns = [
         "firewall-filter-assignments/<int:pk>/",
         include(get_model_urls("netbox_security", "firewallfilterassignment")),
     ),
+    # Policer Assignments
+    path(
+        "policer-assignments/",
+        include(get_model_urls("netbox_security", "policerassignment", detail=False)),
+    ),
+    path(
+        "policer-assignments/<int:pk>/",
+        include(get_model_urls("netbox_security", "policerassignment")),
+    ),
 ]

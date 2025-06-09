@@ -1,15 +1,18 @@
 from netbox.views import generic
 from utilities.views import register_model_view
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
 
 from netbox_security.tables import PolicerTable
 from netbox_security.filtersets import PolicerFilterSet
 
-from netbox_security.models import Policer
+from netbox_security.models import Policer, PolicerAssignment
 from netbox_security.forms import (
     PolicerFilterForm,
     PolicerForm,
     PolicerBulkEditForm,
     PolicerImportForm,
+    PolicerAssignmentForm,
 )
 
 
@@ -68,3 +71,31 @@ class PolicerBulkDeleteView(generic.BulkDeleteView):
 class PolicerBulkImportView(generic.BulkImportView):
     queryset = Policer.objects.all()
     model_form = PolicerImportForm
+
+
+@register_model_view(PolicerAssignment, "add", detail=False)
+@register_model_view(PolicerAssignment, "edit")
+class PolicerAssignmentEditView(generic.ObjectEditView):
+    queryset = PolicerAssignment.objects.all()
+    form = PolicerAssignmentForm
+
+    def alter_object(self, instance, request, args, kwargs):
+        if not instance.pk:
+            content_type = get_object_or_404(
+                ContentType, pk=request.GET.get("assigned_object_type")
+            )
+            instance.assigned_object = get_object_or_404(
+                content_type.model_class(), pk=request.GET.get("assigned_object_id")
+            )
+        return instance
+
+    def get_extra_addanother_params(self, request):
+        return {
+            "assigned_object_type": request.GET.get("assigned_object_type"),
+            "assigned_object_id": request.GET.get("assigned_object_id"),
+        }
+
+
+@register_model_view(PolicerAssignment, "delete")
+class PolicerAssignmentDeleteView(generic.ObjectDeleteView):
+    queryset = PolicerAssignment.objects.all()

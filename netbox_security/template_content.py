@@ -9,6 +9,7 @@ from netbox_security.models import (
     AddressSetAssignment,
     AddressList,
     FirewallFilterAssignment,
+    PolicerAssignment,
 )
 from netbox_security.tables import (
     NatPoolDeviceAssignmentTable,
@@ -29,6 +30,8 @@ from netbox_security.tables import (
     AddressListAddressSetTable,
     FirewallFilterDeviceAssignmentTable,
     FirewallFilterVirtualDeviceContextAssignmentTable,
+    PolicerDeviceAssignmentTable,
+    PolicerVirtualDeviceContextAssignmentTable,
 )
 
 
@@ -143,6 +146,8 @@ class VirtualDeviceContextInfo(PluginTemplateExtension):
         firewall_filter_table = FirewallFilterVirtualDeviceContextAssignmentTable(
             firewall_filter_assignments
         )
+        policer_assignments = PolicerAssignment.objects.filter(virtualdevicecontext=obj)
+        policer_table = PolicerVirtualDeviceContextAssignmentTable(policer_assignments)
         return self.render(
             "netbox_security/device/device_extend.html",
             extra_context={
@@ -152,6 +157,7 @@ class VirtualDeviceContextInfo(PluginTemplateExtension):
                 "related_address_table": address_table,
                 "related_addressset_table": addressset_table,
                 "related_firewall_filter_table": firewall_filter_table,
+                "related_firewall_policer_table": policer_table,
             },
         )
 
@@ -231,6 +237,8 @@ class DeviceInfo(PluginTemplateExtension):
         firewall_filter_table = FirewallFilterDeviceAssignmentTable(
             firewall_filter_assignments
         )
+        policer_assignments = PolicerAssignment.objects.filter(device=obj)
+        policer_table = PolicerDeviceAssignmentTable(policer_assignments)
         return self.render(
             "netbox_security/device/device_extend.html",
             extra_context={
@@ -240,6 +248,7 @@ class DeviceInfo(PluginTemplateExtension):
                 "related_address_table": address_table,
                 "related_addressset_table": addressset_table,
                 "related_firewall_filter_table": firewall_filter_table,
+                "related_firewall_policer_table": policer_table,
             },
         )
 

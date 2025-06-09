@@ -9,7 +9,7 @@ from netbox.forms import (
 )
 
 from tenancy.forms import TenancyForm, TenancyFilterForm
-from utilities.forms.rendering import FieldSet
+from utilities.forms.rendering import FieldSet, ObjectAttribute
 from utilities.forms.fields import (
     DynamicModelChoiceField,
     TagFilterField,
@@ -22,6 +22,7 @@ from tenancy.models import Tenant, TenantGroup
 
 from netbox_security.models import (
     Policer,
+    PolicerAssignment,
 )
 from netbox_security.choices import (
     LossPriorityChoices,
@@ -34,6 +35,7 @@ __all__ = (
     "PolicerFilterForm",
     "PolicerImportForm",
     "PolicerBulkEditForm",
+    "PolicerAssignmentForm",
 )
 
 
@@ -257,3 +259,36 @@ class PolicerBulkEditForm(NetBoxModelBulkEditForm):
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
+
+
+class PolicerAssignmentForm(forms.ModelForm):
+    policer = DynamicModelChoiceField(
+        label=_("Policer"), queryset=Policer.objects.all()
+    )
+
+    fieldsets = (FieldSet(ObjectAttribute("assigned_object"), "policer"),)
+
+    class Meta:
+        model = PolicerAssignment
+        fields = ("policer",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def clean_pool(self):
+        policer = self.cleaned_data["policer"]
+
+        conflicting_assignments = PolicerAssignment.objects.filter(
+            assigned_object_type=self.instance.assigned_object_type,
+            assigned_object_id=self.instance.assigned_object_id,
+            policer=policer,
+        )
+        if self.instance.id:
+            conflicting_assignments = conflicting_assignments.exclude(
+                id=self.instance.id
+            )
+
+        if conflicting_assignments.exists():
+            raise forms.ValidationError(_("Assignment already exists"))
+
+        return policer
