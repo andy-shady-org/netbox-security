@@ -5,6 +5,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from netbox.models import PrimaryModel, NetBoxModel
 from netbox.models.features import ContactsMixin
 from dcim.models import Device, VirtualDeviceContext
+from virtualization.models import VirtualMachine
 from ipam.choices import IPAddressStatusChoices
 from netbox.search import SearchIndex, register_search
 
@@ -115,3 +116,10 @@ GenericRelation(
     object_id_field="assigned_object_id",
     related_query_name="virtualdevicecontext",
 ).contribute_to_class(VirtualDeviceContext, "nat_pools")
+
+GenericRelation(
+    to=NatPoolAssignment,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="virtualmachine",
+).contribute_to_class(VirtualMachine, "nat_pools")

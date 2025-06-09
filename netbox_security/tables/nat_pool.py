@@ -11,6 +11,7 @@ __all__ = (
     "NatPoolTable",
     "NatPoolDeviceAssignmentTable",
     "NatPoolVirtualDeviceContextAssignmentTable",
+    "NatPoolVirtualMachineAssignmentTable",
 )
 
 
@@ -61,4 +62,19 @@ class NatPoolVirtualDeviceContextAssignmentTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = NatPoolAssignment
         fields = ("pk", "pool", "assigned_object", "assigned_object_parent")
+        exclude = ("id",)
+
+
+class NatPoolVirtualMachineAssignmentTable(NetBoxTable):
+    assigned_object = tables.Column(
+        linkify=True,
+        orderable=False,
+        verbose_name=_("Virtual Machine"),
+    )
+    pool = tables.Column(verbose_name=_("NAT Pool"), linkify=True)
+    actions = ActionsColumn(actions=("edit", "delete"))
+
+    class Meta(NetBoxTable.Meta):
+        model = NatPoolAssignment
+        fields = ("pk", "pool", "assigned_object")
         exclude = ("id",)
