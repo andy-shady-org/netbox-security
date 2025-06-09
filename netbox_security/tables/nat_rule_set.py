@@ -16,6 +16,7 @@ __all__ = (
     "NatRuleSetTable",
     "NatRuleSetDeviceAssignmentTable",
     "NatRuleSetVirtualDeviceContextAssignmentTable",
+    "NatRuleSetVirtualMachineAssignmentTable",
 )
 
 
@@ -82,6 +83,21 @@ class NatRuleSetVirtualDeviceContextAssignmentTable(NetBoxTable):
         linkify=True,
         orderable=False,
         verbose_name=_("Virtual Device Context"),
+    )
+    ruleset = tables.Column(verbose_name=_("NAT Ruleset"), linkify=True)
+    actions = ActionsColumn(actions=("edit", "delete"))
+
+    class Meta(NetBoxTable.Meta):
+        model = NatRuleSetAssignment
+        fields = ("pk", "ruleset", "assigned_object", "assigned_object_parent")
+        exclude = ("id",)
+
+
+class NatRuleSetVirtualMachineAssignmentTable(NetBoxTable):
+    assigned_object = tables.Column(
+        linkify=True,
+        orderable=False,
+        verbose_name=_("Virtual Machine"),
     )
     ruleset = tables.Column(verbose_name=_("NAT Ruleset"), linkify=True)
     actions = ActionsColumn(actions=("edit", "delete"))

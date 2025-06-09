@@ -12,11 +12,13 @@ ADDRESS_LIST_ASSIGNMENT_MODELS = Q(
 RULESET_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device"),
     Q(app_label="dcim", model="virtualdevicecontext"),
+    Q(app_label="virtualization", model="virtualmachine"),
 )
 
 POOL_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device"),
     Q(app_label="dcim", model="virtualdevicecontext"),
+    Q(app_label="virtualization", model="virtualmachine"),
 )
 
 RULE_ASSIGNMENT_MODELS = Q(Q(app_label="dcim", model="interface"))

@@ -13,8 +13,10 @@ from netbox_security.models import (
 from netbox_security.tables import (
     NatPoolDeviceAssignmentTable,
     NatPoolVirtualDeviceContextAssignmentTable,
+    NatPoolVirtualMachineAssignmentTable,
     NatRuleSetDeviceAssignmentTable,
     NatRuleSetVirtualDeviceContextAssignmentTable,
+    NatRuleSetVirtualMachineAssignmentTable,
     NatRuleAssignmentTable,
     SecurityZoneDeviceAssignmentTable,
     SecurityZoneVirtualDeviceContextAssignmentTable,
@@ -154,6 +156,42 @@ class VirtualDeviceContextInfo(PluginTemplateExtension):
         )
 
 
+class VirtualMachineInfo(PluginTemplateExtension):
+    models = ["virtualization.virtualmachine"]
+
+    def right_page(self):
+        """ """
+        if self.context["config"].get("virtual_ext_page") == "right":
+            return self.x_page()
+        return ""
+
+    def left_page(self):
+        """ """
+        if self.context["config"].get("virtual_ext_page") == "left":
+            return self.x_page()
+        return ""
+
+    def full_width_page(self):
+        """ """
+        if self.context["config"].get("virtual_ext_page") == "full_width":
+            return self.x_page()
+        return ""
+
+    def x_page(self):
+        obj = self.context["object"]
+        pool_assignments = NatPoolAssignment.objects.filter(virtualmachine=obj)
+        pool_table = NatPoolVirtualMachineAssignmentTable(pool_assignments)
+        ruleset_assignments = NatRuleSetAssignment.objects.filter(virtualmachine=obj)
+        ruleset_table = NatRuleSetVirtualMachineAssignmentTable(ruleset_assignments)
+        return self.render(
+            "netbox_security/virtualmachine/virtualmachine_extend.html",
+            extra_context={
+                "related_pool_table": pool_table,
+                "related_ruleset_table": ruleset_table,
+            },
+        )
+
+
 class DeviceInfo(PluginTemplateExtension):
     models = ["dcim.device"]
 
@@ -247,6 +285,7 @@ template_extensions = [
     AddressContextInfo,
     AddressSetContextInfo,
     VirtualDeviceContextInfo,
+    VirtualMachineInfo,
     DeviceInfo,
     InterfaceInfo,
 ]

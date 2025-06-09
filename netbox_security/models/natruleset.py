@@ -9,6 +9,7 @@ from netbox.models import NetBoxModel, PrimaryModel
 from netbox.models.features import ContactsMixin
 
 from dcim.models import Device, VirtualDeviceContext
+from virtualization.models import VirtualMachine
 
 from netbox_security.constants.constants import (
     RULESET_ASSIGNMENT_MODELS,
@@ -127,3 +128,10 @@ GenericRelation(
     object_id_field="assigned_object_id",
     related_query_name="virtualdevicecontext",
 ).contribute_to_class(VirtualDeviceContext, "natrulesets")
+
+GenericRelation(
+    to=NatRuleSetAssignment,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="virtualmachine",
+).contribute_to_class(VirtualMachine, "natrulesets")

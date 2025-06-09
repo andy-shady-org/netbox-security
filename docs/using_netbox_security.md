@@ -117,8 +117,8 @@ In addition, further object types are using to handle Many-to-Many relationships
 * AddressAssignment -> Device and VirtualDeviceContext
 * AddressSetAssignment -> Device and VirtualDeviceContext
 * SecurityZoneAssignment -> Device, VirtualDeviceContext and Interface (for assigning an interface to a security zone)
-* NatPoolAssignment -> Device and VirtualDeviceContext
-* NatRuleSetAssignment -> Device and VirtualDeviceContext
+* NatPoolAssignment -> Device, VirtualDeviceContext and VirtualMachine
+* NatRuleSetAssignment -> Device, VirtualDeviceContext and VirtualMachine
 * NatRuleAssignment -> Interface (Used for outbound interface assignments)
 * FirewallFilterAssignment -> Device and VirtualDeviceContext
 
@@ -231,7 +231,7 @@ Security Zone Policies
 
 NAT Pools are used as part of a NAT operation for forwarding traffic. Nat Pools consist of pool members that are used as the source or destination of the traffic.
 
-In Netbox Security, a NAT pool can be assigned to one or more devices or virtual device contexts. 
+In Netbox Security, a NAT pool can be assigned to one or more devices, virtual device contexts or virtual machines. 
 NAT pool assignments are stored within the NatPoolAssignment table.
 
 #### Permissions
@@ -270,7 +270,7 @@ NAT Pool Members
 
 NAT Rule Sets are collections of NAT rules. Nat Rules control the forwarding of NAT based traffic.
 
-In Netbox Security, a NAT Rule Set can be assigned to one or more devices or virtual device contexts. 
+In Netbox Security, a NAT Rule Set can be assigned to one or more devices, virtual device contexts or virtual machines. 
 NAT pool assignments are stored within the NatRuleSetAssignment table.
 
 In addition, a NAT Rule may be assigned to an outbound interface, and therefore this assignment is achieved through the NatRuleAssignment table.

@@ -1,0 +1,49 @@
+{% load buttons %}
+{% load custom_links %}
+{% load helpers %}
+{% load i18n %}
+{% load plugins %}
+{% load render_table from django_tables2 %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "NAT Pools" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_natpool %}
+                        <a href="{% url 'plugins:netbox_security:natpool_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create NAT Pool" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_natpoolassignment %}
+                        <a href="{% url 'plugins:netbox_security:natpoolassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign NAT Pool" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% render_table related_pool_table 'inc/table.html' %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "NAT Rulesets" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_natruleset %}
+                        <a href="{% url 'plugins:netbox_security:natruleset_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create NAT Ruleset" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_natrulesetassignment %}
+                        <a href="{% url 'plugins:netbox_security:natrulesetassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign NAT Ruleset" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% render_table related_ruleset_table 'inc/table.html' %}
+        </div>
+    </div>
+</div>
