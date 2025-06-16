@@ -66,5 +66,5 @@ class FirewallFilterVirtualDeviceContextAssignmentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = FirewallFilterAssignment
-        fields = ("pk", "firewall_filter", "assigned_object")
+        fields = ("pk", "firewall_filter", "assigned_object", "assigned_object_parent")
         exclude = ("id",)
