@@ -40,22 +40,70 @@ class NatRuleView(generic.ObjectView):
 
     def get_extra_context(self, request, instance):
         source_addresses_table = IPAddressTable(
-            instance.source_addresses.all(), orderable=False
+            instance.source_addresses.all(),
+            orderable=False,
+            exclude=(
+                "created",
+                "last_updated",
+            ),
         )
         destination_addresses_table = IPAddressTable(
-            instance.destination_addresses.all(), orderable=False
+            instance.destination_addresses.all(),
+            orderable=False,
+            exclude=(
+                "created",
+                "last_updated",
+            ),
         )
         source_prefixes_table = PrefixTable(
-            instance.source_prefixes.all(), orderable=False
+            instance.source_prefixes.all(),
+            orderable=False,
+            exclude=(
+                "prefix_flat",
+                "vlan_group",
+                "utilization",
+                "tenant_group",
+                "scope",
+                "scope_type",
+                "depth",
+                "mark_utilized",
+                "children",
+                "created",
+                "last_updated",
+            ),
         )
         destination_prefixes_table = PrefixTable(
-            instance.destination_prefixes.all(), orderable=False
+            instance.destination_prefixes.all(),
+            orderable=False,
+            exclude=(
+                "prefix_flat",
+                "vlan_group",
+                "utilization",
+                "tenant_group",
+                "scope",
+                "scope_type",
+                "depth",
+                "mark_utilized",
+                "children",
+                "created",
+                "last_updated",
+            ),
         )
         source_ranges_table = IPRangeTable(
-            instance.source_ranges.all(), orderable=False
+            instance.source_ranges.all(),
+            orderable=False,
+            exclude=(
+                "created",
+                "last_updated",
+            ),
         )
         destination_ranges_table = IPRangeTable(
-            instance.destination_ranges.all(), orderable=False
+            instance.destination_ranges.all(),
+            orderable=False,
+            exclude=(
+                "created",
+                "last_updated",
+            ),
         )
 
         return {

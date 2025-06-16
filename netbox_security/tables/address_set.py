@@ -67,7 +67,7 @@ class AddressSetVirtualDeviceContextAssignmentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = AddressSetAssignment
-        fields = ("pk", "address_set", "assigned_object")
+        fields = ("pk", "address_set", "assigned_object", "assigned_object_parent")
         exclude = ("id",)
 
 

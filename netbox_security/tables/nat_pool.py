@@ -76,5 +76,5 @@ class NatPoolVirtualMachineAssignmentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = NatPoolAssignment
-        fields = ("pk", "pool", "assigned_object")
+        fields = ("pk", "pool", "assigned_object", "assigned_object_parent")
         exclude = ("id",)
