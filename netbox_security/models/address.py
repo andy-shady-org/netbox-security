@@ -56,11 +56,7 @@ class AddressAssignment(NetBoxModel):
 
     clone_fields = ("assigned_object_type", "assigned_object_id")
 
-    prerequisite_models = (
-        "dcim.Device",
-        "netbox_security.Address",
-        "netbox_security.SecurityZone",
-    )
+    prerequisite_models = ("netbox_security.Address",)
 
     class Meta:
         indexes = (models.Index(fields=("assigned_object_type", "assigned_object_id")),)

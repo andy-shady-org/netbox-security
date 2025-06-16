@@ -68,10 +68,7 @@ class NatPoolAssignment(NetBoxModel):
 
     clone_fields = ("assigned_object_type", "assigned_object_id")
 
-    prerequisite_models = (
-        "dcim.Device",
-        "netbox_security.NatPool",
-    )
+    prerequisite_models = ("netbox_security.NatPool",)
 
     class Meta:
         indexes = (models.Index(fields=("assigned_object_type", "assigned_object_id")),)
