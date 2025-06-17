@@ -23,8 +23,8 @@ from netbox_security.models import (
 
 
 class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
-    value = django_filters.CharFilter(
-        method="filter_value",
+    address = django_filters.CharFilter(
+        method="filter_address",
         label=_("Value"),
     )
     address_set_id = django_filters.ModelMultipleChoiceFilter(
@@ -36,21 +36,25 @@ class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
 
     class Meta:
         model = Address
-        fields = ["id", "name", "description"]
+        fields = ["id", "name", "description", "dns_name"]
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""
         if not value.strip():
             return queryset
-        qs_filter = Q(name__icontains=value) | Q(description__icontains=value)
+        qs_filter = (
+            Q(name__icontains=value)
+            | Q(description__icontains=value)
+            | Q(dns_name=value)
+        )
         return queryset.filter(qs_filter)
 
-    def filter_value(self, queryset, name, value):
+    def filter_address(self, queryset, name, value):
         if not value.strip():
             return queryset
         try:
             query = str(IPNetwork(value).cidr)
-            return queryset.filter(value=query)
+            return queryset.filter(address=query)
         except (AddrFormatError, ValueError):
             return queryset.none()
 

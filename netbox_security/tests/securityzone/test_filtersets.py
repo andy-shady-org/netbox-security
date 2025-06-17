@@ -117,9 +117,9 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
             zone.save()
 
         cls.addresses = (
-            Address(name="address-1", value="1.1.1.4/32"),
-            Address(name="address-2", value="1.1.1.5/32"),
-            Address(name="address-3", value="1.1.1.6/32"),
+            Address(name="address-1", address="1.1.1.4/32"),
+            Address(name="address-2", address="1.1.1.5/32"),
+            Address(name="address-3", address="1.1.1.6/32"),
         )
         Address.objects.bulk_create(cls.addresses)
 

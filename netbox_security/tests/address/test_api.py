@@ -15,12 +15,23 @@ class AddressAPITestCase(
 ):
     model = Address
 
-    brief_fields = ["description", "display", "id", "name", "url", "value"]
+    brief_fields = [
+        "address",
+        "description",
+        "display",
+        "dns_name",
+        "id",
+        "name",
+        "url",
+    ]
 
     create_data = [
-        {"name": "address-1", "value": "1.1.1.1/32"},
-        {"name": "address-2", "value": "1.1.1.2/32"},
-        {"name": "address-3", "value": "1.1.1.3/32"},
+        {"name": "address-1", "address": "1.1.1.1/32"},
+        {"name": "address-2", "address": "1.1.1.2/32"},
+        {"name": "address-3", "address": "1.1.1.3/32"},
+        {"name": "address-4", "dns_name": "test.example.com"},
+        {"name": "address-5", "dns_name": "*.example.com"},
+        {"name": "address-6", "dns_name": "example.com"},
     ]
 
     bulk_update_data = {
@@ -30,8 +41,9 @@ class AddressAPITestCase(
     @classmethod
     def setUpTestData(cls):
         addresses = (
-            Address(name="address-4", value="1.1.1.4/32"),
-            Address(name="address-5", value="1.1.1.5/32"),
-            Address(name="address-6", value="1.1.1.6/32"),
+            Address(name="address-7", address="1.1.1.4/32"),
+            Address(name="address-8", address="1.1.1.5/32"),
+            Address(name="address-9", address="1.1.1.6/32"),
+            Address(name="address-11", dns_name="test1.example.com"),
         )
         Address.objects.bulk_create(addresses)

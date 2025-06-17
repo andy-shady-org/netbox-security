@@ -2,6 +2,7 @@ from django.urls import reverse
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.core.exceptions import ValidationError
 from netbox.models import PrimaryModel, NetBoxModel
 from netbox.models.features import ContactsMixin
 from dcim.models import Device, VirtualDeviceContext
@@ -10,7 +11,7 @@ from netbox.search import SearchIndex, register_search
 
 from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
 from netbox_security.models import SecurityZone
-
+from netbox_security.validators import validate_fqdn
 
 __all__ = ("Address", "AddressAssignment", "AddressIndex")
 
@@ -19,8 +20,15 @@ class Address(ContactsMixin, PrimaryModel):
     """ """
 
     name = models.CharField(max_length=200)
-    value = IPNetworkField(
+    address = IPNetworkField(
         blank=True, null=True, help_text=_("An IP or Prefix in x.x.x.x/yy format")
+    )
+    dns_name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text=_("Fully qualified hostname (wildcard allowed)"),
+        validators=[validate_fqdn],
     )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
@@ -32,14 +40,21 @@ class Address(ContactsMixin, PrimaryModel):
 
     class Meta:
         verbose_name_plural = _("Addresses")
-        ordering = ("name", "value")
-        unique_together = ("name", "value")
+        ordering = ("name", "address", "dns_name")
+        unique_together = ("name", "address", "dns_name")
 
     def __str__(self):
-        return f"{self.name}: {self.value}"
+        if self.dns_name:
+            return f"{self.name}: {self.dns_name}"
+        else:
+            return f"{self.name}: {self.address}"
 
     def get_absolute_url(self):
         return reverse("plugins:netbox_security:address", args=[self.pk])
+
+    def clean(self):
+        if not any([self.address, self.dns_name]):
+            raise ValidationError("Requires either an address or a dns name")
 
 
 class AddressAssignment(NetBoxModel):
@@ -83,6 +98,8 @@ class AddressIndex(SearchIndex):
     model = Address
     fields = (
         ("name", 100),
+        ("address", 100),
+        ("dns_name", 100),
         ("description", 500),
     )
 

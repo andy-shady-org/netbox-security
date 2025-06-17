@@ -30,9 +30,9 @@ class AddressSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         Tenant.objects.bulk_create(cls.tenants)
 
         cls.addresses = (
-            Address(name="address-1", value="1.1.1.4/32", tenant=cls.tenants[0]),
-            Address(name="address-2", value="1.1.1.5/32", tenant=cls.tenants[1]),
-            Address(name="address-3", value="1.1.1.6/32", tenant=cls.tenants[2]),
+            Address(name="address-1", address="1.1.1.4/32", tenant=cls.tenants[0]),
+            Address(name="address-2", address="1.1.1.5/32", tenant=cls.tenants[1]),
+            Address(name="address-3", address="1.1.1.6/32", tenant=cls.tenants[2]),
         )
         Address.objects.bulk_create(cls.addresses)
 

@@ -42,7 +42,8 @@ from .filters import (
 class NetBoxSecurityAddressType(NetBoxObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
-    value: str
+    address: str | None
+    dns_name: str | None
 
 
 @strawberry_django.type(
