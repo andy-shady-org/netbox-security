@@ -30,9 +30,9 @@ class AddressSetAPITestCase(
     @classmethod
     def setUpTestData(cls):
         cls.addresses = (
-            Address(name="address-1", value="1.1.1.1/32"),
-            Address(name="address-2", value="1.1.1.2/32"),
-            Address(name="address-3", value="1.1.1.3/32"),
+            Address(name="address-1", address="1.1.1.1/32"),
+            Address(name="address-2", address="1.1.1.2/32"),
+            Address(name="address-3", address="1.1.1.3/32"),
         )
         Address.objects.bulk_create(cls.addresses)
 
