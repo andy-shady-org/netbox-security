@@ -1,6 +1,6 @@
 [project]
 name = "netbox-security"
-version = "1.1.5"
+version = "1.1.6"
 description = "A Netbox plugin for tracking Security and NAT related objects"
 authors = [
     {name="Andy Wilson", email="andy@shady.org"},
