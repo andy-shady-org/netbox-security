@@ -14,7 +14,9 @@ from netbox.api.serializers import NetBoxModelSerializer
 from utilities.api import get_serializer_for_model
 
 from netbox_security.models import NatRuleSet, NatRuleSetAssignment
-
+from netbox_security.constants import (
+    RULESET_ASSIGNMENT_MODELS,
+)
 from netbox_security.choices import (
     NatTypeChoices,
     RuleDirectionChoices,
@@ -106,7 +108,9 @@ class NatRuleSetSerializer(NetBoxModelSerializer):
 
 class NatRuleSetAssignmentSerializer(NetBoxModelSerializer):
     ruleset = NatRuleSetSerializer(nested=True, required=True, allow_null=False)
-    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(RULESET_ASSIGNMENT_MODELS)
+    )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:

@@ -10,7 +10,7 @@ from netbox.models import PrimaryModel, NetBoxModel
 from netbox.models.features import ContactsMixin
 from dcim.models import Device, VirtualDeviceContext
 
-from netbox_security.constants.constants import (
+from netbox_security.constants import (
     POLICER_ASSIGNMENT_MODELS,
 )
 

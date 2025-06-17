@@ -17,6 +17,7 @@ from utilities.api import get_serializer_for_model
 from ipam.models import IPAddress, Prefix
 
 from netbox_security.models import NatRule, NatRuleAssignment
+from netbox_security.constants import RULE_ASSIGNMENT_MODELS
 
 from netbox_security.choices import (
     RuleStatusChoices,
@@ -177,7 +178,9 @@ class NatRuleSerializer(NetBoxModelSerializer):
 
 class NatRuleAssignmentSerializer(NetBoxModelSerializer):
     rule = NatRuleSerializer(nested=True, required=True, allow_null=False)
-    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(RULE_ASSIGNMENT_MODELS)
+    )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:

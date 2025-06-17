@@ -12,6 +12,7 @@ from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 
 from netbox_security.models import SecurityZone, SecurityZoneAssignment
+from netbox_security.constants import ZONE_ASSIGNMENT_MODELS
 
 
 class SecurityZoneSerializer(NetBoxModelSerializer):
@@ -52,7 +53,9 @@ class SecurityZoneSerializer(NetBoxModelSerializer):
 
 class SecurityZoneAssignmentSerializer(NetBoxModelSerializer):
     zone = SecurityZoneSerializer(nested=True, required=True, allow_null=False)
-    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(ZONE_ASSIGNMENT_MODELS)
+    )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:

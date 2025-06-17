@@ -15,7 +15,7 @@ from utilities.data import array_to_string
 from ipam.constants import SERVICE_PORT_MIN, SERVICE_PORT_MAX
 from dcim.models import Interface
 
-from netbox_security.constants.constants import RULE_ASSIGNMENT_MODELS
+from netbox_security.constants import RULE_ASSIGNMENT_MODELS
 
 from netbox_security.choices import (
     RuleStatusChoices,

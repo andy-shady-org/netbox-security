@@ -9,7 +9,7 @@ from netbox.models import PrimaryModel, NetBoxModel
 from netbox.models.features import ContactsMixin
 from dcim.models import Device, VirtualDeviceContext, Interface
 
-from netbox_security.constants.constants import ZONE_ASSIGNMENT_MODELS
+from netbox_security.constants import ZONE_ASSIGNMENT_MODELS
 
 
 __all__ = ("SecurityZone", "SecurityZoneAssignment", "SecurityZoneIndex")

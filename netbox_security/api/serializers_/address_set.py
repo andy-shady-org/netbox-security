@@ -12,6 +12,7 @@ from tenancy.api.serializers import TenantSerializer
 
 from netbox_security.models import AddressSet, AddressSetAssignment
 from netbox_security.api.serializers import AddressSerializer
+from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
 
 
 class AddressSetSerializer(NetBoxModelSerializer):
@@ -49,7 +50,9 @@ class AddressSetSerializer(NetBoxModelSerializer):
 
 class AddressSetAssignmentSerializer(NetBoxModelSerializer):
     address_set = AddressSetSerializer(nested=True, required=True, allow_null=False)
-    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(ADDRESS_ASSIGNMENT_MODELS)
+    )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:

@@ -19,6 +19,9 @@ from netbox_security.choices import (
     LossPriorityChoices,
     ForwardingClassChoices,
 )
+from netbox_security.constants import (
+    POLICER_ASSIGNMENT_MODELS,
+)
 
 
 class PolicerSerializer(NetBoxModelSerializer):
@@ -80,7 +83,9 @@ class PolicerSerializer(NetBoxModelSerializer):
 
 class PolicerAssignmentSerializer(NetBoxModelSerializer):
     policer = PolicerSerializer(nested=True, required=True, allow_null=False)
-    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(POLICER_ASSIGNMENT_MODELS)
+    )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:

@@ -17,6 +17,9 @@ from netbox_security.models import NatPool, NatPoolAssignment
 from netbox_security.choices import (
     PoolTypeChoices,
 )
+from netbox_security.constants import (
+    POOL_ASSIGNMENT_MODELS,
+)
 
 
 class NatPoolSerializer(NetBoxModelSerializer):
@@ -57,7 +60,9 @@ class NatPoolSerializer(NetBoxModelSerializer):
 
 class NatPoolAssignmentSerializer(NetBoxModelSerializer):
     pool = NatPoolSerializer(nested=True, required=True, allow_null=False)
-    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(POOL_ASSIGNMENT_MODELS)
+    )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:
