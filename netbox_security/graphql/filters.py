@@ -42,6 +42,8 @@ class NetBoxSecurityAddressFilter(
     ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
+    address: FilterLookup[str] | None = strawberry_django.filter_field()
+    dns_name: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
 
 

@@ -36,14 +36,19 @@ __all__ = (
 
 class AddressForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
-    value = IPNetworkFormField(
-        required=True,
-        label=_("Value"),
+    address = IPNetworkFormField(
+        required=False,
+        label=_("Address"),
         help_text=_("The IP address or prefix value in x.x.x.x/yy format"),
+    )
+    dns_name = forms.CharField(
+        max_length=255,
+        required=False,
+        help_text=_("Fully qualified hostname (wildcard allowed)"),
     )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
-        FieldSet("name", "value", "description", name=_("Address List")),
+        FieldSet("name", "address", "dns_name", "description", name=_("Address List")),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
@@ -53,7 +58,8 @@ class AddressForm(TenancyForm, NetBoxModelForm):
         model = Address
         fields = [
             "name",
-            "value",
+            "address",
+            "dns_name",
             "tenant_group",
             "tenant",
             "description",
@@ -66,7 +72,7 @@ class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = Address
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "value", name=_("Address List")),
+        FieldSet("name", "address", "dns_name", name=_("Address")),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
     tags = TagFilterField(model)
@@ -81,17 +87,23 @@ class AddressImportForm(NetBoxModelImportForm):
         to_field_name="name",
         label=_("Tenant"),
     )
-    value = forms.CharField(
+    address = forms.CharField(
         max_length=64,
-        required=True,
+        required=False,
         help_text=_("The IP address or prefix value in x.x.x.x/yy format"),
+    )
+    dns_name = forms.CharField(
+        max_length=255,
+        required=False,
+        help_text=_("Fully qualified hostname (wildcard allowed)"),
     )
 
     class Meta:
         model = Address
         fields = (
             "name",
-            "value",
+            "address",
+            "dns_name",
             "description",
             "tenant",
             "tags",
@@ -112,14 +124,19 @@ class AddressBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("Tenant"),
     )
-    value = forms.CharField(
+    address = forms.CharField(
         max_length=64,
         required=False,
         help_text=_("The IP address or prefix value in x.x.x.x/yy format"),
     )
+    dns_name = forms.CharField(
+        max_length=255,
+        required=False,
+        help_text=_("Fully qualified hostname (wildcard allowed)"),
+    )
     nullable_fields = ["description", "tenant"]
     fieldsets = (
-        FieldSet("value", "description"),
+        FieldSet("address", "dns_name", "description"),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )

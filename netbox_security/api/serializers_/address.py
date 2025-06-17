@@ -3,6 +3,7 @@ from rest_framework.serializers import (
     HyperlinkedIdentityField,
     SerializerMethodField,
     JSONField,
+    CharField,
 )
 from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
@@ -19,7 +20,8 @@ class AddressSerializer(NetBoxModelSerializer):
         view_name="plugins-api:netbox_security-api:address-detail"
     )
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
-    value = IPNetworkField()
+    address = IPNetworkField(required=False, allow_null=True)
+    dns_name = CharField(required=False, allow_null=True)
 
     class Meta:
         model = Address
@@ -28,7 +30,8 @@ class AddressSerializer(NetBoxModelSerializer):
             "url",
             "display",
             "name",
-            "value",
+            "address",
+            "dns_name",
             "description",
             "tenant",
             "comments",
@@ -42,7 +45,8 @@ class AddressSerializer(NetBoxModelSerializer):
             "url",
             "display",
             "name",
-            "value",
+            "address",
+            "dns_name",
             "description",
         )
 

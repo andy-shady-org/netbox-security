@@ -22,12 +22,13 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = Address
-        fields = ("pk", "name", "description", "value", "tenant", "tags")
+        fields = ("pk", "name", "description", "address", "dns_name", "tenant", "tags")
         default_columns = (
             "pk",
             "name",
             "description",
-            "value",
+            "address",
+            "dns_name",
             "tenant",
         )
 
