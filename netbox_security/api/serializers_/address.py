@@ -11,6 +11,7 @@ from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 from ipam.api.field_serializers import IPNetworkField
 from netbox_security.models import Address, AddressAssignment
+from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
 
 
 class AddressSerializer(NetBoxModelSerializer):
@@ -48,7 +49,9 @@ class AddressSerializer(NetBoxModelSerializer):
 
 class AddressAssignmentSerializer(NetBoxModelSerializer):
     address = AddressSerializer(nested=True, required=True, allow_null=False)
-    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(ADDRESS_ASSIGNMENT_MODELS)
+    )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:

@@ -12,6 +12,7 @@ from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 
 from netbox_security.models import FirewallFilter, FirewallFilterAssignment
+from netbox_security.constants import FILTER_ASSIGNMENT_MODELS
 
 
 class FirewallFilterSerializer(NetBoxModelSerializer):
@@ -53,7 +54,9 @@ class FirewallFilterAssignmentSerializer(NetBoxModelSerializer):
     firewall_filter = FirewallFilterSerializer(
         nested=True, required=True, allow_null=False
     )
-    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(FILTER_ASSIGNMENT_MODELS)
+    )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:

@@ -11,7 +11,7 @@ from netbox.models.features import ContactsMixin
 from dcim.models import Device, VirtualDeviceContext
 from virtualization.models import VirtualMachine
 
-from netbox_security.constants.constants import (
+from netbox_security.constants import (
     RULESET_ASSIGNMENT_MODELS,
 )
 

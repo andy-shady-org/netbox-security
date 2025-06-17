@@ -10,13 +10,19 @@ from netbox.api.serializers import NetBoxModelSerializer
 from utilities.api import get_serializer_for_model
 
 from netbox_security.models import AddressList, AddressListAssignment
+from netbox_security.constants import (
+    ADDRESS_ASSIGNMENT_MODELS,
+    ADDRESS_LIST_ASSIGNMENT_MODELS,
+)
 
 
 class AddressListSerializer(NetBoxModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:addresslist-detail"
     )
-    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(ADDRESS_LIST_ASSIGNMENT_MODELS)
+    )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:
@@ -52,7 +58,9 @@ class AddressListSerializer(NetBoxModelSerializer):
 
 class AddressListAssignmentSerializer(NetBoxModelSerializer):
     address_list = AddressListSerializer(nested=True, required=True, allow_null=False)
-    assigned_object_type = ContentTypeField(queryset=ContentType.objects.all())
+    assigned_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(ADDRESS_ASSIGNMENT_MODELS)
+    )
     assigned_object = SerializerMethodField(read_only=True)
 
     class Meta:

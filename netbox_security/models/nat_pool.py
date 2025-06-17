@@ -9,7 +9,7 @@ from virtualization.models import VirtualMachine
 from ipam.choices import IPAddressStatusChoices
 from netbox.search import SearchIndex, register_search
 
-from netbox_security.constants.constants import (
+from netbox_security.constants import (
     POOL_ASSIGNMENT_MODELS,
 )
 
