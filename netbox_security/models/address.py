@@ -30,6 +30,13 @@ class Address(ContactsMixin, PrimaryModel):
         help_text=_("Fully qualified hostname (wildcard allowed)"),
         validators=[validate_fqdn],
     )
+    ip_range = models.ForeignKey(
+        "ipam.IPRange",
+        blank=True,
+        null=True,
+        related_name="+",
+        on_delete=models.SET_NULL,
+    )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
         on_delete=models.SET_NULL,
@@ -40,8 +47,8 @@ class Address(ContactsMixin, PrimaryModel):
 
     class Meta:
         verbose_name_plural = _("Addresses")
-        ordering = ("name", "address", "dns_name")
-        unique_together = ("name", "address", "dns_name")
+        ordering = ("name", "address", "dns_name", "ip_range")
+        unique_together = ("name", "address", "dns_name", "ip_range")
 
     def __str__(self):
         if self.dns_name:
@@ -53,8 +60,10 @@ class Address(ContactsMixin, PrimaryModel):
         return reverse("plugins:netbox_security:address", args=[self.pk])
 
     def clean(self):
-        if not any([self.address, self.dns_name]):
-            raise ValidationError("Requires either an address or a dns name")
+        if not any([self.address, self.dns_name, self.ip_range]):
+            raise ValidationError(
+                "Requires either an address, a dns name or an IP Range"
+            )
 
 
 class AddressAssignment(NetBoxModel):

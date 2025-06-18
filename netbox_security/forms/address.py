@@ -18,6 +18,7 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
 )
 
+from ipam.models import IPRange
 from tenancy.models import Tenant, TenantGroup
 
 from netbox_security.models import (
@@ -46,9 +47,22 @@ class AddressForm(TenancyForm, NetBoxModelForm):
         required=False,
         help_text=_("Fully qualified hostname (wildcard allowed)"),
     )
+    ip_range = DynamicModelChoiceField(
+        queryset=IPRange.objects.all(),
+        required=False,
+        quick_add=True,
+        help_text=_("An IP Address Range"),
+    )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
-        FieldSet("name", "address", "dns_name", "description", name=_("Address")),
+        FieldSet(
+            "name",
+            "address",
+            "dns_name",
+            "ip_range",
+            "description",
+            name=_("Address List"),
+        ),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
@@ -60,6 +74,7 @@ class AddressForm(TenancyForm, NetBoxModelForm):
             "name",
             "address",
             "dns_name",
+            "ip_range",
             "tenant_group",
             "tenant",
             "description",
@@ -72,7 +87,7 @@ class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = Address
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "address", "dns_name", name=_("Address")),
+        FieldSet("name", "address", "dns_name", "ip_range", name=_("Address")),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
     tags = TagFilterField(model)
@@ -97,6 +112,12 @@ class AddressImportForm(NetBoxModelImportForm):
         required=False,
         help_text=_("Fully qualified hostname (wildcard allowed)"),
     )
+    ip_range = CSVModelChoiceField(
+        queryset=IPRange.objects.all(),
+        required=False,
+        to_field_name="start_address",
+        help_text=_("An IP Address Range"),
+    )
 
     class Meta:
         model = Address
@@ -104,6 +125,7 @@ class AddressImportForm(NetBoxModelImportForm):
             "name",
             "address",
             "dns_name",
+            "ip_range",
             "description",
             "tenant",
             "tags",
@@ -134,9 +156,15 @@ class AddressBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         help_text=_("Fully qualified hostname (wildcard allowed)"),
     )
+    ip_range = DynamicModelChoiceField(
+        queryset=IPRange.objects.all(),
+        required=False,
+        to_field_name="start_address",
+        help_text=_("An IP Address Range"),
+    )
     nullable_fields = ["description", "tenant"]
     fieldsets = (
-        FieldSet("address", "dns_name", "description"),
+        FieldSet("address", "dns_name", "ip_range", "description"),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )

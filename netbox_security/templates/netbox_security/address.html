@@ -20,6 +20,10 @@
                     <th scope="row">{% trans "DNS Name" %}</th>
                     <td>{{ object.dns_name }}</td>
                 </tr>
+                <tr>
+                    <th scope="row">{% trans "IP Range" %}</th>
+                    <td>{{ object.ip_range }}</td>
+                </tr>
                 {% if object.description %}
                 <tr>
                     <th scope="row">{% trans "Description" %}</th>

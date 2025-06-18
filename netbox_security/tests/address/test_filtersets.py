@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
+from ipam.models import IPRange
 from tenancy.models import Tenant, TenantGroup
 from utilities.testing import ChangeLoggedFilterSetTests
 
@@ -29,10 +30,37 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         )
         Tenant.objects.bulk_create(cls.tenants)
 
+        cls.ranges = (
+            IPRange(
+                start_address="1.1.1.2/24",
+                end_address="1.1.1.5/24",
+                status="active",
+                size=4,
+            ),
+            IPRange(
+                start_address="1.1.2.2/24",
+                end_address="1.1.2.5/24",
+                status="active",
+                size=4,
+            ),
+            IPRange(
+                start_address="1.1.3.2/24",
+                end_address="1.1.3.5/24",
+                status="active",
+                size=4,
+            ),
+        )
+        IPRange.objects.bulk_create(cls.ranges)
+
         cls.addresses = (
             Address(name="address-1", address="1.1.1.4/32", tenant=cls.tenants[0]),
             Address(name="address-2", address="1.1.1.5/32", tenant=cls.tenants[1]),
             Address(name="address-3", address="1.1.1.6/32", tenant=cls.tenants[2]),
+            Address(name="address-4", ip_range=cls.ranges[0], tenant=cls.tenants[2]),
+            Address(name="address-5", ip_range=cls.ranges[1], tenant=cls.tenants[2]),
+            Address(
+                name="address-6", dns_name="test.example.com", tenant=cls.tenants[2]
+            ),
         )
         for address in cls.addresses:
             address.save()
@@ -64,6 +92,16 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         params = {"name": ["address-1", "address-2"]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
+    def test_dns_name(self):
+        params = {"dns_name": ["test.example.com"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_ip_range(self):
+        params = {"ip_range_id": [self.ranges[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"ip_range": [self.ranges[0].start_address]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
     def test_tenant(self):
         params = {"tenant_id": [self.tenants[0].pk, self.tenants[1].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
@@ -88,7 +126,7 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 self.address_sets[2].pk,
             ]
         }
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 6)
         params = {"address": self.addresses[0].address}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 

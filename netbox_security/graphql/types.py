@@ -44,6 +44,7 @@ class NetBoxSecurityAddressType(NetBoxObjectType):
     name: str
     address: str | None
     dns_name: str | None
+    ip_range: Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")] | None
 
 
 @strawberry_django.type(

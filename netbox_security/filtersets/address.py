@@ -13,6 +13,7 @@ from utilities.filters import (
 )
 
 from dcim.models import Device, VirtualDeviceContext
+from ipam.models import IPRange
 
 from netbox_security.models import (
     Address,
@@ -32,6 +33,18 @@ class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         field_name="addressset_addresses",
         to_field_name="id",
         label=_("Address Set (ID)"),
+    )
+    ip_range_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="ip_range",
+        queryset=IPRange.objects.all(),
+        to_field_name="id",
+        label=_("IPRange (ID)"),
+    )
+    ip_range = django_filters.ModelMultipleChoiceFilter(
+        field_name="ip_range__start_address",
+        queryset=IPRange.objects.all(),
+        to_field_name="start_address",
+        label=_("IPRange (Start Address)"),
     )
 
     class Meta:
