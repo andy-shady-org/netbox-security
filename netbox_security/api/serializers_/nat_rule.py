@@ -175,6 +175,50 @@ class NatRuleSerializer(NetBoxModelSerializer):
             raise ValidationError(error_message)
         return super().validate(data)
 
+    def create(self, validated_data):
+        source_addresses = validated_data.pop("source_addresses", None)
+        destination_addresses = validated_data.pop("destination_addresses", None)
+        source_prefixes = validated_data.pop("source_prefixes", None)
+        destination_prefixes = validated_data.pop("destination_prefixes", None)
+        source_ranges = validated_data.pop("source_ranges", None)
+        destination_ranges = validated_data.pop("destination_ranges", None)
+        obj = super().create(validated_data)
+        if source_addresses is not None:
+            obj.source_addresses.set(source_addresses)
+        if destination_addresses is not None:
+            obj.destination_addresses.set(destination_addresses)
+        if source_prefixes is not None:
+            obj.source_prefixes.set(source_prefixes)
+        if destination_prefixes is not None:
+            obj.destination_prefixes.set(destination_prefixes)
+        if source_ranges is not None:
+            obj.source_ranges.set(source_ranges)
+        if destination_ranges is not None:
+            obj.destination_ranges.set(destination_ranges)
+        return obj
+
+    def update(self, instance, validated_data):
+        source_addresses = validated_data.pop("source_addresses", None)
+        destination_addresses = validated_data.pop("destination_addresses", None)
+        source_prefixes = validated_data.pop("source_prefixes", None)
+        destination_prefixes = validated_data.pop("destination_prefixes", None)
+        source_ranges = validated_data.pop("source_ranges", None)
+        destination_ranges = validated_data.pop("destination_ranges", None)
+        obj = super().update(instance, validated_data)
+        if source_addresses is not None:
+            obj.source_addresses.set(source_addresses)
+        if destination_addresses is not None:
+            obj.destination_addresses.set(destination_addresses)
+        if source_prefixes is not None:
+            obj.source_prefixes.set(source_prefixes)
+        if destination_prefixes is not None:
+            obj.destination_prefixes.set(destination_prefixes)
+        if source_ranges is not None:
+            obj.source_ranges.set(source_ranges)
+        if destination_ranges is not None:
+            obj.destination_ranges.set(destination_ranges)
+        return obj
+
 
 class NatRuleAssignmentSerializer(NetBoxModelSerializer):
     rule = NatRuleSerializer(nested=True, required=True, allow_null=False)

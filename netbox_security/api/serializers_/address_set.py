@@ -47,6 +47,20 @@ class AddressSetSerializer(NetBoxModelSerializer):
             "description",
         )
 
+    def create(self, validated_data):
+        addresses = validated_data.pop("addresses", None)
+        obj = super().create(validated_data)
+        if addresses is not None:
+            obj.addresses.set(addresses)
+        return obj
+
+    def update(self, instance, validated_data):
+        addresses = validated_data.pop("addresses", None)
+        obj = super().update(instance, validated_data)
+        if addresses is not None:
+            obj.addresses.set(addresses)
+        return obj
+
 
 class AddressSetAssignmentSerializer(NetBoxModelSerializer):
     address_set = AddressSetSerializer(nested=True, required=True, allow_null=False)
