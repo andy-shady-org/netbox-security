@@ -17,12 +17,6 @@ class AddressSetAPITestCase(
 
     brief_fields = ["addresses", "description", "display", "id", "name", "url"]
 
-    create_data = [
-        {"name": "address-set-1"},
-        {"name": "address-set-2"},
-        {"name": "address-set-3"},
-    ]
-
     bulk_update_data = {
         "description": "Test Address Set",
     }
@@ -35,6 +29,12 @@ class AddressSetAPITestCase(
             Address(name="address-3", address="1.1.1.3/32"),
         )
         Address.objects.bulk_create(cls.addresses)
+
+        cls.create_data = [
+            {"name": "address-set-1", "addresses": [cls.addresses[0].pk]},
+            {"name": "address-set-2", "addresses": [cls.addresses[1].pk]},
+            {"name": "address-set-3"},
+        ]
 
         cls.addresses_sets = (
             AddressSet(name="address-set-5"),
