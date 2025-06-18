@@ -56,7 +56,7 @@ class AddressSetSerializer(NetBoxModelSerializer):
 
     def update(self, instance, validated_data):
         addresses = validated_data.pop("addresses", None)
-        obj = super().update(validated_data)
+        obj = super().update(instance, validated_data)
         if addresses is not None:
             obj.addresses.set(addresses)
         return obj

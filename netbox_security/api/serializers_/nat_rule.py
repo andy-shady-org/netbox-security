@@ -204,7 +204,7 @@ class NatRuleSerializer(NetBoxModelSerializer):
         destination_prefixes = validated_data.pop("destination_prefixes", None)
         source_ranges = validated_data.pop("source_ranges", None)
         destination_ranges = validated_data.pop("destination_ranges", None)
-        obj = super().update(validated_data)
+        obj = super().update(instance, validated_data)
         if source_addresses is not None:
             obj.source_addresses.set(source_addresses)
         if destination_addresses is not None:
