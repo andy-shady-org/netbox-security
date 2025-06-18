@@ -41,6 +41,7 @@ class FirewallFilterRuleForm(FilterRuleSettingFormMixin, NetBoxModelForm):
     firewall_filter = DynamicModelChoiceField(
         queryset=FirewallFilter.objects.all(),
         required=True,
+        quick_add=True,
         label=_("Firewall Filter"),
     )
     description = forms.CharField(max_length=200, required=False)

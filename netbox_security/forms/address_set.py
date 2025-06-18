@@ -39,7 +39,10 @@ __all__ = (
 class AddressSetForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
     addresses = DynamicModelMultipleChoiceField(
-        required=True, label=_("Addresses"), queryset=Address.objects.all()
+        required=True,
+        label=_("Addresses"),
+        quick_add=True,
+        queryset=Address.objects.all(),
     )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
