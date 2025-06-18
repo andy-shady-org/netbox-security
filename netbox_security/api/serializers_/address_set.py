@@ -19,7 +19,7 @@ class AddressSetSerializer(NetBoxModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:addressset-detail"
     )
-    addresses = AddressSerializer(nested=True, many=True, read_only=True)
+    addresses = AddressSerializer(nested=True, many=True, read_only=False)
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
