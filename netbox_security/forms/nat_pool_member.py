@@ -39,19 +39,23 @@ class NatPoolMemberForm(NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
     pool = DynamicModelChoiceField(
         queryset=NatPool.objects.all(),
+        quick_add=True,
         required=True,
     )
     status = forms.ChoiceField(choices=IPAddressStatusChoices)
     address = DynamicModelChoiceField(
         queryset=IPAddress.objects.all(),
         required=False,
+        quick_add=True,
     )
     prefix = DynamicModelChoiceField(
         queryset=Prefix.objects.all(),
+        quick_add=True,
         required=False,
     )
     address_range = DynamicModelChoiceField(
         queryset=IPRange.objects.all(),
+        quick_add=True,
         required=False,
     )
     source_ports = NumericArrayField(

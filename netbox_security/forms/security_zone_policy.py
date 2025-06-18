@@ -43,18 +43,22 @@ class SecurityZonePolicyForm(NetBoxModelForm):
     description = forms.CharField(max_length=200, required=False)
     source_zone = DynamicModelChoiceField(
         queryset=SecurityZone.objects.all(),
+        quick_add=True,
         required=True,
     )
     destination_zone = DynamicModelChoiceField(
         queryset=SecurityZone.objects.all(),
+        quick_add=True,
         required=True,
     )
     source_address = DynamicModelMultipleChoiceField(
         queryset=AddressList.objects.all(),
+        quick_add=True,
         required=False,
     )
     destination_address = DynamicModelMultipleChoiceField(
         queryset=AddressList.objects.all(),
+        quick_add=True,
         required=False,
     )
     application = SimpleArrayField(

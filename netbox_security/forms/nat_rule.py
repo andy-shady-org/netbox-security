@@ -48,6 +48,7 @@ __all__ = (
 class NatRuleForm(NetBoxModelForm):
     rule_set = DynamicModelChoiceField(
         queryset=NatRuleSet.objects.all(),
+        quick_add=True,
         required=True,
     )
     name = forms.CharField(max_length=64, required=True)
@@ -63,26 +64,32 @@ class NatRuleForm(NetBoxModelForm):
     )
     source_addresses = DynamicModelMultipleChoiceField(
         queryset=IPAddress.objects.all(),
+        quick_add=True,
         required=False,
     )
     destination_addresses = DynamicModelMultipleChoiceField(
         queryset=IPAddress.objects.all(),
+        quick_add=True,
         required=False,
     )
     source_prefixes = DynamicModelMultipleChoiceField(
         queryset=Prefix.objects.all(),
+        quick_add=True,
         required=False,
     )
     destination_prefixes = DynamicModelMultipleChoiceField(
         queryset=Prefix.objects.all(),
+        quick_add=True,
         required=False,
     )
     source_ranges = DynamicModelMultipleChoiceField(
         queryset=IPRange.objects.all(),
+        quick_add=True,
         required=False,
     )
     destination_ranges = DynamicModelMultipleChoiceField(
         queryset=IPRange.objects.all(),
+        quick_add=True,
         required=False,
     )
     source_ports = NumericArrayField(
@@ -101,14 +108,17 @@ class NatRuleForm(NetBoxModelForm):
     )
     source_pool = DynamicModelChoiceField(
         queryset=NatPool.objects.all(),
+        quick_add=True,
         required=False,
     )
     destination_pool = DynamicModelChoiceField(
         queryset=NatPool.objects.all(),
+        quick_add=True,
         required=False,
     )
     pool = DynamicModelChoiceField(
         queryset=NatPool.objects.all(),
+        quick_add=True,
         required=False,
     )
     fieldsets = (
