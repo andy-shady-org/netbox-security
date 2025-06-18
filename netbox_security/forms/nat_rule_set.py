@@ -42,10 +42,12 @@ class NatRuleSetForm(NetBoxModelForm):
     direction = forms.ChoiceField(required=False, choices=RuleDirectionChoices)
     source_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
+        quick_add=True,
         required=False,
     )
     destination_zones = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
+        quick_add=True,
         required=False,
     )
     fieldsets = (

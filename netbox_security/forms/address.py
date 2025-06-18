@@ -48,7 +48,7 @@ class AddressForm(TenancyForm, NetBoxModelForm):
     )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
-        FieldSet("name", "address", "dns_name", "description", name=_("Address List")),
+        FieldSet("name", "address", "dns_name", "description", name=_("Address")),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
