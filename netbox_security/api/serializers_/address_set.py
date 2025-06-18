@@ -17,7 +17,7 @@ from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
 
 class AddressSetSerializer(NetBoxModelSerializer):
     url = HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_security-api:address-detail"
+        view_name="plugins-api:netbox_security-api:addressset-detail"
     )
     addresses = AddressSerializer(nested=True, many=True, read_only=True)
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
