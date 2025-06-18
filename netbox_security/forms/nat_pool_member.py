@@ -107,7 +107,7 @@ class NatPoolMemberForm(NetBoxModelForm):
             except ObjectDoesNotExist:
                 ip = IPAddress.objects.create(address=str(address))
             self.cleaned_data["address"] = ip
-            return self.cleaned_data["address"]
+        return self.cleaned_data.get("address")
 
     def clean_prefix(self):
         if (prefix := self.cleaned_data.get("prefix")) is not None:
@@ -118,7 +118,7 @@ class NatPoolMemberForm(NetBoxModelForm):
             except ObjectDoesNotExist:
                 network = Prefix.objects.create(prefix=str(prefix))
             self.cleaned_data["prefix"] = network
-            return self.cleaned_data["prefix"]
+        return self.cleaned_data.get("prefix")
 
     def clean_address_range(self):
         if (address_range := self.cleaned_data.get("address_range")) is not None:
@@ -131,7 +131,7 @@ class NatPoolMemberForm(NetBoxModelForm):
                     start_address=str(address_range.start_address)
                 ).first()
             self.cleaned_data["address_range"] = address_range
-            return self.cleaned_data["address_range"]
+        return self.cleaned_data.get("address_range")
 
 
 class NatPoolMemberFilterForm(NetBoxModelFilterSetForm):

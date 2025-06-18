@@ -11,6 +11,7 @@ from netbox.api.serializers import NetBoxModelSerializer
 from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 from ipam.api.field_serializers import IPNetworkField
+from ipam.api.serializers import IPRangeSerializer
 from netbox_security.models import Address, AddressAssignment
 from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
 
@@ -22,6 +23,7 @@ class AddressSerializer(NetBoxModelSerializer):
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
     address = IPNetworkField(required=False, allow_null=True)
     dns_name = CharField(required=False, allow_null=True)
+    ip_range = IPRangeSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
         model = Address
@@ -32,6 +34,7 @@ class AddressSerializer(NetBoxModelSerializer):
             "name",
             "address",
             "dns_name",
+            "ip_range",
             "description",
             "tenant",
             "comments",
@@ -47,6 +50,7 @@ class AddressSerializer(NetBoxModelSerializer):
             "name",
             "address",
             "dns_name",
+            "ip_range",
             "description",
         )
 
