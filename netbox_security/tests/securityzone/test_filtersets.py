@@ -11,6 +11,9 @@ from netbox_security.models import (
     AddressSet,
     AddressList,
     NatRuleSet,
+    ApplicationItem,
+    Application,
+    ApplicationSet,
 )
 
 from netbox_security.filtersets import (
@@ -19,6 +22,7 @@ from netbox_security.filtersets import (
     RuleDirectionChoices,
     NatTypeChoices,
     ActionChoices,
+    ProtocolChoices,
 )
 
 
@@ -159,6 +163,59 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         )
         for assignment in cls.assignments:
             assignment.save()
+
+        cls.items = (
+            ApplicationItem(
+                name="item-1",
+                protocol=ProtocolChoices.TCP,
+                destination_port=1,
+                source_port=1,
+                index=1,
+            ),
+            ApplicationItem(
+                name="item-2",
+                protocol=ProtocolChoices.TCP,
+                destination_port=1,
+                source_port=1,
+                index=1,
+            ),
+            ApplicationItem(
+                name="item-3",
+                protocol=ProtocolChoices.UDP,
+                destination_port=1,
+                source_port=1,
+                index=1,
+            ),
+        )
+        ApplicationItem.objects.bulk_create(cls.items)
+
+        cls.applications = (
+            Application(
+                name="item-1",
+                protocol=ProtocolChoices.TCP,
+                destination_port=1,
+                source_port=1,
+            ),
+            Application(name="item-2"),
+            Application(name="item-3"),
+        )
+        Application.objects.bulk_create(cls.applications)
+        for application in cls.applications:
+            application.application_items.set(cls.items)
+
+        cls.application_sets = (
+            ApplicationSet(name="item-1"),
+            ApplicationSet(
+                name="item-2",
+            ),
+            ApplicationSet(
+                name="item-3",
+            ),
+        )
+        ApplicationSet.objects.bulk_create(cls.application_sets)
+        for application in cls.application_sets:
+            application.applications.set(cls.applications)
+
         cls.policies = (
             SecurityZonePolicy(
                 name="policy-1",
@@ -170,7 +227,6 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                     ActionChoices.COUNT,
                     ActionChoices.LOG,
                 ],
-                application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
                 name="policy-2",
@@ -182,7 +238,6 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                     ActionChoices.COUNT,
                     ActionChoices.LOG,
                 ],
-                application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
                 name="policy-3",
@@ -194,17 +249,26 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                     ActionChoices.COUNT,
                     ActionChoices.LOG,
                 ],
-                application=["test-1", "test-2"],
             ),
         )
         for policy in cls.policies:
             policy.save()
         cls.policies[0].source_address.add(cls.assignments[0])
         cls.policies[0].destination_address.add(cls.assignments[1])
+        cls.policies[0].applications.add(cls.applications[0])
+        cls.policies[0].application_sets.add(cls.application_sets[0])
+
         cls.policies[1].source_address.add(cls.assignments[1])
         cls.policies[1].destination_address.add(cls.assignments[0])
+        cls.policies[1].applications.add(cls.applications[1])
+        cls.policies[1].application_sets.add(cls.application_sets[1])
+
         cls.policies[2].source_address.add(cls.assignments[2])
         cls.policies[2].destination_address.add(cls.assignments[0])
+        cls.policies[2].application_sets.add(cls.application_sets[1])
+        cls.policies[2].application_sets.add(cls.application_sets[2])
+        cls.policies[2].applications.add(cls.applications[1])
+        cls.policies[2].applications.add(cls.applications[2])
 
     def test_name(self):
         params = {"name": ["policy-1", "policy-2"]}
@@ -257,3 +321,31 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_address": [self.assignments[2].name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
+
+    def test_applications(self):
+        params = {"applications_id": [self.applications[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"applications": [self.applications[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"applications_id": [self.applications[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"applications": [self.applications[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"applications_id": [self.applications[2].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"applications": [self.applications[2].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_application_sets(self):
+        params = {"application_sets_id": [self.application_sets[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"application_sets": [self.application_sets[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"application_sets_id": [self.application_sets[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"application_sets": [self.application_sets[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"application_sets_id": [self.application_sets[2].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"application_sets": [self.application_sets[2].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)

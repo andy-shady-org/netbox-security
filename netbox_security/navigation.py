@@ -44,6 +44,65 @@ address_menu_items = (
         ),
     ),
 )
+application_menu_items = (
+    PluginMenuItem(
+        link="plugins:netbox_security:applicationitem_list",
+        link_text=_("Application Items"),
+        permissions=["netbox_security.view_applicationitem"],
+        buttons=(
+            PluginMenuButton(
+                "plugins:netbox_security:applicationitem_add",
+                _("Add"),
+                "mdi mdi-plus-thick",
+                permissions=["netbox_security.add_applicationitem"],
+            ),
+            PluginMenuButton(
+                "plugins:netbox_security:applicationitem_bulk_import",
+                _("Import"),
+                "mdi mdi-upload",
+                permissions=["netbox_security.add_applicationitem"],
+            ),
+        ),
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:application_list",
+        link_text=_("Applications"),
+        permissions=["netbox_security.view_application"],
+        buttons=(
+            PluginMenuButton(
+                "plugins:netbox_security:application_add",
+                _("Add"),
+                "mdi mdi-plus-thick",
+                permissions=["netbox_security.add_application"],
+            ),
+            PluginMenuButton(
+                "plugins:netbox_security:application_bulk_import",
+                _("Import"),
+                "mdi mdi-upload",
+                permissions=["netbox_security.add_application"],
+            ),
+        ),
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:applicationset_list",
+        link_text=_("Application Sets"),
+        permissions=["netbox_security.view_applicationset"],
+        buttons=(
+            PluginMenuButton(
+                "plugins:netbox_security:applicationset_add",
+                _("Add"),
+                "mdi mdi-plus-thick",
+                permissions=["netbox_security.add_applicationset"],
+            ),
+            PluginMenuButton(
+                "plugins:netbox_security:applicationset_bulk_import",
+                _("Import"),
+                "mdi mdi-upload",
+                permissions=["netbox_security.add_applicationset"],
+            ),
+        ),
+    ),
+)
 security_menu_items = (
     PluginMenuItem(
         link="plugins:netbox_security:securityzone_list",
@@ -231,6 +290,7 @@ if plugin_settings.get("top_level_menu"):
         label=_("Security"),
         groups=(
             (_("Address Book"), address_menu_items),
+            (_("Applications"), application_menu_items),
             (_("Security Zones"), security_menu_items),
             (_("NAT Pools"), pool_menu_items),
             (_("NAT Rules"), rule_menu_items),
@@ -241,6 +301,7 @@ if plugin_settings.get("top_level_menu"):
 else:
     menu_items = (
         address_menu_items
+        + application_menu_items
         + security_menu_items
         + pool_menu_items
         + rule_menu_items

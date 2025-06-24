@@ -37,6 +37,33 @@ urlpatterns = [
         "address-list/<int:pk>/",
         include(get_model_urls("netbox_security", "addresslist")),
     ),
+    # Application Items
+    path(
+        "application-item/",
+        include(get_model_urls("netbox_security", "applicationitem", detail=False)),
+    ),
+    path(
+        "application-item/<int:pk>/",
+        include(get_model_urls("netbox_security", "applicationitem")),
+    ),
+    # Applications
+    path(
+        "application/",
+        include(get_model_urls("netbox_security", "application", detail=False)),
+    ),
+    path(
+        "application/<int:pk>/",
+        include(get_model_urls("netbox_security", "application")),
+    ),
+    # Application Sets
+    path(
+        "application-set/",
+        include(get_model_urls("netbox_security", "applicationset", detail=False)),
+    ),
+    path(
+        "application-set/<int:pk>/",
+        include(get_model_urls("netbox_security", "applicationset")),
+    ),
     # Security Zones
     path(
         "security-zone/",

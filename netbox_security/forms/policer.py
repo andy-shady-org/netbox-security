@@ -79,7 +79,7 @@ class PolicerForm(TenancyForm, NetBoxModelForm):
             "description",
             "logical_interface_policer",
             "physical_interface_policer",
-            name=_("Policer"),
+            name=_("Policer Parameters"),
         ),
         FieldSet(
             "bandwidth_limit",

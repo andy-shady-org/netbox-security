@@ -45,7 +45,7 @@ class FirewallFilterForm(TenancyForm, NetBoxModelForm):
     )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
-        FieldSet("name", "family", "description", name=_("Firewall Filter")),
+        FieldSet("name", "family", "description", name=_("Firewall Filter Parameters")),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )

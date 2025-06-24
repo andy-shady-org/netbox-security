@@ -8,6 +8,11 @@ from .views import (
     AddressSetAssignmentViewSet,
     AddressViewSet,
     AddressAssignmentViewSet,
+    ApplicationItemViewSet,
+    ApplicationViewSet,
+    ApplicationSetViewSet,
+    ApplicationAssignmentViewSet,
+    ApplicationSetAssignmentViewSet,
     SecurityZoneViewSet,
     SecurityZoneAssignmentViewSet,
     SecurityZonePolicyViewSet,
@@ -31,23 +36,28 @@ app_name = "netbox_security"
 
 router = NetBoxRouter()
 router.APIRootView = NetBoxSecurityRootView
-router.register("address", AddressViewSet)
-router.register("address-set", AddressSetViewSet)
-router.register("address-list", AddressListViewSet)
-router.register("security-zone", SecurityZoneViewSet)
-router.register("security-zone-policy", SecurityZonePolicyViewSet)
-router.register("nat-pool", NatPoolViewSet)
-router.register("nat-pool-member", NatPoolMemberViewSet)
-router.register("nat-rule-set", NatRuleSetViewSet)
-router.register("nat-rule", NatRuleViewSet)
-router.register("policer", PolicerViewSet)
-router.register("firewall-filter", FirewallFilterViewSet)
-router.register("firewall-filter-rule", FirewallFilterRuleViewSet)
-router.register("firewall-filter-rule-from-setting", FirewallRuleFromSettingViewSet)
-router.register("firewall-filter-rule-then-setting", FirewallRuleThenSettingViewSet)
+router.register("addresses", AddressViewSet)
+router.register("address-sets", AddressSetViewSet)
+router.register("address-lists", AddressListViewSet)
+router.register("application-items", ApplicationItemViewSet)
+router.register("applications", ApplicationViewSet)
+router.register("application-sets", ApplicationSetViewSet)
+router.register("security-zones", SecurityZoneViewSet)
+router.register("security-zone-policies", SecurityZonePolicyViewSet)
+router.register("nat-pools", NatPoolViewSet)
+router.register("nat-pool-members", NatPoolMemberViewSet)
+router.register("nat-rule-sets", NatRuleSetViewSet)
+router.register("nat-rules", NatRuleViewSet)
+router.register("policers", PolicerViewSet)
+router.register("firewall-filters", FirewallFilterViewSet)
+router.register("firewall-filter-rules", FirewallFilterRuleViewSet)
+router.register("firewall-filter-rule-from-settings", FirewallRuleFromSettingViewSet)
+router.register("firewall-filter-rule-then-settings", FirewallRuleThenSettingViewSet)
 router.register("address-assignments", AddressAssignmentViewSet)
 router.register("address-set-assignments", AddressSetAssignmentViewSet)
 router.register("address-list-assignments", AddressListAssignmentViewSet)
+router.register("application-assignments", ApplicationAssignmentViewSet)
+router.register("application-set-assignments", ApplicationSetAssignmentViewSet)
 router.register("security-zone-assignments", SecurityZoneAssignmentViewSet)
 router.register("nat-pool-assignments", NatPoolAssignmentViewSet)
 router.register("nat-rule-set-assignments", NatRuleSetAssignmentViewSet)

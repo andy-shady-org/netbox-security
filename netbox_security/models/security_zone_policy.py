@@ -38,16 +38,15 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
         to="netbox_security.AddressList",
         related_name="%(class)s_destination_address",
     )
-    application = ArrayField(
-        models.CharField(
-            max_length=50,
-            blank=True,
-            null=True,
-        ),
-        size=20,
-        verbose_name=_("Applications"),
+    applications = models.ManyToManyField(
+        to="netbox_security.Application",
         blank=True,
-        null=True,
+        related_name="%(class)s_applications",
+    )
+    application_sets = models.ManyToManyField(
+        to="netbox_security.ApplicationSet",
+        blank=True,
+        related_name="%(class)s_application_sets",
     )
     policy_actions = ArrayField(
         models.CharField(

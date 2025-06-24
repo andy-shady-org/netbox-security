@@ -231,49 +231,59 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
     model = NatRule
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "rule_set", "status", "description", name=_("Rule")),
+        FieldSet("name", "rule_set_id", "status", "description", name=_("Rule")),
         FieldSet(
-            "source_addresses",
-            "source_prefixes",
-            "source_ranges",
-            "source_ports",
+            "source_addresses_id",
+            "source_prefixes_id",
+            "source_ranges_id",
+            "source_ports_id",
             "source_type",
-            "source_pool",
+            "source_pool_id",
             name=_("Sources"),
         ),
         FieldSet(
-            "destination_addresses",
-            "destination_prefixes",
-            "destination_ranges",
-            "destination_ports",
+            "destination_addresses_id",
+            "destination_prefixes_id",
+            "destination_ranges_id",
+            "destination_ports_id",
             "destination_type",
-            "destination_pool",
+            "destination_pool_id",
             name=_("Destinations"),
         ),
-        FieldSet("pool", "custom_interface", name=_("Outbound)")),
+        FieldSet("pool_id", "custom_interface", name=_("Outbound)")),
     )
-    rule_set = DynamicModelMultipleChoiceField(
+    rule_set_id = DynamicModelMultipleChoiceField(
         queryset=NatRuleSet.objects.all(),
+        label=_("NAT Rule Set"),
         required=False,
     )
     status = forms.MultipleChoiceField(
         choices=RuleStatusChoices, required=False, widget=forms.Select()
     )
-    source_addresses = DynamicModelMultipleChoiceField(
-        queryset=IPAddress.objects.all(), required=False
+    source_addresses_id = DynamicModelMultipleChoiceField(
+        queryset=IPAddress.objects.all(),
+        label=_("Source Addresses"),
+        required=False,
     )
-    source_prefixes = DynamicModelMultipleChoiceField(
-        queryset=Prefix.objects.all(), required=False
+    source_prefixes_id = DynamicModelMultipleChoiceField(
+        queryset=Prefix.objects.all(),
+        label=_("Source Prefixes"),
+        required=False,
     )
-    source_ranges = DynamicModelMultipleChoiceField(
-        queryset=IPRange.objects.all(), required=False
+    source_ranges_id = DynamicModelMultipleChoiceField(
+        queryset=IPRange.objects.all(),
+        label=_("Source IP Ranges"),
+        required=False,
     )
-    source_pool = DynamicModelMultipleChoiceField(
+    source_pool_id = DynamicModelMultipleChoiceField(
         queryset=NatPool.objects.all(),
+        label=_("Source NAT Pool"),
         required=False,
     )
     source_type = forms.MultipleChoiceField(
-        choices=AddressTypeChoices, required=False, widget=forms.Select()
+        choices=AddressTypeChoices,
+        required=False,
+        widget=forms.Select(),
     )
     source_ports = NumericArrayField(
         base_field=forms.IntegerField(
@@ -282,20 +292,29 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
         help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
         required=False,
     )
-    destination_addresses = DynamicModelMultipleChoiceField(
-        queryset=IPAddress.objects.all(), required=False
+    destination_addresses_id = DynamicModelMultipleChoiceField(
+        queryset=IPAddress.objects.all(),
+        label=_("Destination Addresses"),
+        required=False,
     )
-    destination_prefixes = DynamicModelMultipleChoiceField(
-        queryset=Prefix.objects.all(), required=False
+    destination_prefixes_id = DynamicModelMultipleChoiceField(
+        queryset=Prefix.objects.all(),
+        label=_("Destination Prefixes"),
+        required=False,
     )
-    destination_ranges = DynamicModelMultipleChoiceField(
-        queryset=IPRange.objects.all(), required=False
+    destination_ranges_id = DynamicModelMultipleChoiceField(
+        queryset=IPRange.objects.all(),
+        label=_("Destination Ranges"),
+        required=False,
     )
     destination_type = forms.MultipleChoiceField(
-        choices=AddressTypeChoices, required=False, widget=forms.Select()
+        choices=AddressTypeChoices,
+        required=False,
+        widget=forms.Select(),
     )
-    destination_pool = DynamicModelMultipleChoiceField(
+    destination_pool_id = DynamicModelMultipleChoiceField(
         queryset=NatPool.objects.all(),
+        label=_("Destination Pool"),
         required=False,
     )
     destination_ports = NumericArrayField(
@@ -305,8 +324,9 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
         help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
         required=False,
     )
-    pool = DynamicModelMultipleChoiceField(
+    pool_id = DynamicModelMultipleChoiceField(
         queryset=NatPool.objects.all(),
+        label=_("NAT Pool"),
         required=False,
     )
     custom_interface = forms.MultipleChoiceField(

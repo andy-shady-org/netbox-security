@@ -9,6 +9,49 @@
     <div class="col-md-6">
         <div class="card">
             <h5 class="card-header">
+                {% trans "Applications" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_application %}
+                        <a href="{% url 'plugins:netbox_security:application_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Application" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_applicationassignment %}
+                        <a href="{% url 'plugins:netbox_security:applicationassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Application" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% render_table related_application_table 'inc/table.html' %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Application Sets" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_applicationset %}
+                        <a href="{% url 'plugins:netbox_security:applicationset_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Application Set" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_applicationsetassignment %}
+                        <a href="{% url 'plugins:netbox_security:applicationsetassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Application Set" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% render_table related_application_set_table 'inc/table.html' %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
                 {% trans "Security Zones" %}
                 <div class="card-actions">
                     {% if perms.netbox_security.add_securityzone %}

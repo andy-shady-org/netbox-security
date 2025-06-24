@@ -1,7 +1,6 @@
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
     ListField,
-    CharField,
     ValidationError,
     ChoiceField,
 )
@@ -9,6 +8,8 @@ from netbox.api.serializers import NetBoxModelSerializer
 from netbox_security.api.serializers import (
     SecurityZoneSerializer,
     AddressListSerializer,
+    ApplicationSerializer,
+    ApplicationSetSerializer,
 )
 from netbox_security.models import (
     SecurityZonePolicy,
@@ -29,11 +30,11 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
     destination_address = AddressListSerializer(
         nested=True, required=False, allow_null=True, many=True
     )
-    application = ListField(
-        child=CharField(),
-        required=False,
-        allow_empty=True,
-        default=[],
+    applications = ApplicationSerializer(
+        nested=True, required=False, allow_null=True, many=True
+    )
+    application_sets = ApplicationSetSerializer(
+        nested=True, required=False, allow_null=True, many=True
     )
     policy_actions = ListField(
         child=ChoiceField(choices=ActionChoices, required=False),
@@ -53,7 +54,8 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
             "source_address",
             "destination_zone",
             "destination_address",
-            "application",
+            "applications",
+            "application_sets",
             "policy_actions",
             "comments",
             "tags",
@@ -72,7 +74,8 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
             "source_address",
             "destination_zone",
             "destination_address",
-            "application",
+            "applications",
+            "application_sets",
             "policy_actions",
         )
 
@@ -102,21 +105,33 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
     def create(self, validated_data):
         source_address = validated_data.pop("source_address", None)
         destination_address = validated_data.pop("destination_address", None)
+        applications = validated_data.pop("applications", None)
+        application_sets = validated_data.pop("application_sets", None)
         policy = super().create(validated_data)
 
         if source_address is not None:
             policy.source_address.set(source_address)
         if destination_address is not None:
             policy.destination_address.set(destination_address)
+        if applications is not None:
+            policy.applications.set(applications)
+        if application_sets is not None:
+            policy.application_sets.set(application_sets)
         return policy
 
     def update(self, instance, validated_data):
         source_address = validated_data.pop("source_address", None)
         destination_address = validated_data.pop("destination_address", None)
+        applications = validated_data.pop("applications", None)
+        application_sets = validated_data.pop("application_sets", None)
         policy = super().update(instance, validated_data)
 
         if source_address is not None:
             policy.source_address.set(source_address)
         if destination_address is not None:
             policy.destination_address.set(destination_address)
+        if applications is not None:
+            policy.applications.set(applications)
+        if application_sets is not None:
+            policy.application_sets.set(application_sets)
         return policy

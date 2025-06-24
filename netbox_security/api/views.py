@@ -9,6 +9,11 @@ from .serializers import (
     AddressSetAssignmentSerializer,
     AddressSerializer,
     AddressAssignmentSerializer,
+    ApplicationItemSerializer,
+    ApplicationSerializer,
+    ApplicationAssignmentSerializer,
+    ApplicationSetSerializer,
+    ApplicationSetAssignmentSerializer,
     SecurityZoneSerializer,
     SecurityZoneAssignmentSerializer,
     SecurityZonePolicySerializer,
@@ -35,6 +40,11 @@ from netbox_security.models import (
     AddressSetAssignment,
     Address,
     AddressAssignment,
+    ApplicationItem,
+    Application,
+    ApplicationAssignment,
+    ApplicationSet,
+    ApplicationSetAssignment,
     SecurityZone,
     SecurityZoneAssignment,
     SecurityZonePolicy,
@@ -61,6 +71,11 @@ from netbox_security.filtersets import (
     AddressSetAssignmentFilterSet,
     AddressFilterSet,
     AddressAssignmentFilterSet,
+    ApplicationItemFilterSet,
+    ApplicationFilterSet,
+    ApplicationAssignmentFilterSet,
+    ApplicationSetFilterSet,
+    ApplicationSetAssignmentFilterSet,
     SecurityZoneFilterSet,
     SecurityZoneAssignmentFilterSet,
     SecurityZonePolicyFilterSet,
@@ -120,6 +135,36 @@ class AddressAssignmentViewSet(NetBoxModelViewSet):
     queryset = AddressAssignment.objects.all()
     serializer_class = AddressAssignmentSerializer
     filterset_class = AddressAssignmentFilterSet
+
+
+class ApplicationItemViewSet(NetBoxModelViewSet):
+    queryset = ApplicationItem.objects.prefetch_related("tags")
+    serializer_class = ApplicationItemSerializer
+    filterset_class = ApplicationItemFilterSet
+
+
+class ApplicationViewSet(NetBoxModelViewSet):
+    queryset = Application.objects.prefetch_related("tenant", "tags")
+    serializer_class = ApplicationSerializer
+    filterset_class = ApplicationFilterSet
+
+
+class ApplicationAssignmentViewSet(NetBoxModelViewSet):
+    queryset = ApplicationAssignment.objects.all()
+    serializer_class = ApplicationAssignmentSerializer
+    filterset_class = ApplicationAssignmentFilterSet
+
+
+class ApplicationSetViewSet(NetBoxModelViewSet):
+    queryset = ApplicationSet.objects.prefetch_related("tenant", "tags")
+    serializer_class = ApplicationSetSerializer
+    filterset_class = ApplicationSetFilterSet
+
+
+class ApplicationSetAssignmentViewSet(NetBoxModelViewSet):
+    queryset = ApplicationSetAssignment.objects.all()
+    serializer_class = ApplicationSetAssignmentSerializer
+    filterset_class = ApplicationSetAssignmentFilterSet
 
 
 class SecurityZoneViewSet(NetBoxModelViewSet):

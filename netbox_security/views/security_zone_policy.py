@@ -1,7 +1,12 @@
 from netbox.views import generic
 from utilities.views import register_model_view
 
-from netbox_security.tables import SecurityZonePolicyTable, AddressListTable
+from netbox_security.tables import (
+    SecurityZonePolicyTable,
+    AddressListTable,
+    ApplicationTable,
+    ApplicationSetTable,
+)
 from netbox_security.filtersets import SecurityZonePolicyFilterSet
 
 from netbox_security.models import (
@@ -38,9 +43,17 @@ class SecurityZonePolicyView(generic.ObjectView):
         destination_address_table = AddressListTable(
             instance.destination_address.all(), orderable=False
         )
+        applications_table = ApplicationTable(
+            instance.applications.all(), orderable=False
+        )
+        application_sets_table = ApplicationSetTable(
+            instance.application_sets.all(), orderable=False
+        )
         return {
             "source_address_table": source_address_table,
             "destination_address_table": destination_address_table,
+            "applications_table": applications_table,
+            "application_sets_table": application_sets_table,
         }
 
 

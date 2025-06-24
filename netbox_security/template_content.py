@@ -4,6 +4,8 @@ from netbox_security.models import (
     NatPoolAssignment,
     NatRuleSetAssignment,
     NatRuleAssignment,
+    ApplicationAssignment,
+    ApplicationSetAssignment,
     SecurityZoneAssignment,
     AddressAssignment,
     AddressSetAssignment,
@@ -19,6 +21,10 @@ from netbox_security.tables import (
     NatRuleSetVirtualDeviceContextAssignmentTable,
     NatRuleSetVirtualMachineAssignmentTable,
     NatRuleAssignmentTable,
+    ApplicationDeviceAssignmentTable,
+    ApplicationVirtualDeviceContextAssignmentTable,
+    ApplicationSetDeviceAssignmentTable,
+    ApplicationSetVirtualDeviceContextAssignmentTable,
     SecurityZoneDeviceAssignmentTable,
     SecurityZoneVirtualDeviceContextAssignmentTable,
     SecurityZoneInterfaceAssignmentTable,
@@ -148,6 +154,18 @@ class VirtualDeviceContextInfo(PluginTemplateExtension):
         )
         policer_assignments = PolicerAssignment.objects.filter(virtualdevicecontext=obj)
         policer_table = PolicerVirtualDeviceContextAssignmentTable(policer_assignments)
+        application_assignments = ApplicationAssignment.objects.filter(
+            virtualdevicecontext=obj
+        )
+        application_table = ApplicationVirtualDeviceContextAssignmentTable(
+            application_assignments
+        )
+        application_set_assignments = ApplicationSetAssignment.objects.filter(
+            virtualdevicecontext=obj
+        )
+        application_set_table = ApplicationSetVirtualDeviceContextAssignmentTable(
+            application_set_assignments
+        )
         return self.render(
             "netbox_security/device/device_extend.html",
             extra_context={
@@ -158,6 +176,8 @@ class VirtualDeviceContextInfo(PluginTemplateExtension):
                 "related_addressset_table": addressset_table,
                 "related_firewall_filter_table": firewall_filter_table,
                 "related_firewall_policer_table": policer_table,
+                "related_application_table": application_table,
+                "related_application_set_table": application_set_table,
             },
         )
 
@@ -239,6 +259,14 @@ class DeviceInfo(PluginTemplateExtension):
         )
         policer_assignments = PolicerAssignment.objects.filter(device=obj)
         policer_table = PolicerDeviceAssignmentTable(policer_assignments)
+        application_assignments = ApplicationAssignment.objects.filter(device=obj)
+        application_table = ApplicationDeviceAssignmentTable(application_assignments)
+        application_set_assignments = ApplicationSetAssignment.objects.filter(
+            device=obj
+        )
+        application_set_table = ApplicationSetDeviceAssignmentTable(
+            application_set_assignments
+        )
         return self.render(
             "netbox_security/device/device_extend.html",
             extra_context={
@@ -249,6 +277,8 @@ class DeviceInfo(PluginTemplateExtension):
                 "related_addressset_table": addressset_table,
                 "related_firewall_filter_table": firewall_filter_table,
                 "related_firewall_policer_table": policer_table,
+                "related_application_table": application_table,
+                "related_application_set_table": application_set_table,
             },
         )
 

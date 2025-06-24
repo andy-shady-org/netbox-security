@@ -66,7 +66,9 @@ class NatPoolFilterForm(NetBoxModelFilterSetForm):
         FieldSet("name", "pool_type", "status"),
     )
     pool_type = forms.ChoiceField(
-        required=False, choices=PoolTypeChoices, help_text=_("NAT Pool Type")
+        required=False,
+        choices=PoolTypeChoices,
+        help_text=_("NAT Pool Type"),
     )
     status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
     tags = TagFilterField(model)

@@ -48,3 +48,8 @@ POLICER_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device")
     | Q(app_label="dcim", model="virtualdevicecontext")
 )
+
+APPLICATION_ASSIGNMENT_MODELS = Q(
+    Q(app_label="dcim", model="device")
+    | Q(app_label="dcim", model="virtualdevicecontext")
+)

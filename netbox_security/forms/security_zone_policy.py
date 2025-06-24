@@ -1,6 +1,5 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from django.contrib.postgres.forms import SimpleArrayField
 
 from netbox.forms import (
     NetBoxModelBulkEditForm,
@@ -24,6 +23,8 @@ from netbox_security.models import (
     SecurityZonePolicy,
     SecurityZone,
     AddressList,
+    Application,
+    ApplicationSet,
 )
 
 from netbox_security.choices import ActionChoices
@@ -61,10 +62,15 @@ class SecurityZonePolicyForm(NetBoxModelForm):
         quick_add=True,
         required=False,
     )
-    application = SimpleArrayField(
-        forms.CharField(max_length=50),
-        help_text=_("Comma-separated list of applications."),
-        required=True,
+    applications = DynamicModelMultipleChoiceField(
+        queryset=Application.objects.all(),
+        quick_add=True,
+        required=False,
+    )
+    application_sets = DynamicModelMultipleChoiceField(
+        queryset=ApplicationSet.objects.all(),
+        quick_add=True,
+        required=False,
     )
     policy_actions = forms.MultipleChoiceField(
         choices=ActionChoices,
@@ -76,7 +82,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
         FieldSet(
             "destination_zone", "destination_address", name=_("Destination Assignment")
         ),
-        FieldSet("application", name=_("Application")),
+        FieldSet("applications", "application_sets", name=_("Applications")),
         FieldSet("policy_actions", name=_("Policy Actions")),
         FieldSet("tags", name=_("Tags")),
     )
@@ -91,7 +97,8 @@ class SecurityZonePolicyForm(NetBoxModelForm):
             "source_address",
             "destination_zone",
             "destination_address",
-            "application",
+            "applications",
+            "application_sets",
             "policy_actions",
             "description",
             "comments",
@@ -128,29 +135,45 @@ class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
         FieldSet("q", "filter_id", "tag"),
         FieldSet("name", "index"),
         FieldSet(
-            "source_zone",
-            "source_address",
-            "destination_zone",
-            "destination_address",
+            "source_zone_id",
+            "source_address_id",
+            "destination_zone_id",
+            "destination_address_id",
+            "applications_id",
+            "application_sets_id",
             name=_("Source/Destination Assignment"),
         ),
         FieldSet("policy_actions", name=_("Policy Actions")),
     )
     index = forms.IntegerField(required=False)
-    source_zone = DynamicModelMultipleChoiceField(
+    source_zone_id = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
+        label=_("Source Zone"),
         required=False,
     )
-    destination_zone = DynamicModelMultipleChoiceField(
+    destination_zone_id = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
+        label=_("Destination Zone"),
         required=False,
     )
-    source_address = DynamicModelMultipleChoiceField(
+    source_address_id = DynamicModelMultipleChoiceField(
         queryset=AddressList.objects.all(),
+        label=_("Source Address"),
         required=False,
     )
-    destination_address = DynamicModelMultipleChoiceField(
+    destination_address_id = DynamicModelMultipleChoiceField(
         queryset=AddressList.objects.all(),
+        label=_("Destination Address"),
+        required=False,
+    )
+    applications_id = DynamicModelMultipleChoiceField(
+        queryset=Application.objects.all(),
+        label=_("Applications"),
+        required=False,
+    )
+    application_sets_id = DynamicModelMultipleChoiceField(
+        queryset=ApplicationSet.objects.all(),
+        label=_("Application Sets"),
         required=False,
     )
     policy_actions = forms.MultipleChoiceField(
@@ -185,13 +208,18 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
         to_field_name="name",
         required=False,
     )
+    applications = CSVModelMultipleChoiceField(
+        queryset=Application.objects.all(),
+        to_field_name="name",
+        required=False,
+    )
+    application_sets = CSVModelMultipleChoiceField(
+        queryset=ApplicationSet.objects.all(),
+        to_field_name="name",
+        required=False,
+    )
     policy_actions = CSVMultipleChoiceField(
         choices=ActionChoices,
-        required=True,
-    )
-    application = SimpleArrayField(
-        forms.CharField(max_length=50),
-        help_text=_("Comma-separated list of applications."),
         required=True,
     )
 
@@ -205,7 +233,8 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
             "source_address",
             "destination_zone",
             "destination_address",
-            "application",
+            "applications",
+            "application_sets",
             "policy_actions",
             "tags",
         )
@@ -252,6 +281,14 @@ class SecurityZonePolicyBulkEditForm(NetBoxModelBulkEditForm):
         queryset=AddressList.objects.all(),
         required=False,
     )
+    applications = DynamicModelMultipleChoiceField(
+        queryset=Application.objects.all(),
+        required=False,
+    )
+    application_sets = DynamicModelMultipleChoiceField(
+        queryset=ApplicationSet.objects.all(),
+        required=False,
+    )
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
     nullable_fields = ["description"]
@@ -259,5 +296,6 @@ class SecurityZonePolicyBulkEditForm(NetBoxModelBulkEditForm):
         FieldSet("description"),
         FieldSet("source_zone", "destination_zone", name="Security Zones"),
         FieldSet("source_address", "destination_address", name="Address Lists"),
+        FieldSet("applications", "application_sets", name="Applications"),
         FieldSet("tags", name=_("Tags")),
     )

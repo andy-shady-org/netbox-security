@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, List
 import strawberry
 import strawberry_django
 from strawberry_django import FilterLookup
@@ -19,12 +19,16 @@ from .enums import (
     NetBoxSecurityAddressTypeEnum,
     NetBoxSecurityLossPriorityEnum,
     NetBoxSecurityForwardingClassEnum,
+    NetBoxSecurityProtocolEnum,
 )
 
 from netbox_security.models import (
     Address,
     AddressSet,
     AddressList,
+    ApplicationItem,
+    Application,
+    ApplicationSet,
     SecurityZone,
     SecurityZonePolicy,
     NatPool,
@@ -67,6 +71,56 @@ class NetBoxSecurityAddressListFilter(NetBoxModelFilterMixin):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
 
 
+@strawberry_django.filter(ApplicationItem, lookups=True)
+class NetBoxSecurityApplicationItemFilter(ContactFilterMixin, NetBoxModelFilterMixin):
+    name: FilterLookup[str] | None = strawberry_django.filter_field()
+    index: FilterLookup[int] | None = strawberry_django.filter_field()
+    protocol: List[
+        Annotated[
+            "NetBoxSecurityProtocolEnum",
+            strawberry.lazy("netbox_security.graphql.enums"),
+        ]
+    ] = strawberry_django.filter_field()
+    destination_port: FilterLookup[int] | None = strawberry_django.filter_field()
+    source_port: FilterLookup[int] | None = strawberry_django.filter_field()
+
+
+@strawberry_django.filter(Application, lookups=True)
+class NetBoxSecurityApplicationFilter(
+    ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
+):
+    name: FilterLookup[str] | None = strawberry_django.filter_field()
+    application_items: (
+        Annotated[
+            "NetBoxSecurityApplicationItemFilter",
+            strawberry.lazy("netbox_security.graphql.filters"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
+    protocol: List[
+        Annotated[
+            "NetBoxSecurityProtocolEnum",
+            strawberry.lazy("netbox_security.graphql.enums"),
+        ]
+    ] = strawberry_django.filter_field()
+    destination_port: FilterLookup[int] | None = strawberry_django.filter_field()
+    source_port: FilterLookup[int] | None = strawberry_django.filter_field()
+
+
+@strawberry_django.filter(ApplicationSet, lookups=True)
+class NetBoxSecurityApplicationSetFilter(
+    ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
+):
+    name: FilterLookup[str] | None = strawberry_django.filter_field()
+    applications: (
+        Annotated[
+            "NetBoxSecurityApplicationFilter",
+            strawberry.lazy("netbox_security.graphql.filters"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
+
+
 @strawberry_django.filter(SecurityZone, lookups=True)
 class NetBoxSecuritySecurityZoneFilter(
     ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
@@ -106,6 +160,20 @@ class NetBoxSecuritySecurityZonePolicyFilter(
     destination_address: (
         Annotated[
             "NetBoxSecurityAddressListFilter",
+            strawberry.lazy("netbox_security.graphql.filters"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
+    applications: (
+        Annotated[
+            "NetBoxSecurityApplicationFilter",
+            strawberry.lazy("netbox_security.graphql.filters"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
+    application_sets: (
+        Annotated[
+            "NetBoxSecurityApplicationSetFilter",
             strawberry.lazy("netbox_security.graphql.filters"),
         ]
         | None

@@ -51,7 +51,7 @@ class FirewallFilterRuleForm(FilterRuleSettingFormMixin, NetBoxModelForm):
             "index",
             "firewall_filter",
             "description",
-            name=_("Firewall Filter Rule"),
+            name=_("Firewall Filter Rule Parameters"),
         ),
         FieldSet("tags", name=_("Tags")),
     )
@@ -72,7 +72,7 @@ class FirewallFilterRuleForm(FilterRuleSettingFormMixin, NetBoxModelForm):
 
 
 class FirewallFilterRuleFilterForm(NetBoxModelFilterSetForm):
-    firewall_filter = DynamicModelMultipleChoiceField(
+    firewall_filter_id = DynamicModelMultipleChoiceField(
         queryset=FirewallFilter.objects.all(),
         required=False,
         label=_("Firewall Filter"),
@@ -84,7 +84,7 @@ class FirewallFilterRuleFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "index",
-            "firewall_filter",
+            "firewall_filter_id",
             "description",
             name=_("Firewall Filter Rule"),
         ),
