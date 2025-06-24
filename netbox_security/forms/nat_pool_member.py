@@ -142,26 +142,33 @@ class NatPoolMemberFilterForm(NetBoxModelFilterSetForm):
     model = NatPoolMember
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "pool_type", "status"),
-        FieldSet("address", "prefix", "address_range", name=_("IPAM")),
+        FieldSet("name", "pool_id", "pool_type", "status"),
+        FieldSet("address_id", "prefix_id", "address_range_id", name=_("IPAM")),
         FieldSet("source_ports", "destination_ports", name=_("Ports")),
     )
     status = forms.MultipleChoiceField(
         choices=IPAddressStatusChoices,
         required=False,
     )
-    pool = DynamicModelMultipleChoiceField(
+    pool_id = DynamicModelMultipleChoiceField(
         queryset=NatPool.objects.all(),
         required=False,
+        label=_("NAT Pool"),
     )
-    address = DynamicModelMultipleChoiceField(
-        queryset=IPAddress.objects.all(), required=False
+    address_id = DynamicModelMultipleChoiceField(
+        queryset=IPAddress.objects.all(),
+        label=_("Address"),
+        required=False,
     )
-    prefix = DynamicModelMultipleChoiceField(
-        queryset=Prefix.objects.all(), required=False
+    prefix_id = DynamicModelMultipleChoiceField(
+        queryset=Prefix.objects.all(),
+        label=_("Prefix"),
+        required=False,
     )
-    address_range = DynamicModelMultipleChoiceField(
-        queryset=IPRange.objects.all(), required=False
+    address_range_id = DynamicModelMultipleChoiceField(
+        queryset=IPRange.objects.all(),
+        label=_("Address Range"),
+        required=False,
     )
     source_ports = forms.IntegerField(
         required=False,

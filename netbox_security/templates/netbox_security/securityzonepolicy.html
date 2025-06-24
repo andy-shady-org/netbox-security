@@ -39,14 +39,6 @@
                     </td>
                 </tr>
                 {% endif %}
-                {% if object.application %}
-                <tr>
-                    <th scope="row">{% trans "Application" %}</th>
-                    <td>
-                        {{ object.application }}
-                    </td>
-                </tr>
-                {% endif %}
                 <tr>
                     <td>{% trans "Policy Actions" %}</td>
                     <td>
@@ -79,6 +71,18 @@
                 {% trans "Destination Addresses" %}
             </h5>
             {% render_table destination_address_table 'inc/table.html' %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Applications" %}
+            </h5>
+            {% render_table applications_table 'inc/table.html' %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Application Sets" %}
+            </h5>
+            {% render_table application_sets_table 'inc/table.html' %}
         </div>
     </div>
 </div>

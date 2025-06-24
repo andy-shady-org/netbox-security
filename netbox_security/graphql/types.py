@@ -11,6 +11,9 @@ from netbox_security.models import (
     Address,
     AddressSet,
     AddressList,
+    ApplicationItem,
+    Application,
+    ApplicationSet,
     SecurityZone,
     SecurityZonePolicy,
     NatPool,
@@ -26,6 +29,9 @@ from .filters import (
     NetBoxSecurityAddressFilter,
     NetBoxSecurityAddressSetFilter,
     NetBoxSecurityAddressListFilter,
+    NetBoxSecurityApplicationItemFilter,
+    NetBoxSecurityApplicationFilter,
+    NetBoxSecurityApplicationSetFilter,
     NetBoxSecuritySecurityZoneFilter,
     NetBoxSecuritySecurityZonePolicyFilter,
     NetBoxSecurityNatPoolFilter,
@@ -68,6 +74,48 @@ class NetBoxSecurityAddressListType(NetBoxObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
     value: str
+
+
+@strawberry_django.type(
+    ApplicationItem, fields="__all__", filters=NetBoxSecurityApplicationItemFilter
+)
+class NetBoxSecurityApplicationItemType(NetBoxObjectType):
+    name: str
+    index: int
+    protocol: str | None
+    destination_port: int | None
+    source_port: int | None
+
+
+@strawberry_django.type(
+    Application, fields="__all__", filters=NetBoxSecurityApplicationFilter
+)
+class NetBoxSecurityApplicationType(NetBoxObjectType):
+    name: str
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+    application_items: List[
+        Annotated[
+            "NetBoxSecurityApplicationItemType",
+            strawberry.lazy("netbox_security.graphql.types"),
+        ]
+    ]
+    protocol: str | None
+    destination_port: int | None
+    source_port: int | None
+
+
+@strawberry_django.type(
+    ApplicationSet, fields="__all__", filters=NetBoxSecurityApplicationSetFilter
+)
+class NetBoxSecurityApplicationSetType(NetBoxObjectType):
+    name: str
+    tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+    applications: List[
+        Annotated[
+            "NetBoxSecurityApplicationType",
+            strawberry.lazy("netbox_security.graphql.types"),
+        ]
+    ]
 
 
 @strawberry_django.type(

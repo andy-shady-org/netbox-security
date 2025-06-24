@@ -6,7 +6,10 @@ from netbox_security.models import (
     SecurityZonePolicy,
     Address,
     AddressList,
+    Application,
+    ApplicationSet,
 )
+from netbox_security.choices import ProtocolChoices
 
 
 class SecurityZoneAPITestCase(
@@ -64,7 +67,8 @@ class SecurityZonePolicyAPITestCase(
     model = SecurityZonePolicy
 
     brief_fields = [
-        "application",
+        "application_sets",
+        "applications",
         "description",
         "destination_address",
         "destination_zone",
@@ -90,6 +94,36 @@ class SecurityZonePolicyAPITestCase(
         )
         SecurityZone.objects.bulk_create(cls.zones)
 
+        cls.applications = (
+            Application(
+                name="item-7",
+                protocol=ProtocolChoices.TCP,
+                destination_port=1,
+                source_port=1,
+            ),
+            Application(
+                name="item-8",
+                protocol=ProtocolChoices.TCP,
+                destination_port=1,
+                source_port=1,
+            ),
+            Application(name="item-9"),
+        )
+        Application.objects.bulk_create(cls.applications)
+
+        cls.application_sets = (
+            ApplicationSet(
+                name="item-7",
+            ),
+            ApplicationSet(
+                name="item-8",
+            ),
+            ApplicationSet(
+                name="item-9",
+            ),
+        )
+        ApplicationSet.objects.bulk_create(cls.application_sets)
+
         cls.policies = (
             SecurityZonePolicy(
                 name="policy-5",
@@ -97,7 +131,6 @@ class SecurityZonePolicyAPITestCase(
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
                 policy_actions=["permit", "count", "log"],
-                application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
                 name="policy-6",
@@ -105,11 +138,19 @@ class SecurityZonePolicyAPITestCase(
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
                 policy_actions=["permit", "count", "log"],
-                application=["test-1", "test-2"],
             ),
         )
         SecurityZonePolicy.objects.bulk_create(cls.policies)
-
+        cls.policies[0].applications.add(cls.applications[0])
+        cls.policies[1].applications.add(
+            cls.applications[1],
+            cls.applications[2],
+        )
+        cls.policies[0].application_sets.add(cls.application_sets[0])
+        cls.policies[1].application_sets.add(
+            cls.application_sets[1],
+            cls.application_sets[2],
+        )
         cls.addresses = (
             Address(name="address-1", address="1.1.1.1/32"),
             Address(name="address-2", address="1.1.1.2/32"),
@@ -149,18 +190,18 @@ class SecurityZonePolicyAPITestCase(
             source_zone=cls.zones[0],
             destination_zone=cls.zones[1],
             policy_actions=["permit", "count", "log"],
-            application=["test-1", "test-2"],
         )
         cls.policy.source_address.add(cls.addresses_lists[0])
         cls.policy.destination_address.add(cls.addresses_lists[1])
         cls.policy.destination_address.set(cls.destination_addresses)
+        cls.policy.applications.set(cls.applications)
+        cls.policy.application_sets.set(cls.application_sets)
 
         cls.create_data = [
             {
                 "name": "policy-1",
                 "index": 1,
                 "policy_actions": ["permit", "count", "log"],
-                "application": ["test-1", "test-2"],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
             },
@@ -168,7 +209,6 @@ class SecurityZonePolicyAPITestCase(
                 "name": "policy-2",
                 "index": 2,
                 "policy_actions": ["permit", "count", "log"],
-                "application": ["test-1", "test-2"],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
             },
@@ -176,7 +216,6 @@ class SecurityZonePolicyAPITestCase(
                 "name": "policy-3",
                 "index": 3,
                 "policy_actions": ["permit", "count", "log"],
-                "application": ["test-1", "test-2"],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
             },
@@ -185,4 +224,8 @@ class SecurityZonePolicyAPITestCase(
     def test_policy(self):
         self.assertEqual(
             set(self.policy.destination_address.all()), set(self.destination_addresses)
+        )
+        self.assertEqual(set(self.policy.applications.all()), set(self.applications))
+        self.assertEqual(
+            set(self.policy.application_sets.all()), set(self.application_sets)
         )

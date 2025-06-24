@@ -61,7 +61,7 @@ class AddressForm(TenancyForm, NetBoxModelForm):
             "dns_name",
             "ip_range",
             "description",
-            name=_("Address List"),
+            name=_("Address Parameters"),
         ),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
@@ -87,8 +87,13 @@ class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = Address
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "address", "dns_name", "ip_range", name=_("Address")),
+        FieldSet("name", "address", "dns_name", "ip_range_id", name=_("Address")),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
+    )
+    ip_range_id = DynamicModelChoiceField(
+        queryset=IPRange.objects.all(),
+        required=False,
+        label=_("IP Range"),
     )
     tags = TagFilterField(model)
 

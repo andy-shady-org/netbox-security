@@ -51,7 +51,13 @@ class NatRuleSetForm(NetBoxModelForm):
         required=False,
     )
     fieldsets = (
-        FieldSet("name", "nat_type", "description", "direction"),
+        FieldSet(
+            "name",
+            "nat_type",
+            "description",
+            "direction",
+            name=_("NAT Rule Set Parameters"),
+        ),
         FieldSet("source_zones", "destination_zones", name=_("Security Zones")),
         FieldSet("tags", name=_("Tags")),
     )
@@ -94,8 +100,8 @@ class NatRuleSetFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "nat_type",
             "direction",
-            "source_zones",
-            "destination_zones",
+            "source_zones_id",
+            "destination_zones_id",
             name="Rule Set Details",
         ),
     )
@@ -104,12 +110,14 @@ class NatRuleSetFilterForm(NetBoxModelFilterSetForm):
         required=False,
     )
     direction = forms.ChoiceField(required=False, choices=RuleDirectionChoices)
-    source_zones = DynamicModelMultipleChoiceField(
+    source_zones_id = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
+        label=_("Source Zones"),
         required=False,
     )
-    destination_zones = DynamicModelMultipleChoiceField(
+    destination_zones_id = DynamicModelMultipleChoiceField(
         queryset=SecurityZone.objects.all(),
+        label=_("Destination Zones"),
         required=False,
     )
     tags = TagFilterField(model)

@@ -1,7 +1,7 @@
 import django_tables2 as tables
 
 from netbox.tables import NetBoxTable
-from netbox.tables.columns import TagColumn, ArrayColumn
+from netbox.tables.columns import TagColumn
 
 from netbox_security.models import SecurityZonePolicy
 
@@ -35,7 +35,8 @@ class SecurityZonePolicyTable(NetBoxTable):
     destination_zone = tables.LinkColumn()
     source_address = tables.TemplateColumn(template_code=LOOPS, orderable=False)
     destination_address = tables.TemplateColumn(template_code=LOOPS, orderable=False)
-    application = ArrayColumn()
+    applications = tables.ManyToManyColumn()
+    application_sets = tables.ManyToManyColumn()
     policy_actions = tables.TemplateColumn(template_code=ACTIONS, orderable=False)
     tags = TagColumn(url_name="plugins:netbox_security:securityzone_list")
 
@@ -49,7 +50,8 @@ class SecurityZonePolicyTable(NetBoxTable):
             "destination_zone",
             "source_address",
             "destination_address",
-            "application",
+            "applications",
+            "application_sets",
             "policy_actions",
             "description",
             "tags",
@@ -61,6 +63,7 @@ class SecurityZonePolicyTable(NetBoxTable):
             "destination_zone",
             "source_address",
             "destination_address",
-            "application",
+            "applications",
+            "application_sets",
             "policy_actions",
         )

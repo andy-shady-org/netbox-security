@@ -46,7 +46,7 @@ class AddressSetForm(TenancyForm, NetBoxModelForm):
     )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
-        FieldSet("name", "addresses", "description", name=_("AddressSet List")),
+        FieldSet("name", "addresses", "description", name=_("Address Set Parameters")),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
@@ -69,11 +69,13 @@ class AddressSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = AddressSet
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "addresses", name=_("AddressSet List")),
+        FieldSet("name", "addresses_id", name=_("AddressSet List")),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
-    addresses = DynamicModelMultipleChoiceField(
-        required=False, label=_("Addresses"), queryset=Address.objects.all()
+    addresses_id = DynamicModelMultipleChoiceField(
+        required=False,
+        label=_("Addresses"),
+        queryset=Address.objects.all(),
     )
     tags = TagFilterField(model)
 

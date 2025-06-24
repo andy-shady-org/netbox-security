@@ -7,7 +7,10 @@ from netbox_security.models import (
     SecurityZonePolicy,
     Address,
     AddressList,
+    Application,
 )
+
+from netbox_security.choices import ProtocolChoices
 
 
 class SecurityZoneViewTestCase(
@@ -130,6 +133,28 @@ class SecurityZonePolicyViewTestCase(
         )
         AddressList.objects.bulk_create(cls.destination_addresses)
 
+        cls.applications = (
+            Application(
+                name="item-1",
+                protocol=ProtocolChoices.TCP,
+                destination_port=1,
+                source_port=1,
+            ),
+            Application(
+                name="item-2",
+                protocol=ProtocolChoices.TCP,
+                destination_port=1,
+                source_port=1,
+            ),
+            Application(
+                name="item-3",
+                protocol=ProtocolChoices.TCP,
+                destination_port=1,
+                source_port=1,
+            ),
+        )
+        Application.objects.bulk_create(cls.applications)
+
         cls.policies = (
             SecurityZonePolicy(
                 name="policy-1",
@@ -137,7 +162,6 @@ class SecurityZonePolicyViewTestCase(
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
                 policy_actions=["permit", "count", "log"],
-                application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
                 name="policy-2",
@@ -145,7 +169,6 @@ class SecurityZonePolicyViewTestCase(
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
                 policy_actions=["permit", "count", "log"],
-                application=["test-1", "test-2"],
             ),
             SecurityZonePolicy(
                 name="policy-3",
@@ -153,13 +176,13 @@ class SecurityZonePolicyViewTestCase(
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
                 policy_actions=["permit", "count", "log"],
-                application=["test-1", "test-2"],
             ),
         )
         SecurityZonePolicy.objects.bulk_create(cls.policies)
         for policy in cls.policies:
             policy.source_address.set(cls.source_addresses)
             policy.destination_address.set(cls.destination_addresses)
+            policy.applications.set(cls.applications)
 
         cls.form_data = {
             "name": "TEST-POLICY1",
@@ -171,8 +194,8 @@ class SecurityZonePolicyViewTestCase(
                 cls.destination_addresses[0].pk,
                 cls.destination_addresses[1].pk,
             ],
+            "applications": [cls.applications[0].pk, cls.applications[1].pk],
             "policy_actions": ["permit", "count", "log"],
-            "application": "test-1,test-2",
             "tags": [t.pk for t in tags],
         }
 
@@ -181,10 +204,10 @@ class SecurityZonePolicyViewTestCase(
         }
 
         cls.csv_data = (
-            "name,index,source_zone,destination_zone,policy_actions,application",
-            f'TEST-POLICY4,1,{cls.zones[0].name},{cls.zones[1].name},"permit,count","test-1,test-2"',
-            f'TEST-POLICY5,2,{cls.zones[0].name},{cls.zones[1].name},"permit,count","test-1,test-2"',
-            f'TEST-POLICY6,3,{cls.zones[0].name},{cls.zones[1].name},"permit,count","test-1,test-2"',
+            "name,index,source_zone,destination_zone,policy_actions",
+            f'TEST-POLICY4,1,{cls.zones[0].name},{cls.zones[1].name},"permit,count"',
+            f'TEST-POLICY5,2,{cls.zones[0].name},{cls.zones[1].name},"permit,count"',
+            f'TEST-POLICY6,3,{cls.zones[0].name},{cls.zones[1].name},"permit,count"',
         )
 
         cls.csv_update_data = (
