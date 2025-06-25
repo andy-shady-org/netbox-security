@@ -2,7 +2,7 @@ import django_tables2 as tables
 from django.utils.translation import gettext_lazy as _
 
 from netbox.tables import NetBoxTable
-from netbox.tables.columns import TagColumn, ActionsColumn
+from netbox.tables.columns import TagColumn, ActionsColumn, ManyToManyColumn
 from tenancy.tables import TenancyColumnsMixin
 
 from netbox_security.models import ApplicationSet, ApplicationSetAssignment
@@ -17,7 +17,9 @@ __all__ = (
 
 class ApplicationSetTable(TenancyColumnsMixin, NetBoxTable):
     name = tables.LinkColumn()
-    applications = tables.ManyToManyColumn()
+    applications = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Applications")
+    )
     tags = TagColumn(url_name="plugins:netbox_security:applicationset_list")
 
     class Meta(NetBoxTable.Meta):

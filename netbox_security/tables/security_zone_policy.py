@@ -1,17 +1,10 @@
 import django_tables2 as tables
+from django.utils.translation import gettext_lazy as _
 
 from netbox.tables import NetBoxTable
-from netbox.tables.columns import TagColumn
+from netbox.tables.columns import TagColumn, ManyToManyColumn, ChoicesColumn
 
 from netbox_security.models import SecurityZonePolicy
-
-LOOPS = """
-{% for p in value.all %}
-    <a href="{{ p.get_absolute_url }}">{{ p }}</a>{% if not forloop.last %}<br />{% endif %}
-{% empty %}
-    &mdash;
-{% endfor %}
-"""
 
 ACTIONS = """
 {% for action in value %}
@@ -33,10 +26,18 @@ class SecurityZonePolicyTable(NetBoxTable):
     name = tables.LinkColumn()
     source_zone = tables.LinkColumn()
     destination_zone = tables.LinkColumn()
-    source_address = tables.TemplateColumn(template_code=LOOPS, orderable=False)
-    destination_address = tables.TemplateColumn(template_code=LOOPS, orderable=False)
-    applications = tables.ManyToManyColumn()
-    application_sets = tables.ManyToManyColumn()
+    source_address = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Source Address")
+    )
+    destination_address = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Destination Address")
+    )
+    applications = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Applications")
+    )
+    application_sets = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Application Sets")
+    )
     policy_actions = tables.TemplateColumn(template_code=ACTIONS, orderable=False)
     tags = TagColumn(url_name="plugins:netbox_security:securityzone_list")
 
