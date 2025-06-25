@@ -198,6 +198,28 @@ urlpatterns = [
         "address-assignments/<int:pk>/",
         include(get_model_urls("netbox_security", "addressassignment")),
     ),
+    # Application Assignments
+    path(
+        "application-assignments/",
+        include(
+            get_model_urls("netbox_security", "applicationassignment", detail=False)
+        ),
+    ),
+    path(
+        "application-assignments/<int:pk>/",
+        include(get_model_urls("netbox_security", "applicationassignment")),
+    ),
+    # Application Set Assignments
+    path(
+        "applicationset-assignments/",
+        include(
+            get_model_urls("netbox_security", "applicationsetassignment", detail=False)
+        ),
+    ),
+    path(
+        "applicationset-assignments/<int:pk>/",
+        include(get_model_urls("netbox_security", "applicationsetassignment")),
+    ),
     # Security Zone Assignments
     path(
         "security-zone-assignments/",
