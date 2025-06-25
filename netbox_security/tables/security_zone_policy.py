@@ -1,4 +1,5 @@
 import django_tables2 as tables
+from django.utils.translation import gettext_lazy as _
 
 from netbox.tables import NetBoxTable
 from netbox.tables.columns import TagColumn, ManyToManyColumn, ChoicesColumn
@@ -26,16 +27,18 @@ class SecurityZonePolicyTable(NetBoxTable):
     source_zone = tables.LinkColumn()
     destination_zone = tables.LinkColumn()
     source_address = ManyToManyColumn(
-        linkify_item=True,
+        orderable=False, linkify=True, verbose_name=_("Source Address")
     )
     destination_address = ManyToManyColumn(
-        linkify_item=True,
+        orderable=False, linkify=True, verbose_name=_("Destination Address")
     )
     applications = ManyToManyColumn(
-        linkify_item=True,
+        orderable=False, linkify=True, verbose_name=_("Applications")
     )
-    application_sets = ManyToManyColumn(linkify_item=True)
-    policy_actions = ChoicesColumn(template_code=ACTIONS, orderable=False)
+    application_sets = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Application Sets")
+    )
+    policy_actions = tables.TemplateColumn(template_code=ACTIONS, orderable=False)
     tags = TagColumn(url_name="plugins:netbox_security:securityzone_list")
 
     class Meta(NetBoxTable.Meta):
