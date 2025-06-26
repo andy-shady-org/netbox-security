@@ -4,6 +4,8 @@ from rest_framework.serializers import (
     SerializerMethodField,
     JSONField,
     ChoiceField,
+    ListField,
+    IntegerField,
 )
 from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
@@ -24,7 +26,23 @@ class ApplicationSerializer(NetBoxModelSerializer):
     application_items = ApplicationItemSerializer(
         nested=True, required=False, allow_null=True, many=True
     )
-    protocol = ChoiceField(choices=ProtocolChoices, required=False)
+    protocol = ListField(
+        child=ChoiceField(choices=ProtocolChoices, required=False, allow_null=True),
+        required=False,
+        default=[],
+    )
+    source_ports = ListField(
+        child=IntegerField(),
+        required=False,
+        allow_empty=True,
+        default=[],
+    )
+    destination_ports = ListField(
+        child=IntegerField(),
+        required=False,
+        allow_empty=True,
+        default=[],
+    )
 
     class Meta:
         model = Application
@@ -35,8 +53,8 @@ class ApplicationSerializer(NetBoxModelSerializer):
             "name",
             "application_items",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "description",
             "tenant",
             "comments",
@@ -52,8 +70,8 @@ class ApplicationSerializer(NetBoxModelSerializer):
             "name",
             "application_items",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "description",
         )
 

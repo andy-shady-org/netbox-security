@@ -3,19 +3,15 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-from django.contrib.postgres.fields import ArrayField
-from django.core.validators import MaxValueValidator, MinValueValidator
 from netbox.search import SearchIndex, register_search
 
 from netbox.models import PrimaryModel, NetBoxModel
 from netbox.models.features import ContactsMixin
 
-from utilities.data import array_to_string
-
-from ipam.constants import SERVICE_PORT_MIN, SERVICE_PORT_MAX
 from dcim.models import Interface
 
 from netbox_security.constants import RULE_ASSIGNMENT_MODELS
+from netbox_security.mixins import PortsMixin
 
 from netbox_security.choices import (
     RuleStatusChoices,
@@ -31,7 +27,7 @@ __all__ = (
 )
 
 
-class NatRule(ContactsMixin, PrimaryModel):
+class NatRule(ContactsMixin, PortsMixin, PrimaryModel):
     """ """
 
     rule_set = models.ForeignKey(
@@ -99,28 +95,6 @@ class NatRule(ContactsMixin, PrimaryModel):
         blank=True,
         related_name="%(class)s_destination_pool",
     )
-    source_ports = ArrayField(
-        base_field=models.PositiveIntegerField(
-            validators=[
-                MinValueValidator(SERVICE_PORT_MIN),
-                MaxValueValidator(SERVICE_PORT_MAX),
-            ]
-        ),
-        null=True,
-        blank=True,
-        verbose_name=_("Source Port numbers"),
-    )
-    destination_ports = ArrayField(
-        base_field=models.PositiveIntegerField(
-            validators=[
-                MinValueValidator(SERVICE_PORT_MIN),
-                MaxValueValidator(SERVICE_PORT_MAX),
-            ]
-        ),
-        null=True,
-        blank=True,
-        verbose_name=_("Destination Port numbers"),
-    )
     custom_interface = models.CharField(
         max_length=50,
         choices=CustomInterfaceChoices,
@@ -147,14 +121,6 @@ class NatRule(ContactsMixin, PrimaryModel):
 
     def get_status_color(self):
         return RuleStatusChoices.colors.get(self.status)
-
-    @property
-    def source_port_list(self):
-        return array_to_string(self.source_ports)
-
-    @property
-    def destination_port_list(self):
-        return array_to_string(self.destination_ports)
 
 
 class NatRuleAssignment(NetBoxModel):

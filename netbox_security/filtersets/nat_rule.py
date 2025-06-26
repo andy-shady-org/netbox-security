@@ -7,7 +7,6 @@ from utilities.filters import (
     ContentTypeFilter,
     MultiValueCharFilter,
     MultiValueNumberFilter,
-    NumericArrayFilter,
 )
 from dcim.models import Device, VirtualDeviceContext
 from ipam.models import IPAddress, Prefix, IPRange
@@ -20,9 +19,10 @@ from netbox_security.models import (
 )
 
 from netbox_security.choices import AddressTypeChoices, RuleStatusChoices
+from netbox_security.mixins import PortsFilterSet
 
 
-class NatRuleFilterSet(NetBoxModelFilterSet):
+class NatRuleFilterSet(PortsFilterSet, NetBoxModelFilterSet):
     rule_set_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatRuleSet.objects.all(),
         field_name="rule_set",
@@ -148,10 +148,6 @@ class NatRuleFilterSet(NetBoxModelFilterSet):
         field_name="source_ranges",
         to_field_name="id",
         label=_("Source Range (ID)"),
-    )
-    source_ports = NumericArrayFilter(field_name="source_ports", lookup_expr="contains")
-    destination_ports = NumericArrayFilter(
-        field_name="destination_ports", lookup_expr="contains"
     )
     source_pool_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),

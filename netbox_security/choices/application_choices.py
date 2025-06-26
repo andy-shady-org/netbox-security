@@ -3,19 +3,21 @@ from utilities.choices import ChoiceSet
 
 class ProtocolChoices(ChoiceSet):
 
-    TCP = "tcp"
-    UDP = "udp"
-    ICMP = "icmp"
-    ICMPv6 = "icmp6"
-    IP = "ip"
-    IPIP = "ipip"
-    SCTP = "sctp"
-    PIM = "pim"
-    IGMP = "igmp"
-    GRE = "gre"
-    ESP = "esp"
+    ALL = "ALL"
+    TCP = "TCP"
+    UDP = "UDP"
+    ICMP = "ICMP"
+    ICMPv6 = "ICMP6"
+    IP = "IP"
+    IPIP = "IPIP"
+    SCTP = "SCTP"
+    PIM = "PIM"
+    IGMP = "IGMP"
+    GRE = "GRE"
+    ESP = "ESP"
 
     CHOICES = [
+        (ALL, "ALL", "green"),
         (TCP, "TCP", "green"),
         (UDP, "UDP", "red"),
         (ICMP, "ICMP", "blue"),

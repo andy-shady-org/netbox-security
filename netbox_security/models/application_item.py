@@ -1,42 +1,30 @@
 from django.urls import reverse
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MaxValueValidator, MinValueValidator
 from netbox.models import PrimaryModel
 from netbox.models.features import ContactsMixin
-from ipam.constants import SERVICE_PORT_MIN, SERVICE_PORT_MAX
 from netbox.search import SearchIndex, register_search
 
+from netbox_security.fields import ChoiceArrayField
 from netbox_security.choices import ProtocolChoices
+from netbox_security.mixins import PortsMixin
 
 __all__ = ("ApplicationItem", "ApplicationItemIndex")
 
 
-class ApplicationItem(ContactsMixin, PrimaryModel):
+class ApplicationItem(ContactsMixin, PortsMixin, PrimaryModel):
     name = models.CharField(max_length=255)
     index = models.PositiveIntegerField()
-    protocol = models.CharField(
-        blank=True,
+    protocol = ChoiceArrayField(
+        base_field=models.CharField(
+            choices=ProtocolChoices,
+            blank=True,
+        ),
+        default=list,
+        verbose_name=_("Protocols"),
         null=True,
-        max_length=255,
-        choices=ProtocolChoices,
-        default=ProtocolChoices.TCP,
-    )
-    destination_port = models.IntegerField(
         blank=True,
-        null=True,
-        validators=[
-            MinValueValidator(SERVICE_PORT_MIN),
-            MaxValueValidator(SERVICE_PORT_MAX),
-        ],
-    )
-    source_port = models.IntegerField(
-        blank=True,
-        null=True,
-        validators=[
-            MinValueValidator(SERVICE_PORT_MIN),
-            MaxValueValidator(SERVICE_PORT_MAX),
-        ],
+        size=5,
     )
 
     class Meta:
@@ -48,6 +36,10 @@ class ApplicationItem(ContactsMixin, PrimaryModel):
 
     def get_absolute_url(self):
         return reverse("plugins:netbox_security:applicationitem", args=[self.pk])
+
+    @property
+    def protocol_list(self):
+        return ", ".join(self.protocol) if self.protocol else ""
 
 
 @register_search

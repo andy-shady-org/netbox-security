@@ -17,16 +17,26 @@
                     <td>{{ object.index }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">{% trans "Protocol" %}</th>
-                    <td>{{ object.protocol }}</td>
+                    <th scope="row">{% trans "Protocols" %}</th>
+                    <td>
+                        {{ object.protocol_list|placeholder }}
+                    </td>
                 </tr>
                 <tr>
-                    <th scope="row">{% trans "Destination Port" %}</th>
-                    <td>{{ object.destination_port }}</td>
+                    <th scope="row">Source Ports</th>
+                    {% if object.source_ports %}
+                    <td>{{ object.source_port_list|placeholder }}</td>
+                    {% else %}
+                    <td>{{ object.source_ports|placeholder }}</td>
+                    {% endif %}
                 </tr>
                 <tr>
-                    <th scope="row">{% trans "Source Port" %}</th>
-                    <td>{{ object.source_port }}</td>
+                    <th scope="row">Destination Ports</th>
+                    {% if object.source_ports %}
+                    <td>{{ object.destination_port_list|placeholder }}</td>
+                    {% else %}
+                    <td>{{ object.destination_ports|placeholder }}</td>
+                    {% endif %}
                 </tr>
                 {% if object.description %}
                 <tr>

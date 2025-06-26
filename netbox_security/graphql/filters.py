@@ -8,7 +8,7 @@ from ipam.graphql.enums import IPAddressStatusEnum
 from tenancy.graphql.filter_mixins import ContactFilterMixin, TenancyFilterMixin
 from ipam.graphql.filters import IPAddressFilter, IPRangeFilter, PrefixFilter
 
-from .filter_lookups import PolicyActionArrayLookup
+from .filter_lookups import PolicyActionArrayLookup, ProtocolArrayLookup
 from .enums import (
     NetBoxSecurityFamilyEnum,
     NetBoxSecurityPoolTypeEnum,
@@ -19,7 +19,6 @@ from .enums import (
     NetBoxSecurityAddressTypeEnum,
     NetBoxSecurityLossPriorityEnum,
     NetBoxSecurityForwardingClassEnum,
-    NetBoxSecurityProtocolEnum,
 )
 
 from netbox_security.models import (
@@ -75,14 +74,15 @@ class NetBoxSecurityAddressListFilter(NetBoxModelFilterMixin):
 class NetBoxSecurityApplicationItemFilter(ContactFilterMixin, NetBoxModelFilterMixin):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     index: FilterLookup[int] | None = strawberry_django.filter_field()
-    protocol: List[
+    protocol: (
         Annotated[
-            "NetBoxSecurityProtocolEnum",
-            strawberry.lazy("netbox_security.graphql.enums"),
+            "ProtocolArrayLookup",
+            strawberry.lazy("netbox_security.graphql.filters"),
         ]
-    ] = strawberry_django.filter_field()
-    destination_port: FilterLookup[int] | None = strawberry_django.filter_field()
-    source_port: FilterLookup[int] | None = strawberry_django.filter_field()
+        | None
+    ) = strawberry_django.filter_field()
+    destination_ports: List[FilterLookup[int]] | None = strawberry_django.filter_field()
+    source_ports: List[FilterLookup[int]] | None = strawberry_django.filter_field()
 
 
 @strawberry_django.filter(Application, lookups=True)
@@ -97,14 +97,15 @@ class NetBoxSecurityApplicationFilter(
         ]
         | None
     ) = strawberry_django.filter_field()
-    protocol: List[
+    protocol: (
         Annotated[
-            "NetBoxSecurityProtocolEnum",
-            strawberry.lazy("netbox_security.graphql.enums"),
+            "ProtocolArrayLookup",
+            strawberry.lazy("netbox_security.graphql.filters"),
         ]
-    ] = strawberry_django.filter_field()
-    destination_port: FilterLookup[int] | None = strawberry_django.filter_field()
-    source_port: FilterLookup[int] | None = strawberry_django.filter_field()
+        | None
+    ) = strawberry_django.filter_field()
+    destination_ports: List[FilterLookup[int]] | None = strawberry_django.filter_field()
+    source_ports: List[FilterLookup[int]] | None = strawberry_django.filter_field()
 
 
 @strawberry_django.filter(ApplicationSet, lookups=True)

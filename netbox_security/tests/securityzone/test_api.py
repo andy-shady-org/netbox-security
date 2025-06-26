@@ -97,15 +97,15 @@ class SecurityZonePolicyAPITestCase(
         cls.applications = (
             Application(
                 name="item-7",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(
                 name="item-8",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(name="item-9"),
         )

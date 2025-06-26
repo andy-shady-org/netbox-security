@@ -2,15 +2,12 @@ from django.urls import reverse
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
-from django.contrib.postgres.fields import ArrayField
-from django.core.validators import MaxValueValidator, MinValueValidator
 from netbox.search import SearchIndex, register_search
 
 from netbox.models import NetBoxModel
-from utilities.data import array_to_string
-from ipam.constants import SERVICE_PORT_MIN, SERVICE_PORT_MAX
 from ipam.choices import IPAddressStatusChoices
 
+from netbox_security.mixins import PortsMixin
 
 __all__ = (
     "NatPoolMember",
@@ -18,7 +15,7 @@ __all__ = (
 )
 
 
-class NatPoolMember(NetBoxModel):
+class NatPoolMember(PortsMixin, NetBoxModel):
     """ """
 
     name = models.CharField(max_length=100)
@@ -52,26 +49,6 @@ class NatPoolMember(NetBoxModel):
         null=True,
         on_delete=models.CASCADE,
     )
-    source_ports = ArrayField(
-        base_field=models.PositiveIntegerField(
-            validators=[
-                MinValueValidator(SERVICE_PORT_MIN),
-                MaxValueValidator(SERVICE_PORT_MAX),
-            ]
-        ),
-        null=True,
-        verbose_name=_("Source Port numbers"),
-    )
-    destination_ports = ArrayField(
-        base_field=models.PositiveIntegerField(
-            validators=[
-                MinValueValidator(SERVICE_PORT_MIN),
-                MaxValueValidator(SERVICE_PORT_MAX),
-            ]
-        ),
-        null=True,
-        verbose_name=_("Destination Port numbers"),
-    )
     prerequisite_models = ("netbox_security.NatPool",)
 
     class Meta:
@@ -86,14 +63,6 @@ class NatPoolMember(NetBoxModel):
 
     def __str__(self):
         return f"{self.name}"
-
-    @property
-    def source_port_list(self):
-        return array_to_string(self.source_ports)
-
-    @property
-    def destination_port_list(self):
-        return array_to_string(self.destination_ports)
 
     def get_status_color(self):
         return IPAddressStatusChoices.colors.get(self.status)

@@ -11,6 +11,18 @@ __all__ = ("ApplicationItemTable",)
 
 class ApplicationItemTable(NetBoxTable):
     name = tables.LinkColumn()
+    protocol = tables.Column(
+        accessor=tables.A("protocol_list"),
+        order_by=tables.A("protocol"),
+    )
+    source_ports = tables.Column(
+        accessor=tables.A("source_port_list"),
+        order_by=tables.A("source_ports"),
+    )
+    destination_ports = tables.Column(
+        accessor=tables.A("destination_port_list"),
+        order_by=tables.A("destination_ports"),
+    )
     tags = TagColumn(url_name="plugins:netbox_security:applicationitem_list")
 
     class Meta(NetBoxTable.Meta):
@@ -21,8 +33,8 @@ class ApplicationItemTable(NetBoxTable):
             "index",
             "description",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "tags",
         )
         default_columns = (
@@ -31,6 +43,6 @@ class ApplicationItemTable(NetBoxTable):
             "index",
             "description",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
         )

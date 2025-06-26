@@ -24,24 +24,24 @@ class ApplicationItemViewTestCase(
     def setUpTestData(cls):
         cls.items = (
             ApplicationItem(
-                name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-7",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
-                name="item-2",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-8",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
-                name="item-3",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-9",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
         )
@@ -51,10 +51,10 @@ class ApplicationItemViewTestCase(
 
         cls.form_data = {
             "name": "item-4",
-            "destination_port": 1,
-            "source_port": 1,
+            "destination_ports": "1,2,3",
+            "source_ports": "1,2,3",
             "index": 1,
-            "protocol": ProtocolChoices.TCP,
+            "protocol": [ProtocolChoices.TCP],
             "tags": [t.pk for t in tags],
         }
 
@@ -63,17 +63,17 @@ class ApplicationItemViewTestCase(
         }
 
         cls.csv_data = (
-            "name,index,protocol,destination_port,source_port",
-            "item-5,1,tcp,1,2",
-            "item-6,2,tcp,2,1",
-            "item-7,3,udp,1,2",
+            "name,index,protocol,destination_ports,source_ports",
+            'item-5,1,"TCP,UDP","1,2","2,1"',
+            'item-6,1,"TCP,IP","1,2","2,1"',
+            'item-7,1,"TCP,UDP","1,2","2,1"',
         )
 
         cls.csv_update_data = (
             "id,name,protocol,description",
-            f"{cls.items[0].pk},item-8,tcp,test1",
-            f"{cls.items[1].pk},item-9,udp,test2",
-            f"{cls.items[2].pk},item-10,tcp,test3",
+            f'{cls.items[0].pk},item-8,"TCP",test1',
+            f'{cls.items[1].pk},item-9,"TCP",test1',
+            f'{cls.items[2].pk},item-10,"TCP",test1',
         )
 
 
@@ -95,24 +95,24 @@ class ApplicationViewTestCase(
     def setUpTestData(cls):
         cls.items = (
             ApplicationItem(
-                name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-7",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
-                name="item-2",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-8",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
-                name="item-3",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-9",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
         )
@@ -121,21 +121,21 @@ class ApplicationViewTestCase(
         cls.applications = (
             Application(
                 name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(
                 name="item-2",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(
                 name="item-3",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
         )
         Application.objects.bulk_create(cls.applications)
@@ -144,9 +144,9 @@ class ApplicationViewTestCase(
 
         cls.form_data = {
             "name": "item-4",
-            "destination_port": 1,
-            "source_port": 1,
-            "protocol": ProtocolChoices.TCP,
+            "destination_ports": "1,2",
+            "source_ports": "1,2",
+            "protocol": [ProtocolChoices.TCP],
             "tags": [t.pk for t in tags],
         }
 
@@ -155,17 +155,17 @@ class ApplicationViewTestCase(
         }
 
         cls.csv_data = (
-            "name,application_items,protocol,destination_port,source_port",
-            f'item-5,"{cls.items[0].name},{cls.items[1].name}",tcp,1,2',
-            "item-6,,tcp,2,1",
-            "item-7,,udp,1,2",
+            "name,application_items,protocol,destination_ports,source_ports",
+            f'item-5,"{cls.items[0].name},{cls.items[1].name}","TCP,UDP","1,2","2,1"',
+            f'item-6,,"TCP,UDP","1,2","2,1"',
+            f'item-7,,"TCP,UDP","1,2","2,1"',
         )
 
         cls.csv_update_data = (
             "id,name,protocol,description",
-            f"{cls.applications[0].pk},item-8,tcp,test1",
-            f"{cls.applications[1].pk},item-9,udp,test2",
-            f"{cls.applications[2].pk},item-10,tcp,test3",
+            f'{cls.applications[0].pk},item-8,"TCP,UDP",test1',
+            f'{cls.applications[1].pk},item-8,"TCP,UDP",test1',
+            f'{cls.applications[2].pk},item-8,"TCP,UDP",test1',
         )
 
 
@@ -187,24 +187,24 @@ class ApplicationSetViewTestCase(
     def setUpTestData(cls):
         cls.items = (
             ApplicationItem(
-                name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-7",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
-                name="item-2",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-8",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
-                name="item-3",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-9",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
         )
@@ -213,21 +213,21 @@ class ApplicationSetViewTestCase(
         cls.applications = (
             Application(
                 name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(
                 name="item-2",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(
                 name="item-3",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
         )
         Application.objects.bulk_create(cls.applications)

@@ -1,4 +1,9 @@
-from rest_framework.serializers import HyperlinkedIdentityField, ChoiceField
+from rest_framework.serializers import (
+    HyperlinkedIdentityField,
+    ChoiceField,
+    ListField,
+    IntegerField,
+)
 from netbox.api.serializers import NetBoxModelSerializer
 from netbox_security.models import ApplicationItem
 from netbox_security.choices import ProtocolChoices
@@ -8,7 +13,23 @@ class ApplicationItemSerializer(NetBoxModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:applicationitem-detail"
     )
-    protocol = ChoiceField(choices=ProtocolChoices, required=False)
+    protocol = ListField(
+        child=ChoiceField(choices=ProtocolChoices, required=False),
+        required=False,
+        default=[],
+    )
+    source_ports = ListField(
+        child=IntegerField(),
+        required=False,
+        allow_empty=True,
+        default=[],
+    )
+    destination_ports = ListField(
+        child=IntegerField(),
+        required=False,
+        allow_empty=True,
+        default=[],
+    )
 
     class Meta:
         model = ApplicationItem
@@ -19,8 +40,8 @@ class ApplicationItemSerializer(NetBoxModelSerializer):
             "name",
             "index",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "description",
             "comments",
             "tags",
@@ -35,7 +56,7 @@ class ApplicationItemSerializer(NetBoxModelSerializer):
             "name",
             "index",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "description",
         )

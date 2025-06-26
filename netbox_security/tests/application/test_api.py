@@ -18,37 +18,37 @@ class ApplicationItemAPITestCase(
 
     brief_fields = [
         "description",
-        "destination_port",
+        "destination_ports",
         "display",
         "id",
         "index",
         "name",
         "protocol",
-        "source_port",
+        "source_ports",
         "url",
     ]
 
     create_data = [
         {
             "name": "item-1",
-            "destination_port": 1,
-            "source_port": 1,
+            "destination_ports": [1],
+            "source_ports": [1],
             "index": 1,
-            "protocol": ProtocolChoices.TCP,
+            "protocol": [ProtocolChoices.TCP],
         },
         {
             "name": "item-2",
-            "destination_port": 2,
-            "source_port": 2,
+            "destination_ports": [2],
+            "source_ports": [2],
             "index": 2,
-            "protocol": ProtocolChoices.TCP,
+            "protocol": [ProtocolChoices.TCP],
         },
         {
             "name": "item-3",
-            "destination_port": 3,
-            "source_port": 3,
+            "destination_ports": [3],
+            "source_ports": [3],
             "index": 4,
-            "protocol": ProtocolChoices.TCP,
+            "protocol": [ProtocolChoices.TCP],
         },
     ]
 
@@ -61,23 +61,23 @@ class ApplicationItemAPITestCase(
         items = (
             ApplicationItem(
                 name="item-7",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
                 name="item-8",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
                 name="item-9",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
         )
@@ -99,33 +99,33 @@ class ApplicationAPITestCase(
     brief_fields = [
         "application_items",
         "description",
-        "destination_port",
+        "destination_ports",
         "display",
         "id",
         "name",
         "protocol",
-        "source_port",
+        "source_ports",
         "url",
     ]
 
     create_data = [
         {
             "name": "item-1",
-            "destination_port": 3,
-            "source_port": 3,
-            "protocol": ProtocolChoices.TCP,
+            "destination_ports": [1],
+            "source_ports": [1],
+            "protocol": [ProtocolChoices.TCP],
         },
         {
             "name": "item-2",
-            "destination_port": 3,
-            "source_port": 3,
-            "protocol": ProtocolChoices.TCP,
+            "destination_ports": [1],
+            "source_ports": [1],
+            "protocol": [ProtocolChoices.TCP],
         },
         {
             "name": "item-3",
-            "destination_port": 3,
-            "source_port": 3,
-            "protocol": ProtocolChoices.TCP,
+            "destination_ports": [1],
+            "source_ports": [1],
+            "protocol": [ProtocolChoices.TCP],
         },
     ]
 
@@ -138,23 +138,23 @@ class ApplicationAPITestCase(
         cls.items = (
             ApplicationItem(
                 name="item-7",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
                 name="item-8",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
                 name="item-9",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
         )
@@ -163,15 +163,15 @@ class ApplicationAPITestCase(
         cls.applications = (
             Application(
                 name="item-7",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(
                 name="item-8",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(name="item-9"),
         )
@@ -221,23 +221,23 @@ class ApplicationSetAPITestCase(
         cls.items = (
             ApplicationItem(
                 name="item-7",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
                 name="item-8",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
                 name="item-9",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
         )
@@ -245,13 +245,18 @@ class ApplicationSetAPITestCase(
 
         cls.applications = (
             Application(
-                name="app-7",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-7",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
-            Application(name="app-8"),
-            Application(name="app-9"),
+            Application(
+                name="item-8",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
+            ),
+            Application(name="item-9"),
         )
         Application.objects.bulk_create(cls.applications)
         cls.applications[1].application_items.set([cls.items[0]])

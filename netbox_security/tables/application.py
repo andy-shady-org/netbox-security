@@ -2,7 +2,11 @@ import django_tables2 as tables
 from django.utils.translation import gettext_lazy as _
 
 from netbox.tables import NetBoxTable
-from netbox.tables.columns import TagColumn, ActionsColumn, ManyToManyColumn
+from netbox.tables.columns import (
+    TagColumn,
+    ActionsColumn,
+    ManyToManyColumn,
+)
 from tenancy.tables import TenancyColumnsMixin
 
 from netbox_security.models import Application, ApplicationAssignment
@@ -20,6 +24,18 @@ class ApplicationTable(TenancyColumnsMixin, NetBoxTable):
     application_items = ManyToManyColumn(
         orderable=False, linkify=True, verbose_name=_("Application Items")
     )
+    protocol = tables.Column(
+        accessor=tables.A("protocol_list"),
+        order_by=tables.A("protocol"),
+    )
+    source_ports = tables.Column(
+        accessor=tables.A("source_port_list"),
+        order_by=tables.A("source_ports"),
+    )
+    destination_ports = tables.Column(
+        accessor=tables.A("destination_port_list"),
+        order_by=tables.A("destination_ports"),
+    )
     tags = TagColumn(url_name="plugins:netbox_security:application_list")
 
     class Meta(NetBoxTable.Meta):
@@ -30,8 +46,8 @@ class ApplicationTable(TenancyColumnsMixin, NetBoxTable):
             "description",
             "application_items",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "tenant",
             "tags",
         )
@@ -41,8 +57,8 @@ class ApplicationTable(TenancyColumnsMixin, NetBoxTable):
             "description",
             "application_items",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "tenant",
         )
 

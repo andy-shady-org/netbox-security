@@ -2,48 +2,36 @@ from django.urls import reverse
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-from django.core.validators import MaxValueValidator, MinValueValidator
 from netbox.models import PrimaryModel, NetBoxModel
 from netbox.models.features import ContactsMixin
 from dcim.models import Device, VirtualDeviceContext
-from ipam.constants import SERVICE_PORT_MIN, SERVICE_PORT_MAX
 from netbox.search import SearchIndex, register_search
 
+from netbox_security.fields import ChoiceArrayField
 from netbox_security.choices import ProtocolChoices
 from netbox_security.constants import APPLICATION_ASSIGNMENT_MODELS
-
+from netbox_security.mixins import PortsMixin
 
 __all__ = ("Application", "ApplicationAssignment", "ApplicationIndex")
 
 
-class Application(ContactsMixin, PrimaryModel):
+class Application(ContactsMixin, PortsMixin, PrimaryModel):
     name = models.CharField(max_length=255)
     application_items = models.ManyToManyField(
         to="netbox_security.ApplicationItem",
         blank=True,
         related_name="+",
     )
-    protocol = models.CharField(
-        blank=True,
+    protocol = ChoiceArrayField(
+        base_field=models.CharField(
+            choices=ProtocolChoices,
+            blank=True,
+        ),
         null=True,
-        max_length=255,
-        choices=ProtocolChoices,
-    )
-    destination_port = models.IntegerField(
         blank=True,
-        null=True,
-        validators=[
-            MinValueValidator(SERVICE_PORT_MIN),
-            MaxValueValidator(SERVICE_PORT_MAX),
-        ],
-    )
-    source_port = models.IntegerField(
-        blank=True,
-        null=True,
-        validators=[
-            MinValueValidator(SERVICE_PORT_MIN),
-            MaxValueValidator(SERVICE_PORT_MAX),
-        ],
+        default=list,
+        verbose_name=_("Protocols"),
+        size=5,
     )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
@@ -64,6 +52,10 @@ class Application(ContactsMixin, PrimaryModel):
 
     def get_absolute_url(self):
         return reverse("plugins:netbox_security:application", args=[self.pk])
+
+    @property
+    def protocol_list(self):
+        return ", ".join(self.protocol) if self.protocol else ""
 
 
 class ApplicationAssignment(NetBoxModel):
