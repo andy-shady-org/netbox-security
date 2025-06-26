@@ -14,7 +14,7 @@ from netbox_security.filtersets import (
 from netbox_security.choices import ProtocolChoices, ActionChoices
 
 
-class ApplicationItemFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class ApplicationItemFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
     queryset = ApplicationItem.objects.all()
     filterset = ApplicationItemFilterSet
 
@@ -23,23 +23,23 @@ class ApplicationItemFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         cls.items = (
             ApplicationItem(
                 name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                source_ports=[1, 2, 3],
+                destination_ports=[4, 5, 6],
                 index=1,
             ),
             ApplicationItem(
                 name="item-2",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                source_ports=[4, 5, 6],
+                destination_ports=[1, 2, 3],
                 index=1,
             ),
             ApplicationItem(
                 name="item-3",
-                protocol=ProtocolChoices.UDP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.UDP],
+                source_ports=[1, 2, 3],
+                destination_ports=[4, 5, 6],
                 index=1,
             ),
         )
@@ -57,8 +57,18 @@ class ApplicationItemFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         params = {"protocol": [ProtocolChoices.UDP]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
+    def test_ports(self):
+        params = {"source_ports": 1}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"source_ports": 4}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"destination_ports": 1}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"destination_ports": 4}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
-class ApplicationFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+
+class ApplicationFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
     queryset = Application.objects.all()
     filterset = ApplicationFilterSet
 
@@ -81,24 +91,24 @@ class ApplicationFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
 
         cls.items = (
             ApplicationItem(
-                name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-7",
+                protocol=[ProtocolChoices.TCP],
+                source_ports=[1, 2, 3],
+                destination_ports=[4, 5, 6],
                 index=1,
             ),
             ApplicationItem(
-                name="item-2",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-8",
+                protocol=[ProtocolChoices.TCP],
+                source_ports=[4, 5, 6],
+                destination_ports=[1, 2, 3],
                 index=1,
             ),
             ApplicationItem(
-                name="item-3",
-                protocol=ProtocolChoices.UDP,
-                destination_port=1,
-                source_port=1,
+                name="item-9",
+                protocol=[ProtocolChoices.UDP],
+                source_ports=[1, 2, 3],
+                destination_ports=[4, 5, 6],
                 index=1,
             ),
         )
@@ -107,14 +117,20 @@ class ApplicationFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         cls.applications = (
             Application(
                 name="item-1",
-                protocol=ProtocolChoices.ICMP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.ICMP],
+                source_ports=[1, 2, 3],
+                destination_ports=[4, 5, 6],
                 tenant=cls.tenants[0],
             ),
-            Application(name="item-2"),
+            Application(
+                name="item-2",
+                source_ports=[4, 5, 6],
+                destination_ports=[1, 2, 3],
+            ),
             Application(
                 name="item-3",
+                source_ports=[1, 2, 3],
+                destination_ports=[4, 5, 6],
                 tenant=cls.tenants[2],
             ),
         )
@@ -229,8 +245,18 @@ class ApplicationFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
+    def test_ports(self):
+        params = {"source_ports": 1}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"source_ports": 4}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"destination_ports": 1}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"destination_ports": 4}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
-class ApplicationSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+
+class ApplicationSetFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
     queryset = ApplicationSet.objects.all()
     filterset = ApplicationSetFilterSet
 
@@ -253,24 +279,24 @@ class ApplicationSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
 
         cls.items = (
             ApplicationItem(
-                name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-7",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
-                name="item-2",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-8",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
-                name="item-3",
-                protocol=ProtocolChoices.UDP,
-                destination_port=1,
-                source_port=1,
+                name="item-9",
+                protocol=[ProtocolChoices.UDP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
         )
@@ -279,9 +305,9 @@ class ApplicationSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         cls.applications = (
             Application(
                 name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 tenant=cls.tenants[0],
             ),
             Application(name="item-2", tenant=cls.tenants[1]),

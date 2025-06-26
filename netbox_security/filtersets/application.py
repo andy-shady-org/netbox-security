@@ -18,10 +18,11 @@ from netbox_security.models import (
     ApplicationItem,
     SecurityZonePolicy,
 )
-from netbox_security.choices import ProtocolChoices
+
+from netbox_security.mixins import PortsFilterSet
 
 
-class ApplicationFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+class ApplicationFilterSet(PortsFilterSet, TenancyFilterSet, NetBoxModelFilterSet):
     application_items_id = django_filters.ModelMultipleChoiceFilter(
         field_name="application_items",
         queryset=ApplicationItem.objects.all(),
@@ -34,9 +35,9 @@ class ApplicationFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         to_field_name="name",
         label=_("Application Item (name)"),
     )
-    protocol = django_filters.MultipleChoiceFilter(
-        choices=ProtocolChoices,
-        required=False,
+    protocol = MultiValueCharFilter(
+        method="filter_protocol",
+        label=_("Protocols"),
     )
     security_zone_policy_id = django_filters.ModelMultipleChoiceFilter(
         field_name="securityzonepolicy_applications",
@@ -56,9 +57,13 @@ class ApplicationFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
             "id",
             "name",
             "description",
-            "destination_port",
-            "source_port",
         ]
+
+    def filter_protocol(self, queryset, name, value):
+        if not value:
+            return queryset
+
+        return queryset.filter(protocol__overlap=value)
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""

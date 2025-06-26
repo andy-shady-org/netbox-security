@@ -2,7 +2,6 @@ import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
-from utilities.filters import NumericArrayFilter
 
 from ipam.models import IPAddress, Prefix, IPRange
 from ipam.choices import IPAddressStatusChoices
@@ -11,9 +10,10 @@ from netbox_security.models import (
     NatPool,
     NatPoolMember,
 )
+from netbox_security.mixins import PortsFilterSet
 
 
-class NatPoolMemberFilterSet(NetBoxModelFilterSet):
+class NatPoolMemberFilterSet(PortsFilterSet, NetBoxModelFilterSet):
     pool_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
         field_name="pool",
@@ -65,10 +65,6 @@ class NatPoolMemberFilterSet(NetBoxModelFilterSet):
     status = django_filters.MultipleChoiceFilter(
         choices=IPAddressStatusChoices,
         required=False,
-    )
-    source_ports = NumericArrayFilter(field_name="source_ports", lookup_expr="contains")
-    destination_ports = NumericArrayFilter(
-        field_name="destination_ports", lookup_expr="contains"
     )
 
     class Meta:

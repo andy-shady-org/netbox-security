@@ -136,21 +136,21 @@ class SecurityZonePolicyViewTestCase(
         cls.applications = (
             Application(
                 name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(
                 name="item-2",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(
                 name="item-3",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
         )
         Application.objects.bulk_create(cls.applications)

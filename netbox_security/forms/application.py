@@ -17,7 +17,7 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
     CSVModelMultipleChoiceField,
     DynamicModelMultipleChoiceField,
-    CSVChoiceField,
+    CSVMultipleChoiceField,
 )
 
 from tenancy.models import Tenant, TenantGroup
@@ -28,6 +28,8 @@ from netbox_security.models import (
     ApplicationItem,
 )
 from netbox_security.choices import ProtocolChoices
+from netbox_security.mixins import PortsForm
+
 
 __all__ = (
     "ApplicationForm",
@@ -38,7 +40,7 @@ __all__ = (
 )
 
 
-class ApplicationForm(TenancyForm, NetBoxModelForm):
+class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
     application_items = DynamicModelMultipleChoiceField(
         queryset=ApplicationItem.objects.all(),
@@ -46,20 +48,17 @@ class ApplicationForm(TenancyForm, NetBoxModelForm):
         quick_add=True,
         help_text=_("A list of Application Items to include in this set."),
     )
-    protocol = forms.ChoiceField(
+    protocol = forms.MultipleChoiceField(
         choices=ProtocolChoices,
         required=False,
     )
-    destination_port = forms.IntegerField(required=False)
-    source_port = forms.IntegerField(required=False)
-    description = forms.CharField(max_length=200, required=False)
     fieldsets = (
         FieldSet(
             "name",
             "application_items",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "description",
             name=_("Application Parameters"),
         ),
@@ -74,8 +73,8 @@ class ApplicationForm(TenancyForm, NetBoxModelForm):
             "name",
             "application_items",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "tenant_group",
             "tenant",
             "description",
@@ -84,7 +83,7 @@ class ApplicationForm(TenancyForm, NetBoxModelForm):
         ]
 
 
-class ApplicationFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+class ApplicationFilterForm(PortsForm, TenancyFilterForm, NetBoxModelFilterSetForm):
     model = Application
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
@@ -92,8 +91,8 @@ class ApplicationFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
             "name",
             "application_items_id",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             name=_("Application"),
         ),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
@@ -107,12 +106,10 @@ class ApplicationFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
         choices=ProtocolChoices,
         required=False,
     )
-    destination_port = forms.IntegerField(required=False)
-    source_port = forms.IntegerField(required=False)
     tags = TagFilterField(model)
 
 
-class ApplicationImportForm(NetBoxModelImportForm):
+class ApplicationImportForm(PortsForm, NetBoxModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     description = forms.CharField(max_length=200, required=False)
     tenant = CSVModelChoiceField(
@@ -128,15 +125,7 @@ class ApplicationImportForm(NetBoxModelImportForm):
         help_text=_("An list of Applications Items to include in this set."),
         label=_("Application Items"),
     )
-    destination_port = forms.IntegerField(
-        required=False,
-        label=_("Destination Port"),
-    )
-    source_port = forms.IntegerField(
-        required=False,
-        label=_("Source Port"),
-    )
-    protocol = CSVChoiceField(
+    protocol = CSVMultipleChoiceField(
         choices=ProtocolChoices,
         required=False,
     )
@@ -146,8 +135,8 @@ class ApplicationImportForm(NetBoxModelImportForm):
         fields = (
             "name",
             "application_items",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "protocol",
             "description",
             "tenant",
@@ -155,7 +144,7 @@ class ApplicationImportForm(NetBoxModelImportForm):
         )
 
 
-class ApplicationBulkEditForm(NetBoxModelBulkEditForm):
+class ApplicationBulkEditForm(PortsForm, NetBoxModelBulkEditForm):
     model = Application
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
@@ -173,19 +162,17 @@ class ApplicationBulkEditForm(NetBoxModelBulkEditForm):
         queryset=ApplicationItem.objects.all(),
         required=False,
     )
-    protocol = forms.ChoiceField(
+    protocol = forms.MultipleChoiceField(
         choices=ProtocolChoices,
         required=False,
     )
-    destination_port = forms.IntegerField(required=False)
-    source_port = forms.IntegerField(required=False)
     nullable_fields = ["description", "tenant"]
     fieldsets = (
         FieldSet(
             "application_items",
             "protocol",
-            "destination_port",
-            "source_port",
+            "source_ports",
+            "destination_ports",
             "description",
         ),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),

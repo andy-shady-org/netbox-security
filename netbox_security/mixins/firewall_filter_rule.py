@@ -9,6 +9,8 @@ from netbox_security.choices import (
 )
 from netbox_security.models import FirewallRuleFromSetting, FirewallRuleThenSetting
 
+__all__ = ("FilterRuleSettingFormMixin",)
+
 
 class FilterRuleSettingFormMixin:
     FROM_MODEL = FirewallRuleFromSetting

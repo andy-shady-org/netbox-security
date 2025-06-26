@@ -8,7 +8,6 @@ from netbox.forms import (
     NetBoxModelFilterSetForm,
 )
 from ipam.models import IPAddress, Prefix, IPRange
-from ipam.constants import SERVICE_PORT_MIN, SERVICE_PORT_MAX
 
 from utilities.forms.rendering import FieldSet, ObjectAttribute, TabbedGroups
 from utilities.forms.fields import (
@@ -16,7 +15,6 @@ from utilities.forms.fields import (
     DynamicModelMultipleChoiceField,
     TagFilterField,
     CSVChoiceField,
-    NumericArrayField,
     CSVModelChoiceField,
     CSVModelMultipleChoiceField,
     CommentField,
@@ -34,6 +32,7 @@ from netbox_security.models import (
     NatRule,
     NatRuleAssignment,
 )
+from netbox_security.mixins import PortsForm
 
 
 __all__ = (
@@ -45,7 +44,7 @@ __all__ = (
 )
 
 
-class NatRuleForm(NetBoxModelForm):
+class NatRuleForm(PortsForm, NetBoxModelForm):
     rule_set = DynamicModelChoiceField(
         queryset=NatRuleSet.objects.all(),
         quick_add=True,
@@ -90,20 +89,6 @@ class NatRuleForm(NetBoxModelForm):
     destination_ranges = DynamicModelMultipleChoiceField(
         queryset=IPRange.objects.all(),
         quick_add=True,
-        required=False,
-    )
-    source_ports = NumericArrayField(
-        base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
-        ),
-        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
-        required=False,
-    )
-    destination_ports = NumericArrayField(
-        base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
-        ),
-        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
         required=False,
     )
     source_pool = DynamicModelChoiceField(
@@ -227,7 +212,7 @@ class NatRuleForm(NetBoxModelForm):
         return self.cleaned_data
 
 
-class NatRuleFilterForm(NetBoxModelFilterSetForm):
+class NatRuleFilterForm(PortsForm, NetBoxModelFilterSetForm):
     model = NatRule
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
@@ -236,7 +221,7 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
             "source_addresses_id",
             "source_prefixes_id",
             "source_ranges_id",
-            "source_ports_id",
+            "source_ports",
             "source_type",
             "source_pool_id",
             name=_("Sources"),
@@ -245,7 +230,7 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
             "destination_addresses_id",
             "destination_prefixes_id",
             "destination_ranges_id",
-            "destination_ports_id",
+            "destination_ports",
             "destination_type",
             "destination_pool_id",
             name=_("Destinations"),
@@ -285,13 +270,6 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
         required=False,
         widget=forms.Select(),
     )
-    source_ports = NumericArrayField(
-        base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
-        ),
-        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
-        required=False,
-    )
     destination_addresses_id = DynamicModelMultipleChoiceField(
         queryset=IPAddress.objects.all(),
         label=_("Destination Addresses"),
@@ -317,13 +295,6 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
         label=_("Destination Pool"),
         required=False,
     )
-    destination_ports = NumericArrayField(
-        base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
-        ),
-        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
-        required=False,
-    )
     pool_id = DynamicModelMultipleChoiceField(
         queryset=NatPool.objects.all(),
         label=_("NAT Pool"),
@@ -335,7 +306,7 @@ class NatRuleFilterForm(NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class NatRuleImportForm(NetBoxModelImportForm):
+class NatRuleImportForm(PortsForm, NetBoxModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     rule_set = CSVModelChoiceField(
         queryset=NatRuleSet.objects.all(),
@@ -378,20 +349,6 @@ class NatRuleImportForm(NetBoxModelImportForm):
     )
     destination_ranges = CSVModelMultipleChoiceField(
         queryset=IPRange.objects.all(),
-        required=False,
-    )
-    source_ports = NumericArrayField(
-        base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
-        ),
-        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
-        required=False,
-    )
-    destination_ports = NumericArrayField(
-        base_field=forms.IntegerField(
-            min_value=SERVICE_PORT_MIN, max_value=SERVICE_PORT_MAX
-        ),
-        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
         required=False,
     )
     source_pool = CSVModelChoiceField(
@@ -482,7 +439,7 @@ class NatRuleImportForm(NetBoxModelImportForm):
         return self.cleaned_data
 
 
-class NatRuleBulkEditForm(NetBoxModelBulkEditForm):
+class NatRuleBulkEditForm(PortsForm, NetBoxModelBulkEditForm):
     model = NatRule
     rule_set = DynamicModelMultipleChoiceField(
         queryset=NatRuleSet.objects.all(), required=False
@@ -514,6 +471,8 @@ class NatRuleBulkEditForm(NetBoxModelBulkEditForm):
             "destination_type",
             "source_pool",
             "destination_pool",
+            "source_ports",
+            "destination_ports",
             "pool",
         ),
         FieldSet("tags", name=_("Tags")),

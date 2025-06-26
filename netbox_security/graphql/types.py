@@ -82,9 +82,9 @@ class NetBoxSecurityAddressListType(NetBoxObjectType):
 class NetBoxSecurityApplicationItemType(NetBoxObjectType):
     name: str
     index: int
-    protocol: str | None
-    destination_port: int | None
-    source_port: int | None
+    protocol: List[str] | None
+    destination_ports: List[int] | None
+    source_ports: List[int] | None
 
 
 @strawberry_django.type(
@@ -99,9 +99,9 @@ class NetBoxSecurityApplicationType(NetBoxObjectType):
             strawberry.lazy("netbox_security.graphql.types"),
         ]
     ]
-    protocol: str | None
-    destination_port: int | None
-    source_port: int | None
+    protocol: List[str] | None
+    destination_ports: List[int] | None
+    source_ports: List[int] | None
 
 
 @strawberry_django.type(

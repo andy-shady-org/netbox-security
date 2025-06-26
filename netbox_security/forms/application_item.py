@@ -12,13 +12,14 @@ from utilities.forms.rendering import FieldSet
 from utilities.forms.fields import (
     TagFilterField,
     CommentField,
-    CSVChoiceField,
+    CSVMultipleChoiceField,
 )
 
 from netbox_security.models import (
     ApplicationItem,
 )
 from netbox_security.choices import ProtocolChoices
+from netbox_security.mixins import PortsForm
 
 __all__ = (
     "ApplicationItemForm",
@@ -28,23 +29,21 @@ __all__ = (
 )
 
 
-class ApplicationItemForm(NetBoxModelForm):
+class ApplicationItemForm(PortsForm, NetBoxModelForm):
     name = forms.CharField(max_length=255, required=True)
     index = forms.IntegerField(required=True)
-    protocol = forms.ChoiceField(
+    protocol = forms.MultipleChoiceField(
         choices=ProtocolChoices,
         required=True,
     )
-    destination_port = forms.IntegerField(required=True)
-    source_port = forms.IntegerField(required=True)
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
         FieldSet(
             "name",
             "index",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "description",
             name=_("Application Items"),
         ),
@@ -58,15 +57,15 @@ class ApplicationItemForm(NetBoxModelForm):
             "name",
             "index",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "description",
             "comments",
             "tags",
         ]
 
 
-class ApplicationItemFilterForm(NetBoxModelFilterSetForm):
+class ApplicationItemFilterForm(PortsForm, NetBoxModelFilterSetForm):
     model = ApplicationItem
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
@@ -74,8 +73,8 @@ class ApplicationItemFilterForm(NetBoxModelFilterSetForm):
             "name",
             "index",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "description",
             name=_("Application Items"),
         ),
@@ -83,29 +82,19 @@ class ApplicationItemFilterForm(NetBoxModelFilterSetForm):
     index = forms.IntegerField(required=False)
     protocol = forms.MultipleChoiceField(
         choices=ProtocolChoices,
-        required=True,
+        required=False,
     )
-    destination_port = forms.IntegerField(required=False)
-    source_port = forms.IntegerField(required=False)
     tags = TagFilterField(model)
 
 
-class ApplicationItemImportForm(NetBoxModelImportForm):
+class ApplicationItemImportForm(PortsForm, NetBoxModelImportForm):
     name = forms.CharField(max_length=255, required=True)
     index = forms.IntegerField(
         required=True,
         label=_("Index"),
     )
     description = forms.CharField(max_length=200, required=False)
-    destination_port = forms.IntegerField(
-        required=True,
-        label=_("Destination Port"),
-    )
-    source_port = forms.IntegerField(
-        required=True,
-        label=_("Source Port"),
-    )
-    protocol = CSVChoiceField(
+    protocol = CSVMultipleChoiceField(
         choices=ProtocolChoices,
         required=True,
     )
@@ -116,8 +105,8 @@ class ApplicationItemImportForm(NetBoxModelImportForm):
             "name",
             "index",
             "protocol",
-            "destination_port",
-            "source_port",
+            "destination_ports",
+            "source_ports",
             "description",
             "tags",
         )
@@ -127,7 +116,7 @@ class ApplicationItemBulkEditForm(NetBoxModelBulkEditForm):
     model = ApplicationItem
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
-    protocol = forms.ChoiceField(
+    protocol = forms.MultipleChoiceField(
         choices=ProtocolChoices,
         required=False,
     )

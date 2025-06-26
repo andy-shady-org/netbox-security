@@ -22,8 +22,8 @@ from netbox_security.filtersets import (
     RuleDirectionChoices,
     NatTypeChoices,
     ActionChoices,
-    ProtocolChoices,
 )
+from netbox_security.choices import ProtocolChoices
 
 
 class SecurityZoneFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
@@ -166,24 +166,24 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
 
         cls.items = (
             ApplicationItem(
-                name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-7",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
-                name="item-2",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                name="item-8",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
             ApplicationItem(
-                name="item-3",
-                protocol=ProtocolChoices.UDP,
-                destination_port=1,
-                source_port=1,
+                name="item-9",
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
                 index=1,
             ),
         )
@@ -192,12 +192,14 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         cls.applications = (
             Application(
                 name="item-1",
-                protocol=ProtocolChoices.TCP,
-                destination_port=1,
-                source_port=1,
+                protocol=[ProtocolChoices.TCP],
+                destination_ports=[1],
+                source_ports=[1],
             ),
             Application(name="item-2"),
-            Application(name="item-3"),
+            Application(
+                name="item-3",
+            ),
         )
         Application.objects.bulk_create(cls.applications)
         for application in cls.applications:
