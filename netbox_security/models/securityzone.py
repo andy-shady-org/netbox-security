@@ -21,7 +21,6 @@ class SecurityZone(ContactsMixin, PrimaryModel):
     )
     identifier = models.CharField(
         max_length=100,
-        unique=True,
         blank=True,
         null=True,
     )

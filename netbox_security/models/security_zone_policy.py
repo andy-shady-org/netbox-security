@@ -22,7 +22,6 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
     index = models.PositiveIntegerField()
     identifier = models.CharField(
         max_length=100,
-        unique=True,
         blank=True,
         null=True,
     )

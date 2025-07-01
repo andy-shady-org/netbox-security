@@ -13,31 +13,31 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="address",
             name="identifier",
-            field=models.CharField(blank=True, max_length=100, null=True, unique=True),
+            field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AddField(
             model_name="addressset",
             name="identifier",
-            field=models.CharField(blank=True, max_length=100, null=True, unique=True),
+            field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AddField(
             model_name="application",
             name="identifier",
-            field=models.CharField(blank=True, max_length=100, null=True, unique=True),
+            field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AddField(
             model_name="applicationset",
             name="identifier",
-            field=models.CharField(blank=True, max_length=100, null=True, unique=True),
+            field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AddField(
             model_name="securityzone",
             name="identifier",
-            field=models.CharField(blank=True, max_length=100, null=True, unique=True),
+            field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AddField(
             model_name="securityzonepolicy",
             name="identifier",
-            field=models.CharField(blank=True, max_length=100, null=True, unique=True),
+            field=models.CharField(blank=True, max_length=100, null=True),
         ),
     ]
