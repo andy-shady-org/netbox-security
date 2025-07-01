@@ -17,6 +17,12 @@ __all__ = ("Application", "ApplicationAssignment", "ApplicationIndex")
 
 class Application(ContactsMixin, PortsMixin, PrimaryModel):
     name = models.CharField(max_length=255)
+    identifier = models.CharField(
+        max_length=100,
+        unique=True,
+        blank=True,
+        null=True,
+    )
     application_items = models.ManyToManyField(
         to="netbox_security.ApplicationItem",
         blank=True,

@@ -35,9 +35,10 @@ __all__ = (
 
 class SecurityZoneForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
-        FieldSet("name", "description", name=_("Security Zone")),
+        FieldSet("name", "identifier", "description", name=_("Security Zone")),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
@@ -47,6 +48,7 @@ class SecurityZoneForm(TenancyForm, NetBoxModelForm):
         model = SecurityZone
         fields = [
             "name",
+            "identifier",
             "tenant_group",
             "tenant",
             "description",
@@ -61,6 +63,7 @@ class SecurityZoneFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
         FieldSet("q", "filter_id", "tag"),
         FieldSet(
             "name",
+            "identifier",
         ),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
@@ -68,6 +71,7 @@ class SecurityZoneFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
 
 
 class SecurityZoneImportForm(NetBoxModelImportForm):
+    identifier = forms.CharField(max_length=100, required=False)
     tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
@@ -79,6 +83,7 @@ class SecurityZoneImportForm(NetBoxModelImportForm):
         model = SecurityZone
         fields = (
             "name",
+            "identifier",
             "description",
             "tenant",
             "tags",

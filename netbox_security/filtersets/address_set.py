@@ -36,7 +36,7 @@ class AddressSetFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
 
     class Meta:
         model = AddressSet
-        fields = ["id", "name", "description"]
+        fields = ["id", "name", "description", "identifier"]
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""

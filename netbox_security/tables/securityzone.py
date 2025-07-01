@@ -27,6 +27,7 @@ class SecurityZoneTable(TenancyColumnsMixin, NetBoxTable):
         fields = (
             "pk",
             "name",
+            "identifier",
             "description",
             "source_policy_count",
             "destination_policy_count",
@@ -36,6 +37,7 @@ class SecurityZoneTable(TenancyColumnsMixin, NetBoxTable):
         default_columns = (
             "pk",
             "name",
+            "identifier",
             "description",
             "source_policy_count",
             "destination_policy_count",

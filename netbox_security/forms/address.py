@@ -37,6 +37,7 @@ __all__ = (
 
 class AddressForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     address = IPNetworkFormField(
         required=False,
         label=_("Address"),
@@ -57,6 +58,7 @@ class AddressForm(TenancyForm, NetBoxModelForm):
     fieldsets = (
         FieldSet(
             "name",
+            "identifier",
             "address",
             "dns_name",
             "ip_range",
@@ -72,6 +74,7 @@ class AddressForm(TenancyForm, NetBoxModelForm):
         model = Address
         fields = [
             "name",
+            "identifier",
             "address",
             "dns_name",
             "ip_range",
@@ -87,7 +90,14 @@ class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = Address
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "address", "dns_name", "ip_range_id", name=_("Address")),
+        FieldSet(
+            "name",
+            "identifier",
+            "address",
+            "dns_name",
+            "ip_range_id",
+            name=_("Address"),
+        ),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
     ip_range_id = DynamicModelChoiceField(
@@ -100,6 +110,7 @@ class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
 
 class AddressImportForm(NetBoxModelImportForm):
     name = forms.CharField(max_length=200, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
     tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
@@ -128,6 +139,7 @@ class AddressImportForm(NetBoxModelImportForm):
         model = Address
         fields = (
             "name",
+            "identifier",
             "address",
             "dns_name",
             "ip_range",

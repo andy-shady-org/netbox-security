@@ -53,11 +53,7 @@ class ApplicationFilterSet(PortsFilterSet, TenancyFilterSet, NetBoxModelFilterSe
 
     class Meta:
         model = Application
-        fields = [
-            "id",
-            "name",
-            "description",
-        ]
+        fields = ["id", "name", "description", "identifier"]
 
     def filter_protocol(self, queryset, name, value):
         if not value:

@@ -20,6 +20,12 @@ class Address(ContactsMixin, PrimaryModel):
     """ """
 
     name = models.CharField(max_length=200)
+    identifier = models.CharField(
+        max_length=100,
+        unique=True,
+        blank=True,
+        null=True,
+    )
     address = IPNetworkField(
         blank=True, null=True, help_text=_("An IP or Prefix in x.x.x.x/yy format")
     )

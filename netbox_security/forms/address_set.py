@@ -38,6 +38,7 @@ __all__ = (
 
 class AddressSetForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     addresses = DynamicModelMultipleChoiceField(
         required=True,
         label=_("Addresses"),
@@ -46,7 +47,13 @@ class AddressSetForm(TenancyForm, NetBoxModelForm):
     )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
-        FieldSet("name", "addresses", "description", name=_("Address Set Parameters")),
+        FieldSet(
+            "name",
+            "identifier",
+            "addresses",
+            "description",
+            name=_("Address Set Parameters"),
+        ),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
@@ -56,6 +63,7 @@ class AddressSetForm(TenancyForm, NetBoxModelForm):
         model = AddressSet
         fields = [
             "name",
+            "identifier",
             "addresses",
             "tenant_group",
             "tenant",
@@ -69,7 +77,7 @@ class AddressSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = AddressSet
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "addresses_id", name=_("AddressSet List")),
+        FieldSet("name", "identifier", "addresses_id", name=_("AddressSet List")),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
     addresses_id = DynamicModelMultipleChoiceField(
@@ -82,6 +90,7 @@ class AddressSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
 
 class AddressSetImportForm(NetBoxModelImportForm):
     name = forms.CharField(max_length=200, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
     addresses = CSVModelMultipleChoiceField(
         queryset=Address.objects.all(),
@@ -99,6 +108,7 @@ class AddressSetImportForm(NetBoxModelImportForm):
         model = AddressSet
         fields = (
             "name",
+            "identifier",
             "addresses",
             "description",
             "tenant",

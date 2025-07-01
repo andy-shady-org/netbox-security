@@ -30,6 +30,7 @@ class ApplicationSetSerializer(NetBoxModelSerializer):
             "url",
             "display",
             "name",
+            "identifier",
             "applications",
             "description",
             "tenant",
@@ -44,6 +45,7 @@ class ApplicationSetSerializer(NetBoxModelSerializer):
             "url",
             "display",
             "name",
+            "identifier",
             "applications",
             "description",
         )

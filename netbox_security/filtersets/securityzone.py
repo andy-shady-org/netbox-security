@@ -40,7 +40,7 @@ class SecurityZoneFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
 
     class Meta:
         model = SecurityZone
-        fields = ["id", "name", "description"]
+        fields = ["id", "name", "description", "identifier"]
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""

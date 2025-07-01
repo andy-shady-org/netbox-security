@@ -47,6 +47,7 @@ class SecurityZonePolicyTable(NetBoxTable):
             "id",
             "index",
             "name",
+            "identifier",
             "source_zone",
             "destination_zone",
             "source_address",
@@ -60,6 +61,7 @@ class SecurityZonePolicyTable(NetBoxTable):
         default_columns = (
             "index",
             "name",
+            "identifier",
             "source_zone",
             "destination_zone",
             "source_address",

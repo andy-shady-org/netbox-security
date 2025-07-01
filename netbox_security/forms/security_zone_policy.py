@@ -40,6 +40,7 @@ __all__ = (
 
 class SecurityZonePolicyForm(NetBoxModelForm):
     name = forms.CharField(max_length=100, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     index = forms.IntegerField(required=True)
     description = forms.CharField(max_length=200, required=False)
     source_zone = DynamicModelChoiceField(
@@ -77,7 +78,9 @@ class SecurityZonePolicyForm(NetBoxModelForm):
         required=True,
     )
     fieldsets = (
-        FieldSet("name", "index", "description", name=_("Security Zone Policy")),
+        FieldSet(
+            "name", "identifier", "index", "description", name=_("Security Zone Policy")
+        ),
         FieldSet("source_zone", "source_address", name=_("Source Assignment")),
         FieldSet(
             "destination_zone", "destination_address", name=_("Destination Assignment")
@@ -92,6 +95,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
         model = SecurityZonePolicy
         fields = [
             "name",
+            "identifier",
             "index",
             "source_zone",
             "source_address",
@@ -133,7 +137,7 @@ class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
     model = SecurityZonePolicy
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "index"),
+        FieldSet("name", "identifier", "index"),
         FieldSet(
             "source_zone_id",
             "source_address_id",
@@ -184,6 +188,8 @@ class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
 
 
 class SecurityZonePolicyImportForm(NetBoxModelImportForm):
+    name = forms.CharField(max_length=100, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     index = forms.IntegerField(
         required=True,
         label=_("Index"),
@@ -227,6 +233,7 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
         model = SecurityZonePolicy
         fields = (
             "name",
+            "identifier",
             "index",
             "description",
             "source_zone",

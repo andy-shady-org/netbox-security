@@ -43,6 +43,7 @@ class ApplicationTable(TenancyColumnsMixin, NetBoxTable):
         fields = (
             "pk",
             "name",
+            "identifier",
             "description",
             "application_items",
             "protocol",
@@ -54,6 +55,7 @@ class ApplicationTable(TenancyColumnsMixin, NetBoxTable):
         default_columns = (
             "pk",
             "name",
+            "identifier",
             "description",
             "application_items",
             "protocol",

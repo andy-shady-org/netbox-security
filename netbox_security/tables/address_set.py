@@ -25,10 +25,19 @@ class AddressSetTable(TenancyColumnsMixin, NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = AddressSet
-        fields = ("pk", "name", "description", "addresses", "tenant", "tags")
+        fields = (
+            "pk",
+            "name",
+            "identifier",
+            "description",
+            "addresses",
+            "tenant",
+            "tags",
+        )
         default_columns = (
             "pk",
             "name",
+            "identifier",
             "description",
             "addresses",
             "tenant",

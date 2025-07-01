@@ -19,6 +19,12 @@ class SecurityZone(ContactsMixin, PrimaryModel):
     name = models.CharField(
         max_length=100,
     )
+    identifier = models.CharField(
+        max_length=100,
+        unique=True,
+        blank=True,
+        null=True,
+    )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
         on_delete=models.SET_NULL,
