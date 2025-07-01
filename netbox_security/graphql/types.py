@@ -48,7 +48,7 @@ from .filters import (
 class NetBoxSecurityAddressType(NetBoxObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
-    identifier: str
+    identifier: str | None
     address: str | None
     dns_name: str | None
     ip_range: Annotated["IPRangeType", strawberry.lazy("ipam.graphql.types")] | None
@@ -60,7 +60,7 @@ class NetBoxSecurityAddressType(NetBoxObjectType):
 class NetBoxSecurityAddressSetType(NetBoxObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
-    identifier: str
+    identifier: str | None
     addresses: List[
         Annotated[
             "NetBoxSecurityAddressType",
@@ -94,7 +94,7 @@ class NetBoxSecurityApplicationItemType(NetBoxObjectType):
 )
 class NetBoxSecurityApplicationType(NetBoxObjectType):
     name: str
-    identifier: str
+    identifier: str | None
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     application_items: List[
         Annotated[
@@ -112,7 +112,7 @@ class NetBoxSecurityApplicationType(NetBoxObjectType):
 )
 class NetBoxSecurityApplicationSetType(NetBoxObjectType):
     name: str
-    identifier: str
+    identifier: str | None
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     applications: List[
         Annotated[
@@ -127,7 +127,7 @@ class NetBoxSecurityApplicationSetType(NetBoxObjectType):
 )
 class NetBoxSecuritySecurityZoneType(NetBoxObjectType):
     name: str
-    identifier: str
+    identifier: str | None
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
 
@@ -136,7 +136,7 @@ class NetBoxSecuritySecurityZoneType(NetBoxObjectType):
 )
 class NetBoxSecuritySecurityZonePolicyType(NetBoxObjectType):
     name: str
-    identifier: str
+    identifier: str | None
     source_zone: (
         Annotated[
             "NetBoxSecuritySecurityZoneType",

@@ -15,7 +15,15 @@ class AddressSetAPITestCase(
 ):
     model = AddressSet
 
-    brief_fields = ["addresses", "description", "display", "id", "name", "url"]
+    brief_fields = [
+        "addresses",
+        "description",
+        "display",
+        "id",
+        "identifier",
+        "name",
+        "url",
+    ]
 
     bulk_update_data = {
         "description": "Test Address Set",
