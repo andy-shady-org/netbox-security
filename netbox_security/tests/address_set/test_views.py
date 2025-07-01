@@ -39,6 +39,7 @@ class AddressSetViewTestCase(
 
         cls.form_data = {
             "name": "address-4",
+            "identifier": "xyz",
             "addresses": [cls.addresses[0].pk, cls.addresses[1].pk],
             "tags": [t.pk for t in tags],
         }
@@ -48,10 +49,10 @@ class AddressSetViewTestCase(
         }
 
         cls.csv_data = (
-            "name",
-            "address-set-5",
-            "address-set-6",
-            "address-set-7",
+            "name,identifier",
+            "address-set-5,abc",
+            "address-set-6,efg",
+            "address-set-7,hij",
         )
 
         cls.csv_update_data = (

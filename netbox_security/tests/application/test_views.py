@@ -144,6 +144,7 @@ class ApplicationViewTestCase(
 
         cls.form_data = {
             "name": "item-4",
+            "identifier": "xyz",
             "destination_ports": "1,2",
             "source_ports": "1,2",
             "protocol": [ProtocolChoices.TCP],
@@ -155,10 +156,10 @@ class ApplicationViewTestCase(
         }
 
         cls.csv_data = (
-            "name,application_items,protocol,destination_ports,source_ports",
-            f'item-5,"{cls.items[0].name},{cls.items[1].name}","TCP,UDP","1,2","2,1"',
-            f'item-6,,"TCP,UDP","1,2","2,1"',
-            f'item-7,,"TCP,UDP","1,2","2,1"',
+            "name,identifier,application_items,protocol,destination_ports,source_ports",
+            f'item-5,abc,"{cls.items[0].name},{cls.items[1].name}","TCP,UDP","1,2","2,1"',
+            f'item-6,def,,"TCP,UDP","1,2","2,1"',
+            f'item-7,ghi,,"TCP,UDP","1,2","2,1"',
         )
 
         cls.csv_update_data = (
@@ -247,6 +248,7 @@ class ApplicationSetViewTestCase(
 
         cls.form_data = {
             "name": "item-4",
+            "identifier": "xyz",
             "applications": [
                 cls.applications[0].pk,
                 cls.applications[1].pk,
@@ -260,10 +262,10 @@ class ApplicationSetViewTestCase(
         }
 
         cls.csv_data = (
-            "name,applications",
-            f'item-5,"{cls.applications[0].name},{cls.applications[1].name}"',
-            f'item-6,"{cls.applications[1].name},{cls.applications[2].name}"',
-            f'item-7,"{cls.applications[0].name},{cls.applications[2].name}"',
+            "name,identifier,applications",
+            f'item-5,abc,"{cls.applications[0].name},{cls.applications[1].name}"',
+            f'item-6,def,"{cls.applications[1].name},{cls.applications[2].name}"',
+            f'item-7,ghi,"{cls.applications[0].name},{cls.applications[2].name}"',
         )
 
         cls.csv_update_data = (

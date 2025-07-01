@@ -40,6 +40,7 @@ class SecurityZoneViewTestCase(
 
         cls.form_data = {
             "name": "TEST-ZONE1",
+            "identifier": "xyz",
             "tags": [t.pk for t in tags],
         }
 
@@ -48,10 +49,10 @@ class SecurityZoneViewTestCase(
         }
 
         cls.csv_data = (
-            "name",
-            "TEST-ZONE2",
-            "TEST-ZONE3",
-            "TEST-ZONE4",
+            "name,identifier",
+            "TEST-ZONE2,abc",
+            "TEST-ZONE3,dce",
+            "TEST-ZONE4,fgh",
         )
 
         cls.csv_update_data = (
@@ -186,6 +187,7 @@ class SecurityZonePolicyViewTestCase(
 
         cls.form_data = {
             "name": "TEST-POLICY1",
+            "identifier": "xyz",
             "index": 10,
             "source_zone": cls.zones[0].pk,
             "destination_zone": cls.zones[1].pk,
@@ -204,10 +206,10 @@ class SecurityZonePolicyViewTestCase(
         }
 
         cls.csv_data = (
-            "name,index,source_zone,destination_zone,policy_actions",
-            f'TEST-POLICY4,1,{cls.zones[0].name},{cls.zones[1].name},"permit,count"',
-            f'TEST-POLICY5,2,{cls.zones[0].name},{cls.zones[1].name},"permit,count"',
-            f'TEST-POLICY6,3,{cls.zones[0].name},{cls.zones[1].name},"permit,count"',
+            "name,identifier,index,source_zone,destination_zone,policy_actions",
+            f'TEST-POLICY4,abc,1,{cls.zones[0].name},{cls.zones[1].name},"permit,count"',
+            f'TEST-POLICY5,def,2,{cls.zones[0].name},{cls.zones[1].name},"permit,count"',
+            f'TEST-POLICY6,ghi,3,{cls.zones[0].name},{cls.zones[1].name},"permit,count"',
         )
 
         cls.csv_update_data = (
