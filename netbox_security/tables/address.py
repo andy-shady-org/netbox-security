@@ -25,6 +25,7 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
         fields = (
             "pk",
             "name",
+            "identifier",
             "description",
             "address",
             "dns_name",
@@ -35,6 +36,7 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
         default_columns = (
             "pk",
             "name",
+            "identifier",
             "description",
             "address",
             "dns_name",

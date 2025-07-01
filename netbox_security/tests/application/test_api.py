@@ -102,6 +102,7 @@ class ApplicationAPITestCase(
         "destination_ports",
         "display",
         "id",
+        "identifier",
         "name",
         "protocol",
         "source_ports",
@@ -196,6 +197,7 @@ class ApplicationSetAPITestCase(
         "description",
         "display",
         "id",
+        "identifier",
         "name",
         "url",
     ]

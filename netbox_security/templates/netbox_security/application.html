@@ -14,6 +14,10 @@
                     <td>{{ object.name }}</td>
                 </tr>
                 <tr>
+                    <th scope="row">{% trans "Identifier" %}</th>
+                    <td>{{ object.identifier }}</td>
+                </tr>
+                <tr>
                     <th scope="row">{% trans "Protocols" %}</th>
                     <td>
                         {{ object.protocol_list|placeholder }}

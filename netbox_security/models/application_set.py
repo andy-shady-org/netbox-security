@@ -17,6 +17,11 @@ class ApplicationSet(ContactsMixin, PrimaryModel):
     """ """
 
     name = models.CharField(max_length=200)
+    identifier = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
     applications = models.ManyToManyField(
         to="netbox_security.Application",
         related_name="+",

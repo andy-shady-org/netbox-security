@@ -38,6 +38,7 @@ __all__ = (
 
 class ApplicationSetForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     applications = DynamicModelMultipleChoiceField(
         queryset=Application.objects.all(),
         required=True,
@@ -48,6 +49,7 @@ class ApplicationSetForm(TenancyForm, NetBoxModelForm):
     fieldsets = (
         FieldSet(
             "name",
+            "identifier",
             "applications",
             "description",
             name=_("Application Set Parameters"),
@@ -61,6 +63,7 @@ class ApplicationSetForm(TenancyForm, NetBoxModelForm):
         model = ApplicationSet
         fields = [
             "name",
+            "identifier",
             "applications",
             "tenant_group",
             "tenant",
@@ -74,7 +77,7 @@ class ApplicationSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = ApplicationSet
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "applications_id", name=_("Application Set")),
+        FieldSet("name", "identifier", "applications_id", name=_("Application Set")),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
     applications_id = DynamicModelMultipleChoiceField(
@@ -87,6 +90,7 @@ class ApplicationSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
 
 class ApplicationSetImportForm(NetBoxModelImportForm):
     name = forms.CharField(max_length=200, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
     tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
@@ -105,6 +109,7 @@ class ApplicationSetImportForm(NetBoxModelImportForm):
         model = ApplicationSet
         fields = (
             "name",
+            "identifier",
             "applications",
             "description",
             "tenant",

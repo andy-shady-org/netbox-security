@@ -22,6 +22,7 @@ class AddressAPITestCase(
         "display",
         "dns_name",
         "id",
+        "identifier",
         "ip_range",
         "name",
         "url",

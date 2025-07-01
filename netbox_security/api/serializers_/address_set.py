@@ -31,6 +31,7 @@ class AddressSetSerializer(NetBoxModelSerializer):
             "url",
             "display",
             "name",
+            "identifier",
             "addresses",
             "description",
             "tenant",
@@ -45,6 +46,7 @@ class AddressSetSerializer(NetBoxModelSerializer):
             "url",
             "display",
             "name",
+            "identifier",
             "addresses",
             "description",
         )

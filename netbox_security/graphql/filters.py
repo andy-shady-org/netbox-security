@@ -45,6 +45,7 @@ class NetBoxSecurityAddressFilter(
     ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
+    identifier: FilterLookup[str] | None = strawberry_django.filter_field()
     address: FilterLookup[str] | None = strawberry_django.filter_field()
     dns_name: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
@@ -55,6 +56,7 @@ class NetBoxSecurityAddressSetFilter(
     ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
+    identifier: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
     addresses: (
         Annotated[
@@ -90,6 +92,7 @@ class NetBoxSecurityApplicationFilter(
     ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
+    identifier: FilterLookup[str] | None = strawberry_django.filter_field()
     application_items: (
         Annotated[
             "NetBoxSecurityApplicationItemFilter",
@@ -113,6 +116,7 @@ class NetBoxSecurityApplicationSetFilter(
     ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
+    identifier: FilterLookup[str] | None = strawberry_django.filter_field()
     applications: (
         Annotated[
             "NetBoxSecurityApplicationFilter",
@@ -127,6 +131,7 @@ class NetBoxSecuritySecurityZoneFilter(
     ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
+    identifier: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
 
 
@@ -135,6 +140,7 @@ class NetBoxSecuritySecurityZonePolicyFilter(
     ContactFilterMixin, NetBoxModelFilterMixin
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
+    identifier: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
     index: FilterLookup[int] | None = strawberry_django.filter_field()
     source_zone: (

@@ -42,6 +42,7 @@ __all__ = (
 
 class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     application_items = DynamicModelMultipleChoiceField(
         queryset=ApplicationItem.objects.all(),
         required=False,
@@ -55,6 +56,7 @@ class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
     fieldsets = (
         FieldSet(
             "name",
+            "identifier",
             "application_items",
             "protocol",
             "destination_ports",
@@ -71,6 +73,7 @@ class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
         model = Application
         fields = [
             "name",
+            "identifier",
             "application_items",
             "protocol",
             "destination_ports",
@@ -89,6 +92,7 @@ class ApplicationFilterForm(PortsForm, TenancyFilterForm, NetBoxModelFilterSetFo
         FieldSet("q", "filter_id", "tag"),
         FieldSet(
             "name",
+            "identifier",
             "application_items_id",
             "protocol",
             "destination_ports",
@@ -111,6 +115,7 @@ class ApplicationFilterForm(PortsForm, TenancyFilterForm, NetBoxModelFilterSetFo
 
 class ApplicationImportForm(PortsForm, NetBoxModelImportForm):
     name = forms.CharField(max_length=200, required=True)
+    identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
     tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
@@ -134,6 +139,7 @@ class ApplicationImportForm(PortsForm, NetBoxModelImportForm):
         model = Application
         fields = (
             "name",
+            "identifier",
             "application_items",
             "destination_ports",
             "source_ports",

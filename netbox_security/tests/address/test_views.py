@@ -58,6 +58,7 @@ class AddressViewTestCase(
 
         cls.form_data = {
             "name": "address-5",
+            "identifier": "xyz",
             "address": IPNetwork("1.1.1.4/32"),
             "tags": [t.pk for t in tags],
         }
@@ -67,12 +68,12 @@ class AddressViewTestCase(
         }
 
         cls.csv_data = (
-            "name,address,dns_name,ip_range",
-            "address-7,1.1.1.5/32,,",
-            "address-8,1.1.1.6/32,,",
-            "address-9,1.1.1.7/32,,",
-            "address-10,,test2.example.com,",
-            "address-11,,,1.1.3.2/24",
+            "name,identifier,address,dns_name,ip_range",
+            "address-7,abc,1.1.1.5/32,,",
+            "address-8,efg,1.1.1.6/32,,",
+            "address-9,dad,1.1.1.7/32,,",
+            "address-10,bil,,test2.example.com,",
+            "address-11,poo,,,1.1.3.2/24",
         )
 
         cls.csv_update_data = (
