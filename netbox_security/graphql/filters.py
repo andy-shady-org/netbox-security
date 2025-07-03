@@ -65,6 +65,13 @@ class NetBoxSecurityAddressSetFilter(
         ]
         | None
     ) = strawberry_django.filter_field()
+    address_sets: (
+        Annotated[
+            "NetBoxSecurityAddressSetFilter",
+            strawberry.lazy("netbox_security.graphql.filters"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
 
 
 @strawberry_django.filter(AddressList, lookups=True)

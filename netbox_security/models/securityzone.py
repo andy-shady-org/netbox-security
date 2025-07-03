@@ -92,6 +92,7 @@ class SecurityZoneIndex(SearchIndex):
     model = SecurityZone
     fields = (
         ("name", 100),
+        ("identifier", 300),
         ("description", 500),
     )
 

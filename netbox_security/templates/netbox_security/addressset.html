@@ -48,6 +48,12 @@
             </h5>
             {% render_table address_table 'inc/table.html' %}
         </div>
+        <div class="card">
+            <h5 class="card-header">
+                Address Sets
+            </h5>
+            {% render_table address_set_table 'inc/table.html' %}
+        </div>
         {% plugin_right_page object %}
     </div>
     {% plugin_full_width_page object %}
