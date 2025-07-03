@@ -37,8 +37,12 @@ class AddressSetView(generic.ObjectView):
 
     def get_extra_context(self, request, instance):
         address_table = AddressTable(instance.addresses.all(), orderable=False)
+        address_set_table = AddressSetTable(
+            instance.address_sets.all(), orderable=False
+        )
         return {
             "address_table": address_table,
+            "address_set_table": address_set_table,
         }
 
 

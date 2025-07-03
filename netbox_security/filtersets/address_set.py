@@ -33,6 +33,18 @@ class AddressSetFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         to_field_name="name",
         label=_("Address (Name)"),
     )
+    address_set_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=AddressSet.objects.all(),
+        field_name="address_sets",
+        to_field_name="id",
+        label=_("Address Set (ID)"),
+    )
+    address_set = django_filters.ModelMultipleChoiceFilter(
+        queryset=Address.objects.all(),
+        field_name="address_sets__name",
+        to_field_name="name",
+        label=_("Address Set (Name)"),
+    )
 
     class Meta:
         model = AddressSet

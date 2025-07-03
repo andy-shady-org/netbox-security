@@ -93,6 +93,8 @@ class ApplicationSetIndex(SearchIndex):
     model = ApplicationSet
     fields = (
         ("name", 100),
+        ("identifier", 300),
+        ("applications", 300),
         ("description", 500),
     )
 

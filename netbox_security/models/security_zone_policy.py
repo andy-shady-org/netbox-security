@@ -86,5 +86,12 @@ class SecurityZonePolicyIndex(SearchIndex):
     model = SecurityZonePolicy
     fields = (
         ("name", 100),
+        ("identifier", 300),
+        ("source_zone", 300),
+        ("destination_zone", 300),
+        ("source_address", 300),
+        ("destination_address", 300),
+        ("applications", 300),
+        ("application_sets", 300),
         ("description", 500),
     )

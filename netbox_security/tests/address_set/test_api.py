@@ -16,6 +16,7 @@ class AddressSetAPITestCase(
     model = AddressSet
 
     brief_fields = [
+        "address_sets",
         "addresses",
         "description",
         "display",

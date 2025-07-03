@@ -114,6 +114,8 @@ class AddressIndex(SearchIndex):
         ("name", 100),
         ("address", 100),
         ("dns_name", 100),
+        ("ip_range", 100),
+        ("identifier", 300),
         ("description", 500),
     )
 

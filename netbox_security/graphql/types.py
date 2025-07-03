@@ -67,6 +67,12 @@ class NetBoxSecurityAddressSetType(NetBoxObjectType):
             strawberry.lazy("netbox_security.graphql.types"),
         ]
     ]
+    address_sets: List[
+        Annotated[
+            "NetBoxSecurityAddressSetType",
+            strawberry.lazy("netbox_security.graphql.types"),
+        ]
+    ]
 
 
 @strawberry_django.type(

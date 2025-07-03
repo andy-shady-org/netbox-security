@@ -21,6 +21,9 @@ class AddressSetTable(TenancyColumnsMixin, NetBoxTable):
     addresses = ManyToManyColumn(
         orderable=False, linkify=True, verbose_name=_("Addresses")
     )
+    address_sets = ManyToManyColumn(
+        orderable=False, linkify=True, verbose_name=_("Address Sets")
+    )
     tags = TagColumn(url_name="plugins:netbox_security:addressset_list")
 
     class Meta(NetBoxTable.Meta):
@@ -31,6 +34,7 @@ class AddressSetTable(TenancyColumnsMixin, NetBoxTable):
             "identifier",
             "description",
             "addresses",
+            "address_sets",
             "tenant",
             "tags",
         )
@@ -40,6 +44,7 @@ class AddressSetTable(TenancyColumnsMixin, NetBoxTable):
             "identifier",
             "description",
             "addresses",
+            "address_sets",
             "tenant",
         )
 

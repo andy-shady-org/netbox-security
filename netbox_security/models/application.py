@@ -105,6 +105,9 @@ class ApplicationIndex(SearchIndex):
     model = Application
     fields = (
         ("name", 100),
+        ("identifier", 300),
+        ("application_items", 300),
+        ("protocol", 500),
         ("description", 500),
     )
 

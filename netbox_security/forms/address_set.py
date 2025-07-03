@@ -40,10 +40,16 @@ class AddressSetForm(TenancyForm, NetBoxModelForm):
     name = forms.CharField(max_length=64, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     addresses = DynamicModelMultipleChoiceField(
-        required=True,
+        required=False,
         label=_("Addresses"),
         quick_add=True,
         queryset=Address.objects.all(),
+    )
+    address_sets = DynamicModelMultipleChoiceField(
+        required=False,
+        label=_("Address Sets"),
+        quick_add=True,
+        queryset=AddressSet.objects.all(),
     )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
@@ -51,6 +57,7 @@ class AddressSetForm(TenancyForm, NetBoxModelForm):
             "name",
             "identifier",
             "addresses",
+            "address_sets",
             "description",
             name=_("Address Set Parameters"),
         ),
@@ -65,6 +72,7 @@ class AddressSetForm(TenancyForm, NetBoxModelForm):
             "name",
             "identifier",
             "addresses",
+            "address_sets",
             "tenant_group",
             "tenant",
             "description",
@@ -77,13 +85,24 @@ class AddressSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = AddressSet
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "identifier", "addresses_id", name=_("AddressSet List")),
+        FieldSet(
+            "name",
+            "identifier",
+            "addresses_id",
+            "address_sets_id",
+            name=_("AddressSet List"),
+        ),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
     addresses_id = DynamicModelMultipleChoiceField(
         required=False,
         label=_("Addresses"),
         queryset=Address.objects.all(),
+    )
+    address_sets_id = DynamicModelMultipleChoiceField(
+        required=False,
+        label=_("Address Sets"),
+        queryset=AddressSet.objects.all(),
     )
     tags = TagFilterField(model)
 
@@ -94,6 +113,11 @@ class AddressSetImportForm(NetBoxModelImportForm):
     description = forms.CharField(max_length=200, required=False)
     addresses = CSVModelMultipleChoiceField(
         queryset=Address.objects.all(),
+        to_field_name="name",
+        required=False,
+    )
+    address_sets = CSVModelMultipleChoiceField(
+        queryset=AddressSet.objects.all(),
         to_field_name="name",
         required=False,
     )
@@ -110,6 +134,7 @@ class AddressSetImportForm(NetBoxModelImportForm):
             "name",
             "identifier",
             "addresses",
+            "address_sets",
             "description",
             "tenant",
             "tags",

@@ -27,6 +27,10 @@ class AddressSet(ContactsMixin, PrimaryModel):
         to="netbox_security.Address",
         related_name="%(class)s_addresses",
     )
+    address_sets = models.ManyToManyField(
+        to="netbox_security.AddressSet",
+        related_name="%(class)s_address_sets",
+    )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
         on_delete=models.SET_NULL,
@@ -90,6 +94,9 @@ class AddressSetIndex(SearchIndex):
     model = AddressSet
     fields = (
         ("name", 100),
+        ("identifier", 300),
+        ("addresses", 300),
+        ("address_sets", 300),
         ("description", 500),
     )
 
