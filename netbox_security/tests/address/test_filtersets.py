@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
-
+from netaddr import IPNetwork
 from ipam.models import IPRange
 from tenancy.models import Tenant, TenantGroup
 from utilities.testing import ChangeLoggedFilterSetTests
@@ -32,20 +32,20 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
 
         cls.ranges = (
             IPRange(
-                start_address="1.1.1.2/24",
-                end_address="1.1.1.5/24",
+                start_address=IPNetwork("1.1.1.2/24"),
+                end_address=IPNetwork("1.1.1.5/24"),
                 status="active",
                 size=4,
             ),
             IPRange(
-                start_address="1.1.2.2/24",
-                end_address="1.1.2.5/24",
+                start_address=IPNetwork("1.1.2.2/24"),
+                end_address=IPNetwork("1.1.2.5/24"),
                 status="active",
                 size=4,
             ),
             IPRange(
-                start_address="1.1.3.2/24",
-                end_address="1.1.3.5/24",
+                start_address=IPNetwork("1.1.3.2/24"),
+                end_address=IPNetwork("1.1.3.5/24"),
                 status="active",
                 size=4,
             ),

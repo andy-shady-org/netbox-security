@@ -1,3 +1,4 @@
+from netaddr import IPNetwork
 from utilities.testing import APIViewTestCases
 from netbox_security.tests.custom import APITestCase, NetBoxSecurityGraphQLMixin
 from netbox_security.models import NatPool, NatPoolMember
@@ -135,15 +136,15 @@ class NatPoolMemberAPITestCase(
 
         cls.addresses = (
             IPAddress(
-                address="1.1.1.1/24",
+                address=IPNetwork("1.1.1.1/24"),
                 status="active",
             ),
             IPAddress(
-                address="1.1.2.1/24",
+                address=IPNetwork("1.1.2.1/24"),
                 status="active",
             ),
             IPAddress(
-                address="1.1.3.1/24",
+                address=IPNetwork("1.1.3.1/24"),
                 status="active",
             ),
         )
@@ -151,20 +152,20 @@ class NatPoolMemberAPITestCase(
 
         cls.ranges = (
             IPRange(
-                start_address="1.1.1.2/24",
-                end_address="1.1.1.5/24",
+                start_address=IPNetwork("1.1.1.2/24"),
+                end_address=IPNetwork("1.1.1.5/24"),
                 status="active",
                 size=4,
             ),
             IPRange(
-                start_address="1.1.2.2/24",
-                end_address="1.1.2.5/24",
+                start_address=IPNetwork("1.1.2.2/24"),
+                end_address=IPNetwork("1.1.2.5/24"),
                 status="active",
                 size=4,
             ),
             IPRange(
-                start_address="1.1.3.2/24",
-                end_address="1.1.3.5/24",
+                start_address=IPNetwork("1.1.3.2/24"),
+                end_address=IPNetwork("1.1.3.5/24"),
                 status="active",
                 size=4,
             ),

@@ -1,3 +1,4 @@
+from netaddr import IPNetwork
 from utilities.testing import ViewTestCases, create_tags
 from netbox_security.tests.custom import ModelViewTestCase
 
@@ -142,20 +143,20 @@ class NatPoolMemberViewTestCase(
 
         cls.ranges = (
             IPRange(
-                start_address="1.1.1.2/24",
-                end_address="1.1.1.5/24",
+                start_address=IPNetwork("1.1.1.2/24"),
+                end_address=IPNetwork("1.1.1.5/24"),
                 status="active",
                 size=4,
             ),
             IPRange(
-                start_address="1.1.2.2/24",
-                end_address="1.1.2.5/24",
+                start_address=IPNetwork("1.1.2.2/24"),
+                end_address=IPNetwork("1.1.2.5/24"),
                 status="active",
                 size=4,
             ),
             IPRange(
-                start_address="1.1.3.2/24",
-                end_address="1.1.3.5/24",
+                start_address=IPNetwork("1.1.3.2/24"),
+                end_address=IPNetwork("1.1.3.5/24"),
                 status="active",
                 size=4,
             ),

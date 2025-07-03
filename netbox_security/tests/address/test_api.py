@@ -1,3 +1,4 @@
+from netaddr import IPNetwork
 from utilities.testing import APIViewTestCases
 from ipam.models import IPRange
 from netbox_security.tests.custom import APITestCase, NetBoxSecurityGraphQLMixin
@@ -45,20 +46,20 @@ class AddressAPITestCase(
     def setUpTestData(cls):
         cls.ranges = (
             IPRange(
-                start_address="1.1.1.2/24",
-                end_address="1.1.1.5/24",
+                start_address=IPNetwork("1.1.1.2/24"),
+                end_address=IPNetwork("1.1.1.5/24"),
                 status="active",
                 size=4,
             ),
             IPRange(
-                start_address="1.1.2.2/24",
-                end_address="1.1.2.5/24",
+                start_address=IPNetwork("1.1.2.2/24"),
+                end_address=IPNetwork("1.1.2.5/24"),
                 status="active",
                 size=4,
             ),
             IPRange(
-                start_address="1.1.3.2/24",
-                end_address="1.1.3.5/24",
+                start_address=IPNetwork("1.1.3.2/24"),
+                end_address=IPNetwork("1.1.3.5/24"),
                 status="active",
                 size=4,
             ),
