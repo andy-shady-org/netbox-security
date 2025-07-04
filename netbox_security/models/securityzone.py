@@ -37,6 +37,10 @@ class SecurityZone(ContactsMixin, PrimaryModel):
         ordering = [
             "name",
         ]
+        unique_together = [
+            "name",
+            "identifier",
+        ]
 
     def __str__(self):
         return self.name

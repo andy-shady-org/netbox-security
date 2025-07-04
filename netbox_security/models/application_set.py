@@ -38,6 +38,10 @@ class ApplicationSet(ContactsMixin, PrimaryModel):
     class Meta:
         verbose_name_plural = _("Application Sets")
         ordering = ("name",)
+        unique_together = [
+            "name",
+            "identifier",
+        ]
 
     def __str__(self):
         return self.name
