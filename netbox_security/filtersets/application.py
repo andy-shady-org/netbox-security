@@ -65,7 +65,11 @@ class ApplicationFilterSet(PortsFilterSet, TenancyFilterSet, NetBoxModelFilterSe
         """Perform the filtered search."""
         if not value.strip():
             return queryset
-        qs_filter = Q(name__icontains=value) | Q(description__icontains=value)
+        qs_filter = (
+            Q(name__icontains=value)
+            | Q(description__icontains=value)
+            | Q(identifier__icontains=value)
+        )
         return queryset.filter(qs_filter)
 
 
