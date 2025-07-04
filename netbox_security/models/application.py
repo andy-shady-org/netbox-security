@@ -25,7 +25,7 @@ class Application(ContactsMixin, PortsMixin, PrimaryModel):
     application_items = models.ManyToManyField(
         to="netbox_security.ApplicationItem",
         blank=True,
-        related_name="+",
+        related_name="%(class)s_application_items",
     )
     protocol = ChoiceArrayField(
         base_field=models.CharField(

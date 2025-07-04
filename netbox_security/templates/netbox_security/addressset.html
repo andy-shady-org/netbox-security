@@ -34,6 +34,14 @@
                     </td>
                 </tr>
                 {% endif %}
+                <tr>
+                    <th scope="row">{% trans "Parent Address Sets" %}</th>
+                    <td>
+                        {% for item in object.addressset_address_sets.all %}
+                        {{ item|linkify|placeholder }}<br />
+                        {% endfor %}
+                    </td>
+                </tr>
             </table>
         </div>
         {% include 'inc/panels/comments.html' %}
@@ -41,7 +49,7 @@
         {% include 'inc/panels/custom_fields.html' %}
         {% plugin_left_page object %}
     </div>
-      <div class="col col-md-6">
+    <div class="col col-md-6">
         <div class="card">
             <h5 class="card-header">
                 Addresses

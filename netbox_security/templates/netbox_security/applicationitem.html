@@ -44,6 +44,14 @@
                     <td>{{ object.description|placeholder }}</td>
                 </tr>
                 {% endif %}
+                <tr>
+                    <th scope="row">{% trans "Parent Applications" %}</th>
+                    <td>
+                        {% for item in object.application_application_items.all %}
+                        {{ item|linkify|placeholder }}<br />
+                        {% endfor %}
+                    </td>
+                </tr>
             </table>
         </div>
         {% include 'inc/panels/custom_fields.html' %}
