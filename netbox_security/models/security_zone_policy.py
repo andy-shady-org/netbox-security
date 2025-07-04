@@ -72,7 +72,7 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
     class Meta:
         verbose_name_plural = _("Security Zone Policies")
         ordering = ["index", "name"]
-        unique_together = ["name", "source_zone", "destination_zone"]
+        unique_together = ["name", "identifier", "source_zone", "destination_zone"]
 
     def __str__(self):
         return self.name

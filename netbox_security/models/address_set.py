@@ -42,7 +42,10 @@ class AddressSet(ContactsMixin, PrimaryModel):
     class Meta:
         verbose_name_plural = _("Address Sets")
         ordering = ("name",)
-        unique_together = ("name",)
+        unique_together = [
+            "name",
+            "identifier",
+        ]
 
     def __str__(self):
         return self.name

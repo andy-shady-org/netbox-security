@@ -53,7 +53,13 @@ class Address(ContactsMixin, PrimaryModel):
     class Meta:
         verbose_name_plural = _("Addresses")
         ordering = ("name", "address", "dns_name", "ip_range")
-        unique_together = ("name", "address", "dns_name", "ip_range")
+        unique_together = [
+            "name",
+            "identifier",
+            "address",
+            "dns_name",
+            "ip_range",
+        ]
 
     def __str__(self):
         if self.dns_name:
