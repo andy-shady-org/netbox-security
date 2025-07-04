@@ -14,6 +14,7 @@ from dcim.models import Device, VirtualDeviceContext
 
 from netbox_security.models import (
     Application,
+    ApplicationSet,
     ApplicationAssignment,
     ApplicationItem,
     SecurityZonePolicy,
@@ -49,6 +50,12 @@ class ApplicationFilterSet(PortsFilterSet, TenancyFilterSet, NetBoxModelFilterSe
         queryset=ApplicationItem.objects.all(),
         to_field_name="id",
         label=_("Application (ID)"),
+    )
+    application_set_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ApplicationSet.objects.all(),
+        field_name="applicationset_applications",
+        to_field_name="id",
+        label=_("Application Set (ID)"),
     )
 
     class Meta:
