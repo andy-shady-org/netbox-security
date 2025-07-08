@@ -27,16 +27,28 @@ class SecurityZonePolicyTable(NetBoxTable):
     source_zone = tables.LinkColumn()
     destination_zone = tables.LinkColumn()
     source_address = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Source Address")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Source Address"),
     )
     destination_address = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Destination Address")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Destination Address"),
     )
     applications = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Applications")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Applications"),
     )
     application_sets = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Application Sets")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Application Sets"),
     )
     policy_actions = tables.TemplateColumn(template_code=ACTIONS, orderable=False)
     tags = TagColumn(url_name="plugins:netbox_security:securityzone_list")
@@ -59,9 +71,11 @@ class SecurityZonePolicyTable(NetBoxTable):
             "tags",
         )
         default_columns = (
+            "id",
             "index",
             "name",
             "identifier",
+            "description",
             "source_zone",
             "destination_zone",
             "source_address",

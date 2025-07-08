@@ -37,18 +37,6 @@ class NatRuleSetView(generic.ObjectView):
     queryset = NatRuleSet.objects.annotate(rule_count=Count("natrule_rules"))
     template_name = "netbox_security/natruleset.html"
 
-    def get_extra_context(self, request, instance):
-        source_zones_qs = instance.source_zones.all()
-        destination_zones_qs = instance.destination_zones.all()
-        source_zones_table = SecurityZoneTable(source_zones_qs, orderable=False)
-        destination_zones_table = SecurityZoneTable(
-            destination_zones_qs, orderable=False
-        )
-        return {
-            "source_zones_table": source_zones_table,
-            "destination_zones_table": destination_zones_table,
-        }
-
 
 @register_model_view(NatRuleSet, "list", path="", detail=False)
 class NatRuleSetListView(generic.ObjectListView):

@@ -1,10 +1,11 @@
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
+from django.core.paginator import EmptyPage
 
 from netbox.views import generic
 from utilities.views import register_model_view
-
+from utilities.paginator import EnhancedPaginator, get_paginate_count
 from netbox_security.tables import SecurityZoneTable
 from netbox_security.filtersets import SecurityZoneFilterSet
 
@@ -40,18 +41,6 @@ class SecurityZoneView(generic.ObjectView):
         destination_policy_count=Count("destination_zone_policies"),
     )
     template_name = "netbox_security/securityzone.html"
-
-    def get_extra_context(self, request, instance):
-        source_zone_table = SecurityZonePolicyTable(
-            instance.source_zone_policies.all(), orderable=False
-        )
-        destination_zone_table = SecurityZonePolicyTable(
-            instance.destination_zone_policies.all(), orderable=False
-        )
-        return {
-            "source_zone_table": source_zone_table,
-            "destination_zone_table": destination_zone_table,
-        }
 
 
 @register_model_view(SecurityZone, "list", path="", detail=False)

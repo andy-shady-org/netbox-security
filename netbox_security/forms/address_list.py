@@ -6,6 +6,9 @@ from utilities.forms.fields import (
     DynamicModelChoiceField,
 )
 
+from netbox.forms import (
+    NetBoxModelFilterSetForm,
+)
 
 from netbox_security.models import (
     AddressList,
@@ -14,6 +17,7 @@ from netbox_security.models import (
 
 __all__ = (
     "AddressListForm",
+    "AddressListFilterForm",
     "AddressListAssignmentForm",
 )
 
@@ -28,6 +32,17 @@ class AddressListForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class AddressListFilterForm(NetBoxModelFilterSetForm):
+    model = AddressList
+    fieldsets = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "name",
+            name=_("Address"),
+        ),
+    )
 
 
 class AddressListAssignmentForm(forms.ModelForm):

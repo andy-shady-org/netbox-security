@@ -1,7 +1,7 @@
 {% extends 'generic/object.html' %}
 {% load i18n %}
 {% load plugins %}
-{% load render_table from django_tables2 %}
+{% load helpers %}
 
 {% block content %}
 <div class="row">
@@ -64,7 +64,7 @@
             <h5 class="card-header">
                 {% trans "Application Items" %}
             </h5>
-            {% render_table items_table 'inc/table.html' %}
+            {% htmx_table 'plugins:netbox_security:applicationitem_list' application_id=object.pk %}
         </div>
     </div>
 </div>

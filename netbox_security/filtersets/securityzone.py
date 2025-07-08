@@ -15,27 +15,27 @@ from dcim.models import Device, VirtualDeviceContext, Interface
 from netbox_security.models import (
     SecurityZone,
     SecurityZoneAssignment,
+    NatRuleSet,
 )
 
 
 class SecurityZoneFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
-    natruleset_source_zone_id = django_filters.ModelMultipleChoiceFilter(
+    source_zone_id = django_filters.ModelMultipleChoiceFilter(
         field_name="natruleset_source_zones",
         queryset=SecurityZone.objects.all(),
         to_field_name="id",
         label=_("Source Zone NAT Rule Set (ID)"),
     )
-    natruleset_destination_zone_id = django_filters.ModelMultipleChoiceFilter(
+    destination_zone_id = django_filters.ModelMultipleChoiceFilter(
         field_name="natruleset_destination_zones",
         queryset=SecurityZone.objects.all(),
         to_field_name="id",
-        label=_("NAT Rule Set (ID)"),
+        label=_("Destination Zone NAT Rule Set (ID)"),
     )
     nat_rule_set_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="natruleset_source_zones",
-        queryset=SecurityZone.objects.all(),
-        to_field_name="id",
-        label=_("Source Zone NAT Rule Set (ID)"),
+        method="filter_natruleset",
+        queryset=NatRuleSet.objects.all(),
+        label=_("NAT Rule Set (ID)"),
     )
 
     class Meta:
@@ -50,6 +50,16 @@ class SecurityZoneFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
             Q(name__icontains=value)
             | Q(description__icontains=value)
             | Q(identifier__icontains=value)
+        )
+        return queryset.filter(qs_filter)
+
+    def filter_natruleset(self, queryset, name, value):
+        """Filter NAT Rule Set (ID)."""
+        if not value:
+            return queryset
+        rules = {rule.pk for rule in value}
+        qs_filter = Q(natruleset_destination_zones__id__in=rules) | Q(
+            natruleset_source_zones__id__in=rules
         )
         return queryset.filter(qs_filter)
 

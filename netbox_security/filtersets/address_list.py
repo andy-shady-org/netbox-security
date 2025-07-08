@@ -17,6 +17,7 @@ from netbox_security.models import (
     AddressSet,
     AddressListAssignment,
     SecurityZone,
+    SecurityZonePolicy,
 )
 
 
@@ -41,6 +42,18 @@ class AddressListFilterSet(NetBoxModelFilterSet):
         method="filter_addressset",
         field_name="pk",
         label=_("Address Set (ID)"),
+    )
+    source_address_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=SecurityZonePolicy.objects.all(),
+        field_name="securityzonepolicy_source_address",
+        to_field_name="id",
+        label=_("Source Address List (ID)"),
+    )
+    destination_address_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=SecurityZonePolicy.objects.all(),
+        field_name="securityzonepolicy_destination_address",
+        to_field_name="id",
+        label=_("Destination Address List (ID)"),
     )
 
     class Meta:

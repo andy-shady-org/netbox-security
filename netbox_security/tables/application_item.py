@@ -28,7 +28,7 @@ class ApplicationItemTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = ApplicationItem
         fields = (
-            "pk",
+            "id",
             "name",
             "index",
             "description",
@@ -38,7 +38,7 @@ class ApplicationItemTable(NetBoxTable):
             "tags",
         )
         default_columns = (
-            "pk",
+            "id",
             "name",
             "index",
             "description",

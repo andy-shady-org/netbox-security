@@ -18,14 +18,17 @@ __all__ = (
 class ApplicationSetTable(TenancyColumnsMixin, NetBoxTable):
     name = tables.LinkColumn()
     applications = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Applications")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Applications"),
     )
     tags = TagColumn(url_name="plugins:netbox_security:applicationset_list")
 
     class Meta(NetBoxTable.Meta):
         model = ApplicationSet
         fields = (
-            "pk",
+            "id",
             "name",
             "identifier",
             "description",
@@ -34,7 +37,7 @@ class ApplicationSetTable(TenancyColumnsMixin, NetBoxTable):
             "tags",
         )
         default_columns = (
-            "pk",
+            "id",
             "name",
             "identifier",
             "description",
