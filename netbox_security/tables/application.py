@@ -22,7 +22,10 @@ __all__ = (
 class ApplicationTable(TenancyColumnsMixin, NetBoxTable):
     name = tables.LinkColumn()
     application_items = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Application Items")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Application Items"),
     )
     protocol = tables.Column(
         accessor=tables.A("protocol_list"),
@@ -41,7 +44,7 @@ class ApplicationTable(TenancyColumnsMixin, NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = Application
         fields = (
-            "pk",
+            "id",
             "name",
             "identifier",
             "description",
@@ -53,7 +56,7 @@ class ApplicationTable(TenancyColumnsMixin, NetBoxTable):
             "tags",
         )
         default_columns = (
-            "pk",
+            "id",
             "name",
             "identifier",
             "description",

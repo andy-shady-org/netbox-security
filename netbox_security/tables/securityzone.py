@@ -25,7 +25,7 @@ class SecurityZoneTable(TenancyColumnsMixin, NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = SecurityZone
         fields = (
-            "pk",
+            "id",
             "name",
             "identifier",
             "description",
@@ -35,14 +35,13 @@ class SecurityZoneTable(TenancyColumnsMixin, NetBoxTable):
             "tags",
         )
         default_columns = (
-            "pk",
+            "id",
             "name",
             "identifier",
             "description",
             "source_policy_count",
             "destination_policy_count",
             "tenant",
-            "tags",
         )
 
 

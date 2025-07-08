@@ -36,26 +36,6 @@ class SecurityZonePolicyView(generic.ObjectView):
     queryset = SecurityZonePolicy.objects.all()
     template_name = "netbox_security/securityzonepolicy.html"
 
-    def get_extra_context(self, request, instance):
-        source_address_table = AddressListTable(
-            instance.source_address.all(), orderable=False
-        )
-        destination_address_table = AddressListTable(
-            instance.destination_address.all(), orderable=False
-        )
-        applications_table = ApplicationTable(
-            instance.applications.all(), orderable=False
-        )
-        application_sets_table = ApplicationSetTable(
-            instance.application_sets.all(), orderable=False
-        )
-        return {
-            "source_address_table": source_address_table,
-            "destination_address_table": destination_address_table,
-            "applications_table": applications_table,
-            "application_sets_table": application_sets_table,
-        }
-
 
 @register_model_view(SecurityZonePolicy, "list", path="", detail=False)
 class SecurityZonePolicyListView(generic.ObjectListView):

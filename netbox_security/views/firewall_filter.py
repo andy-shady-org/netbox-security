@@ -43,14 +43,6 @@ class FirewallFilterView(generic.ObjectView):
     )
     template_name = "netbox_security/firewallfilter.html"
 
-    def get_extra_context(self, request, instance):
-        filter_rules_table = FirewallFilterRuleTable(
-            instance.firewallfilterrule_rules.all(), orderable=False
-        )
-        return {
-            "filter_rules_table": filter_rules_table,
-        }
-
 
 @register_model_view(FirewallFilter, "list", path="", detail=False)
 class FirewallFilterListView(generic.ObjectListView):

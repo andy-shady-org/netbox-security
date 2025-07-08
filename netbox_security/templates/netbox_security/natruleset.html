@@ -4,7 +4,6 @@
 {% load custom_links %}
 {% load helpers %}
 {% load plugins %}
-{% load render_table from django_tables2 %}
 
 {% block extra_controls %}
     {% if perms.netbox_security.change_natruleset %}
@@ -61,13 +60,13 @@
             <h5 class="card-header">
                 Source Zones
             </h5>
-            {% render_table source_zones_table 'inc/table.html' %}
+            {% htmx_table 'plugins:netbox_security:securityzone_list' source_zone_id=object.pk %}
         </div>
         <div class="card">
             <h5 class="card-header">
                 Destination Zones
             </h5>
-            {% render_table destination_zones_table 'inc/table.html' %}
+            {% htmx_table 'plugins:netbox_security:securityzone_list' destination_zone_id=object.pk %}
         </div>
     </div>
 </div>

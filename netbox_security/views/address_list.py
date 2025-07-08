@@ -5,8 +5,11 @@ from netbox.views import generic
 from utilities.views import register_model_view
 
 from netbox_security.models import AddressList, AddressListAssignment
+from netbox_security.filtersets import AddressListFilterSet
+from netbox_security.tables import AddressListTable
 from netbox_security.forms import (
     AddressListForm,
+    AddressListFilterForm,
     AddressListAssignmentForm,
 )
 
@@ -17,6 +20,14 @@ __all__ = (
     "AddressListAssignmentEditView",
     "AddressListAssignmentDeleteView",
 )
+
+
+@register_model_view(AddressList, "list", path="", detail=False)
+class AddressListView(generic.ObjectListView):
+    queryset = AddressList.objects.all()
+    filterset = AddressListFilterSet
+    filterset_form = AddressListFilterForm
+    table = AddressListTable
 
 
 @register_model_view(AddressList, "add", detail=False)

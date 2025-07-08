@@ -25,8 +25,21 @@ class NatPoolTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = NatPool
-        fields = ("pk", "name", "pool_type", "member_count", "description", "tags")
-        default_columns = ("pk", "name", "pool_type", "member_count", "description")
+        fields = (
+            "id",
+            "name",
+            "pool_type",
+            "member_count",
+            "description",
+            "tags",
+        )
+        default_columns = (
+            "id",
+            "name",
+            "pool_type",
+            "member_count",
+            "description",
+        )
 
 
 class NatPoolDeviceAssignmentTable(NetBoxTable):

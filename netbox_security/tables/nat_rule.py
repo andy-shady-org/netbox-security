@@ -28,22 +28,40 @@ class NatRuleTable(NetBoxTable):
     destination_type = ChoiceFieldColumn()
     custom_interface = ChoiceFieldColumn()
     source_addresses = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Source Addresses")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Source Addresses"),
     )
     destination_addresses = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Destination Addresses")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Destination Addresses"),
     )
     source_prefixes = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Source Prefixes")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Source Prefixes"),
     )
     destination_prefixes = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Destination Prefixes")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Destination Prefixes"),
     )
     source_ranges = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Source Ranges")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Source Ranges"),
     )
     destination_ranges = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Destination Ranges")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Destination Ranges"),
     )
     source_ports = tables.Column(
         accessor=tables.A("source_port_list"),
@@ -60,7 +78,7 @@ class NatRuleTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = NatRule
         fields = (
-            "pk",
+            "id",
             "rule_set",
             "name",
             "description",
@@ -81,7 +99,16 @@ class NatRuleTable(NetBoxTable):
             "destination_pool",
             "tags",
         )
-        default_columns = ("pk", "name", "status", "rule_set", "description", "pool")
+        default_columns = (
+            "id",
+            "name",
+            "status",
+            "rule_set",
+            "description",
+            "pool",
+            "source_type",
+            "destination_type",
+        )
 
 
 class NatRuleAssignmentTable(NetBoxTable):

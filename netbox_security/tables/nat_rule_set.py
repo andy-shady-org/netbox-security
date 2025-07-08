@@ -25,10 +25,16 @@ class NatRuleSetTable(NetBoxTable):
     description = tables.LinkColumn()
     nat_type = ChoiceFieldColumn()
     source_zones = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Source Zones")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Source Zones"),
     )
     destination_zones = ManyToManyColumn(
-        orderable=False, linkify=True, verbose_name=_("Destination Zones")
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Destination Zones"),
     )
     direction = ChoiceFieldColumn()
     rule_count = tables.Column()
@@ -37,7 +43,7 @@ class NatRuleSetTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = NatRuleSet
         fields = (
-            "pk",
+            "id",
             "name",
             "description",
             "nat_type",
@@ -48,12 +54,14 @@ class NatRuleSetTable(NetBoxTable):
             "tags",
         )
         default_columns = (
-            "pk",
+            "id",
             "name",
             "description",
             "nat_type",
             "rule_count",
             "direction",
+            "source_zones",
+            "destination_zones",
         )
 
 

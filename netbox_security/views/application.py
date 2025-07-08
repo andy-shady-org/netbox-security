@@ -35,15 +35,6 @@ class ApplicationView(generic.ObjectView):
     queryset = Application.objects.all()
     template_name = "netbox_security/application.html"
 
-    def get_extra_context(self, request, instance):
-        items_table = ApplicationItemTable(
-            instance.application_items.all(), orderable=False
-        )
-
-        return {
-            "items_table": items_table,
-        }
-
 
 @register_model_view(Application, "list", path="", detail=False)
 class ApplicationListView(generic.ObjectListView):

@@ -29,7 +29,7 @@ class NatPoolMemberTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = NatPoolMember
         fields = (
-            "pk",
+            "id",
             "name",
             "pool",
             "status",
@@ -41,6 +41,7 @@ class NatPoolMemberTable(NetBoxTable):
             "tags",
         )
         default_columns = (
+            "id",
             "name",
             "status",
             "pool",

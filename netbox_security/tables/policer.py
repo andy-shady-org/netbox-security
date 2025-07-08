@@ -32,7 +32,7 @@ class PolicerTable(TenancyColumnsMixin, NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = Policer
         fields = (
-            "pk",
+            "id",
             "name",
             "description",
             "logical_interface_policer",
@@ -48,7 +48,7 @@ class PolicerTable(TenancyColumnsMixin, NetBoxTable):
             "tags",
         )
         default_columns = (
-            "pk",
+            "id",
             "name",
             "description",
             "logical_interface_policer",
@@ -61,7 +61,6 @@ class PolicerTable(TenancyColumnsMixin, NetBoxTable):
             "discard",
             "out_of_profile",
             "tenant",
-            "tags",
         )
 
 

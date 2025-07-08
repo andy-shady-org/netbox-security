@@ -23,9 +23,17 @@ class FirewallFilterTable(TenancyColumnsMixin, NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = FirewallFilter
-        fields = ("pk", "name", "description", "family", "rule_count", "tenant", "tags")
+        fields = (
+            "id",
+            "name",
+            "description",
+            "family",
+            "rule_count",
+            "tenant",
+            "tags",
+        )
         default_columns = (
-            "pk",
+            "id",
             "name",
             "description",
             "family",
