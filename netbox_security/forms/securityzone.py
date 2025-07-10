@@ -30,6 +30,7 @@ __all__ = (
     "SecurityZoneImportForm",
     "SecurityZoneBulkEditForm",
     "SecurityZoneAssignmentForm",
+    "SecurityZoneAssignmentFilterForm",
 )
 
 
@@ -143,3 +144,13 @@ class SecurityZoneAssignmentForm(forms.ModelForm):
             raise forms.ValidationError(_("Assignment already exists"))
 
         return zone
+
+
+class SecurityZoneAssignmentFilterForm(NetBoxModelFilterSetForm):
+    model = SecurityZone
+    fieldsets = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "name",
+        ),
+    )

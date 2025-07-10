@@ -10,8 +10,7 @@ from netbox_security.models import Policer, PolicerAssignment
 
 __all__ = (
     "PolicerTable",
-    "PolicerDeviceAssignmentTable",
-    "PolicerVirtualDeviceContextAssignmentTable",
+    "PolicerAssignmentTable",
 )
 
 
@@ -48,7 +47,6 @@ class PolicerTable(TenancyColumnsMixin, NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "description",
             "logical_interface_policer",
@@ -64,22 +62,7 @@ class PolicerTable(TenancyColumnsMixin, NetBoxTable):
         )
 
 
-class PolicerDeviceAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Device"),
-    )
-    policer = tables.Column(verbose_name=_("Policer"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = PolicerAssignment
-        fields = ("pk", "policer", "assigned_object")
-        exclude = ("id",)
-
-
-class PolicerVirtualDeviceContextAssignmentTable(NetBoxTable):
+class PolicerAssignmentTable(NetBoxTable):
     assigned_object_parent = tables.Column(
         accessor=tables.A("assigned_object__device"),
         linkify=True,
@@ -89,12 +72,12 @@ class PolicerVirtualDeviceContextAssignmentTable(NetBoxTable):
     assigned_object = tables.Column(
         linkify=True,
         orderable=False,
-        verbose_name=_("Virtual Device Context"),
+        verbose_name=_("Assigned Object"),
     )
     policer = tables.Column(verbose_name=_("Policer"), linkify=True)
     actions = ActionsColumn(actions=("edit", "delete"))
 
     class Meta(NetBoxTable.Meta):
         model = PolicerAssignment
-        fields = ("pk", "policer", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
+        fields = ("id", "policer", "assigned_object", "assigned_object_parent")
+        default_columns = ("policer", "assigned_object", "assigned_object_parent")

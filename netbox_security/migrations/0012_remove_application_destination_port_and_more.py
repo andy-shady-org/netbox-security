@@ -7,7 +7,6 @@ import utilities.json
 import netbox_security.fields.choice_field
 import django.contrib.postgres.fields
 import django.core.validators
-import netbox_security.fields.choice_field
 from django.db import migrations, models
 
 

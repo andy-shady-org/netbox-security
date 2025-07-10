@@ -10,8 +10,7 @@ from netbox_security.models import FirewallFilter, FirewallFilterAssignment
 
 __all__ = (
     "FirewallFilterTable",
-    "FirewallFilterDeviceAssignmentTable",
-    "FirewallFilterVirtualDeviceContextAssignmentTable",
+    "FirewallFilterAssignmentTable",
 )
 
 
@@ -33,7 +32,6 @@ class FirewallFilterTable(TenancyColumnsMixin, NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "description",
             "family",
@@ -42,22 +40,7 @@ class FirewallFilterTable(TenancyColumnsMixin, NetBoxTable):
         )
 
 
-class FirewallFilterDeviceAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Device"),
-    )
-    firewall_filter = tables.Column(verbose_name=_("Firewall Filter"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = FirewallFilterAssignment
-        fields = ("pk", "firewall_filter", "assigned_object")
-        exclude = ("id",)
-
-
-class FirewallFilterVirtualDeviceContextAssignmentTable(NetBoxTable):
+class FirewallFilterAssignmentTable(NetBoxTable):
     assigned_object_parent = tables.Column(
         accessor=tables.A("assigned_object__device"),
         linkify=True,
@@ -67,12 +50,16 @@ class FirewallFilterVirtualDeviceContextAssignmentTable(NetBoxTable):
     assigned_object = tables.Column(
         linkify=True,
         orderable=False,
-        verbose_name=_("Virtual Device Context"),
+        verbose_name=_("Assigned Object"),
     )
     firewall_filter = tables.Column(verbose_name=_("Firewall Filter"), linkify=True)
     actions = ActionsColumn(actions=("edit", "delete"))
 
     class Meta(NetBoxTable.Meta):
         model = FirewallFilterAssignment
-        fields = ("pk", "firewall_filter", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
+        fields = ("id", "firewall_filter", "assigned_object", "assigned_object_parent")
+        default_columns = (
+            "firewall_filter",
+            "assigned_object",
+            "assigned_object_parent",
+        )

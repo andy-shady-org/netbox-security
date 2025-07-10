@@ -14,8 +14,7 @@ from netbox_security.models import Application, ApplicationAssignment
 
 __all__ = (
     "ApplicationTable",
-    "ApplicationDeviceAssignmentTable",
-    "ApplicationVirtualDeviceContextAssignmentTable",
+    "ApplicationAssignmentTable",
 )
 
 
@@ -56,7 +55,6 @@ class ApplicationTable(TenancyColumnsMixin, NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "identifier",
             "description",
@@ -68,22 +66,7 @@ class ApplicationTable(TenancyColumnsMixin, NetBoxTable):
         )
 
 
-class ApplicationDeviceAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Device"),
-    )
-    application = tables.Column(verbose_name=_("Application"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = ApplicationAssignment
-        fields = ("pk", "application", "assigned_object")
-        exclude = ("id",)
-
-
-class ApplicationVirtualDeviceContextAssignmentTable(NetBoxTable):
+class ApplicationAssignmentTable(NetBoxTable):
     assigned_object_parent = tables.Column(
         accessor=tables.A("assigned_object__device"),
         linkify=True,
@@ -93,12 +76,12 @@ class ApplicationVirtualDeviceContextAssignmentTable(NetBoxTable):
     assigned_object = tables.Column(
         linkify=True,
         orderable=False,
-        verbose_name=_("Virtual Device Context"),
+        verbose_name=_("Assigned Object"),
     )
     application = tables.Column(verbose_name=_("Application"), linkify=True)
     actions = ActionsColumn(actions=("edit", "delete"))
 
     class Meta(NetBoxTable.Meta):
         model = ApplicationAssignment
-        fields = ("pk", "application", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
+        fields = ("id", "application", "assigned_object", "assigned_object_parent")
+        default_columns = ("application", "assigned_object", "assigned_object_parent")

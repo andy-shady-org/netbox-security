@@ -38,7 +38,6 @@ class ApplicationItemTable(NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "index",
             "description",

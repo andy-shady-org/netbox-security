@@ -115,12 +115,12 @@ class NatRuleAssignmentTable(NetBoxTable):
     assigned_object = tables.Column(
         linkify=True,
         orderable=False,
-        verbose_name=_("Interface"),
+        verbose_name=_("Assigned Object"),
     )
     rule = tables.Column(verbose_name=_("NAT Rule"), linkify=True)
     actions = ActionsColumn(actions=("edit", "delete"))
 
     class Meta(NetBoxTable.Meta):
         model = NatRuleAssignment
-        fields = ("pk", "rule", "assigned_object")
-        exclude = ("id",)
+        fields = ("id", "rule", "assigned_object")
+        default_columns = ("rule", "assigned_object")

@@ -52,13 +52,13 @@
     <div class="col col-md-6">
         <div class="card">
             <h5 class="card-header">
-                Addresses
+                Child Addresses
             </h5>
             {% htmx_table 'plugins:netbox_security:address_list' address_set_id=object.pk %}
         </div>
         <div class="card">
             <h5 class="card-header">
-                Address Sets
+                Child Address Sets
             </h5>
             {% htmx_table 'plugins:netbox_security:addressset_list' address_set_id=object.pk %}
         </div>

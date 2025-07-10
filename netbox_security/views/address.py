@@ -4,8 +4,8 @@ from django.shortcuts import get_object_or_404
 from netbox.views import generic
 from utilities.views import register_model_view
 
-from netbox_security.tables import AddressTable
-from netbox_security.filtersets import AddressFilterSet
+from netbox_security.tables import AddressTable, AddressAssignmentTable
+from netbox_security.filtersets import AddressFilterSet, AddressAssignmentFilterSet
 
 from netbox_security.models import Address, AddressAssignment
 from netbox_security.forms import (
@@ -14,6 +14,7 @@ from netbox_security.forms import (
     AddressBulkEditForm,
     AddressAssignmentForm,
     AddressImportForm,
+    AddressAssignmentFilterForm,
 )
 
 
@@ -27,6 +28,7 @@ __all__ = (
     "AddressBulkImportView",
     "AddressAssignmentEditView",
     "AddressAssignmentDeleteView",
+    "AddressAssignmentListView",
 )
 
 
@@ -74,6 +76,14 @@ class AddressBulkDeleteView(generic.BulkDeleteView):
 class AddressBulkImportView(generic.BulkImportView):
     queryset = Address.objects.all()
     model_form = AddressImportForm
+
+
+@register_model_view(AddressAssignment, "list", path="", detail=False)
+class AddressAssignmentListView(generic.ObjectListView):
+    queryset = AddressAssignment.objects.all()
+    filterset = AddressAssignmentFilterSet
+    filterset_form = AddressAssignmentFilterForm
+    table = AddressAssignmentTable
 
 
 @register_model_view(AddressAssignment, "add", detail=False)

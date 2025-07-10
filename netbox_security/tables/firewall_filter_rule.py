@@ -28,7 +28,6 @@ class FirewallFilterRuleTable(NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "index",
             "firewall_filter",

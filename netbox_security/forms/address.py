@@ -32,6 +32,7 @@ __all__ = (
     "AddressImportForm",
     "AddressBulkEditForm",
     "AddressAssignmentForm",
+    "AddressAssignmentFilterForm",
 )
 
 
@@ -218,3 +219,13 @@ class AddressAssignmentForm(forms.ModelForm):
             raise forms.ValidationError(_("Assignment already exists"))
 
         return address
+
+
+class AddressAssignmentFilterForm(NetBoxModelFilterSetForm):
+    model = AddressAssignment
+    fieldsets = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "name",
+        ),
+    )

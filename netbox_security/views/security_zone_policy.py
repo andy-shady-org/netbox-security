@@ -3,9 +3,6 @@ from utilities.views import register_model_view
 
 from netbox_security.tables import (
     SecurityZonePolicyTable,
-    AddressListTable,
-    ApplicationTable,
-    ApplicationSetTable,
 )
 from netbox_security.filtersets import SecurityZonePolicyFilterSet
 

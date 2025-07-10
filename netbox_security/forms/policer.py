@@ -36,6 +36,7 @@ __all__ = (
     "PolicerImportForm",
     "PolicerBulkEditForm",
     "PolicerAssignmentForm",
+    "PolicerAssignmentFilterForm",
 )
 
 
@@ -292,3 +293,13 @@ class PolicerAssignmentForm(forms.ModelForm):
             raise forms.ValidationError(_("Assignment already exists"))
 
         return policer
+
+
+class PolicerAssignmentFilterForm(NetBoxModelFilterSetForm):
+    model = PolicerAssignment
+    fieldsets = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "name",
+        ),
+    )

@@ -71,7 +71,6 @@ class SecurityZonePolicyTable(NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "index",
             "name",
             "identifier",

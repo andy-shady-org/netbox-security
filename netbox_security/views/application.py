@@ -4,8 +4,11 @@ from django.shortcuts import get_object_or_404
 from netbox.views import generic
 from utilities.views import register_model_view
 
-from netbox_security.tables import ApplicationTable, ApplicationItemTable
-from netbox_security.filtersets import ApplicationFilterSet
+from netbox_security.tables import ApplicationTable, ApplicationAssignmentTable
+from netbox_security.filtersets import (
+    ApplicationFilterSet,
+    ApplicationAssignmentFilterSet,
+)
 
 from netbox_security.models import Application, ApplicationAssignment
 from netbox_security.forms import (
@@ -14,6 +17,7 @@ from netbox_security.forms import (
     ApplicationBulkEditForm,
     ApplicationAssignmentForm,
     ApplicationImportForm,
+    ApplicationAssignmentFilterForm,
 )
 
 
@@ -27,6 +31,7 @@ __all__ = (
     "ApplicationBulkImportView",
     "ApplicationAssignmentEditView",
     "ApplicationAssignmentDeleteView",
+    "ApplicationAssignmentListView",
 )
 
 
@@ -74,6 +79,14 @@ class ApplicationBulkDeleteView(generic.BulkDeleteView):
 class ApplicationBulkImportView(generic.BulkImportView):
     queryset = Application.objects.all()
     model_form = ApplicationImportForm
+
+
+@register_model_view(ApplicationAssignment, "list", path="", detail=False)
+class ApplicationAssignmentListView(generic.ObjectListView):
+    queryset = ApplicationAssignment.objects.all()
+    filterset = ApplicationAssignmentFilterSet
+    filterset_form = ApplicationAssignmentFilterForm
+    table = ApplicationAssignmentTable
 
 
 @register_model_view(ApplicationAssignment, "add", detail=False)

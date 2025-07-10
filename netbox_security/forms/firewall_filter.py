@@ -34,6 +34,7 @@ __all__ = (
     "FirewallFilterImportForm",
     "FirewallFilterBulkEditForm",
     "FirewallFilterAssignmentForm",
+    "FirewallFilterAssignmentFilterForm",
 )
 
 
@@ -161,3 +162,13 @@ class FirewallFilterAssignmentForm(forms.ModelForm):
             raise forms.ValidationError(_("Assignment already exists"))
 
         return firewall_filter
+
+
+class FirewallFilterAssignmentFilterForm(NetBoxModelFilterSetForm):
+    model = FirewallFilterAssignment
+    fieldsets = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "name",
+        ),
+    )

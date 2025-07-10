@@ -9,9 +9,7 @@ from netbox_security.models import NatPool, NatPoolAssignment
 
 __all__ = (
     "NatPoolTable",
-    "NatPoolDeviceAssignmentTable",
-    "NatPoolVirtualDeviceContextAssignmentTable",
-    "NatPoolVirtualMachineAssignmentTable",
+    "NatPoolAssignmentTable",
 )
 
 
@@ -34,7 +32,6 @@ class NatPoolTable(NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "pool_type",
             "member_count",
@@ -42,22 +39,7 @@ class NatPoolTable(NetBoxTable):
         )
 
 
-class NatPoolDeviceAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Device"),
-    )
-    pool = tables.Column(verbose_name=_("NAT Pool"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = NatPoolAssignment
-        fields = ("pk", "pool", "assigned_object")
-        exclude = ("id",)
-
-
-class NatPoolVirtualDeviceContextAssignmentTable(NetBoxTable):
+class NatPoolAssignmentTable(NetBoxTable):
     assigned_object_parent = tables.Column(
         accessor=tables.A("assigned_object__device"),
         linkify=True,
@@ -67,27 +49,16 @@ class NatPoolVirtualDeviceContextAssignmentTable(NetBoxTable):
     assigned_object = tables.Column(
         linkify=True,
         orderable=False,
-        verbose_name=_("Virtual Device Context"),
+        verbose_name=_("Assigned Object"),
     )
     pool = tables.Column(verbose_name=_("NAT Pool"), linkify=True)
     actions = ActionsColumn(actions=("edit", "delete"))
 
     class Meta(NetBoxTable.Meta):
         model = NatPoolAssignment
-        fields = ("pk", "pool", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
-
-
-class NatPoolVirtualMachineAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Virtual Machine"),
-    )
-    pool = tables.Column(verbose_name=_("NAT Pool"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = NatPoolAssignment
-        fields = ("pk", "pool", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
+        fields = ("id", "pool", "assigned_object", "assigned_object_parent")
+        default_columns = (
+            "pool",
+            "assigned_object",
+            "assigned_object_parent",
+        )

@@ -5,8 +5,11 @@ from django.db.models import Count
 from netbox.views import generic
 from utilities.views import register_model_view
 
-from netbox_security.tables import FirewallFilterTable
-from netbox_security.filtersets import FirewallFilterFilterSet
+from netbox_security.tables import FirewallFilterTable, FirewallFilterAssignmentTable
+from netbox_security.filtersets import (
+    FirewallFilterFilterSet,
+    FirewallFilterAssignmentFilterSet,
+)
 
 from netbox_security.models import (
     FirewallFilter,
@@ -18,10 +21,8 @@ from netbox_security.forms import (
     FirewallFilterBulkEditForm,
     FirewallFilterAssignmentForm,
     FirewallFilterImportForm,
+    FirewallFilterAssignmentFilterForm,
 )
-
-from netbox_security.tables import FirewallFilterRuleTable
-
 
 __all__ = (
     "FirewallFilterView",
@@ -33,6 +34,7 @@ __all__ = (
     "FirewallFilterBulkImportView",
     "FirewallFilterAssignmentEditView",
     "FirewallFilterAssignmentDeleteView",
+    "FirewallFilterAssignmentListView",
 )
 
 
@@ -84,6 +86,14 @@ class FirewallFilterBulkDeleteView(generic.BulkDeleteView):
 class FirewallFilterBulkImportView(generic.BulkImportView):
     queryset = FirewallFilter.objects.all()
     model_form = FirewallFilterImportForm
+
+
+@register_model_view(FirewallFilterAssignment, "list", path="", detail=False)
+class FirewallFilterAssignmentListView(generic.ObjectListView):
+    queryset = FirewallFilterAssignment.objects.all()
+    filterset = FirewallFilterAssignmentFilterSet
+    filterset_form = FirewallFilterAssignmentFilterForm
+    table = FirewallFilterAssignmentTable
 
 
 @register_model_view(FirewallFilterAssignment, "add", detail=False)
