@@ -41,7 +41,6 @@ class NatPoolMemberTable(NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "status",
             "pool",

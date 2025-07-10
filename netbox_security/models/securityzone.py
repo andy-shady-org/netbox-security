@@ -48,6 +48,30 @@ class SecurityZone(ContactsMixin, PrimaryModel):
     def get_absolute_url(self):
         return reverse("plugins:netbox_security:securityzone", args=[self.pk])
 
+    @classmethod
+    def annotated_queryset(cls):
+        """Construct an efficient queryset for this model and related data."""
+        return (
+            cls.objects.defer("id")
+            .prefetch_related("source_zone_policies", "destination_zone_policies")
+            .annotate(
+                source_policy_count=models.Count(
+                    "source_zone_policies",
+                    filter=models.Q(
+                        source_zone_policies__source_zone=models.F("pk"),
+                    ),
+                    distinct=True,
+                ),
+                destination_policy_count=models.Count(
+                    "destination_zone_policies",
+                    filter=models.Q(
+                        destination_zone_policies__destination_zone=models.F("pk"),
+                    ),
+                    distinct=True,
+                ),
+            )
+        )
+
 
 class SecurityZoneAssignment(NetBoxModel):
     assigned_object_type = models.ForeignKey(

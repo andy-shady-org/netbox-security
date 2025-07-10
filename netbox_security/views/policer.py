@@ -3,8 +3,8 @@ from utilities.views import register_model_view
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
-from netbox_security.tables import PolicerTable
-from netbox_security.filtersets import PolicerFilterSet
+from netbox_security.tables import PolicerTable, PolicerAssignmentTable
+from netbox_security.filtersets import PolicerFilterSet, PolicerAssignmentFilterSet
 
 from netbox_security.models import Policer, PolicerAssignment
 from netbox_security.forms import (
@@ -13,6 +13,7 @@ from netbox_security.forms import (
     PolicerBulkEditForm,
     PolicerImportForm,
     PolicerAssignmentForm,
+    PolicerAssignmentFilterForm,
 )
 
 
@@ -24,6 +25,7 @@ __all__ = (
     "PolicerBulkEditView",
     "PolicerBulkDeleteView",
     "PolicerBulkImportView",
+    "PolicerAssignmentListView",
 )
 
 
@@ -71,6 +73,14 @@ class PolicerBulkDeleteView(generic.BulkDeleteView):
 class PolicerBulkImportView(generic.BulkImportView):
     queryset = Policer.objects.all()
     model_form = PolicerImportForm
+
+
+@register_model_view(PolicerAssignment, "list", path="", detail=False)
+class PolicerAssignmentListView(generic.ObjectListView):
+    queryset = PolicerAssignment.objects.all()
+    filterset = PolicerAssignmentFilterSet
+    filterset_form = PolicerAssignmentFilterForm
+    table = PolicerAssignmentTable
 
 
 @register_model_view(PolicerAssignment, "add", detail=False)

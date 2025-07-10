@@ -10,9 +10,7 @@ from netbox_security.models import SecurityZone, SecurityZoneAssignment
 
 __all__ = (
     "SecurityZoneTable",
-    "SecurityZoneDeviceAssignmentTable",
-    "SecurityZoneVirtualDeviceContextAssignmentTable",
-    "SecurityZoneInterfaceAssignmentTable",
+    "SecurityZoneAssignmentTable",
 )
 
 
@@ -35,7 +33,6 @@ class SecurityZoneTable(TenancyColumnsMixin, NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "identifier",
             "description",
@@ -45,22 +42,7 @@ class SecurityZoneTable(TenancyColumnsMixin, NetBoxTable):
         )
 
 
-class SecurityZoneDeviceAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Device"),
-    )
-    zone = tables.Column(verbose_name=_("Security Zone"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = SecurityZoneAssignment
-        fields = ("pk", "zone", "assigned_object")
-        exclude = ("id",)
-
-
-class SecurityZoneVirtualDeviceContextAssignmentTable(NetBoxTable):
+class SecurityZoneAssignmentTable(NetBoxTable):
     assigned_object_parent = tables.Column(
         accessor=tables.A("assigned_object__device"),
         linkify=True,
@@ -70,33 +52,12 @@ class SecurityZoneVirtualDeviceContextAssignmentTable(NetBoxTable):
     assigned_object = tables.Column(
         linkify=True,
         orderable=False,
-        verbose_name=_("Virtual Device Context"),
+        verbose_name=_("Assigned Object"),
     )
     zone = tables.Column(verbose_name=_("Security Zone"), linkify=True)
     actions = ActionsColumn(actions=("edit", "delete"))
 
     class Meta(NetBoxTable.Meta):
         model = SecurityZoneAssignment
-        fields = ("pk", "zone", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
-
-
-class SecurityZoneInterfaceAssignmentTable(NetBoxTable):
-    assigned_object_parent = tables.Column(
-        accessor=tables.A("assigned_object__device"),
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Parent"),
-    )
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Interface"),
-    )
-    zone = tables.Column(verbose_name=_("Security Zone"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = SecurityZoneAssignment
-        fields = ("pk", "zone", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
+        fields = ("id", "zone", "assigned_object", "assigned_object_parent")
+        default_columns = ("zone", "assigned_object", "assigned_object_parent")

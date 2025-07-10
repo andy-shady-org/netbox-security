@@ -13,10 +13,15 @@ from netbox_security.forms import (
     NatRuleBulkEditForm,
     NatRuleImportForm,
     NatRuleAssignmentForm,
+    NatRuleAssignmentFilterForm,
 )
-from netbox_security.filtersets import NatRuleFilterSet
+from netbox_security.filtersets import (
+    NatRuleFilterSet,
+    NatRuleAssignmentFilterSet,
+)
 from netbox_security.tables import (
     NatRuleTable,
+    NatRuleAssignmentTable,
 )
 
 
@@ -30,6 +35,7 @@ __all__ = (
     "NatRuleBulkImportView",
     "NatRuleAssignmentEditView",
     "NatRuleAssignmentDeleteView",
+    "NatRuleAssignmentListView",
 )
 
 
@@ -154,6 +160,14 @@ class NatRuleBulkImportView(generic.BulkImportView):
 class NatRuleBulkDeleteView(generic.BulkDeleteView):
     queryset = NatRule.objects.all()
     table = NatRuleTable
+
+
+@register_model_view(NatRuleAssignment, "list", path="", detail=False)
+class NatRuleAssignmentListView(generic.ObjectListView):
+    queryset = NatRuleAssignment.objects.all()
+    filterset = NatRuleAssignmentFilterSet
+    filterset_form = NatRuleAssignmentFilterForm
+    table = NatRuleAssignmentTable
 
 
 @register_model_view(NatRuleAssignment, "edit")

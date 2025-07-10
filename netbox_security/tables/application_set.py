@@ -10,8 +10,7 @@ from netbox_security.models import ApplicationSet, ApplicationSetAssignment
 
 __all__ = (
     "ApplicationSetTable",
-    "ApplicationSetDeviceAssignmentTable",
-    "ApplicationSetVirtualDeviceContextAssignmentTable",
+    "ApplicationSetAssignmentTable",
 )
 
 
@@ -37,7 +36,6 @@ class ApplicationSetTable(TenancyColumnsMixin, NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "identifier",
             "description",
@@ -46,22 +44,7 @@ class ApplicationSetTable(TenancyColumnsMixin, NetBoxTable):
         )
 
 
-class ApplicationSetDeviceAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Device"),
-    )
-    application_set = tables.Column(verbose_name=_("Application Set"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = ApplicationSetAssignment
-        fields = ("pk", "application_set", "assigned_object")
-        exclude = ("id",)
-
-
-class ApplicationSetVirtualDeviceContextAssignmentTable(NetBoxTable):
+class ApplicationSetAssignmentTable(NetBoxTable):
     assigned_object_parent = tables.Column(
         accessor=tables.A("assigned_object__device"),
         linkify=True,
@@ -71,12 +54,16 @@ class ApplicationSetVirtualDeviceContextAssignmentTable(NetBoxTable):
     assigned_object = tables.Column(
         linkify=True,
         orderable=False,
-        verbose_name=_("Virtual Device Context"),
+        verbose_name=_("Assigned Object"),
     )
     application_set = tables.Column(verbose_name=_("Application Set"), linkify=True)
     actions = ActionsColumn(actions=("edit", "delete"))
 
     class Meta(NetBoxTable.Meta):
         model = ApplicationSetAssignment
-        fields = ("pk", "application_set", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
+        fields = ("id", "application_set", "assigned_object", "assigned_object_parent")
+        default_columns = (
+            "application_set",
+            "assigned_object",
+            "assigned_object_parent",
+        )

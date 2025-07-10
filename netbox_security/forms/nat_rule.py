@@ -41,6 +41,7 @@ __all__ = (
     "NatRuleImportForm",
     "NatRuleBulkEditForm",
     "NatRuleAssignmentForm",
+    "NatRuleAssignmentFilterForm",
 )
 
 
@@ -508,3 +509,13 @@ class NatRuleAssignmentForm(forms.ModelForm):
             raise forms.ValidationError(_("Assignment already exists"))
 
         return rule
+
+
+class NatRuleAssignmentFilterForm(NetBoxModelFilterSetForm):
+    model = NatRuleAssignment
+    fieldsets = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "name",
+        ),
+    )

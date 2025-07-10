@@ -1,0 +1,200 @@
+{% extends 'generic/object.html' %}
+{% load buttons %}
+{% load custom_links %}
+{% load helpers %}
+{% load i18n %}
+{% load plugins %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Applications" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_application %}
+                        <a href="{% url 'plugins:netbox_security:application_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Application" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_applicationassignment %}
+                        <a href="{% url 'plugins:netbox_security:applicationassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Application" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% htmx_table 'plugins:netbox_security:applicationassignment_list' virtualdevicecontext_id=object.pk %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Application Sets" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_applicationset %}
+                        <a href="{% url 'plugins:netbox_security:applicationset_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Application Set" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_applicationsetassignment %}
+                        <a href="{% url 'plugins:netbox_security:applicationsetassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Application Set" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% htmx_table 'plugins:netbox_security:applicationsetassignment_list' virtualdevicecontext_id=object.pk %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Security Zones" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_securityzone %}
+                        <a href="{% url 'plugins:netbox_security:securityzone_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Security Zone" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_securityzoneassignment %}
+                        <a href="{% url 'plugins:netbox_security:securityzoneassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Security Zone" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% htmx_table 'plugins:netbox_security:securityzoneassignment_list' virtualdevicecontext_id=object.pk %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Firewall Filters" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_firewallfilter %}
+                        <a href="{% url 'plugins:netbox_security:firewallfilter_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Firewall Filter" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_firewallfilterassignment %}
+                        <a href="{% url 'plugins:netbox_security:firewallfilterassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Firewall Filter" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% htmx_table 'plugins:netbox_security:firewallfilterassignment_list' virtualdevicecontext_id=object.pk %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "NAT Pools" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_natpool %}
+                        <a href="{% url 'plugins:netbox_security:natpool_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create NAT Pool" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_natpoolassignment %}
+                        <a href="{% url 'plugins:netbox_security:natpoolassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign NAT Pool" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% htmx_table 'plugins:netbox_security:natpoolassignment_list' virtualdevicecontext_id=object.pk %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "NAT Rulesets" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_natruleset %}
+                        <a href="{% url 'plugins:netbox_security:natruleset_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create NAT Ruleset" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_natrulesetassignment %}
+                        <a href="{% url 'plugins:netbox_security:natrulesetassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign NAT Ruleset" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% htmx_table 'plugins:netbox_security:natrulesetassignment_list' virtualdevicecontext_id=object.pk %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Addresses" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_address %}
+                        <a href="{% url 'plugins:netbox_security:address_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Address" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_addressassignment %}
+                        <a href="{% url 'plugins:netbox_security:addressassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Address" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% htmx_table 'plugins:netbox_security:addressassignment_list' virtualdevicecontext_id=object.pk %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Address Sets" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_addressset %}
+                        <a href="{% url 'plugins:netbox_security:addressset_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Address Set" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_addresssetassignment %}
+                        <a href="{% url 'plugins:netbox_security:addresssetassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Address Set" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% htmx_table 'plugins:netbox_security:addresssetassignment_list' virtualdevicecontext_id=object.pk %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Firewall Policers" %}
+                <div class="card-actions">
+                    {% if perms.netbox_security.add_policer %}
+                        <a href="{% url 'plugins:netbox_security:policer_add' %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create Firewall Policer" %}
+                        </a>
+                    {% endif %}
+                    {% if perms.netbox_security.add_policerassignment %}
+                        <a href="{% url 'plugins:netbox_security:policerassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Firewall Policer" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h5>
+            {% htmx_table 'plugins:netbox_security:policerassignment_list' virtualdevicecontext_id=object.pk %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

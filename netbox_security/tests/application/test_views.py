@@ -158,8 +158,8 @@ class ApplicationViewTestCase(
         cls.csv_data = (
             "name,identifier,application_items,protocol,destination_ports,source_ports",
             f'item-5,abc,"{cls.items[0].name},{cls.items[1].name}","TCP,UDP","1,2","2,1"',
-            f'item-6,def,,"TCP,UDP","1,2","2,1"',
-            f'item-7,ghi,,"TCP,UDP","1,2","2,1"',
+            'item-6,def,,"TCP,UDP","1,2","2,1"',
+            'item-7,ghi,,"TCP,UDP","1,2","2,1"',
         )
 
         cls.csv_update_data = (

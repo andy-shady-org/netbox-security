@@ -14,9 +14,7 @@ from netbox_security.models import NatRuleSet, NatRuleSetAssignment
 
 __all__ = (
     "NatRuleSetTable",
-    "NatRuleSetDeviceAssignmentTable",
-    "NatRuleSetVirtualDeviceContextAssignmentTable",
-    "NatRuleSetVirtualMachineAssignmentTable",
+    "NatRuleSetAssignmentTable",
 )
 
 
@@ -54,7 +52,6 @@ class NatRuleSetTable(NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "description",
             "nat_type",
@@ -65,22 +62,7 @@ class NatRuleSetTable(NetBoxTable):
         )
 
 
-class NatRuleSetDeviceAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Device"),
-    )
-    ruleset = tables.Column(verbose_name=_("NAT Ruleset"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = NatRuleSetAssignment
-        fields = ("pk", "ruleset", "assigned_object")
-        exclude = ("id",)
-
-
-class NatRuleSetVirtualDeviceContextAssignmentTable(NetBoxTable):
+class NatRuleSetAssignmentTable(NetBoxTable):
     assigned_object_parent = tables.Column(
         accessor=tables.A("assigned_object__device"),
         linkify=True,
@@ -90,27 +72,12 @@ class NatRuleSetVirtualDeviceContextAssignmentTable(NetBoxTable):
     assigned_object = tables.Column(
         linkify=True,
         orderable=False,
-        verbose_name=_("Virtual Device Context"),
+        verbose_name=_("Assigned Object"),
     )
     ruleset = tables.Column(verbose_name=_("NAT Ruleset"), linkify=True)
     actions = ActionsColumn(actions=("edit", "delete"))
 
     class Meta(NetBoxTable.Meta):
         model = NatRuleSetAssignment
-        fields = ("pk", "ruleset", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
-
-
-class NatRuleSetVirtualMachineAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Virtual Machine"),
-    )
-    ruleset = tables.Column(verbose_name=_("NAT Ruleset"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = NatRuleSetAssignment
-        fields = ("pk", "ruleset", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
+        fields = ("id", "ruleset", "assigned_object", "assigned_object_parent")
+        default_columns = ("ruleset", "assigned_object", "assigned_object_parent")

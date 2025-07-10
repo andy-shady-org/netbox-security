@@ -31,6 +31,7 @@ __all__ = (
     "NatPoolImportForm",
     "NatPoolBulkEditForm",
     "NatPoolAssignmentForm",
+    "NatPoolAssignmentFilterForm",
 )
 
 
@@ -131,3 +132,13 @@ class NatPoolAssignmentForm(forms.ModelForm):
             raise forms.ValidationError(_("Assignment already exists"))
 
         return pool
+
+
+class NatPoolAssignmentFilterForm(NetBoxModelFilterSetForm):
+    model = NatPoolAssignment
+    fieldsets = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "name",
+        ),
+    )

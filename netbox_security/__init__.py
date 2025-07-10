@@ -16,8 +16,7 @@ class SecurityConfig(PluginConfig):
     default_settings = {
         "top_level_menu": True,
         "virtual_ext_page": "left",
-        "device_ext_page": "left",
-        "interface_ext_page": "left",
+        "interface_ext_page": "full_width",
         "address_ext_page": "right",
     }
 

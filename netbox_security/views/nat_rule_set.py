@@ -7,14 +7,23 @@ from django.shortcuts import get_object_or_404
 from utilities.views import register_model_view, ViewTab
 
 from netbox_security.models import NatRuleSet, NatRuleSetAssignment, NatRule
-from netbox_security.tables import NatRuleSetTable, NatRuleTable, SecurityZoneTable
-from netbox_security.filtersets import NatRuleSetFilterSet, NatRuleFilterSet
+from netbox_security.tables import (
+    NatRuleSetTable,
+    NatRuleTable,
+    NatRuleSetAssignmentTable,
+)
+from netbox_security.filtersets import (
+    NatRuleSetFilterSet,
+    NatRuleFilterSet,
+    NatRuleSetAssignmentFilterSet,
+)
 from netbox_security.forms import (
     NatRuleSetFilterForm,
     NatRuleSetForm,
     NatRuleSetBulkEditForm,
     NatRuleSetImportForm,
     NatRuleSetAssignmentForm,
+    NatRuleSetAssignmentFilterForm,
 )
 
 
@@ -29,6 +38,7 @@ __all__ = (
     "NatRuleSetRulesView",
     "NatRuleSetAssignmentEditView",
     "NatRuleSetAssignmentDeleteView",
+    "NatRuleSetAssignmentListView",
 )
 
 
@@ -94,6 +104,14 @@ class NatRuleSetRulesView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         return parent.natrule_rules
+
+
+@register_model_view(NatRuleSetAssignment, "list", path="", detail=False)
+class NatRuleSetAssignmentListView(generic.ObjectListView):
+    queryset = NatRuleSetAssignment.objects.all()
+    filterset = NatRuleSetAssignmentFilterSet
+    filterset_form = NatRuleSetAssignmentFilterForm
+    table = NatRuleSetAssignmentTable
 
 
 @register_model_view(NatRuleSetAssignment, "add", detail=False)

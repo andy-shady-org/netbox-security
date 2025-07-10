@@ -14,9 +14,18 @@ from netbox_security.forms import (
     NatPoolBulkEditForm,
     NatPoolImportForm,
     NatPoolAssignmentForm,
+    NatPoolAssignmentFilterForm,
 )
-from netbox_security.filtersets import NatPoolFilterSet, NatPoolMemberFilterSet
-from netbox_security.tables import NatPoolTable, NatPoolMemberTable
+from netbox_security.filtersets import (
+    NatPoolFilterSet,
+    NatPoolMemberFilterSet,
+    NatPoolAssignmentFilterSet,
+)
+from netbox_security.tables import (
+    NatPoolTable,
+    NatPoolMemberTable,
+    NatPoolAssignmentTable,
+)
 
 
 __all__ = (
@@ -30,6 +39,7 @@ __all__ = (
     "NatPoolNatPoolMembersView",
     "NatPoolAssignmentEditView",
     "NatPoolAssignmentDeleteView",
+    "NatPoolAssignmentListView",
 )
 
 
@@ -95,6 +105,14 @@ class NatPoolNatPoolMembersView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         return parent.natpoolmember_pools
+
+
+@register_model_view(NatPoolAssignment, "list", path="", detail=False)
+class NatPoolAssignmentListView(generic.ObjectListView):
+    queryset = NatPoolAssignment.objects.all()
+    filterset = NatPoolAssignmentFilterSet
+    filterset_form = NatPoolAssignmentFilterForm
+    table = NatPoolAssignmentTable
 
 
 @register_model_view(NatPoolAssignment, "add", detail=False)

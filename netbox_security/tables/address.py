@@ -10,9 +10,7 @@ from netbox_security.models import Address, AddressAssignment
 
 __all__ = (
     "AddressTable",
-    "AddressDeviceAssignmentTable",
-    "AddressVirtualDeviceContextAssignmentTable",
-    "AddressSecurityZoneAssignmentTable",
+    "AddressAssignmentTable",
 )
 
 
@@ -34,7 +32,6 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
             "tags",
         )
         default_columns = (
-            "id",
             "name",
             "identifier",
             "description",
@@ -45,22 +42,7 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
         )
 
 
-class AddressDeviceAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Device"),
-    )
-    address = tables.Column(verbose_name=_("Address"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = AddressAssignment
-        fields = ("pk", "address", "assigned_object")
-        exclude = ("id",)
-
-
-class AddressVirtualDeviceContextAssignmentTable(NetBoxTable):
+class AddressAssignmentTable(NetBoxTable):
     assigned_object_parent = tables.Column(
         accessor=tables.A("assigned_object__device"),
         linkify=True,
@@ -70,27 +52,12 @@ class AddressVirtualDeviceContextAssignmentTable(NetBoxTable):
     assigned_object = tables.Column(
         linkify=True,
         orderable=False,
-        verbose_name=_("Virtual Device Context"),
+        verbose_name=_("Assigned Object"),
     )
     address = tables.Column(verbose_name=_("Address"), linkify=True)
     actions = ActionsColumn(actions=("edit", "delete"))
 
     class Meta(NetBoxTable.Meta):
         model = AddressAssignment
-        fields = ("pk", "address", "assigned_object", "assigned_object_parent")
-        exclude = ("id",)
-
-
-class AddressSecurityZoneAssignmentTable(NetBoxTable):
-    assigned_object = tables.Column(
-        linkify=True,
-        orderable=False,
-        verbose_name=_("Security Zone"),
-    )
-    address = tables.Column(verbose_name=_("Address"), linkify=True)
-    actions = ActionsColumn(actions=("edit", "delete"))
-
-    class Meta(NetBoxTable.Meta):
-        model = AddressAssignment
-        fields = ("pk", "address", "assigned_object")
-        exclude = ("id",)
+        fields = ("id", "address", "assigned_object", "assigned_object_parent")
+        default_columns = ("address", "assigned_object", "assigned_object_parent")

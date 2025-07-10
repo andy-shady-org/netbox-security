@@ -13,3 +13,4 @@ from .address_list import *
 from .firewall_filter import *
 from .firewall_filter_rule import *
 from .policer import *
+from .tabs import *

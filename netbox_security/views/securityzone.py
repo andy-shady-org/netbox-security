@@ -1,13 +1,13 @@
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
-from django.db.models import Count
-from django.core.paginator import EmptyPage
 
 from netbox.views import generic
 from utilities.views import register_model_view
-from utilities.paginator import EnhancedPaginator, get_paginate_count
-from netbox_security.tables import SecurityZoneTable
-from netbox_security.filtersets import SecurityZoneFilterSet
+from netbox_security.tables import SecurityZoneTable, SecurityZoneAssignmentTable
+from netbox_security.filtersets import (
+    SecurityZoneFilterSet,
+    SecurityZoneAssignmentFilterSet,
+)
 
 from netbox_security.models import SecurityZone, SecurityZoneAssignment
 from netbox_security.forms import (
@@ -16,9 +16,8 @@ from netbox_security.forms import (
     SecurityZoneBulkEditForm,
     SecurityZoneAssignmentForm,
     SecurityZoneImportForm,
+    SecurityZoneAssignmentFilterForm,
 )
-
-from netbox_security.tables import SecurityZonePolicyTable
 
 
 __all__ = (
@@ -31,24 +30,19 @@ __all__ = (
     "SecurityZoneBulkImportView",
     "SecurityZoneAssignmentEditView",
     "SecurityZoneAssignmentDeleteView",
+    "SecurityZoneAssignmentListView",
 )
 
 
 @register_model_view(SecurityZone)
 class SecurityZoneView(generic.ObjectView):
-    queryset = SecurityZone.objects.annotate(
-        source_policy_count=Count("source_zone_policies"),
-        destination_policy_count=Count("destination_zone_policies"),
-    )
+    queryset = SecurityZone.annotated_queryset()
     template_name = "netbox_security/securityzone.html"
 
 
 @register_model_view(SecurityZone, "list", path="", detail=False)
 class SecurityZoneListView(generic.ObjectListView):
-    queryset = SecurityZone.objects.annotate(
-        source_policy_count=Count("source_zone_policies"),
-        destination_policy_count=Count("destination_zone_policies"),
-    )
+    queryset = SecurityZone.annotated_queryset()
     filterset = SecurityZoneFilterSet
     filterset_form = SecurityZoneFilterForm
     table = SecurityZoneTable
@@ -84,6 +78,14 @@ class SecurityZoneBulkDeleteView(generic.BulkDeleteView):
 class SecurityZoneBulkImportView(generic.BulkImportView):
     queryset = SecurityZone.objects.all()
     model_form = SecurityZoneImportForm
+
+
+@register_model_view(SecurityZoneAssignment, "list", path="", detail=False)
+class SecurityZoneAssignmentListView(generic.ObjectListView):
+    queryset = SecurityZoneAssignment.objects.all()
+    filterset = SecurityZoneAssignmentFilterSet
+    filterset_form = SecurityZoneAssignmentFilterForm
+    table = SecurityZoneAssignmentTable
 
 
 @register_model_view(SecurityZoneAssignment, "add", detail=False)

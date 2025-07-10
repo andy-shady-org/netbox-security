@@ -65,11 +65,9 @@ Full documentation on using plugins with NetBox: [Using Plugins - NetBox Documen
 ## Configuration
 
 The following options are available:
-* `device_ext_page`: String (default left) Device related objects table position. The following values are available:  
+* `virtual_ext_page`: String (default left) Virtual Machine related objects table position. The following values are available:  
 left, right, full_width. Set empty value for disable.
-* `virtual_ext_page`: String (default left) Virtual Context related objects table position. The following values are available:  
-left, right, full_width. Set empty value for disable.
-* `interface_ext_page`: String (default left) Interface related objects table position. The following values are available:  
+* `interface_ext_page`: String (default full_width) Interface related objects table position. The following values are available:  
 left, right, full_width. Set empty value for disable.
 * `address_ext_page`: String (default right) Address/Address Set related objects table position. The following values are available:  
 left, right, full_width. Set empty value for disable.

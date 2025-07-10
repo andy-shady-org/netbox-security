@@ -37,6 +37,7 @@ __all__ = (
     "ApplicationImportForm",
     "ApplicationBulkEditForm",
     "ApplicationAssignmentForm",
+    "ApplicationAssignmentFilterForm",
 )
 
 
@@ -217,3 +218,13 @@ class ApplicationAssignmentForm(forms.ModelForm):
             raise forms.ValidationError(_("Assignment already exists"))
 
         return application
+
+
+class ApplicationAssignmentFilterForm(NetBoxModelFilterSetForm):
+    model = ApplicationAssignment
+    fieldsets = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "name",
+        ),
+    )
