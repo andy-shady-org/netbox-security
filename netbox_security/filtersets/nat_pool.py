@@ -49,6 +49,12 @@ class NatPoolAssignmentFilterSet(NetBoxModelFilterSet):
         queryset=NatPool.objects.all(),
         label=_("NAT Pool (ID)"),
     )
+    pool = django_filters.ModelMultipleChoiceFilter(
+        field_name="pool",
+        queryset=NatPool.objects.all(),
+        to_field_name="name",
+        label=_("NAT Pool (Name)"),
+    )
     device = MultiValueCharFilter(
         method="filter_device",
         field_name="name",

@@ -64,8 +64,14 @@ class PolicerFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
 class PolicerAssignmentFilterSet(NetBoxModelFilterSet):
     assigned_object_type = ContentTypeFilter()
     policer_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=PolicerAssignment.objects.all(),
+        queryset=Policer.objects.all(),
         label=_("Policer (ID)"),
+    )
+    policer = django_filters.ModelMultipleChoiceFilter(
+        field_name="policer",
+        queryset=Policer.objects.all(),
+        to_field_name="name",
+        label=_("Policer (Name)"),
     )
     device = MultiValueCharFilter(
         method="filter_device",
