@@ -19,11 +19,13 @@ from netbox_security.models import (
 from netbox_security.filtersets import (
     SecurityZoneFilterSet,
     SecurityZonePolicyFilterSet,
+)
+from netbox_security.choices import (
+    ProtocolChoices,
     RuleDirectionChoices,
     NatTypeChoices,
     ActionChoices,
 )
-from netbox_security.choices import ProtocolChoices
 
 
 class SecurityZoneFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
