@@ -22,6 +22,14 @@
                     <td>{{ object.description|placeholder }}</td>
                 </tr>
                 {% endif %}
+                <tr>
+                    <th scope="row">{% trans "Parent Policies" %}</th>
+                    <td>
+                        {% for item in object.securityzonepolicy_application_sets.all %}
+                        {{ item|linkify|placeholder }}<br />
+                        {% endfor %}
+                    </td>
+                </tr>
             </table>
         </div>
       {% include 'inc/panels/custom_fields.html' %}

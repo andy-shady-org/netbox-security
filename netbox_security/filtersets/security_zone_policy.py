@@ -2,6 +2,7 @@ import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
+from utilities.filters import MultiValueCharFilter
 
 from netbox_security.models import (
     SecurityZonePolicy,
@@ -10,8 +11,6 @@ from netbox_security.models import (
     Application,
     ApplicationSet,
 )
-
-from netbox_security.choices import ActionChoices
 
 
 class SecurityZonePolicyFilterSet(NetBoxModelFilterSet):
@@ -105,14 +104,23 @@ class SecurityZonePolicyFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("Source Address (ID)"),
     )
-    policy_actions = django_filters.MultipleChoiceFilter(
-        choices=ActionChoices,
-        required=False,
+    policy_actions = MultiValueCharFilter(
+        method="filter_policy_actions",
+        label=_("Policy Actions"),
     )
+    # policy_actions = django_filters.MultipleChoiceFilter(
+    #     choices=ActionChoices,
+    #     required=False,
+    # )
 
     class Meta:
         model = SecurityZonePolicy
         fields = ["id", "name", "description", "index", "identifier"]
+
+    def filter_policy_actions(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.filter(policy_actions__overlap=value)
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""

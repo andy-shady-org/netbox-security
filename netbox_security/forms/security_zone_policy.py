@@ -182,7 +182,7 @@ class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
     )
     policy_actions = forms.MultipleChoiceField(
         choices=ActionChoices,
-        required=True,
+        required=False,
     )
     tags = TagFilterField(model)
 

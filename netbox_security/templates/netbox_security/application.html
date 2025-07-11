@@ -46,6 +46,14 @@
                 </tr>
                 {% endif %}
                 <tr>
+                    <th scope="row">{% trans "Parent Policies" %}</th>
+                    <td>
+                        {% for item in object.securityzonepolicy_applications.all %}
+                        {{ item|linkify|placeholder }}<br />
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row">{% trans "Parent Application Sets" %}</th>
                     <td>
                         {% for item in object.applicationset_applications.all %}
