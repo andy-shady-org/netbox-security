@@ -197,7 +197,7 @@ class NatRuleAssignmentFilterSet(NetBoxModelFilterSet):
         label=_("NAT Rule (ID)"),
     )
     rule = django_filters.ModelMultipleChoiceFilter(
-        field_name="rule",
+        field_name="rule__name",
         queryset=NatRule.objects.all(),
         to_field_name="name",
         label=_("NAT Rule (Name)"),

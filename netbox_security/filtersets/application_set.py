@@ -68,7 +68,7 @@ class ApplicationSetAssignmentFilterSet(NetBoxModelFilterSet):
         label=_("Application Set (ID)"),
     )
     application_set = django_filters.ModelMultipleChoiceFilter(
-        field_name="application_set",
+        field_name="application_set__name",
         queryset=ApplicationSet.objects.all(),
         to_field_name="name",
         label=_("Application Set (Name)"),

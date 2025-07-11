@@ -50,7 +50,7 @@ class NatPoolAssignmentFilterSet(NetBoxModelFilterSet):
         label=_("NAT Pool (ID)"),
     )
     pool = django_filters.ModelMultipleChoiceFilter(
-        field_name="pool",
+        field_name="pool__name",
         queryset=NatPool.objects.all(),
         to_field_name="name",
         label=_("NAT Pool (Name)"),

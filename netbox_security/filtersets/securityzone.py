@@ -71,7 +71,7 @@ class SecurityZoneAssignmentFilterSet(NetBoxModelFilterSet):
         label=_("Security Zone (ID)"),
     )
     zone = django_filters.ModelMultipleChoiceFilter(
-        field_name="zone",
+        field_name="zone__name",
         queryset=SecurityZone.objects.all(),
         to_field_name="name",
         label=_("Security Zone (Name)"),
