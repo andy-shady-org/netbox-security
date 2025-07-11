@@ -79,6 +79,12 @@ class AddressAssignmentFilterSet(NetBoxModelFilterSet):
         queryset=Address.objects.all(),
         label=_("Address (ID)"),
     )
+    address = django_filters.ModelMultipleChoiceFilter(
+        field_name="address",
+        queryset=Address.objects.all(),
+        to_field_name="name",
+        label=_("Address (Name)"),
+    )
     device = MultiValueCharFilter(
         method="filter_device",
         field_name="name",

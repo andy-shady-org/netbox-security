@@ -81,6 +81,12 @@ class NatRuleSetAssignmentFilterSet(NetBoxModelFilterSet):
         queryset=NatRuleSet.objects.all(),
         label=_("NAT Ruleset (ID)"),
     )
+    ruleset = django_filters.ModelMultipleChoiceFilter(
+        field_name="ruleset",
+        queryset=NatRuleSet.objects.all(),
+        to_field_name="name",
+        label=_("NAT Ruleset (Name)"),
+    )
     device = MultiValueCharFilter(
         method="filter_device",
         field_name="name",

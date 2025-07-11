@@ -86,6 +86,12 @@ class ApplicationAssignmentFilterSet(NetBoxModelFilterSet):
         queryset=Application.objects.all(),
         label=_("Application (ID)"),
     )
+    application = django_filters.ModelMultipleChoiceFilter(
+        field_name="application",
+        queryset=Application.objects.all(),
+        to_field_name="name",
+        label=_("Application (Name)"),
+    )
     device = MultiValueCharFilter(
         method="filter_device",
         field_name="name",
