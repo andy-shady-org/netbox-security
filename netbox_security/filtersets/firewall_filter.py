@@ -45,7 +45,7 @@ class FirewallFilterAssignmentFilterSet(NetBoxModelFilterSet):
         label=_("Firewall Filter (ID)"),
     )
     firewall_filter = django_filters.ModelMultipleChoiceFilter(
-        field_name="firewall_filter",
+        field_name="firewall_filter__name",
         queryset=FirewallFilter.objects.all(),
         to_field_name="name",
         label=_("Firewall Filter (Name)"),

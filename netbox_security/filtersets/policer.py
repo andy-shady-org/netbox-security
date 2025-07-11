@@ -68,7 +68,7 @@ class PolicerAssignmentFilterSet(NetBoxModelFilterSet):
         label=_("Policer (ID)"),
     )
     policer = django_filters.ModelMultipleChoiceFilter(
-        field_name="policer",
+        field_name="policer__name",
         queryset=Policer.objects.all(),
         to_field_name="name",
         label=_("Policer (Name)"),

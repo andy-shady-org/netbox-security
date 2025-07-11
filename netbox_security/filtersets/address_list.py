@@ -93,7 +93,7 @@ class AddressListAssignmentFilterSet(NetBoxModelFilterSet):
         label=_("Address List (ID)"),
     )
     address_list = django_filters.ModelMultipleChoiceFilter(
-        field_name="address_list",
+        field_name="address_list__name",
         queryset=AddressList.objects.all(),
         to_field_name="name",
         label=_("Address List (Name)"),
