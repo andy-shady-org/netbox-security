@@ -16,6 +16,8 @@ from utilities.forms.fields import (
     CSVModelMultipleChoiceField,
     CommentField,
 )
+from dcim.models import Device, VirtualDeviceContext
+from virtualization.models import VirtualMachine
 
 from netbox_security.choices import NatTypeChoices, RuleDirectionChoices
 
@@ -239,6 +241,24 @@ class NatRuleSetAssignmentFilterForm(NetBoxModelFilterSetForm):
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
         FieldSet(
-            "name",
+            "device_id",
+            "virtualdevicecontext_id",
+            "virtualmachine_id",
+            name="Assignments",
         ),
+    )
+    device_id = DynamicModelChoiceField(
+        queryset=Device.objects.all(),
+        required=False,
+        label=_("Device"),
+    )
+    virtualdevicecontext_id = DynamicModelChoiceField(
+        queryset=VirtualDeviceContext.objects.all(),
+        required=False,
+        label=_("Virtual Device Context"),
+    )
+    virtualmachine_id = DynamicModelChoiceField(
+        queryset=VirtualMachine.objects.all(),
+        required=False,
+        label=_("Virtual Machine"),
     )

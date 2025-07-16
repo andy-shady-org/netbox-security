@@ -5,6 +5,7 @@ from utilities.forms.rendering import FieldSet, ObjectAttribute
 from utilities.forms.fields import (
     DynamicModelChoiceField,
 )
+from dcim.models import Device, VirtualDeviceContext
 
 from netbox.forms import (
     NetBoxModelFilterSetForm,
@@ -13,12 +14,16 @@ from netbox.forms import (
 from netbox_security.models import (
     AddressList,
     AddressListAssignment,
+    SecurityZone,
+    Address,
+    AddressSet,
 )
 
 __all__ = (
     "AddressListForm",
     "AddressListFilterForm",
     "AddressListAssignmentForm",
+    "AddressListAssignmentFilterForm",
 )
 
 
@@ -39,9 +44,26 @@ class AddressListFilterForm(NetBoxModelFilterSetForm):
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
         FieldSet(
-            "name",
-            name=_("Address"),
+            "device_id",
+            "virtualdevicecontext_id",
+            "securityzone_id",
+            name="Assignments",
         ),
+    )
+    device_id = DynamicModelChoiceField(
+        queryset=Device.objects.all(),
+        required=False,
+        label=_("Device"),
+    )
+    virtualdevicecontext_id = DynamicModelChoiceField(
+        queryset=VirtualDeviceContext.objects.all(),
+        required=False,
+        label=_("Virtual Device Context"),
+    )
+    securityzone_id = DynamicModelChoiceField(
+        queryset=SecurityZone.objects.all(),
+        required=False,
+        label=_("Security Zone"),
     )
 
 
@@ -76,3 +98,43 @@ class AddressListAssignmentForm(forms.ModelForm):
             raise forms.ValidationError(_("Assignment already exists"))
 
         return address_list
+
+
+class AddressListAssignmentFilterForm(NetBoxModelFilterSetForm):
+    model = AddressListAssignment
+    fieldsets = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "address_id",
+            "addressset_id",
+            "device_id",
+            "virtualdevicecontext_id",
+            "securityzone_id",
+            name="Assignments",
+        ),
+    )
+    address_id = DynamicModelChoiceField(
+        queryset=Address.objects.all(),
+        required=False,
+        label=_("Address"),
+    )
+    addressset_id = DynamicModelChoiceField(
+        queryset=AddressSet.objects.all(),
+        required=False,
+        label=_("Address Set"),
+    )
+    device_id = DynamicModelChoiceField(
+        queryset=Device.objects.all(),
+        required=False,
+        label=_("Device"),
+    )
+    virtualdevicecontext_id = DynamicModelChoiceField(
+        queryset=VirtualDeviceContext.objects.all(),
+        required=False,
+        label=_("Virtual Device Context"),
+    )
+    security_zone_id = DynamicModelChoiceField(
+        queryset=SecurityZone.objects.all(),
+        required=False,
+        label=_("Security Zone"),
+    )

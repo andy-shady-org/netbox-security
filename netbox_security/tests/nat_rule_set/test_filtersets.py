@@ -1,11 +1,24 @@
+from django.contrib.contenttypes.models import ContentType
 from netaddr import IPNetwork
 from django.test import TestCase
 from utilities.testing import ChangeLoggedFilterSetTests
 from ipam.choices import IPAddressStatusChoices
+from dcim.models import Site, Manufacturer
+from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
 from ipam.models import IPAddress, Prefix, IPRange
 
-from netbox_security.models import NatPool, NatRuleSet, NatRule, SecurityZone
-from netbox_security.filtersets import NatRuleSetFilterSet, NatRuleFilterSet
+from netbox_security.models import (
+    NatPool,
+    NatRuleSet,
+    NatRule,
+    SecurityZone,
+    NatRuleSetAssignment,
+)
+from netbox_security.filtersets import (
+    NatRuleSetFilterSet,
+    NatRuleFilterSet,
+    NatRuleSetAssignmentFilterSet,
+)
 from netbox_security.choices import (
     PoolTypeChoices,
     RuleStatusChoices,
@@ -507,4 +520,134 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
 
     def test_ip_range_id(self):
         params = {"ip_range_id": [self.ranges[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+
+class NatRuleSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+    queryset = NatRuleSetAssignment.objects.all()
+    filterset = NatRuleSetAssignmentFilterSet
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.rule_sets = (
+            NatRuleSet(
+                name="set-4",
+                nat_type=NatTypeChoices.TYPE_IPV4,
+                direction=RuleDirectionChoices.DIRECTION_INBOUND,
+            ),
+            NatRuleSet(
+                name="set-5",
+                nat_type=NatTypeChoices.TYPE_IPV4,
+                direction=RuleDirectionChoices.DIRECTION_INBOUND,
+            ),
+            NatRuleSet(
+                name="set-6",
+                nat_type=NatTypeChoices.TYPE_STATIC,
+                direction=RuleDirectionChoices.DIRECTION_OUTBOUND,
+            ),
+        )
+        NatRuleSet.objects.bulk_create(cls.rule_sets)
+
+        cls.sites = (Site(name="site-1", slug="site-1"),)
+        Site.objects.bulk_create(cls.sites)
+
+        cls.manu = (Manufacturer(name="manufacturer-1", slug="manufacturer-1"),)
+        Manufacturer.objects.bulk_create(cls.manu)
+
+        cls.types = (
+            DeviceType(model="type-1", slug="type-1", manufacturer=cls.manu[0]),
+        )
+        DeviceType.objects.bulk_create(cls.types)
+
+        cls.roles = (
+            DeviceRole(name="role-1", slug="role-1", level=0, lft=1, rght=2, tree_id=1),
+        )
+        DeviceRole.objects.bulk_create(cls.roles)
+        cls.devices = (
+            Device(
+                name="device-1",
+                status="active",
+                site=cls.sites[0],
+                role=cls.roles[0],
+                device_type=cls.types[0],
+            ),
+            Device(
+                name="device-2",
+                status="active",
+                site=cls.sites[0],
+                role=cls.roles[0],
+                device_type=cls.types[0],
+            ),
+        )
+        Device.objects.bulk_create(cls.devices)
+        cls.virtual = (
+            VirtualDeviceContext(name="vd-1", device=cls.devices[0], status="active"),
+        )
+        VirtualDeviceContext.objects.bulk_create(cls.virtual)
+        cls.assignments = (
+            NatRuleSetAssignment(
+                ruleset=cls.rule_sets[0],
+                assigned_object=cls.devices[0],
+                assigned_object_type=ContentType.objects.get_by_natural_key(
+                    "dcim", "device"
+                ),
+                assigned_object_id=(cls.devices[0].pk,),
+            ),
+            NatRuleSetAssignment(
+                ruleset=cls.rule_sets[1],
+                assigned_object=cls.devices[1],
+                assigned_object_type=ContentType.objects.get_by_natural_key(
+                    "dcim", "device"
+                ),
+                assigned_object_id=(cls.devices[1].pk,),
+            ),
+            NatRuleSetAssignment(
+                ruleset=cls.rule_sets[2],
+                assigned_object=cls.virtual[0],
+                assigned_object_type=ContentType.objects.get_by_natural_key(
+                    "dcim", "virtualdevicecontext"
+                ),
+                assigned_object_id=(cls.virtual[0].pk,),
+            ),
+        )
+        NatRuleSetAssignment.objects.bulk_create(cls.assignments)
+
+    def test_ruleset(self):
+        params = {"ruleset_id": [self.rule_sets[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {
+            "ruleset_id": [
+                self.rule_sets[1].pk,
+                self.rule_sets[2].pk,
+            ]
+        }
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"ruleset": [self.rule_sets[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {
+            "ruleset": [
+                self.rule_sets[1].name,
+                self.rule_sets[2].name,
+            ]
+        }
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_device(self):
+        params = {"device_id": [self.devices[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"device_id": [self.devices[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"device_id": [self.devices[0].pk, self.devices[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"device": [self.devices[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"device": [self.devices[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"device": [self.devices[0].name, self.devices[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_virtual(self):
+        params = {"virtualdevicecontext_id": [self.virtual[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"virtualdevicecontext": [self.virtual[0].name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)

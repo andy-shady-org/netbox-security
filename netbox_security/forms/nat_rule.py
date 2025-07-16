@@ -7,6 +7,7 @@ from netbox.forms import (
     NetBoxModelImportForm,
     NetBoxModelFilterSetForm,
 )
+from dcim.models import Interface
 from ipam.models import IPAddress, Prefix, IPRange
 
 from utilities.forms.rendering import FieldSet, ObjectAttribute, TabbedGroups
@@ -516,6 +517,12 @@ class NatRuleAssignmentFilterForm(NetBoxModelFilterSetForm):
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
         FieldSet(
-            "name",
+            "interface_id",
+            name="Assignments",
         ),
+    )
+    interface_id = DynamicModelChoiceField(
+        queryset=Interface.objects.all(),
+        required=False,
+        label=_("Device"),
     )

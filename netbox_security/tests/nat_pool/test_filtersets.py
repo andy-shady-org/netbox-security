@@ -1,11 +1,18 @@
+from django.contrib.contenttypes.models import ContentType
 from netaddr import IPNetwork
 from django.test import TestCase
 from utilities.testing import ChangeLoggedFilterSetTests
+from dcim.models import Site, Manufacturer
+from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
 from ipam.models import IPAddress, Prefix, IPRange
 from ipam.choices import IPAddressStatusChoices
 
-from netbox_security.models import NatPool, NatPoolMember
-from netbox_security.filtersets import NatPoolFilterSet, NatPoolMemberFilterSet
+from netbox_security.models import NatPool, NatPoolMember, NatPoolAssignment
+from netbox_security.filtersets import (
+    NatPoolFilterSet,
+    NatPoolMemberFilterSet,
+    NatPoolAssignmentFilterSet,
+)
 from netbox_security.choices import (
     PoolTypeChoices,
 )
@@ -206,3 +213,133 @@ class NatPoolMemberFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_ports": 4}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+
+class NatPoolAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+    queryset = NatPoolAssignment.objects.all()
+    filterset = NatPoolAssignmentFilterSet
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.pools = (
+            NatPool(
+                name="pool-1",
+                pool_type=PoolTypeChoices.ADDRESS,
+                status=IPAddressStatusChoices.STATUS_ACTIVE,
+            ),
+            NatPool(
+                name="pool-2",
+                pool_type=PoolTypeChoices.ADDRESS,
+                status=IPAddressStatusChoices.STATUS_ACTIVE,
+            ),
+            NatPool(
+                name="pool-3",
+                pool_type=PoolTypeChoices.ADDRESS,
+                status=IPAddressStatusChoices.STATUS_ACTIVE,
+            ),
+        )
+        NatPool.objects.bulk_create(cls.pools)
+
+        cls.sites = (Site(name="site-1", slug="site-1"),)
+        Site.objects.bulk_create(cls.sites)
+
+        cls.manu = (Manufacturer(name="manufacturer-1", slug="manufacturer-1"),)
+        Manufacturer.objects.bulk_create(cls.manu)
+
+        cls.types = (
+            DeviceType(model="type-1", slug="type-1", manufacturer=cls.manu[0]),
+        )
+        DeviceType.objects.bulk_create(cls.types)
+
+        cls.roles = (
+            DeviceRole(name="role-1", slug="role-1", level=0, lft=1, rght=2, tree_id=1),
+        )
+        DeviceRole.objects.bulk_create(cls.roles)
+        cls.devices = (
+            Device(
+                name="device-1",
+                status="active",
+                site=cls.sites[0],
+                role=cls.roles[0],
+                device_type=cls.types[0],
+            ),
+            Device(
+                name="device-2",
+                status="active",
+                site=cls.sites[0],
+                role=cls.roles[0],
+                device_type=cls.types[0],
+            ),
+        )
+        Device.objects.bulk_create(cls.devices)
+        cls.virtual = (
+            VirtualDeviceContext(name="vd-1", device=cls.devices[0], status="active"),
+        )
+        VirtualDeviceContext.objects.bulk_create(cls.virtual)
+        cls.assignments = (
+            NatPoolAssignment(
+                pool=cls.pools[0],
+                assigned_object=cls.devices[0],
+                assigned_object_type=ContentType.objects.get_by_natural_key(
+                    "dcim", "device"
+                ),
+                assigned_object_id=(cls.devices[0].pk,),
+            ),
+            NatPoolAssignment(
+                pool=cls.pools[1],
+                assigned_object=cls.devices[1],
+                assigned_object_type=ContentType.objects.get_by_natural_key(
+                    "dcim", "device"
+                ),
+                assigned_object_id=(cls.devices[1].pk,),
+            ),
+            NatPoolAssignment(
+                pool=cls.pools[2],
+                assigned_object=cls.virtual[0],
+                assigned_object_type=ContentType.objects.get_by_natural_key(
+                    "dcim", "virtualdevicecontext"
+                ),
+                assigned_object_id=(cls.virtual[0].pk,),
+            ),
+        )
+        NatPoolAssignment.objects.bulk_create(cls.assignments)
+
+    def test_pool(self):
+        params = {"pool_id": [self.pools[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {
+            "pool_id": [
+                self.pools[1].pk,
+                self.pools[2].pk,
+            ]
+        }
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"pool": [self.pools[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {
+            "pool": [
+                self.pools[1].name,
+                self.pools[2].name,
+            ]
+        }
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_device(self):
+        params = {"device_id": [self.devices[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"device_id": [self.devices[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"device_id": [self.devices[0].pk, self.devices[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"device": [self.devices[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"device": [self.devices[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"device": [self.devices[0].name, self.devices[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_virtual(self):
+        params = {"virtualdevicecontext_id": [self.virtual[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"virtualdevicecontext": [self.virtual[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
