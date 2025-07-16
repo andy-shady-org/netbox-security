@@ -243,6 +243,7 @@ class AddressAssignmentFilterForm(NetBoxModelFilterSetForm):
         queryset=VirtualDeviceContext.objects.all(),
         required=False,
         label=_("Virtual Device Context"),
+        query_params={"device_id": "$device_id"},
     )
     security_zone_id = DynamicModelChoiceField(
         queryset=SecurityZone.objects.all(),
