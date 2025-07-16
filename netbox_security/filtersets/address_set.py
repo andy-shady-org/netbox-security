@@ -94,12 +94,12 @@ class AddressSetAssignmentFilterSet(NetBoxModelFilterSet):
         field_name="pk",
         label=_("Virtual Device Context (ID)"),
     )
-    securityzone = MultiValueCharFilter(
+    security_zone = MultiValueCharFilter(
         method="filter_zone",
         field_name="name",
         label=_("Security Zone (name)"),
     )
-    securityzone_id = MultiValueNumberFilter(
+    security_zone_id = MultiValueNumberFilter(
         method="filter_zone",
         field_name="pk",
         label=_("Security Zone (ID)"),

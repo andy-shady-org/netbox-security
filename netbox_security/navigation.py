@@ -284,6 +284,64 @@ firewall_menu_items = (
     ),
 )
 
+assignments_menu_items = (
+    PluginMenuItem(
+        link="plugins:netbox_security:addressassignment_list",
+        link_text=_("Address Assignments"),
+        permissions=["netbox_security.view_addressassignment"],
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:addresssetassignment_list",
+        link_text=_("Address Set Assignments"),
+        permissions=["netbox_security.view_addresssetassignment"],
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:addresslistassignment_list",
+        link_text=_("Address List Assignments"),
+        permissions=["netbox_security.view_addresslistassignment"],
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:applicationassignment_list",
+        link_text=_("Application Assignments"),
+        permissions=["netbox_security.view_applicationassignment"],
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:applicationsetassignment_list",
+        link_text=_("Application Set Assignments"),
+        permissions=["netbox_security.view_applicationsetassignment"],
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:securityzoneassignment_list",
+        link_text=_("Security Zone Assignments"),
+        permissions=["netbox_security.view_securityzoneassignment"],
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:natpoolassignment_list",
+        link_text=_("NAT Pool Assignments"),
+        permissions=["netbox_security.view_natpoolassignment"],
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:natrulesetassignment_list",
+        link_text=_("NAT Ruleset Assignments"),
+        permissions=["netbox_security.view_natrulesetassignment"],
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:natruleassignment_list",
+        link_text=_("NAT Rule Assignments"),
+        permissions=["netbox_security.view_natruleassignment"],
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:firewallfilterassignment_list",
+        link_text=_("Firewall Filter Assignments"),
+        permissions=["netbox_security.view_firewallfilterassignment"],
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_security:policerassignment_list",
+        link_text=_("Firewall Policer Assignments"),
+        permissions=["netbox_security.view_policerassignment"],
+    ),
+)
+
 
 if plugin_settings.get("top_level_menu"):
     menu = PluginMenu(
@@ -295,6 +353,7 @@ if plugin_settings.get("top_level_menu"):
             (_("NAT Pools"), pool_menu_items),
             (_("NAT Rules"), rule_menu_items),
             (_("Firewall Filters"), firewall_menu_items),
+            (_("Assignments"), assignments_menu_items),
         ),
         icon_class="mdi mdi-security",
     )
@@ -306,4 +365,5 @@ else:
         + pool_menu_items
         + rule_menu_items
         + firewall_menu_items
+        + assignments_menu_items
     )

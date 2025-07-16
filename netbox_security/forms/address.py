@@ -19,11 +19,13 @@ from utilities.forms.fields import (
 )
 
 from ipam.models import IPRange
+from dcim.models import Device, VirtualDeviceContext
 from tenancy.models import Tenant, TenantGroup
 
 from netbox_security.models import (
     Address,
     AddressAssignment,
+    SecurityZone,
 )
 
 __all__ = (
@@ -226,6 +228,24 @@ class AddressAssignmentFilterForm(NetBoxModelFilterSetForm):
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
         FieldSet(
-            "name",
+            "device_id",
+            "virtualdevicecontext_id",
+            "securityzone_id",
+            name="Assignments",
         ),
+    )
+    device_id = DynamicModelChoiceField(
+        queryset=Device.objects.all(),
+        required=False,
+        label=_("Device"),
+    )
+    virtualdevicecontext_id = DynamicModelChoiceField(
+        queryset=VirtualDeviceContext.objects.all(),
+        required=False,
+        label=_("Virtual Device Context"),
+    )
+    security_zone_id = DynamicModelChoiceField(
+        queryset=SecurityZone.objects.all(),
+        required=False,
+        label=_("Security Zone"),
     )

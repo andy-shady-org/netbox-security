@@ -18,6 +18,7 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
 )
 
+from dcim.models import Device, VirtualDeviceContext
 from tenancy.models import Tenant, TenantGroup
 
 from netbox_security.models import (
@@ -168,7 +169,15 @@ class FirewallFilterAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = FirewallFilterAssignment
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet(
-            "name",
-        ),
+        FieldSet("device_id", "virtualdevicecontext_id", name="Assignments"),
+    )
+    device_id = DynamicModelChoiceField(
+        queryset=Device.objects.all(),
+        required=False,
+        label=_("Device"),
+    )
+    virtualdevicecontext_id = DynamicModelChoiceField(
+        queryset=VirtualDeviceContext.objects.all(),
+        required=False,
+        label=_("Virtual Device Context"),
     )
