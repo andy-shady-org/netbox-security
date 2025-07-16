@@ -166,10 +166,15 @@ class SecurityZoneAssignmentFilterForm(NetBoxModelFilterSetForm):
     virtualdevicecontext_id = DynamicModelChoiceField(
         queryset=VirtualDeviceContext.objects.all(),
         required=False,
+        query_params={"device_id": "$device_id"},
         label=_("Virtual Device Context"),
     )
     interface_id = DynamicModelChoiceField(
         queryset=Interface.objects.all(),
         required=False,
         label=_("Device"),
+        query_params={
+            "device_id": "$device_id",
+            "vdc_id": "$virtualdevicecontext_id",
+        },
     )

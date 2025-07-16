@@ -155,6 +155,7 @@ class NatPoolAssignmentFilterForm(NetBoxModelFilterSetForm):
     virtualdevicecontext_id = DynamicModelChoiceField(
         queryset=VirtualDeviceContext.objects.all(),
         required=False,
+        query_params={"device_id": "$device_id"},
         label=_("Virtual Device Context"),
     )
     virtualmachine_id = DynamicModelChoiceField(

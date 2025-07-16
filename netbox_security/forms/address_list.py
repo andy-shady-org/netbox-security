@@ -59,6 +59,7 @@ class AddressListFilterForm(NetBoxModelFilterSetForm):
         queryset=VirtualDeviceContext.objects.all(),
         required=False,
         label=_("Virtual Device Context"),
+        query_params={"device_id": "$device_id"},
     )
     securityzone_id = DynamicModelChoiceField(
         queryset=SecurityZone.objects.all(),
