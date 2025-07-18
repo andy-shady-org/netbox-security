@@ -203,11 +203,20 @@ class AddressSetAssignmentFilterForm(NetBoxModelFilterSetForm):
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
         FieldSet(
+            "address_set_id",
+            name=_("Address Set"),
+        ),
+        FieldSet(
             "device_id",
             "virtualdevicecontext_id",
             "security_zone_id",
             name="Assignments",
         ),
+    )
+    address_set_id = DynamicModelMultipleChoiceField(
+        queryset=AddressSet.objects.all(),
+        required=False,
+        label=_("Address Set"),
     )
     device_id = DynamicModelChoiceField(
         queryset=Device.objects.all(),

@@ -13,6 +13,7 @@ from ipam.formfields import IPNetworkFormField
 from utilities.forms.rendering import FieldSet, ObjectAttribute
 from utilities.forms.fields import (
     DynamicModelChoiceField,
+    DynamicModelMultipleChoiceField,
     TagFilterField,
     CommentField,
     CSVModelChoiceField,
@@ -228,11 +229,20 @@ class AddressAssignmentFilterForm(NetBoxModelFilterSetForm):
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
         FieldSet(
+            "address_id",
+            name=_("Address"),
+        ),
+        FieldSet(
             "device_id",
             "virtualdevicecontext_id",
             "security_zone_id",
             name="Assignments",
         ),
+    )
+    address_id = DynamicModelMultipleChoiceField(
+        queryset=Address.objects.all(),
+        required=False,
+        label=_("Address"),
     )
     device_id = DynamicModelChoiceField(
         queryset=Device.objects.all(),
