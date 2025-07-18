@@ -12,6 +12,7 @@ from tenancy.forms import TenancyForm, TenancyFilterForm
 from utilities.forms.rendering import FieldSet, ObjectAttribute
 from utilities.forms.fields import (
     DynamicModelChoiceField,
+    DynamicModelMultipleChoiceField,
     TagFilterField,
     CommentField,
     CSVChoiceField,
@@ -169,7 +170,16 @@ class FirewallFilterAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = FirewallFilterAssignment
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "firewall_filter_id",
+            name=_("Firewall Filter"),
+        ),
         FieldSet("device_id", "virtualdevicecontext_id", name="Assignments"),
+    )
+    firewall_filter_id = DynamicModelMultipleChoiceField(
+        queryset=FirewallFilter.objects.all(),
+        required=False,
+        label=_("Firewall Filter"),
     )
     device_id = DynamicModelChoiceField(
         queryset=Device.objects.all(),

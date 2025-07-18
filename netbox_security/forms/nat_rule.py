@@ -517,12 +517,20 @@ class NatRuleAssignmentFilterForm(NetBoxModelFilterSetForm):
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
         FieldSet(
+            "rule_id",
+            name=_("NAT Rule"),
+        ),
+        FieldSet(
             "device_id",
             "interface_id",
             name="Assignments",
         ),
     )
-    selector_fields = ("filter_id", "q", "device_id")
+    rule_id = DynamicModelMultipleChoiceField(
+        queryset=NatRule.objects.all(),
+        required=False,
+        label=_("NAT Rule"),
+    )
     device_id = DynamicModelChoiceField(
         queryset=Device.objects.all(),
         required=False,

@@ -10,6 +10,7 @@ from netbox.forms import (
 from utilities.forms.rendering import FieldSet, ObjectAttribute
 from utilities.forms.fields import (
     DynamicModelChoiceField,
+    DynamicModelMultipleChoiceField,
     TagFilterField,
     CSVChoiceField,
     CommentField,
@@ -141,11 +142,20 @@ class NatPoolAssignmentFilterForm(NetBoxModelFilterSetForm):
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
         FieldSet(
+            "pool_id",
+            name=_("NAT Pool"),
+        ),
+        FieldSet(
             "device_id",
             "virtualdevicecontext_id",
             "virtualmachine_id",
             name="Assignments",
         ),
+    )
+    pool_id = DynamicModelMultipleChoiceField(
+        queryset=NatPool.objects.all(),
+        required=False,
+        label=_("NAT Pool"),
     )
     device_id = DynamicModelChoiceField(
         queryset=Device.objects.all(),
