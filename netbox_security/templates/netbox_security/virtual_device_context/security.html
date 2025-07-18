@@ -44,7 +44,7 @@
                     {% endif %}
                 </div>
             </h5>
-            {% htmx_table 'plugins:netbox_security:addresslistassignment_list' device_id=object.pk %}
+            {% htmx_table 'plugins:netbox_security:addresslistassignment_list' virtualdevicecontext_id=object.pk %}
         </div>
     </div>
 

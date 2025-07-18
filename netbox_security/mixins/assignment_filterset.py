@@ -22,7 +22,6 @@ class AssignmentFilterSet(NetBoxModelFilterSet):
         method="filter_device",
         field_name="pk",
         label=_("Device (ID)"),
-        exclude=True,
     )
     virtualdevicecontext = MultiValueCharFilter(
         method="filter_context",
@@ -32,7 +31,6 @@ class AssignmentFilterSet(NetBoxModelFilterSet):
     virtualdevicecontext_id = MultiValueNumberFilter(
         method="filter_context",
         field_name="pk",
-        exclude=True,
         label=_("Virtual Device Context (ID)"),
     )
 
@@ -49,25 +47,32 @@ class AssignmentFilterSet(NetBoxModelFilterSet):
         query = Q()
         for key in self.groups.keys():
             for name, value in self.groups[key].items():
-                query |= self.filter_or(base_queryset, name, value)
+                query |= self.filter_or(
+                    base_queryset,
+                    name,
+                    value,
+                    vdc=True if key == "virtual_devices" else False,
+                )
         return base_queryset.filter(query)
 
     @staticmethod
-    def filter_or(queryset, name, value):
-        if (devices := Device.objects.filter(**{f"{name}__in": value})).exists():
-            return Q(
-                assigned_object_type=ContentType.objects.get_for_model(Device),
-                assigned_object_id__in=devices.values_list("id", flat=True),
-            )
-        if (
-            devices := VirtualDeviceContext.objects.filter(**{f"{name}__in": value})
-        ).exists():
-            return Q(
-                assigned_object_type=ContentType.objects.get_for_model(
-                    VirtualDeviceContext
-                ),
-                assigned_object_id__in=devices.values_list("id", flat=True),
-            )
+    def filter_or(queryset, name, value, vdc=False):
+        if vdc:
+            if (
+                devices := VirtualDeviceContext.objects.filter(**{f"{name}__in": value})
+            ).exists():
+                return Q(
+                    assigned_object_type=ContentType.objects.get_for_model(
+                        VirtualDeviceContext
+                    ),
+                    assigned_object_id__in=devices.values_list("id", flat=True),
+                )
+        else:
+            if (devices := Device.objects.filter(**{f"{name}__in": value})).exists():
+                return Q(
+                    assigned_object_type=ContentType.objects.get_for_model(Device),
+                    assigned_object_id__in=devices.values_list("id", flat=True),
+                )
         return queryset.none()
 
     def filter_device(self, queryset, name, value):
