@@ -110,7 +110,7 @@ class AddressListAssignmentFilterForm(NetBoxModelFilterSetForm):
             "addressset_id",
             "device_id",
             "virtualdevicecontext_id",
-            "securityzone_id",
+            "security_zone_id",
             name="Assignments",
         ),
     )
