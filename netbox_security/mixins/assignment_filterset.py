@@ -38,42 +38,30 @@ class AssignmentFilterSet(NetBoxModelFilterSet):
     def qs(self):
         base_queryset = super().qs
 
-        if not hasattr(self, "groups"):
-            setattr(self, "groups", {})
-
-        if not self.groups:
+        groups = getattr(self, "groups", {})
+        if not groups:
             return base_queryset
 
-        query = Q()
-        for key in self.groups.keys():
-            for name, value in self.groups[key].items():
-                query |= self.filter_or(
-                    base_queryset,
-                    name,
-                    value,
-                    vdc=True if key == "virtual_devices" else False,
-                )
-        return base_queryset.filter(query)
+        combined_query = Q()
+        for group_key, filters in groups.items():
+            is_vdc = group_key == "virtual_devices"
+            for field, values in filters.items():
+                combined_query |= self._build_device_filter(field, values, is_vdc)
+
+        return base_queryset.filter(combined_query)
 
     @staticmethod
-    def filter_or(queryset, name, value, vdc=False):
-        if vdc:
-            if (
-                devices := VirtualDeviceContext.objects.filter(**{f"{name}__in": value})
-            ).exists():
-                return Q(
-                    assigned_object_type=ContentType.objects.get_for_model(
-                        VirtualDeviceContext
-                    ),
-                    assigned_object_id__in=devices.values_list("id", flat=True),
-                )
-        else:
-            if (devices := Device.objects.filter(**{f"{name}__in": value})).exists():
-                return Q(
-                    assigned_object_type=ContentType.objects.get_for_model(Device),
-                    assigned_object_id__in=devices.values_list("id", flat=True),
-                )
-        return queryset.none()
+    def _build_device_filter(field, values, is_vdc=False):
+        model = VirtualDeviceContext if is_vdc else Device
+        content_type = ContentType.objects.get_for_model(model)
+
+        devices = model.objects.filter(**{f"{field}__in": values}).values_list(
+            "id", flat=True
+        )
+        if devices.exists():
+            return Q(assigned_object_type=content_type, assigned_object_id__in=devices)
+
+        return Q(pk__in=[])  # Return empty Q instead of queryset.none()
 
     def filter_device(self, queryset, name, value):
         if not hasattr(self, "groups"):
