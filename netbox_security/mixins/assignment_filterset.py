@@ -46,12 +46,10 @@ class AssignmentFilterSet(NetBoxModelFilterSet):
         if not self.groups:
             return base_queryset
 
-        logger.warning(self.groups)
         query = Q()
         for key in self.groups.keys():
             for name, value in self.groups[key].items():
                 query |= self.filter_or(base_queryset, name, value)
-        logger.warning(query)
         return base_queryset.filter(query)
 
     @staticmethod
