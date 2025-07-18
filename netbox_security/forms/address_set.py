@@ -205,7 +205,7 @@ class AddressSetAssignmentFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "device_id",
             "virtualdevicecontext_id",
-            "securityzone_id",
+            "security_zone_id",
             name="Assignments",
         ),
     )
