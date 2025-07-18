@@ -57,10 +57,12 @@
             </table>
         </div>
         {% include 'inc/panels/custom_fields.html' %}
+        {% plugin_left_page object %}
     </div>
     <div class="col-md-6">
         {% include 'inc/panels/tags.html' %}
         {% include 'inc/panels/comments.html' %}
+        {% plugin_right_page object %}
     </div>
 </div>
 <div class="row">
@@ -78,5 +80,6 @@
             {% htmx_table 'plugins:netbox_security:securityzonepolicy_list' destination_zone_id=object.pk %}
         </div>
     </div>
+    {% plugin_full_width_page object %}
 </div>
 {% endblock %}
