@@ -129,50 +129,58 @@ class NatRuleSerializer(NetBoxModelSerializer):
         )
 
     def validate(self, data):
-        error_message = {}
-        if isinstance(data, dict):
-            if (source_addresses := data.get("source_addresses")) is not None and (
-                destination_addresses := data.get("destination_addresses")
-            ) is not None:
-                if set(destination_addresses) & set(source_addresses):
-                    error_address_entry = f"Source and Destination addresses cannot match: {source_addresses} - {destination_addresses}"
-                    error_message |= {
-                        "destination_addresses": [error_address_entry],
-                        "source_addresses": [error_address_entry],
-                    }
+        if not isinstance(data, dict):
+            return super().validate(data)
 
-            if (source_prefixes := data.get("source_prefixes")) is not None and (
-                destination_prefixes := data.get("destination_prefixes")
-            ) is not None:
-                if set(destination_prefixes) & set(source_prefixes):
-                    error_prefix_entry = "Source and Destination prefixes cannot match."
-                    error_message |= {
-                        "destination_prefixes": [error_prefix_entry],
-                        "source_prefixes": [error_prefix_entry],
-                    }
+        errors = []
 
-            if (source_pool := data.get("source_pool")) is not None and (
-                destination_pool := data.get("destination_pool")
-            ) is not None:
-                if destination_pool == source_pool:
-                    error_prefix_entry = "Source and Destination pools cannot match."
-                    error_message |= {
-                        "destination_pool": [error_prefix_entry],
-                        "source_pool": [error_prefix_entry],
-                    }
+        def check_overlap(field1, field2, message, show_values=False):
+            val1 = data.get(field1)
+            val2 = data.get(field2)
 
-            if (source_ranges := data.get("source_ranges")) is not None and (
-                destination_ranges := data.get("destination_ranges")
-            ) is not None:
-                if set(destination_ranges) & set(source_ranges):
-                    error_prefix_entry = "Source and Destination ranges cannot match."
-                    error_message |= {
-                        "destination_ranges": [error_prefix_entry],
-                        "source_ranges": [error_prefix_entry],
-                    }
+            if val1 is not None and val2 is not None:
+                # Use set comparison for iterables, direct equality for others
+                if isinstance(val1, list) and isinstance(val2, list):
+                    if set(val1) & set(val2):
+                        full_msg = (
+                            f"{message}: {val1} - {val2}" if show_values else message
+                        )
+                        return {field1: [full_msg], field2: [full_msg]}
+                elif val1 == val2:
+                    return {field1: [message], field2: [message]}
+            return {}
 
-        if error_message:
-            raise ValidationError(error_message)
+        violations = [
+            check_overlap(
+                "source_addresses",
+                "destination_addresses",
+                "Source and Destination addresses cannot match",
+                show_values=True,
+            ),
+            check_overlap(
+                "source_prefixes",
+                "destination_prefixes",
+                "Source and Destination prefixes cannot match",
+            ),
+            check_overlap(
+                "source_pool",
+                "destination_pool",
+                "Source and Destination pools cannot match",
+            ),
+            check_overlap(
+                "source_ranges",
+                "destination_ranges",
+                "Source and Destination ranges cannot match",
+            ),
+        ]
+
+        error_dict = {}
+        for error in violations:
+            error_dict.update(error)
+
+        if error_dict:
+            raise ValidationError(error_dict)
+
         return super().validate(data)
 
     def create(self, validated_data):
