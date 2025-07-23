@@ -22,6 +22,12 @@ class ApplicationSetTable(TenancyColumnsMixin, NetBoxTable):
         linkify=True,
         verbose_name=_("Applications"),
     )
+    application_sets = ManyToManyColumn(
+        linkify_item=True,
+        orderable=False,
+        linkify=True,
+        verbose_name=_("Application Sets"),
+    )
     tags = TagColumn(url_name="plugins:netbox_security:applicationset_list")
 
     class Meta(NetBoxTable.Meta):
@@ -32,6 +38,7 @@ class ApplicationSetTable(TenancyColumnsMixin, NetBoxTable):
             "identifier",
             "description",
             "applications",
+            "application_sets",
             "tenant",
             "tags",
         )
@@ -40,6 +47,7 @@ class ApplicationSetTable(TenancyColumnsMixin, NetBoxTable):
             "identifier",
             "description",
             "applications",
+            "application_sets",
             "tenant",
         )
 

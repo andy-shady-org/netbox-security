@@ -9,8 +9,6 @@ from utilities.filters import (
     MultiValueNumberFilter,
 )
 
-from dcim.models import Device, VirtualDeviceContext
-
 from netbox_security.models import (
     AddressList,
     Address,

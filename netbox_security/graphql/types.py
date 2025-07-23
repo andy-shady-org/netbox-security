@@ -126,6 +126,12 @@ class NetBoxSecurityApplicationSetType(NetBoxObjectType):
             strawberry.lazy("netbox_security.graphql.types"),
         ]
     ]
+    application_sets: List[
+        Annotated[
+            "NetBoxSecurityApplicationSetType",
+            strawberry.lazy("netbox_security.graphql.types"),
+        ]
+    ]
 
 
 @strawberry_django.type(

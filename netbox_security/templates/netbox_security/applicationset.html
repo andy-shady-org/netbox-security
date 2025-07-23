@@ -43,6 +43,12 @@
             </h5>
             {% htmx_table 'plugins:netbox_security:application_list' application_set_id=object.pk %}
         </div>
+        <div class="card">
+            <h5 class="card-header">
+                Child Application Sets
+            </h5>
+            {% htmx_table 'plugins:netbox_security:applicationset_list' application_set_id=object.pk %}
+        </div>
     </div>
 </div>
 {% endblock %}
