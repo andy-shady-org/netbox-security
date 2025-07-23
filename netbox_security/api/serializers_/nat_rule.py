@@ -132,8 +132,6 @@ class NatRuleSerializer(NetBoxModelSerializer):
         if not isinstance(data, dict):
             return super().validate(data)
 
-        errors = []
-
         def check_overlap(field1, field2, message, show_values=False):
             val1 = data.get(field1)
             val2 = data.get(field2)

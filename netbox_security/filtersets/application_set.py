@@ -28,6 +28,18 @@ class ApplicationSetFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         to_field_name="name",
         label=_("Application (name)"),
     )
+    application_sets_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="application_sets",
+        queryset=ApplicationSet.objects.all(),
+        to_field_name="id",
+        label=_("Application Set (name)"),
+    )
+    application_sets = django_filters.ModelMultipleChoiceFilter(
+        field_name="application_sets__name",
+        queryset=ApplicationSet.objects.all(),
+        to_field_name="name",
+        label=_("Application Set (name)"),
+    )
     security_zone_policy_id = django_filters.ModelMultipleChoiceFilter(
         field_name="securityzonepolicy_application_sets",
         queryset=SecurityZonePolicy.objects.all(),
@@ -38,6 +50,12 @@ class ApplicationSetFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         queryset=Application.objects.all(),
         to_field_name="id",
         label=_("Application (ID)"),
+    )
+    application_set_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="application_sets",
+        queryset=ApplicationSet.objects.all(),
+        to_field_name="id",
+        label=_("Application Set (ID)"),
     )
 
     class Meta:

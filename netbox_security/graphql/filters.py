@@ -131,6 +131,13 @@ class NetBoxSecurityApplicationSetFilter(
         ]
         | None
     ) = strawberry_django.filter_field()
+    application_sets: (
+        Annotated[
+            "NetBoxSecurityApplicationSetFilter",
+            strawberry.lazy("netbox_security.graphql.filters"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
 
 
 @strawberry_django.filter(SecurityZone, lookups=True)

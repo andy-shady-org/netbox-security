@@ -43,9 +43,15 @@ class ApplicationSetForm(TenancyForm, NetBoxModelForm):
     identifier = forms.CharField(max_length=100, required=False)
     applications = DynamicModelMultipleChoiceField(
         queryset=Application.objects.all(),
-        required=True,
+        required=False,
         quick_add=True,
         help_text=_("A list of applications to include in this set."),
+    )
+    application_sets = DynamicModelMultipleChoiceField(
+        queryset=ApplicationSet.objects.all(),
+        required=False,
+        quick_add=True,
+        help_text=_("A list of application sets to include in this set."),
     )
     description = forms.CharField(max_length=200, required=False)
     fieldsets = (
@@ -53,6 +59,7 @@ class ApplicationSetForm(TenancyForm, NetBoxModelForm):
             "name",
             "identifier",
             "applications",
+            "application_sets",
             "description",
             name=_("Application Set Parameters"),
         ),
@@ -67,6 +74,7 @@ class ApplicationSetForm(TenancyForm, NetBoxModelForm):
             "name",
             "identifier",
             "applications",
+            "application_sets",
             "tenant_group",
             "tenant",
             "description",
@@ -79,12 +87,23 @@ class ApplicationSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = ApplicationSet
     fieldsets = (
         FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "identifier", "applications_id", name=_("Application Set")),
+        FieldSet(
+            "name",
+            "identifier",
+            "applications_id",
+            "application_sets_id",
+            name=_("Application Set"),
+        ),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
     applications_id = DynamicModelMultipleChoiceField(
         queryset=Application.objects.all(),
         label=_("Applications"),
+        required=False,
+    )
+    application_sets_id = DynamicModelMultipleChoiceField(
+        queryset=ApplicationSet.objects.all(),
+        label=_("Application Sets"),
         required=False,
     )
     tags = TagFilterField(model)
@@ -102,9 +121,15 @@ class ApplicationSetImportForm(NetBoxModelImportForm):
     )
     applications = CSVModelMultipleChoiceField(
         queryset=Application.objects.all(),
-        required=True,
+        required=False,
         to_field_name="name",
         help_text=_("An list of applications to include in this set."),
+    )
+    application_sets = CSVModelMultipleChoiceField(
+        queryset=ApplicationSet.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("An list of application sets to include in this set."),
     )
 
     class Meta:
@@ -113,6 +138,7 @@ class ApplicationSetImportForm(NetBoxModelImportForm):
             "name",
             "identifier",
             "applications",
+            "application_sets",
             "description",
             "tenant",
             "tags",
@@ -138,9 +164,14 @@ class ApplicationSetBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         help_text=_("A list of applications to include in this set."),
     )
+    application_sets = DynamicModelMultipleChoiceField(
+        queryset=Application.objects.all(),
+        required=False,
+        help_text=_("A list of application sets to include in this set."),
+    )
     nullable_fields = ["description", "tenant"]
     fieldsets = (
-        FieldSet("applications", "description"),
+        FieldSet("applications", "application_sets", "description"),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )

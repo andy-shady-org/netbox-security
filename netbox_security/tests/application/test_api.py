@@ -193,6 +193,7 @@ class ApplicationSetAPITestCase(
     model = ApplicationSet
 
     brief_fields = [
+        "application_sets",
         "applications",
         "description",
         "display",

@@ -27,6 +27,11 @@ class ApplicationSet(ContactsMixin, PrimaryModel):
         related_name="%(class)s_applications",
         blank=True,
     )
+    application_sets = models.ManyToManyField(
+        to="netbox_security.ApplicationSet",
+        related_name="%(class)s_application_sets",
+        blank=True,
+    )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
         on_delete=models.SET_NULL,

@@ -14,13 +14,9 @@ from netbox_security.constants import APPLICATION_ASSIGNMENT_MODELS
 from netbox_security.api.serializers import ApplicationSerializer
 
 
-class ApplicationSetSerializer(NetBoxModelSerializer):
+class NestedApplicationSetSerializer(NetBoxModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:applicationset-detail"
-    )
-    tenant = TenantSerializer(nested=True, required=False, allow_null=True)
-    applications = ApplicationSerializer(
-        nested=True, required=False, allow_null=True, many=True
     )
 
     class Meta:
@@ -32,6 +28,7 @@ class ApplicationSetSerializer(NetBoxModelSerializer):
             "name",
             "identifier",
             "applications",
+            "application_sets",
             "description",
             "tenant",
             "comments",
@@ -47,21 +44,70 @@ class ApplicationSetSerializer(NetBoxModelSerializer):
             "name",
             "identifier",
             "applications",
+            "application_sets",
+            "description",
+        )
+
+
+class ApplicationSetSerializer(NetBoxModelSerializer):
+    url = HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_security-api:applicationset-detail"
+    )
+    tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+    applications = ApplicationSerializer(
+        nested=True, required=False, allow_null=True, many=True
+    )
+    application_sets = NestedApplicationSetSerializer(
+        nested=True, required=False, allow_null=True, many=True
+    )
+
+    class Meta:
+        model = ApplicationSet
+        fields = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "identifier",
+            "applications",
+            "application_sets",
+            "description",
+            "tenant",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "identifier",
+            "applications",
+            "application_sets",
             "description",
         )
 
     def create(self, validated_data):
         applications = validated_data.pop("applications", None)
+        application_sets = validated_data.pop("application_sets", None)
         obj = super().create(validated_data)
         if applications is not None:
             obj.applications.set(applications)
+        if application_sets is not None:
+            obj.application_sets.set(application_sets)
         return obj
 
     def update(self, instance, validated_data):
         applications = validated_data.pop("applications", None)
+        application_sets = validated_data.pop("application_sets", None)
         obj = super().update(instance, validated_data)
         if applications is not None:
             obj.applications.set(applications)
+        if application_sets is not None:
+            obj.application_sets.set(application_sets)
         return obj
 
 
