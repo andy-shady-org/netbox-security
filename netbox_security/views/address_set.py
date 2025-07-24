@@ -35,6 +35,7 @@ __all__ = (
     "AddressSetAssignmentEditView",
     "AddressSetAssignmentDeleteView",
     "AddressSetAssignmentListView",
+    "AddressSetAssignmentBulkDeleteView",
 )
 
 
@@ -118,3 +119,9 @@ class AddressSetAssignmentEditView(generic.ObjectEditView):
 @register_model_view(AddressSetAssignment, "delete")
 class AddressSetAssignmentDeleteView(generic.ObjectDeleteView):
     queryset = AddressSetAssignment.objects.all()
+
+
+@register_model_view(AddressSetAssignment, "bulk_delete", path="delete", detail=False)
+class AddressSetAssignmentBulkDeleteView(generic.BulkDeleteView):
+    queryset = AddressSetAssignment.objects.all()
+    table = AddressSetAssignmentTable

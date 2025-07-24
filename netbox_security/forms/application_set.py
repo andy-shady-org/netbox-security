@@ -221,9 +221,9 @@ class ApplicationSetAssignmentFilterForm(NetBoxModelFilterSetForm):
         FieldSet("device_id", "virtualdevicecontext_id", name="Assignments"),
     )
     application_set_id = DynamicModelMultipleChoiceField(
-        queryset=Application.objects.all(),
+        queryset=ApplicationSet.objects.all(),
         required=False,
-        label=_("Application"),
+        label=_("Application Set"),
     )
     device_id = DynamicModelChoiceField(
         queryset=Device.objects.all(),

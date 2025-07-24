@@ -40,6 +40,7 @@ __all__ = (
     "NatPoolAssignmentEditView",
     "NatPoolAssignmentDeleteView",
     "NatPoolAssignmentListView",
+    "NatPoolAssignmentBulkDeleteView",
 )
 
 
@@ -141,3 +142,9 @@ class NatPoolAssignmentEditView(generic.ObjectEditView):
 @register_model_view(NatPoolAssignment, "delete")
 class NatPoolAssignmentDeleteView(generic.ObjectDeleteView):
     queryset = NatPoolAssignment.objects.all()
+
+
+@register_model_view(NatPoolAssignment, "bulk_delete", path="delete", detail=False)
+class NatPoolAssignmentBulkDeleteView(generic.BulkDeleteView):
+    queryset = NatPoolAssignment.objects.all()
+    table = NatPoolAssignmentTable
