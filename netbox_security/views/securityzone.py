@@ -31,6 +31,7 @@ __all__ = (
     "SecurityZoneAssignmentEditView",
     "SecurityZoneAssignmentDeleteView",
     "SecurityZoneAssignmentListView",
+    "SecurityZoneAssignmentBulkDeleteView",
 )
 
 
@@ -114,3 +115,9 @@ class SecurityZoneAssignmentEditView(generic.ObjectEditView):
 @register_model_view(SecurityZoneAssignment, "delete")
 class SecurityZoneAssignmentDeleteView(generic.ObjectDeleteView):
     queryset = SecurityZoneAssignment.objects.all()
+
+
+@register_model_view(SecurityZoneAssignment, "bulk_delete", path="delete", detail=False)
+class SecurityZoneAssignmentBulkDeleteView(generic.BulkDeleteView):
+    queryset = SecurityZoneAssignment.objects.all()
+    table = SecurityZoneAssignmentTable

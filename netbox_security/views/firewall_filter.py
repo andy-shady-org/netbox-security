@@ -35,6 +35,7 @@ __all__ = (
     "FirewallFilterAssignmentEditView",
     "FirewallFilterAssignmentDeleteView",
     "FirewallFilterAssignmentListView",
+    "FirewallFilterAssignmentBulkDeleteView",
 )
 
 
@@ -122,3 +123,11 @@ class FirewallFilterAssignmentEditView(generic.ObjectEditView):
 @register_model_view(FirewallFilterAssignment, "delete")
 class FirewallFilterAssignmentDeleteView(generic.ObjectDeleteView):
     queryset = FirewallFilterAssignment.objects.all()
+
+
+@register_model_view(
+    FirewallFilterAssignment, "bulk_delete", path="delete", detail=False
+)
+class FirewallFilterAssignmentBulkDeleteView(generic.BulkDeleteView):
+    queryset = FirewallFilterAssignment.objects.all()
+    table = FirewallFilterAssignmentTable

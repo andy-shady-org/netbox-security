@@ -32,6 +32,7 @@ __all__ = (
     "ApplicationSetAssignmentEditView",
     "ApplicationSetAssignmentDeleteView",
     "ApplicationSetAssignmentListView",
+    "ApplicationSetAssignmentBulkDeleteView",
 )
 
 
@@ -115,3 +116,11 @@ class ApplicationSetAssignmentEditView(generic.ObjectEditView):
 @register_model_view(ApplicationSetAssignment, "delete")
 class ApplicationSetAssignmentDeleteView(generic.ObjectDeleteView):
     queryset = ApplicationSetAssignment.objects.all()
+
+
+@register_model_view(
+    ApplicationSetAssignment, "bulk_delete", path="delete", detail=False
+)
+class ApplicationSetAssignmentBulkDeleteView(generic.BulkDeleteView):
+    queryset = ApplicationSetAssignment.objects.all()
+    table = ApplicationSetAssignmentTable

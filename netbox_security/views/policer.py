@@ -26,6 +26,7 @@ __all__ = (
     "PolicerBulkDeleteView",
     "PolicerBulkImportView",
     "PolicerAssignmentListView",
+    "PolicerAssignmentBulkDeleteView",
 )
 
 
@@ -109,3 +110,9 @@ class PolicerAssignmentEditView(generic.ObjectEditView):
 @register_model_view(PolicerAssignment, "delete")
 class PolicerAssignmentDeleteView(generic.ObjectDeleteView):
     queryset = PolicerAssignment.objects.all()
+
+
+@register_model_view(PolicerAssignment, "bulk_delete", path="delete", detail=False)
+class PolicerAssignmentBulkDeleteView(generic.BulkDeleteView):
+    queryset = PolicerAssignment.objects.all()
+    table = PolicerAssignmentTable
