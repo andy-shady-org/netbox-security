@@ -95,6 +95,9 @@ class FirewallFilterAssignmentListView(generic.ObjectListView):
     filterset = FirewallFilterAssignmentFilterSet
     filterset_form = FirewallFilterAssignmentFilterForm
     table = FirewallFilterAssignmentTable
+    actions = {
+        "export": {"view"},
+    }
 
 
 @register_model_view(FirewallFilterAssignment, "add", detail=False)

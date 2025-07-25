@@ -88,6 +88,9 @@ class ApplicationAssignmentListView(generic.ObjectListView):
     filterset = ApplicationAssignmentFilterSet
     filterset_form = ApplicationAssignmentFilterForm
     table = ApplicationAssignmentTable
+    actions = {
+        "export": {"view"},
+    }
 
 
 @register_model_view(ApplicationAssignment, "add", detail=False)

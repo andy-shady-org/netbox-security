@@ -70,6 +70,9 @@ class AddressListAssignmentListView(generic.ObjectListView):
     filterset = AddressListAssignmentFilterSet
     filterset_form = AddressListAssignmentFilterForm
     table = AddressListAssignmentTable
+    actions = {
+        "export": {"view"},
+    }
 
 
 @register_model_view(AddressListAssignment, "add", detail=False)

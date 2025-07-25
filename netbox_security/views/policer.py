@@ -82,6 +82,9 @@ class PolicerAssignmentListView(generic.ObjectListView):
     filterset = PolicerAssignmentFilterSet
     filterset_form = PolicerAssignmentFilterForm
     table = PolicerAssignmentTable
+    actions = {
+        "export": {"view"},
+    }
 
 
 @register_model_view(PolicerAssignment, "add", detail=False)
