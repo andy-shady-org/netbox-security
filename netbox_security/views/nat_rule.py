@@ -169,6 +169,9 @@ class NatRuleAssignmentListView(generic.ObjectListView):
     filterset = NatRuleAssignmentFilterSet
     filterset_form = NatRuleAssignmentFilterForm
     table = NatRuleAssignmentTable
+    actions = {
+        "export": {"view"},
+    }
 
 
 @register_model_view(NatRuleAssignment, "edit")

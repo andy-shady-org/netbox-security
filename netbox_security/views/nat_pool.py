@@ -114,6 +114,9 @@ class NatPoolAssignmentListView(generic.ObjectListView):
     filterset = NatPoolAssignmentFilterSet
     filterset_form = NatPoolAssignmentFilterForm
     table = NatPoolAssignmentTable
+    actions = {
+        "export": {"view"},
+    }
 
 
 @register_model_view(NatPoolAssignment, "add", detail=False)

@@ -87,6 +87,9 @@ class SecurityZoneAssignmentListView(generic.ObjectListView):
     filterset = SecurityZoneAssignmentFilterSet
     filterset_form = SecurityZoneAssignmentFilterForm
     table = SecurityZoneAssignmentTable
+    actions = {
+        "export": {"view"},
+    }
 
 
 @register_model_view(SecurityZoneAssignment, "add", detail=False)
