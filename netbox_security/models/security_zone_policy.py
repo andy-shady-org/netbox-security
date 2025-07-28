@@ -64,10 +64,7 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
         size=4,
         verbose_name=_("Policy Actions"),
     )
-    prerequisite_models = (
-        "netbox_security.SecurityZone",
-        "netbox_security.AddressList",
-    )
+    prerequisite_models = ("netbox_security.SecurityZone",)
 
     class Meta:
         verbose_name_plural = _("Security Zone Policies")
