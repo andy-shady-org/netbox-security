@@ -56,9 +56,6 @@ class Address(ContactsMixin, PrimaryModel):
         unique_together = [
             "name",
             "identifier",
-            "address",
-            "dns_name",
-            "ip_range",
         ]
 
     def __str__(self):

@@ -112,6 +112,10 @@ class NatRule(ContactsMixin, PortsMixin, PrimaryModel):
     class Meta:
         verbose_name_plural = _("NAT Rules")
         unique_together = ["rule_set", "name"]
+        ordering = [
+            "rule_set",
+            "name",
+        ]
 
     def __str__(self):
         return f"{self.name}"
