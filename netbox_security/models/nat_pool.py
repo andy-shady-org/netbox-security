@@ -43,6 +43,9 @@ class NatPool(ContactsMixin, PrimaryModel):
         verbose_name = _("NAT Pool")
         verbose_name_plural = _("NAT Pools")
         unique_together = ["name", "pool_type"]
+        ordering = [
+            "name",
+        ]
 
     def __str__(self):
         return self.name

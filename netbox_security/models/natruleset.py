@@ -55,6 +55,9 @@ class NatRuleSet(ContactsMixin, PrimaryModel):
 
     class Meta:
         verbose_name_plural = "NAT Rule Sets"
+        ordering = [
+            "name",
+        ]
 
     def __str__(self):
         return self.name
