@@ -5,7 +5,7 @@ description = "A Netbox plugin for tracking Security and NAT related objects"
 authors = [
     {name="Andy Wilson", email="andy@shady.org"},
 ]
-license = {file="LICENCE"}
+license = {file="LICENSE"}
 readme = "README.md"
 keywords = ["netbox", "netbox-plugin", "security"]
 classifiers = [
