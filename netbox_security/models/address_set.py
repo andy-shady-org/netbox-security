@@ -80,6 +80,7 @@ class AddressSetAssignment(NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_address",
             ),
         )
+        ordering = ("address_set", "assigned_object_id")
         verbose_name = _("Address Set Assignment")
         verbose_name_plural = _("Address Set Assignments")
 

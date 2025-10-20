@@ -82,6 +82,7 @@ class FirewallFilterAssignment(NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_firewall_filter",
             ),
         )
+        ordering = ("firewall_filter", "assigned_object_id")
         verbose_name = _("Firewall Filter Assignment")
         verbose_name_plural = _("Firewall Filter Assignments")
 

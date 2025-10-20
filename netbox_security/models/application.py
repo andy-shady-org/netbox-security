@@ -92,6 +92,7 @@ class ApplicationAssignment(NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_application",
             ),
         )
+        ordering = ("application", "assigned_object_id")
         verbose_name = _("Application assignment")
         verbose_name_plural = _("Application assignments")
 

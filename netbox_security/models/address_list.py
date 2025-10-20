@@ -37,6 +37,7 @@ class AddressList(NetBoxModel):
     class Meta:
         verbose_name_plural = _("Address Lists")
         indexes = (models.Index(fields=("assigned_object_type", "assigned_object_id")),)
+        ordering = ("name", "assigned_object_id")
         constraints = (
             models.UniqueConstraint(
                 fields=("assigned_object_type", "assigned_object_id", "name"),
@@ -79,6 +80,7 @@ class AddressListAssignment(NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_address",
             ),
         )
+        ordering = ("address_list", "assigned_object_id")
         verbose_name = _("Address List Assignment")
         verbose_name_plural = _("Address List Assignments")
 

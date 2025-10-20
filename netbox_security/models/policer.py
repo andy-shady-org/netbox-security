@@ -134,6 +134,7 @@ class PolicerAssignment(NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_policer",
             ),
         )
+        ordering = ("policer", "assigned_object_id")
         verbose_name = _("Policer assignment")
         verbose_name_plural = _("Policer assignments")
 
