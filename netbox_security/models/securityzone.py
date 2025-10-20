@@ -103,6 +103,7 @@ class SecurityZoneAssignment(NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_security_zone",
             ),
         )
+        ordering = ("zone", "assigned_object_id")
         verbose_name = _("Security Zone assignment")
         verbose_name_plural = _("Security Zone assignments")
 

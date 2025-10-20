@@ -94,6 +94,7 @@ class NatRuleSetAssignment(NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_nat_rule_set",
             ),
         )
+        ordering = ("ruleset", "assigned_object_id")
         verbose_name = _("NAT Pool assignment")
         verbose_name_plural = _("NAT Ruleset assignments")
 

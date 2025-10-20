@@ -81,6 +81,7 @@ class NatPoolAssignment(NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_nat_pool",
             ),
         )
+        ordering = ("pool", "assigned_object_id")
         verbose_name = _("NAT Pool assignment")
         verbose_name_plural = _("NAT Pool assignments")
 
