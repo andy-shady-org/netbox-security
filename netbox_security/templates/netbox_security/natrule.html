@@ -1,4 +1,5 @@
 {% extends 'generic/object.html' %}
+{% load i18n %}
 {% load buttons %}
 {% load static %}
 {% load custom_links %}
@@ -98,40 +99,64 @@
     </div>
     <div class="col-md-6">
         <div class="card">
-            <h5 class="card-header">
-                Source Addresses - Address Type: {{ object.source_type|placeholder }}
-            </h5>
-            {% render_table source_addresses_table 'inc/table.html' %}
+            {% if source_addresses_table.rows|length == 1 %}
+                <h2 class="card-header">Source Address - Address Type: {{ object.source_type|placeholder }}</h2>
+            {% else %}
+                <h2 class="card-header">Source Addresses - Address Type: {{ object.source_type|placeholder }}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table source_addresses_table 'inc/table.html' %}
+            </div>
         </div>
         <div class="card">
-            <h5 class="card-header">
-                Destination Addresses - Address Type: {{ object.destination_type|placeholder }}
-            </h5>
-            {% render_table destination_addresses_table 'inc/table.html' %}
+            {% if destination_addresses_table.rows|length == 1 %}
+                <h2 class="card-header">Destination Address - Address Type: {{ object.destination_type|placeholder }}</h2>
+            {% else %}
+                <h2 class="card-header">Destination Addresses - Address Type: {{ object.destination_type|placeholder }}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table destination_addresses_table 'inc/table.html' %}
+            </div>
         </div>
         <div class="card">
-            <h5 class="card-header">
-                Source Prefixes
-            </h5>
-            {% render_table source_prefixes_table 'inc/table.html' %}
+            {% if source_prefixes_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Source Prefix" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Source Prefixes" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table source_prefixes_table 'inc/table.html' %}
+            </div>
         </div>
         <div class="card">
-            <h5 class="card-header">
-                Destination Prefixes
-            </h5>
-            {% render_table destination_prefixes_table 'inc/table.html' %}
+            {% if destination_prefixes_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Destination Prefix" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Destination Prefixes" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table destination_prefixes_table 'inc/table.html' %}
+            </div>
         </div>
         <div class="card">
-            <h5 class="card-header">
-                Source IP Ranges
-            </h5>
-            {% render_table source_ranges_table 'inc/table.html' %}
+            {% if source_ranges_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Source IP Range" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Source IP Ranges" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table source_ranges_table 'inc/table.html' %}
+            </div>
         </div>
         <div class="card">
-            <h5 class="card-header">
-                Destination IP Ranges
-            </h5>
-            {% render_table destination_ranges_table 'inc/table.html' %}
+            {% if destination_ranges_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Destination IP Range" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Destination IP Ranges" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table destination_ranges_table 'inc/table.html' %}
+            </div>
         </div>
     </div>
 </div>
