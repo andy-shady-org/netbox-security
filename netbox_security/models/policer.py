@@ -16,7 +16,6 @@ from netbox_security.constants import (
 
 from netbox_security.choices import ForwardingClassChoices, LossPriorityChoices
 
-
 __all__ = (
     "Policer",
     "PolicerAssignment",

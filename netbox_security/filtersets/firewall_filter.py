@@ -14,7 +14,6 @@ from netbox_security.mixins import (
 )
 from netbox_security.choices import FamilyChoices
 
-
 __all__ = (
     "FirewallFilterFilterSet",
     "FirewallFilterAssignmentFilterSet",

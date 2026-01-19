@@ -13,7 +13,6 @@ from netbox_security.models import (
     ApplicationSet,
 )
 
-
 __all__ = ("SecurityZonePolicyFilterSet",)
 
 

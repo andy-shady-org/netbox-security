@@ -7,7 +7,6 @@ from tenancy.tables import TenancyColumnsMixin
 
 from netbox_security.models import Address, AddressAssignment
 
-
 __all__ = (
     "AddressTable",
     "AddressAssignmentTable",

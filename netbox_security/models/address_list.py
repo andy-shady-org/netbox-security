@@ -11,7 +11,6 @@ from netbox_security.constants import (
 )
 from netbox_security.models import SecurityZone, Address, AddressSet
 
-
 __all__ = ("AddressList", "AddressListAssignment", "AddressListIndex")
 
 

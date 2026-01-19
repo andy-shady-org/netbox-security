@@ -20,7 +20,6 @@ from netbox_security.mixins import (
     AssignmentFilterSet,
 )
 
-
 __all__ = (
     "AddressSetFilterSet",
     "AddressSetAssignmentFilterSet",

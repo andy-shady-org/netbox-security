@@ -14,7 +14,6 @@ from netbox_security.models import (
 
 from netbox_security.mixins import PortsFilterSet
 
-
 __all__ = ("ApplicationItemFilterSet",)
 
 

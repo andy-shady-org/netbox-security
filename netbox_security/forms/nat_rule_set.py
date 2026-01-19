@@ -27,7 +27,6 @@ from netbox_security.models import (
     SecurityZone,
 )
 
-
 __all__ = (
     "NatRuleSetForm",
     "NatRuleSetFilterForm",

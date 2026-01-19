@@ -19,7 +19,6 @@ from netbox_security.choices import (
     AddressTypeChoices,
 )
 
-
 __all__ = (
     "NatRule",
     "NatRuleAssignment",

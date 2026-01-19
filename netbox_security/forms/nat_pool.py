@@ -27,7 +27,6 @@ from netbox_security.models import (
     NatPoolAssignment,
 )
 
-
 __all__ = (
     "NatPoolForm",
     "NatPoolFilterForm",

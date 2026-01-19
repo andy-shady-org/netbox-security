@@ -19,7 +19,6 @@ from netbox_security.forms import (
     SecurityZoneAssignmentFilterForm,
 )
 
-
 __all__ = (
     "SecurityZoneView",
     "SecurityZoneListView",

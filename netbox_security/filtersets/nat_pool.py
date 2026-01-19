@@ -20,7 +20,6 @@ from netbox_security.mixins import (
 )
 from netbox_security.choices import PoolTypeChoices
 
-
 __all__ = (
     "NatPoolFilterSet",
     "NatPoolAssignmentFilterSet",

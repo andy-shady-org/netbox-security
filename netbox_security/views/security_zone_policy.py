@@ -16,7 +16,6 @@ from netbox_security.forms import (
     SecurityZonePolicyImportForm,
 )
 
-
 __all__ = (
     "SecurityZonePolicyView",
     "SecurityZonePolicyListView",

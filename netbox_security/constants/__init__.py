@@ -11,7 +11,6 @@ from .constants import (
     APPLICATION_ASSIGNMENT_MODELS,
 )
 
-
 __all__ = (
     "ADDRESS_ASSIGNMENT_MODELS",
     "RULESET_ASSIGNMENT_MODELS",

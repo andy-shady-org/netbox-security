@@ -17,7 +17,6 @@ from netbox_security.choices import (
     ForwardingClassChoices,
 )
 
-
 __all__ = (
     "PolicerFilterSet",
     "PolicerAssignmentFilterSet",

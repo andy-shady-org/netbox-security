@@ -10,7 +10,6 @@ from netbox.search import SearchIndex, register_search
 from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
 from netbox_security.models import SecurityZone
 
-
 __all__ = ("AddressSet", "AddressSetAssignment", "AddressSetIndex")
 
 

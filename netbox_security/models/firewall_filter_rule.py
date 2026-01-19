@@ -13,7 +13,6 @@ from netbox_security.choices import (
     FirewallRuleThenSettingChoices,
 )
 
-
 __all__ = (
     "FirewallRuleFromSetting",
     "FirewallRuleThenSetting",

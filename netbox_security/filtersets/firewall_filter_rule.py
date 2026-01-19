@@ -16,7 +16,6 @@ from netbox_security.models import (
     FirewallRuleThenSetting,
 )
 
-
 __all__ = (
     "FirewallFilterRuleFilterSet",
     "FirewallFilterRuleFromSettingFilterSet",

@@ -12,7 +12,6 @@ from netbox_security.forms import (
     ApplicationItemImportForm,
 )
 
-
 __all__ = (
     "ApplicationItemView",
     "ApplicationItemListView",

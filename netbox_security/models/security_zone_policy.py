@@ -8,7 +8,6 @@ from netbox.models import PrimaryModel
 from netbox.models.features import ContactsMixin
 from netbox_security.choices import ActionChoices
 
-
 __all__ = (
     "SecurityZonePolicy",
     "SecurityZonePolicyIndex",

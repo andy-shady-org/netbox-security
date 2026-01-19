@@ -24,7 +24,6 @@ from netbox_security.choices import (
     NatTypeChoices,
 )
 
-
 __all__ = (
     "NatRuleSetFilterSet",
     "NatRuleSetAssignmentFilterSet",

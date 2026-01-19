@@ -9,7 +9,6 @@ from netbox.search import SearchIndex, register_search
 
 from netbox_security.constants import APPLICATION_ASSIGNMENT_MODELS
 
-
 __all__ = ("ApplicationSet", "ApplicationSetAssignment", "ApplicationSetIndex")
 
 

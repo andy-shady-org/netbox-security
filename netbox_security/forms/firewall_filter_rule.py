@@ -26,7 +26,6 @@ from netbox_security.mixins import (
     FilterRuleSettingFormMixin,
 )
 
-
 __all__ = (
     "FirewallFilterRuleForm",
     "FirewallFilterRuleFilterForm",

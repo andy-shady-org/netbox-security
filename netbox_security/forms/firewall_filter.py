@@ -29,7 +29,6 @@ from netbox_security.models import (
 
 from netbox_security.choices import FamilyChoices
 
-
 __all__ = (
     "FirewallFilterForm",
     "FirewallFilterFilterForm",

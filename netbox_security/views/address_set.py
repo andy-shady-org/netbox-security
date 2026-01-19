@@ -23,7 +23,6 @@ from netbox_security.forms import (
     AddressSetAssignmentFilterForm,
 )
 
-
 __all__ = (
     "AddressSetView",
     "AddressSetListView",

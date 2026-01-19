@@ -35,7 +35,6 @@ from netbox_security.models import (
 )
 from netbox_security.mixins import PortsForm
 
-
 __all__ = (
     "NatRuleForm",
     "NatRuleFilterForm",

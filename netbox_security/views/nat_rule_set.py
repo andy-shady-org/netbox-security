@@ -26,7 +26,6 @@ from netbox_security.forms import (
     NatRuleSetAssignmentFilterForm,
 )
 
-
 __all__ = (
     "NatRuleSetView",
     "NatRuleSetListView",
