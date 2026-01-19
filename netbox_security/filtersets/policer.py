@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
+from utilities.filtersets import register_filterset
 
 from netbox_security.models import (
     Policer,
@@ -17,6 +18,13 @@ from netbox_security.choices import (
 )
 
 
+__all__ = (
+    "PolicerFilterSet",
+    "PolicerAssignmentFilterSet",
+)
+
+
+@register_filterset
 class PolicerFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
     loss_priority = django_filters.MultipleChoiceFilter(
         choices=LossPriorityChoices,
@@ -56,6 +64,7 @@ class PolicerFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         return queryset.filter(qs_filter)
 
 
+@register_filterset
 class PolicerAssignmentFilterSet(AssignmentFilterSet):
     policer_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Policer.objects.all(),

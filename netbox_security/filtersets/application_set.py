@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
+from utilities.filtersets import register_filterset
 
 from netbox_security.models import (
     ApplicationSet,
@@ -15,6 +16,13 @@ from netbox_security.mixins import (
 )
 
 
+__all__ = (
+    "ApplicationSetFilterSet",
+    "ApplicationSetAssignmentFilterSet",
+)
+
+
+@register_filterset
 class ApplicationSetFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
     applications_id = django_filters.ModelMultipleChoiceFilter(
         field_name="applications",
@@ -74,6 +82,7 @@ class ApplicationSetFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         return queryset.filter(qs_filter)
 
 
+@register_filterset
 class ApplicationSetAssignmentFilterSet(AssignmentFilterSet):
     application_set_id = django_filters.ModelMultipleChoiceFilter(
         queryset=ApplicationSet.objects.all(),

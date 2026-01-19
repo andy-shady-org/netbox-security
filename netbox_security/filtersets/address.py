@@ -6,6 +6,7 @@ from netaddr.core import AddrFormatError
 from netaddr import IPNetwork
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
+from utilities.filtersets import register_filterset
 from utilities.filters import (
     MultiValueCharFilter,
     MultiValueNumberFilter,
@@ -24,6 +25,13 @@ from netbox_security.mixins import (
 )
 
 
+__all__ = (
+    "AddressFilterSet",
+    "AddressAssignmentFilterSet",
+)
+
+
+@register_filterset
 class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
     address = django_filters.CharFilter(
         method="filter_address",
@@ -74,6 +82,7 @@ class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
             return queryset.none()
 
 
+@register_filterset
 class AddressAssignmentFilterSet(AssignmentFilterSet):
     address_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Address.objects.all(),

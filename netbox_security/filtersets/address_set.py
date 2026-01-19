@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
+from utilities.filtersets import register_filterset
 from utilities.filters import (
     MultiValueCharFilter,
     MultiValueNumberFilter,
@@ -20,6 +21,13 @@ from netbox_security.mixins import (
 )
 
 
+__all__ = (
+    "AddressSetFilterSet",
+    "AddressSetAssignmentFilterSet",
+)
+
+
+@register_filterset
 class AddressSetFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
     address_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Address.objects.all(),
@@ -62,6 +70,7 @@ class AddressSetFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         return queryset.filter(qs_filter)
 
 
+@register_filterset
 class AddressSetAssignmentFilterSet(AssignmentFilterSet):
     address_set_id = django_filters.ModelMultipleChoiceFilter(
         queryset=AddressSet.objects.all(),

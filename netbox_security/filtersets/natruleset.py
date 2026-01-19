@@ -3,6 +3,8 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
+from utilities.filtersets import register_filterset
+
 from utilities.filters import (
     MultiValueCharFilter,
     MultiValueNumberFilter,
@@ -23,6 +25,13 @@ from netbox_security.choices import (
 )
 
 
+__all__ = (
+    "NatRuleSetFilterSet",
+    "NatRuleSetAssignmentFilterSet",
+)
+
+
+@register_filterset
 class NatRuleSetFilterSet(NetBoxModelFilterSet):
     nat_type = django_filters.MultipleChoiceFilter(
         choices=NatTypeChoices,
@@ -75,6 +84,7 @@ class NatRuleSetFilterSet(NetBoxModelFilterSet):
         return queryset.filter(qs_filter)
 
 
+@register_filterset
 class NatRuleSetAssignmentFilterSet(AssignmentFilterSet):
     ruleset_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatRuleSet.objects.all(),

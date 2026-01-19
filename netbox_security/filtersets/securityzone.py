@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
+from utilities.filtersets import register_filterset
 from utilities.filters import (
     MultiValueCharFilter,
     MultiValueNumberFilter,
@@ -21,6 +22,13 @@ from netbox_security.mixins import (
 )
 
 
+__all__ = (
+    "SecurityZoneFilterSet",
+    "SecurityZoneAssignmentFilterSet",
+)
+
+
+@register_filterset
 class SecurityZoneFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
     source_zone_id = django_filters.ModelMultipleChoiceFilter(
         field_name="natruleset_source_zones",
@@ -66,6 +74,7 @@ class SecurityZoneFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         return queryset.filter(qs_filter)
 
 
+@register_filterset
 class SecurityZoneAssignmentFilterSet(AssignmentFilterSet):
     zone_id = django_filters.ModelMultipleChoiceFilter(
         queryset=SecurityZone.objects.all(),

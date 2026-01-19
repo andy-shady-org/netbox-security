@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.utils.translation import gettext as _
 
 from netbox.filtersets import NetBoxModelFilterSet
+from utilities.filtersets import register_filterset
 
 from netbox_security.choices import (
     FirewallRuleFromSettingChoices,
@@ -23,6 +24,7 @@ __all__ = (
 )
 
 
+@register_filterset
 class FirewallFilterRuleFilterSet(NetBoxModelFilterSet):
     firewall_filter_id = django_filters.ModelMultipleChoiceFilter(
         queryset=FirewallFilter.objects.all(),
@@ -48,6 +50,7 @@ class FirewallFilterRuleFilterSet(NetBoxModelFilterSet):
         return queryset.filter(qs_filter).distinct()
 
 
+@register_filterset
 class FirewallFilterRuleFromSettingFilterSet(NetBoxModelFilterSet):
     key = django_filters.MultipleChoiceFilter(
         choices=FirewallRuleFromSettingChoices, null_value=None, label=_("Setting Name")
@@ -66,6 +69,7 @@ class FirewallFilterRuleFromSettingFilterSet(NetBoxModelFilterSet):
         return queryset.filter(qs_filter).distinct()
 
 
+@register_filterset
 class FirewallFilterRuleThenSettingFilterSet(NetBoxModelFilterSet):
     key = django_filters.MultipleChoiceFilter(
         choices=FirewallRuleThenSettingChoices, null_value=None, label=_("Setting Name")

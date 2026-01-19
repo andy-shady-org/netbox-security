@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
+from utilities.filtersets import register_filterset
 from utilities.filters import (
     ContentTypeFilter,
     MultiValueCharFilter,
@@ -22,6 +23,13 @@ from netbox_security.mixins import (
 )
 
 
+__all__ = (
+    "AddressListFilterSet",
+    "AddressListAssignmentFilterSet",
+)
+
+
+@register_filterset
 class AddressListFilterSet(NetBoxModelFilterSet):
     assigned_object_type = ContentTypeFilter()
     address = MultiValueCharFilter(
@@ -87,6 +95,7 @@ class AddressListFilterSet(NetBoxModelFilterSet):
         )
 
 
+@register_filterset
 class AddressListAssignmentFilterSet(AssignmentFilterSet):
     address_list_id = django_filters.ModelMultipleChoiceFilter(
         queryset=AddressList.objects.all(),

@@ -3,7 +3,7 @@ import strawberry
 import strawberry_django
 from strawberry_django import FilterLookup
 
-from netbox.graphql.filter_mixins import NetBoxModelFilterMixin
+from netbox.graphql.filters import PrimaryModelFilter
 from ipam.graphql.enums import IPAddressStatusEnum
 from tenancy.graphql.filter_mixins import ContactFilterMixin, TenancyFilterMixin
 from ipam.graphql.filters import IPAddressFilter, IPRangeFilter, PrefixFilter
@@ -42,7 +42,7 @@ from netbox_security.models import (
 
 @strawberry_django.filter(Address, lookups=True)
 class NetBoxSecurityAddressFilter(
-    ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
+    ContactFilterMixin, TenancyFilterMixin, PrimaryModelFilter
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     identifier: FilterLookup[str] | None = strawberry_django.filter_field()
@@ -53,7 +53,7 @@ class NetBoxSecurityAddressFilter(
 
 @strawberry_django.filter(AddressSet, lookups=True)
 class NetBoxSecurityAddressSetFilter(
-    ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
+    ContactFilterMixin, TenancyFilterMixin, PrimaryModelFilter
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     identifier: FilterLookup[str] | None = strawberry_django.filter_field()
@@ -75,12 +75,12 @@ class NetBoxSecurityAddressSetFilter(
 
 
 @strawberry_django.filter(AddressList, lookups=True)
-class NetBoxSecurityAddressListFilter(NetBoxModelFilterMixin):
+class NetBoxSecurityAddressListFilter(PrimaryModelFilter):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
 
 
 @strawberry_django.filter(ApplicationItem, lookups=True)
-class NetBoxSecurityApplicationItemFilter(ContactFilterMixin, NetBoxModelFilterMixin):
+class NetBoxSecurityApplicationItemFilter(ContactFilterMixin, PrimaryModelFilter):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     index: FilterLookup[int] | None = strawberry_django.filter_field()
     protocol: (
@@ -96,7 +96,7 @@ class NetBoxSecurityApplicationItemFilter(ContactFilterMixin, NetBoxModelFilterM
 
 @strawberry_django.filter(Application, lookups=True)
 class NetBoxSecurityApplicationFilter(
-    ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
+    ContactFilterMixin, TenancyFilterMixin, PrimaryModelFilter
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     identifier: FilterLookup[str] | None = strawberry_django.filter_field()
@@ -120,7 +120,7 @@ class NetBoxSecurityApplicationFilter(
 
 @strawberry_django.filter(ApplicationSet, lookups=True)
 class NetBoxSecurityApplicationSetFilter(
-    ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
+    ContactFilterMixin, TenancyFilterMixin, PrimaryModelFilter
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     identifier: FilterLookup[str] | None = strawberry_django.filter_field()
@@ -142,7 +142,7 @@ class NetBoxSecurityApplicationSetFilter(
 
 @strawberry_django.filter(SecurityZone, lookups=True)
 class NetBoxSecuritySecurityZoneFilter(
-    ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
+    ContactFilterMixin, TenancyFilterMixin, PrimaryModelFilter
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     identifier: FilterLookup[str] | None = strawberry_django.filter_field()
@@ -150,9 +150,7 @@ class NetBoxSecuritySecurityZoneFilter(
 
 
 @strawberry_django.filter(SecurityZonePolicy, lookups=True)
-class NetBoxSecuritySecurityZonePolicyFilter(
-    ContactFilterMixin, NetBoxModelFilterMixin
-):
+class NetBoxSecuritySecurityZonePolicyFilter(ContactFilterMixin, PrimaryModelFilter):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     identifier: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
@@ -209,7 +207,7 @@ class NetBoxSecuritySecurityZonePolicyFilter(
 
 
 @strawberry_django.filter(NatPool, lookups=True)
-class NetBoxSecurityNatPoolFilter(ContactFilterMixin, NetBoxModelFilterMixin):
+class NetBoxSecurityNatPoolFilter(ContactFilterMixin, PrimaryModelFilter):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
     pool_type: (
@@ -225,7 +223,7 @@ class NetBoxSecurityNatPoolFilter(ContactFilterMixin, NetBoxModelFilterMixin):
 
 
 @strawberry_django.filter(NatPoolMember, lookups=True)
-class NetBoxSecurityNatPoolMemberFilter(NetBoxModelFilterMixin):
+class NetBoxSecurityNatPoolMemberFilter(PrimaryModelFilter):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     pool: (
         Annotated[
@@ -249,7 +247,7 @@ class NetBoxSecurityNatPoolMemberFilter(NetBoxModelFilterMixin):
 
 
 @strawberry_django.filter(NatRuleSet, lookups=True)
-class NetBoxSecurityNatRuleSetFilter(ContactFilterMixin, NetBoxModelFilterMixin):
+class NetBoxSecurityNatRuleSetFilter(ContactFilterMixin, PrimaryModelFilter):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
     nat_type: (
@@ -283,7 +281,7 @@ class NetBoxSecurityNatRuleSetFilter(ContactFilterMixin, NetBoxModelFilterMixin)
 
 
 @strawberry_django.filter(NatRule, lookups=True)
-class NetBoxSecurityNatRuleFilter(ContactFilterMixin, NetBoxModelFilterMixin):
+class NetBoxSecurityNatRuleFilter(ContactFilterMixin, PrimaryModelFilter):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
     rule_set: (
@@ -364,7 +362,7 @@ class NetBoxSecurityNatRuleFilter(ContactFilterMixin, NetBoxModelFilterMixin):
 
 @strawberry_django.filter(Policer, lookups=True)
 class NetBoxSecurityPolicerFilter(
-    ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
+    ContactFilterMixin, TenancyFilterMixin, PrimaryModelFilter
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
@@ -397,7 +395,7 @@ class NetBoxSecurityPolicerFilter(
 
 @strawberry_django.filter(FirewallFilter, lookups=True)
 class NetBoxSecurityFirewallFilterFilter(
-    ContactFilterMixin, TenancyFilterMixin, NetBoxModelFilterMixin
+    ContactFilterMixin, TenancyFilterMixin, PrimaryModelFilter
 ):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
@@ -410,9 +408,7 @@ class NetBoxSecurityFirewallFilterFilter(
 
 
 @strawberry_django.filter(FirewallFilterRule, lookups=True)
-class NetBoxSecurityFirewallFilterRuleFilter(
-    ContactFilterMixin, NetBoxModelFilterMixin
-):
+class NetBoxSecurityFirewallFilterRuleFilter(ContactFilterMixin, PrimaryModelFilter):
     name: FilterLookup[str] | None = strawberry_django.filter_field()
     description: FilterLookup[str] | None = strawberry_django.filter_field()
     firewall_filter: (

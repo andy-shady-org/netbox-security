@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
+from utilities.filtersets import register_filterset
 
 from netbox_security.models import (
     FirewallFilter,
@@ -14,6 +15,13 @@ from netbox_security.mixins import (
 from netbox_security.choices import FamilyChoices
 
 
+__all__ = (
+    "FirewallFilterFilterSet",
+    "FirewallFilterAssignmentFilterSet",
+)
+
+
+@register_filterset
 class FirewallFilterFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
     family = django_filters.MultipleChoiceFilter(
         choices=FamilyChoices,
@@ -32,6 +40,7 @@ class FirewallFilterFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         return queryset.filter(qs_filter)
 
 
+@register_filterset
 class FirewallFilterAssignmentFilterSet(AssignmentFilterSet):
     firewall_filter_id = django_filters.ModelMultipleChoiceFilter(
         queryset=FirewallFilter.objects.all(),
