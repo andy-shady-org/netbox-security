@@ -1,7 +1,7 @@
 import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
 from utilities.filtersets import register_filterset
 
@@ -22,7 +22,7 @@ __all__ = (
 
 
 @register_filterset
-class ApplicationSetFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+class ApplicationSetFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
     applications_id = django_filters.ModelMultipleChoiceFilter(
         field_name="applications",
         queryset=Application.objects.all(),

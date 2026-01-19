@@ -1,7 +1,7 @@
 import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
 from utilities.filtersets import register_filterset
 
@@ -21,7 +21,7 @@ __all__ = (
 
 
 @register_filterset
-class FirewallFilterFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+class FirewallFilterFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
     family = django_filters.MultipleChoiceFilter(
         choices=FamilyChoices,
         required=False,

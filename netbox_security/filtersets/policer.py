@@ -1,7 +1,7 @@
 import django_filters
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
 from utilities.filtersets import register_filterset
 
@@ -24,7 +24,7 @@ __all__ = (
 
 
 @register_filterset
-class PolicerFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+class PolicerFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
     loss_priority = django_filters.MultipleChoiceFilter(
         choices=LossPriorityChoices,
         required=False,

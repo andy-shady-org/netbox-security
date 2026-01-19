@@ -1,7 +1,7 @@
 import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from utilities.filtersets import register_filterset
 from ipam.models import IPAddress, Prefix, IPRange
 
@@ -22,7 +22,7 @@ __all__ = (
 
 
 @register_filterset
-class NatRuleFilterSet(PortsFilterSet, NetBoxModelFilterSet):
+class NatRuleFilterSet(PortsFilterSet, PrimaryModelFilterSet):
     rule_set_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatRuleSet.objects.all(),
         field_name="rule_set",

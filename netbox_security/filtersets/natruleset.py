@@ -2,7 +2,7 @@ import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from utilities.filtersets import register_filterset
 
 from utilities.filters import (
@@ -31,7 +31,7 @@ __all__ = (
 
 
 @register_filterset
-class NatRuleSetFilterSet(NetBoxModelFilterSet):
+class NatRuleSetFilterSet(PrimaryModelFilterSet):
     nat_type = django_filters.MultipleChoiceFilter(
         choices=NatTypeChoices,
         required=False,

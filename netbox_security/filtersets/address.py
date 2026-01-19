@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from netaddr.core import AddrFormatError
 from netaddr import IPNetwork
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
 from utilities.filtersets import register_filterset
 from utilities.filters import (
@@ -31,7 +31,7 @@ __all__ = (
 
 
 @register_filterset
-class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+class AddressFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
     address = django_filters.CharFilter(
         method="filter_address",
         label=_("Value"),

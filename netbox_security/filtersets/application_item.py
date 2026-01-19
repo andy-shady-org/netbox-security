@@ -1,6 +1,6 @@
 import django_filters
 from django.db.models import Q
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from django.utils.translation import gettext_lazy as _
 
 from utilities.filtersets import register_filterset
@@ -18,7 +18,7 @@ __all__ = ("ApplicationItemFilterSet",)
 
 
 @register_filterset
-class ApplicationItemFilterSet(PortsFilterSet, NetBoxModelFilterSet):
+class ApplicationItemFilterSet(PortsFilterSet, PrimaryModelFilterSet):
     protocol = MultiValueCharFilter(
         method="filter_protocol",
         label=_("Protocols"),

@@ -2,7 +2,7 @@ import django_filters
 from django.db.models import Q
 from django.utils.translation import gettext as _
 
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from utilities.filtersets import register_filterset
 
 from netbox_security.choices import (
@@ -24,7 +24,7 @@ __all__ = (
 
 
 @register_filterset
-class FirewallFilterRuleFilterSet(NetBoxModelFilterSet):
+class FirewallFilterRuleFilterSet(PrimaryModelFilterSet):
     firewall_filter_id = django_filters.ModelMultipleChoiceFilter(
         queryset=FirewallFilter.objects.all(),
         field_name="firewall_filter",
