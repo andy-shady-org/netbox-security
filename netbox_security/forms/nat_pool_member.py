@@ -77,7 +77,6 @@ class NatPoolMemberForm(PortsForm, NetBoxModelForm):
         model = NatPoolMember
         fields = [
             "name",
-            "owner",
             "pool",
             "address",
             "prefix",
@@ -126,7 +125,7 @@ class NatPoolMemberForm(PortsForm, NetBoxModelForm):
 class NatPoolMemberFilterForm(PortsForm, NetBoxModelFilterSetForm):
     model = NatPoolMember
     fieldsets = (
-        FieldSet("q", "filter_id", "tag", "owner_id"),
+        FieldSet("q", "filter_id", "tag"),
         FieldSet("name", "pool_id", "pool_type", "status"),
         FieldSet("address_id", "prefix_id", "address_range_id", name=_("IPAM")),
         FieldSet("source_ports", "destination_ports", name=_("Ports")),
@@ -190,7 +189,6 @@ class NatPoolMemberImportForm(PortsForm, NetBoxModelImportForm):
         model = NatPoolMember
         fields = (
             "name",
-            "owner",
             "pool",
             "status",
             "address",
