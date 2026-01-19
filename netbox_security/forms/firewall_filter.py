@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 
@@ -39,7 +40,7 @@ __all__ = (
 )
 
 
-class FirewallFilterForm(TenancyForm, NetBoxModelForm):
+class FirewallFilterForm(TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     family = forms.ChoiceField(
         required=False,
@@ -67,7 +68,7 @@ class FirewallFilterForm(TenancyForm, NetBoxModelForm):
         ]
 
 
-class FirewallFilterFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+class FirewallFilterFilterForm(TenancyFilterForm, PrimaryModelFilterSetForm):
     model = FirewallFilter
     fieldsets = (
         FieldSet("q", "filter_id", "tag", "owner_id"),
@@ -81,7 +82,7 @@ class FirewallFilterFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class FirewallFilterImportForm(NetBoxModelImportForm):
+class FirewallFilterImportForm(PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     description = forms.CharField(max_length=200, required=False)
     family = CSVChoiceField(
@@ -108,7 +109,7 @@ class FirewallFilterImportForm(NetBoxModelImportForm):
         )
 
 
-class FirewallFilterBulkEditForm(NetBoxModelBulkEditForm):
+class FirewallFilterBulkEditForm(PrimaryModelBulkEditForm):
     model = FirewallFilter
     description = forms.CharField(max_length=200, required=False)
     family = forms.ChoiceField(
@@ -170,7 +171,7 @@ class FirewallFilterAssignmentForm(forms.ModelForm):
 class FirewallFilterAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = FirewallFilterAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag", "owner_id"),
+        FieldSet("q", "filter_id", "tag"),
         FieldSet(
             "firewall_filter_id",
             name=_("Firewall Filter"),

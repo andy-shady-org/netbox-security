@@ -2,10 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelForm,
-    NetBoxModelFilterSetForm,
-    NetBoxModelBulkEditForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
 )
 
 from utilities.forms.rendering import FieldSet
@@ -34,7 +34,7 @@ __all__ = (
 )
 
 
-class FirewallFilterRuleForm(FilterRuleSettingFormMixin, NetBoxModelForm):
+class FirewallFilterRuleForm(FilterRuleSettingFormMixin, PrimaryModelForm):
     name = forms.CharField(max_length=100, required=True)
     index = forms.IntegerField(required=True)
     firewall_filter = DynamicModelChoiceField(
@@ -71,7 +71,7 @@ class FirewallFilterRuleForm(FilterRuleSettingFormMixin, NetBoxModelForm):
         return super().save(*args, **kwargs)
 
 
-class FirewallFilterRuleFilterForm(NetBoxModelFilterSetForm):
+class FirewallFilterRuleFilterForm(PrimaryModelFilterSetForm):
     firewall_filter_id = DynamicModelMultipleChoiceField(
         queryset=FirewallFilter.objects.all(),
         required=False,
@@ -92,7 +92,7 @@ class FirewallFilterRuleFilterForm(NetBoxModelFilterSetForm):
     tag = TagFilterField(model)
 
 
-class FirewallFilterRuleImportForm(NetBoxModelImportForm):
+class FirewallFilterRuleImportForm(PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     index = forms.IntegerField(required=True)
     description = forms.CharField(max_length=200, required=False)
@@ -115,7 +115,7 @@ class FirewallFilterRuleImportForm(NetBoxModelImportForm):
         )
 
 
-class FirewallFilterRuleBulkEditForm(NetBoxModelBulkEditForm):
+class FirewallFilterRuleBulkEditForm(PrimaryModelBulkEditForm):
     model = FirewallFilterRule
     index = forms.IntegerField(required=False)
     description = forms.CharField(max_length=200, required=False)

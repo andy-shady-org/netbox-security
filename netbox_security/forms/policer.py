@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 
@@ -41,7 +42,7 @@ __all__ = (
 )
 
 
-class PolicerForm(TenancyForm, NetBoxModelForm):
+class PolicerForm(TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=200, required=False)
     logical_interface_policer = forms.BooleanField(
@@ -123,7 +124,7 @@ class PolicerForm(TenancyForm, NetBoxModelForm):
         ]
 
 
-class PolicerFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+class PolicerFilterForm(TenancyFilterForm, PrimaryModelFilterSetForm):
     model = Policer
     fieldsets = (
         FieldSet("q", "filter_id", "tag", "owner_id"),
@@ -135,7 +136,7 @@ class PolicerFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class PolicerImportForm(NetBoxModelImportForm):
+class PolicerImportForm(PrimaryModelImportForm):
     tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
@@ -194,7 +195,7 @@ class PolicerImportForm(NetBoxModelImportForm):
         )
 
 
-class PolicerBulkEditForm(NetBoxModelBulkEditForm):
+class PolicerBulkEditForm(PrimaryModelBulkEditForm):
     model = Policer
     description = forms.CharField(max_length=200, required=False)
     logical_interface_policer = forms.BooleanField(
@@ -301,7 +302,7 @@ class PolicerAssignmentForm(forms.ModelForm):
 class PolicerAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = PolicerAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag", "owner_id"),
+        FieldSet("q", "filter_id", "tag"),
         FieldSet(
             "policer_id",
             name=_("Policer"),

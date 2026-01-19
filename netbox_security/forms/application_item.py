@@ -2,10 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
-    NetBoxModelFilterSetForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
 )
 
 from utilities.forms.rendering import FieldSet
@@ -29,7 +29,7 @@ __all__ = (
 )
 
 
-class ApplicationItemForm(PortsForm, NetBoxModelForm):
+class ApplicationItemForm(PortsForm, PrimaryModelForm):
     name = forms.CharField(max_length=255, required=True)
     index = forms.IntegerField(required=True)
     protocol = forms.MultipleChoiceField(
@@ -66,7 +66,7 @@ class ApplicationItemForm(PortsForm, NetBoxModelForm):
         ]
 
 
-class ApplicationItemFilterForm(PortsForm, NetBoxModelFilterSetForm):
+class ApplicationItemFilterForm(PortsForm, PrimaryModelFilterSetForm):
     model = ApplicationItem
     fieldsets = (
         FieldSet("q", "filter_id", "tag", "owner_id"),
@@ -88,7 +88,7 @@ class ApplicationItemFilterForm(PortsForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class ApplicationItemImportForm(PortsForm, NetBoxModelImportForm):
+class ApplicationItemImportForm(PortsForm, PrimaryModelImportForm):
     name = forms.CharField(max_length=255, required=True)
     index = forms.IntegerField(
         required=True,
@@ -114,7 +114,7 @@ class ApplicationItemImportForm(PortsForm, NetBoxModelImportForm):
         )
 
 
-class ApplicationItemBulkEditForm(NetBoxModelBulkEditForm):
+class ApplicationItemBulkEditForm(PrimaryModelBulkEditForm):
     model = ApplicationItem
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)

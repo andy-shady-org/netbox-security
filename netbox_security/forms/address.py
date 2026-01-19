@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 
@@ -39,7 +40,7 @@ __all__ = (
 )
 
 
-class AddressForm(TenancyForm, NetBoxModelForm):
+class AddressForm(TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     address = IPNetworkFormField(
@@ -91,7 +92,7 @@ class AddressForm(TenancyForm, NetBoxModelForm):
         ]
 
 
-class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+class AddressFilterForm(TenancyFilterForm, PrimaryModelFilterSetForm):
     model = Address
     fieldsets = (
         FieldSet("q", "filter_id", "tag", "owner_id"),
@@ -113,7 +114,7 @@ class AddressFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class AddressImportForm(NetBoxModelImportForm):
+class AddressImportForm(PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
@@ -155,7 +156,7 @@ class AddressImportForm(NetBoxModelImportForm):
         )
 
 
-class AddressBulkEditForm(NetBoxModelBulkEditForm):
+class AddressBulkEditForm(PrimaryModelBulkEditForm):
     model = Address
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
@@ -229,7 +230,7 @@ class AddressAssignmentForm(forms.ModelForm):
 class AddressAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = AddressAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag", "owner_id"),
+        FieldSet("q", "filter_id", "tag"),
         FieldSet(
             "address_id",
             name=_("Address"),

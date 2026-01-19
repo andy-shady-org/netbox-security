@@ -2,10 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
-    NetBoxModelFilterSetForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
 )
 
 from utilities.forms.rendering import FieldSet
@@ -37,7 +37,7 @@ __all__ = (
 )
 
 
-class SecurityZonePolicyForm(NetBoxModelForm):
+class SecurityZonePolicyForm(PrimaryModelForm):
     name = forms.CharField(max_length=100, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     index = forms.IntegerField(required=True)
@@ -133,7 +133,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
         return self.cleaned_data
 
 
-class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
+class SecurityZonePolicyFilterForm(PrimaryModelFilterSetForm):
     model = SecurityZonePolicy
     fieldsets = (
         FieldSet("q", "filter_id", "tag", "owner_id"),
@@ -187,7 +187,7 @@ class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class SecurityZonePolicyImportForm(NetBoxModelImportForm):
+class SecurityZonePolicyImportForm(PrimaryModelImportForm):
     name = forms.CharField(max_length=100, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     index = forms.IntegerField(
@@ -271,7 +271,7 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
         return self.cleaned_data
 
 
-class SecurityZonePolicyBulkEditForm(NetBoxModelBulkEditForm):
+class SecurityZonePolicyBulkEditForm(PrimaryModelBulkEditForm):
     model = SecurityZonePolicy
     source_zone = DynamicModelChoiceField(
         queryset=SecurityZone.objects.all(),

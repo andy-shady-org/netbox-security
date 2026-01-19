@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 
@@ -41,7 +42,7 @@ __all__ = (
 )
 
 
-class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
+class ApplicationForm(PortsForm, TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     application_items = DynamicModelMultipleChoiceField(
@@ -88,7 +89,7 @@ class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
         ]
 
 
-class ApplicationFilterForm(PortsForm, TenancyFilterForm, NetBoxModelFilterSetForm):
+class ApplicationFilterForm(PortsForm, TenancyFilterForm, PrimaryModelFilterSetForm):
     model = Application
     fieldsets = (
         FieldSet("q", "filter_id", "tag", "owner_id"),
@@ -115,7 +116,7 @@ class ApplicationFilterForm(PortsForm, TenancyFilterForm, NetBoxModelFilterSetFo
     tags = TagFilterField(model)
 
 
-class ApplicationImportForm(PortsForm, NetBoxModelImportForm):
+class ApplicationImportForm(PortsForm, PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
@@ -153,7 +154,7 @@ class ApplicationImportForm(PortsForm, NetBoxModelImportForm):
         )
 
 
-class ApplicationBulkEditForm(PortsForm, NetBoxModelBulkEditForm):
+class ApplicationBulkEditForm(PortsForm, PrimaryModelBulkEditForm):
     model = Application
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
@@ -225,7 +226,7 @@ class ApplicationAssignmentForm(forms.ModelForm):
 class ApplicationAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = ApplicationAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag", "owner_id"),
+        FieldSet("q", "filter_id", "tag"),
         FieldSet(
             "application_id",
             name=_("Application"),

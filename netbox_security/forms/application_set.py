@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 
@@ -38,7 +39,7 @@ __all__ = (
 )
 
 
-class ApplicationSetForm(TenancyForm, NetBoxModelForm):
+class ApplicationSetForm(TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     applications = DynamicModelMultipleChoiceField(
@@ -84,7 +85,7 @@ class ApplicationSetForm(TenancyForm, NetBoxModelForm):
         ]
 
 
-class ApplicationSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+class ApplicationSetFilterForm(TenancyFilterForm, PrimaryModelFilterSetForm):
     model = ApplicationSet
     fieldsets = (
         FieldSet("q", "filter_id", "tag", "owner_id"),
@@ -110,7 +111,7 @@ class ApplicationSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class ApplicationSetImportForm(NetBoxModelImportForm):
+class ApplicationSetImportForm(PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
@@ -147,7 +148,7 @@ class ApplicationSetImportForm(NetBoxModelImportForm):
         )
 
 
-class ApplicationSetBulkEditForm(NetBoxModelBulkEditForm):
+class ApplicationSetBulkEditForm(PrimaryModelBulkEditForm):
     model = ApplicationSet
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)
@@ -215,7 +216,7 @@ class ApplicationSetAssignmentForm(forms.ModelForm):
 class ApplicationSetAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = ApplicationSetAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag", "owner_id"),
+        FieldSet("q", "filter_id", "tag"),
         FieldSet(
             "application_set_id",
             name=_("Application Set"),

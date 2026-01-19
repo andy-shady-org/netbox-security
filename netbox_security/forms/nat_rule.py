@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 from dcim.models import Interface, Device
@@ -45,7 +46,7 @@ __all__ = (
 )
 
 
-class NatRuleForm(PortsForm, NetBoxModelForm):
+class NatRuleForm(PortsForm, PrimaryModelForm):
     rule_set = DynamicModelChoiceField(
         queryset=NatRuleSet.objects.all(),
         quick_add=True,
@@ -214,7 +215,7 @@ class NatRuleForm(PortsForm, NetBoxModelForm):
         return self.cleaned_data
 
 
-class NatRuleFilterForm(PortsForm, NetBoxModelFilterSetForm):
+class NatRuleFilterForm(PortsForm, PrimaryModelFilterSetForm):
     model = NatRule
     fieldsets = (
         FieldSet("q", "filter_id", "tag", "owner_id"),
@@ -308,7 +309,7 @@ class NatRuleFilterForm(PortsForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class NatRuleImportForm(PortsForm, NetBoxModelImportForm):
+class NatRuleImportForm(PortsForm, PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     rule_set = CSVModelChoiceField(
         queryset=NatRuleSet.objects.all(),
@@ -442,7 +443,7 @@ class NatRuleImportForm(PortsForm, NetBoxModelImportForm):
         return self.cleaned_data
 
 
-class NatRuleBulkEditForm(PortsForm, NetBoxModelBulkEditForm):
+class NatRuleBulkEditForm(PortsForm, PrimaryModelBulkEditForm):
     model = NatRule
     rule_set = DynamicModelMultipleChoiceField(
         queryset=NatRuleSet.objects.all(), required=False
@@ -516,7 +517,7 @@ class NatRuleAssignmentForm(forms.ModelForm):
 class NatRuleAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = NatRuleAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag", "owner_id"),
+        FieldSet("q", "filter_id", "tag"),
         FieldSet(
             "rule_id",
             name=_("NAT Rule"),

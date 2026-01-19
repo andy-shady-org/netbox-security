@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 
@@ -38,7 +39,7 @@ __all__ = (
 )
 
 
-class AddressSetForm(TenancyForm, NetBoxModelForm):
+class AddressSetForm(TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     addresses = DynamicModelMultipleChoiceField(
@@ -84,7 +85,7 @@ class AddressSetForm(TenancyForm, NetBoxModelForm):
         ]
 
 
-class AddressSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+class AddressSetFilterForm(TenancyFilterForm, PrimaryModelFilterSetForm):
     model = AddressSet
     fieldsets = (
         FieldSet("q", "filter_id", "tag", "owner_id"),
@@ -110,7 +111,7 @@ class AddressSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class AddressSetImportForm(NetBoxModelImportForm):
+class AddressSetImportForm(PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
@@ -145,7 +146,7 @@ class AddressSetImportForm(NetBoxModelImportForm):
         )
 
 
-class AddressSetBulkEditForm(NetBoxModelBulkEditForm):
+class AddressSetBulkEditForm(PrimaryModelBulkEditForm):
     model = AddressSet
     description = forms.CharField(max_length=200, required=False)
     tenant_group = DynamicModelChoiceField(
@@ -203,7 +204,7 @@ class AddressSetAssignmentForm(forms.ModelForm):
 class AddressSetAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = AddressSetAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag", "owner_id"),
+        FieldSet("q", "filter_id", "tag"),
         FieldSet(
             "address_set_id",
             name=_("Address Set"),

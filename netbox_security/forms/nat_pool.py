@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 from utilities.forms.rendering import FieldSet, ObjectAttribute
@@ -37,7 +38,7 @@ __all__ = (
 )
 
 
-class NatPoolForm(NetBoxModelForm):
+class NatPoolForm(PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     pool_type = forms.ChoiceField(
         required=False, choices=PoolTypeChoices, help_text=_("NAT Pool Type")
@@ -78,7 +79,7 @@ class NatPoolFilterForm(NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class NatPoolImportForm(NetBoxModelImportForm):
+class NatPoolImportForm(PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     description = forms.CharField(max_length=200, required=False)
     pool_type = CSVChoiceField(choices=PoolTypeChoices, help_text=_("NAT Pool Type"))
@@ -91,7 +92,7 @@ class NatPoolImportForm(NetBoxModelImportForm):
         fields = ("name", "owner", "pool_type", "description", "status", "tags")
 
 
-class NatPoolBulkEditForm(NetBoxModelBulkEditForm):
+class NatPoolBulkEditForm(PrimaryModelBulkEditForm):
     model = NatPool
     pool_type = forms.ChoiceField(required=False, choices=PoolTypeChoices)
     status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)
@@ -140,7 +141,7 @@ class NatPoolAssignmentForm(forms.ModelForm):
 class NatPoolAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = NatPoolAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag", "owner_id"),
+        FieldSet("q", "filter_id", "tag"),
         FieldSet(
             "pool_id",
             name=_("NAT Pool"),
