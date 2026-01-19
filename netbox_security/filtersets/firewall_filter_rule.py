@@ -50,7 +50,7 @@ class FirewallFilterRuleFilterSet(PrimaryModelFilterSet):
 
 
 @register_filterset
-class FirewallFilterRuleFromSettingFilterSet(NetBoxModelFilterSet):
+class FirewallFilterRuleFromSettingFilterSet(PrimaryModelFilterSet):
     key = django_filters.MultipleChoiceFilter(
         choices=FirewallRuleFromSettingChoices, null_value=None, label=_("Setting Name")
     )
@@ -69,7 +69,7 @@ class FirewallFilterRuleFromSettingFilterSet(NetBoxModelFilterSet):
 
 
 @register_filterset
-class FirewallFilterRuleThenSettingFilterSet(NetBoxModelFilterSet):
+class FirewallFilterRuleThenSettingFilterSet(PrimaryModelFilterSet):
     key = django_filters.MultipleChoiceFilter(
         choices=FirewallRuleThenSettingChoices, null_value=None, label=_("Setting Name")
     )
