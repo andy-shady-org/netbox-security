@@ -2,7 +2,7 @@ import django_filters
 from django.db.models import Q
 from django.utils.translation import gettext as _
 
-from netbox.filtersets import PrimaryModelFilterSet
+from netbox.filtersets import NetBoxModelFilterSet, PrimaryModelFilterSet
 from utilities.filtersets import register_filterset
 
 from netbox_security.choices import (
