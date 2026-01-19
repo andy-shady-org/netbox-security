@@ -55,6 +55,7 @@ class ApplicationItemForm(PortsForm, NetBoxModelForm):
         model = ApplicationItem
         fields = [
             "name",
+            "owner",
             "index",
             "protocol",
             "destination_ports",
@@ -68,7 +69,7 @@ class ApplicationItemForm(PortsForm, NetBoxModelForm):
 class ApplicationItemFilterForm(PortsForm, NetBoxModelFilterSetForm):
     model = ApplicationItem
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "name",
             "index",
@@ -103,6 +104,7 @@ class ApplicationItemImportForm(PortsForm, NetBoxModelImportForm):
         model = ApplicationItem
         fields = (
             "name",
+            "owner",
             "index",
             "protocol",
             "destination_ports",

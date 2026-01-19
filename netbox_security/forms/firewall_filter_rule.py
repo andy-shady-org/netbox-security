@@ -60,6 +60,7 @@ class FirewallFilterRuleForm(FilterRuleSettingFormMixin, NetBoxModelForm):
         model = FirewallFilterRule
         fields = [
             "name",
+            "owner",
             "description",
             "index",
             "firewall_filter",
@@ -79,7 +80,7 @@ class FirewallFilterRuleFilterForm(NetBoxModelFilterSetForm):
     index = forms.IntegerField(required=False)
     model = FirewallFilterRule
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "name",
             "index",
@@ -106,6 +107,7 @@ class FirewallFilterRuleImportForm(NetBoxModelImportForm):
         model = FirewallFilterRule
         fields = (
             "name",
+            "owner",
             "index",
             "firewall_filter",
             "description",

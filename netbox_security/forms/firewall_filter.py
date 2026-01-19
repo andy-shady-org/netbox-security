@@ -57,6 +57,7 @@ class FirewallFilterForm(TenancyForm, NetBoxModelForm):
         model = FirewallFilter
         fields = [
             "name",
+            "owner",
             "family",
             "tenant_group",
             "tenant",
@@ -69,7 +70,7 @@ class FirewallFilterForm(TenancyForm, NetBoxModelForm):
 class FirewallFilterFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = FirewallFilter
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet("name", "family", name=_("Firewall Filter")),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
@@ -99,6 +100,7 @@ class FirewallFilterImportForm(NetBoxModelImportForm):
         model = FirewallFilter
         fields = (
             "name",
+            "owner",
             "family",
             "description",
             "tenant",
@@ -168,7 +170,7 @@ class FirewallFilterAssignmentForm(forms.ModelForm):
 class FirewallFilterAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = FirewallFilterAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "firewall_filter_id",
             name=_("Firewall Filter"),

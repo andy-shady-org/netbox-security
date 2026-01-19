@@ -94,6 +94,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
         model = SecurityZonePolicy
         fields = [
             "name",
+            "owner",
             "identifier",
             "index",
             "source_zone",
@@ -135,7 +136,7 @@ class SecurityZonePolicyForm(NetBoxModelForm):
 class SecurityZonePolicyFilterForm(NetBoxModelFilterSetForm):
     model = SecurityZonePolicy
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet("name", "identifier", "index"),
         FieldSet(
             "source_zone_id",
@@ -232,6 +233,7 @@ class SecurityZonePolicyImportForm(NetBoxModelImportForm):
         model = SecurityZonePolicy
         fields = (
             "name",
+            "owner",
             "identifier",
             "index",
             "description",

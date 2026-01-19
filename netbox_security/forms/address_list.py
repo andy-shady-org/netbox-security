@@ -33,7 +33,7 @@ class AddressListForm(forms.ModelForm):
 
     class Meta:
         model = AddressList
-        fields = ("name",)
+        fields = ("name", "owner")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,7 +42,7 @@ class AddressListForm(forms.ModelForm):
 class AddressListFilterForm(NetBoxModelFilterSetForm):
     model = AddressList
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "device_id",
             "virtualdevicecontext_id",
@@ -104,7 +104,7 @@ class AddressListAssignmentForm(forms.ModelForm):
 class AddressListAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = AddressListAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "address_id",
             "addressset_id",

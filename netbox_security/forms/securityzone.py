@@ -51,6 +51,7 @@ class SecurityZoneForm(TenancyForm, NetBoxModelForm):
         model = SecurityZone
         fields = [
             "name",
+            "owner",
             "identifier",
             "tenant_group",
             "tenant",
@@ -63,7 +64,7 @@ class SecurityZoneForm(TenancyForm, NetBoxModelForm):
 class SecurityZoneFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = SecurityZone
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "name",
             "identifier",
@@ -86,6 +87,7 @@ class SecurityZoneImportForm(NetBoxModelImportForm):
         model = SecurityZone
         fields = (
             "name",
+            "owner",
             "identifier",
             "description",
             "tenant",
@@ -151,7 +153,7 @@ class SecurityZoneAssignmentForm(forms.ModelForm):
 class SecurityZoneAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = SecurityZone
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "zone_id",
             name=_("Security Zone"),

@@ -105,6 +105,7 @@ class PolicerForm(TenancyForm, NetBoxModelForm):
         model = Policer
         fields = [
             "name",
+            "owner",
             "tenant_group",
             "tenant",
             "description",
@@ -125,7 +126,7 @@ class PolicerForm(TenancyForm, NetBoxModelForm):
 class PolicerFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = Policer
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "name",
         ),
@@ -177,6 +178,7 @@ class PolicerImportForm(NetBoxModelImportForm):
         model = Policer
         fields = (
             "name",
+            "owner",
             "description",
             "tenant",
             "logical_interface_policer",
@@ -299,7 +301,7 @@ class PolicerAssignmentForm(forms.ModelForm):
 class PolicerAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = PolicerAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "policer_id",
             name=_("Policer"),

@@ -54,6 +54,7 @@ class NatPoolForm(NetBoxModelForm):
         model = NatPool
         fields = [
             "name",
+            "owner",
             "pool_type",
             "status",
             "description",
@@ -65,7 +66,7 @@ class NatPoolForm(NetBoxModelForm):
 class NatPoolFilterForm(NetBoxModelFilterSetForm):
     model = NatPool
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet("name", "pool_type", "status"),
     )
     pool_type = forms.ChoiceField(
@@ -87,7 +88,7 @@ class NatPoolImportForm(NetBoxModelImportForm):
 
     class Meta:
         model = NatPool
-        fields = ("name", "pool_type", "description", "status", "tags")
+        fields = ("name", "owner", "pool_type", "description", "status", "tags")
 
 
 class NatPoolBulkEditForm(NetBoxModelBulkEditForm):
@@ -139,7 +140,7 @@ class NatPoolAssignmentForm(forms.ModelForm):
 class NatPoolAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = NatPoolAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "pool_id",
             name=_("NAT Pool"),

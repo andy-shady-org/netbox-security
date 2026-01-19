@@ -142,6 +142,7 @@ class NatRuleForm(PortsForm, NetBoxModelForm):
         fields = [
             "rule_set",
             "name",
+            "owner",
             "description",
             "status",
             "source_type",
@@ -216,7 +217,7 @@ class NatRuleForm(PortsForm, NetBoxModelForm):
 class NatRuleFilterForm(PortsForm, NetBoxModelFilterSetForm):
     model = NatRule
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet("name", "rule_set_id", "status", "description", name=_("Rule")),
         FieldSet(
             "source_addresses_id",
@@ -369,6 +370,7 @@ class NatRuleImportForm(PortsForm, NetBoxModelImportForm):
         model = NatRule
         fields = (
             "name",
+            "owner",
             "rule_set",
             "status",
             "description",
@@ -514,7 +516,7 @@ class NatRuleAssignmentForm(forms.ModelForm):
 class NatRuleAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = NatRuleAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "rule_id",
             name=_("NAT Rule"),

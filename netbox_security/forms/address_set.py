@@ -72,6 +72,7 @@ class AddressSetForm(TenancyForm, NetBoxModelForm):
         model = AddressSet
         fields = [
             "name",
+            "owner",
             "identifier",
             "addresses",
             "address_sets",
@@ -86,7 +87,7 @@ class AddressSetForm(TenancyForm, NetBoxModelForm):
 class AddressSetFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     model = AddressSet
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "name",
             "identifier",
@@ -134,6 +135,7 @@ class AddressSetImportForm(NetBoxModelImportForm):
         model = AddressSet
         fields = (
             "name",
+            "owner",
             "identifier",
             "addresses",
             "address_sets",
@@ -201,7 +203,7 @@ class AddressSetAssignmentForm(forms.ModelForm):
 class AddressSetAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = AddressSetAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "address_set_id",
             name=_("Address Set"),

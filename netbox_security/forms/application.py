@@ -57,6 +57,7 @@ class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
     fieldsets = (
         FieldSet(
             "name",
+            "owner",
             "identifier",
             "application_items",
             "protocol",
@@ -90,7 +91,7 @@ class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
 class ApplicationFilterForm(PortsForm, TenancyFilterForm, NetBoxModelFilterSetForm):
     model = Application
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "name",
             "identifier",
@@ -140,6 +141,7 @@ class ApplicationImportForm(PortsForm, NetBoxModelImportForm):
         model = Application
         fields = (
             "name",
+            "owner",
             "identifier",
             "application_items",
             "destination_ports",
@@ -223,7 +225,7 @@ class ApplicationAssignmentForm(forms.ModelForm):
 class ApplicationAssignmentFilterForm(NetBoxModelFilterSetForm):
     model = ApplicationAssignment
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "application_id",
             name=_("Application"),
