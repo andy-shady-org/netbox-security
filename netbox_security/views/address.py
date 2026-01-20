@@ -17,7 +17,6 @@ from netbox_security.forms import (
     AddressAssignmentFilterForm,
 )
 
-
 __all__ = (
     "AddressView",
     "AddressListView",

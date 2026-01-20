@@ -7,7 +7,7 @@ from rest_framework.serializers import (
 )
 from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
-from netbox.api.serializers import NetBoxModelSerializer
+from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
 from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 
@@ -15,7 +15,7 @@ from netbox_security.models import FirewallFilter, FirewallFilterAssignment
 from netbox_security.constants import FILTER_ASSIGNMENT_MODELS
 
 
-class FirewallFilterSerializer(NetBoxModelSerializer):
+class FirewallFilterSerializer(PrimaryModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:firewallfilter-detail"
     )

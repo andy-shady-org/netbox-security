@@ -2,7 +2,8 @@ import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
+from utilities.filtersets import register_filterset
 from utilities.filters import (
     MultiValueCharFilter,
     MultiValueNumberFilter,
@@ -19,8 +20,14 @@ from netbox_security.mixins import (
 )
 from netbox_security.choices import PoolTypeChoices
 
+__all__ = (
+    "NatPoolFilterSet",
+    "NatPoolAssignmentFilterSet",
+)
 
-class NatPoolFilterSet(NetBoxModelFilterSet):
+
+@register_filterset
+class NatPoolFilterSet(PrimaryModelFilterSet):
     pool_type = django_filters.MultipleChoiceFilter(
         choices=PoolTypeChoices,
         required=False,
@@ -43,6 +50,7 @@ def search(self, queryset, name, value):
     return queryset.filter(qs_filter)
 
 
+@register_filterset
 class NatPoolAssignmentFilterSet(AssignmentFilterSet):
     pool_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),

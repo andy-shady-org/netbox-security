@@ -24,7 +24,6 @@ from netbox_security.tables import (
     NatRuleAssignmentTable,
 )
 
-
 __all__ = (
     "NatRuleView",
     "NatRuleListView",

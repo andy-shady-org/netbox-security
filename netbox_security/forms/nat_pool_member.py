@@ -3,10 +3,10 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
-    NetBoxModelFilterSetForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
 )
 from utilities.forms.rendering import FieldSet, TabbedGroups
 from utilities.forms.fields import (
@@ -15,16 +15,20 @@ from utilities.forms.fields import (
     TagFilterField,
     CSVChoiceField,
     CSVModelChoiceField,
+    CommentField,
 )
 from ipam.models import IPAddress, Prefix, IPRange
-from ipam.choices import IPAddressStatusChoices
+from ipam.choices import (
+    IPAddressStatusChoices,
+    PrefixStatusChoices,
+    IPRangeStatusChoices,
+)
 
 from netbox_security.models import (
     NatPool,
     NatPoolMember,
 )
 from netbox_security.mixins import PortsForm
-
 
 __all__ = (
     "NatPoolMemberForm",
@@ -34,8 +38,9 @@ __all__ = (
 )
 
 
-class NatPoolMemberForm(PortsForm, NetBoxModelForm):
+class NatPoolMemberForm(PortsForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
+    description = forms.CharField(max_length=200, required=False)
     pool = DynamicModelChoiceField(
         queryset=NatPool.objects.all(),
         quick_add=True,
@@ -73,11 +78,13 @@ class NatPoolMemberForm(PortsForm, NetBoxModelForm):
         ),
         FieldSet("tags", name=_("Tags")),
     )
+    comments = CommentField()
 
     class Meta:
         model = NatPoolMember
         fields = [
             "name",
+            "owner",
             "pool",
             "address",
             "prefix",
@@ -94,7 +101,9 @@ class NatPoolMemberForm(PortsForm, NetBoxModelForm):
             except MultipleObjectsReturned:
                 ip = IPAddress.objects.filter(address=str(address)).first()
             except ObjectDoesNotExist:
-                ip = IPAddress.objects.create(address=str(address))
+                ip = IPAddress.objects.create(
+                    address=str(address), status=IPAddressStatusChoices.STATUS_ACTIVE
+                )
             self.cleaned_data["address"] = ip
         return self.cleaned_data.get("address")
 
@@ -105,7 +114,9 @@ class NatPoolMemberForm(PortsForm, NetBoxModelForm):
             except MultipleObjectsReturned:
                 network = Prefix.objects.filter(prefix=str(prefix)).first()
             except ObjectDoesNotExist:
-                network = Prefix.objects.create(prefix=str(prefix))
+                network = Prefix.objects.create(
+                    prefix=str(prefix), status=PrefixStatusChoices.STATUS_ACTIVE
+                )
             self.cleaned_data["prefix"] = network
         return self.cleaned_data.get("prefix")
 
@@ -123,10 +134,10 @@ class NatPoolMemberForm(PortsForm, NetBoxModelForm):
         return self.cleaned_data.get("address_range")
 
 
-class NatPoolMemberFilterForm(PortsForm, NetBoxModelFilterSetForm):
+class NatPoolMemberFilterForm(PortsForm, PrimaryModelFilterSetForm):
     model = NatPoolMember
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet("name", "pool_id", "pool_type", "status"),
         FieldSet("address_id", "prefix_id", "address_range_id", name=_("IPAM")),
         FieldSet("source_ports", "destination_ports", name=_("Ports")),
@@ -158,8 +169,9 @@ class NatPoolMemberFilterForm(PortsForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class NatPoolMemberImportForm(PortsForm, NetBoxModelImportForm):
+class NatPoolMemberImportForm(PortsForm, PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
+    description = forms.CharField(max_length=200, required=False)
     pool = CSVModelChoiceField(
         queryset=NatPool.objects.all(),
         required=True,
@@ -190,6 +202,7 @@ class NatPoolMemberImportForm(PortsForm, NetBoxModelImportForm):
         model = NatPoolMember
         fields = (
             "name",
+            "owner",
             "pool",
             "status",
             "address",
@@ -223,7 +236,7 @@ class NatPoolMemberImportForm(PortsForm, NetBoxModelImportForm):
             return self.cleaned_data["prefix"]
 
 
-class NatPoolMemberBulkEditForm(PortsForm, NetBoxModelBulkEditForm):
+class NatPoolMemberBulkEditForm(PortsForm, PrimaryModelBulkEditForm):
     model = NatPoolMember
     pool = DynamicModelChoiceField(queryset=NatPool.objects.all(), required=False)
     status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)

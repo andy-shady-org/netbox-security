@@ -20,7 +20,6 @@ from netbox_security.forms import (
     ApplicationSetAssignmentFilterForm,
 )
 
-
 __all__ = (
     "ApplicationSetView",
     "ApplicationSetListView",

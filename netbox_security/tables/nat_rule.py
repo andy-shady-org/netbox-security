@@ -11,7 +11,6 @@ from netbox.tables.columns import (
 
 from netbox_security.models import NatRule, NatRuleAssignment
 
-
 __all__ = (
     "NatRuleTable",
     "NatRuleAssignmentTable",

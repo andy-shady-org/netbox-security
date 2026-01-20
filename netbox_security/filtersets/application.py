@@ -1,8 +1,9 @@
 import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
+from utilities.filtersets import register_filterset
 from utilities.filters import (
     MultiValueCharFilter,
 )
@@ -18,8 +19,14 @@ from netbox_security.models import (
 
 from netbox_security.mixins import PortsFilterSet, AssignmentFilterSet
 
+__all__ = (
+    "ApplicationFilterSet",
+    "ApplicationAssignmentFilterSet",
+)
 
-class ApplicationFilterSet(PortsFilterSet, TenancyFilterSet, NetBoxModelFilterSet):
+
+@register_filterset
+class ApplicationFilterSet(PortsFilterSet, TenancyFilterSet, PrimaryModelFilterSet):
     application_items_id = django_filters.ModelMultipleChoiceFilter(
         field_name="application_items",
         queryset=ApplicationItem.objects.all(),
@@ -76,6 +83,7 @@ class ApplicationFilterSet(PortsFilterSet, TenancyFilterSet, NetBoxModelFilterSe
         return queryset.filter(qs_filter)
 
 
+@register_filterset
 class ApplicationAssignmentFilterSet(AssignmentFilterSet):
     application_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Application.objects.all(),

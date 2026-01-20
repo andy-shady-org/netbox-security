@@ -17,7 +17,6 @@ from netbox_security.forms import (
     AddressListAssignmentFilterForm,
 )
 
-
 __all__ = (
     "AddressListEditView",
     "AddressListDeleteView",

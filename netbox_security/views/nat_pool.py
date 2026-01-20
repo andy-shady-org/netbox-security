@@ -27,7 +27,6 @@ from netbox_security.tables import (
     NatPoolAssignmentTable,
 )
 
-
 __all__ = (
     "NatPoolView",
     "NatPoolListView",

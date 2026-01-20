@@ -10,7 +10,6 @@ from netbox_security.forms import (
     NatPoolMemberImportForm,
 )
 
-
 __all__ = (
     "NatPoolMemberView",
     "NatPoolMemberListView",

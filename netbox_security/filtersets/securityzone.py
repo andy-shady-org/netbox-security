@@ -2,8 +2,9 @@ import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
+from utilities.filtersets import register_filterset
 from utilities.filters import (
     MultiValueCharFilter,
     MultiValueNumberFilter,
@@ -20,8 +21,14 @@ from netbox_security.mixins import (
     AssignmentFilterSet,
 )
 
+__all__ = (
+    "SecurityZoneFilterSet",
+    "SecurityZoneAssignmentFilterSet",
+)
 
-class SecurityZoneFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+
+@register_filterset
+class SecurityZoneFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
     source_zone_id = django_filters.ModelMultipleChoiceFilter(
         field_name="natruleset_source_zones",
         queryset=SecurityZone.objects.all(),
@@ -66,6 +73,7 @@ class SecurityZoneFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
         return queryset.filter(qs_filter)
 
 
+@register_filterset
 class SecurityZoneAssignmentFilterSet(AssignmentFilterSet):
     zone_id = django_filters.ModelMultipleChoiceFilter(
         queryset=SecurityZone.objects.all(),

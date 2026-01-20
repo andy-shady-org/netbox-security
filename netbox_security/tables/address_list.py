@@ -6,7 +6,6 @@ from netbox.tables.columns import ActionsColumn
 
 from netbox_security.models import AddressList, AddressListAssignment
 
-
 __all__ = (
     "AddressListTable",
     "AddressListAssignmentTable",

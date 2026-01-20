@@ -4,8 +4,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from netaddr.core import AddrFormatError
 from netaddr import IPNetwork
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from tenancy.filtersets import TenancyFilterSet
+from utilities.filtersets import register_filterset
 from utilities.filters import (
     MultiValueCharFilter,
     MultiValueNumberFilter,
@@ -23,8 +24,14 @@ from netbox_security.mixins import (
     AssignmentFilterSet,
 )
 
+__all__ = (
+    "AddressFilterSet",
+    "AddressAssignmentFilterSet",
+)
 
-class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
+
+@register_filterset
+class AddressFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
     address = django_filters.CharFilter(
         method="filter_address",
         label=_("Value"),
@@ -74,6 +81,7 @@ class AddressFilterSet(TenancyFilterSet, NetBoxModelFilterSet):
             return queryset.none()
 
 
+@register_filterset
 class AddressAssignmentFilterSet(AssignmentFilterSet):
     address_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Address.objects.all(),

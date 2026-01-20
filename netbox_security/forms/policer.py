@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 
@@ -31,7 +32,6 @@ from netbox_security.choices import (
     ForwardingClassChoices,
 )
 
-
 __all__ = (
     "PolicerForm",
     "PolicerFilterForm",
@@ -42,7 +42,7 @@ __all__ = (
 )
 
 
-class PolicerForm(TenancyForm, NetBoxModelForm):
+class PolicerForm(TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=200, required=False)
     logical_interface_policer = forms.BooleanField(
@@ -106,6 +106,7 @@ class PolicerForm(TenancyForm, NetBoxModelForm):
         model = Policer
         fields = [
             "name",
+            "owner",
             "tenant_group",
             "tenant",
             "description",
@@ -123,10 +124,10 @@ class PolicerForm(TenancyForm, NetBoxModelForm):
         ]
 
 
-class PolicerFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+class PolicerFilterForm(TenancyFilterForm, PrimaryModelFilterSetForm):
     model = Policer
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "name",
         ),
@@ -135,7 +136,7 @@ class PolicerFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class PolicerImportForm(NetBoxModelImportForm):
+class PolicerImportForm(PrimaryModelImportForm):
     tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
@@ -178,6 +179,7 @@ class PolicerImportForm(NetBoxModelImportForm):
         model = Policer
         fields = (
             "name",
+            "owner",
             "description",
             "tenant",
             "logical_interface_policer",
@@ -193,7 +195,7 @@ class PolicerImportForm(NetBoxModelImportForm):
         )
 
 
-class PolicerBulkEditForm(NetBoxModelBulkEditForm):
+class PolicerBulkEditForm(PrimaryModelBulkEditForm):
     model = Policer
     description = forms.CharField(max_length=200, required=False)
     logical_interface_policer = forms.BooleanField(

@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 from utilities.forms.rendering import FieldSet, ObjectAttribute
@@ -27,7 +28,6 @@ from netbox_security.models import (
     SecurityZone,
 )
 
-
 __all__ = (
     "NatRuleSetForm",
     "NatRuleSetFilterForm",
@@ -38,7 +38,7 @@ __all__ = (
 )
 
 
-class NatRuleSetForm(NetBoxModelForm):
+class NatRuleSetForm(PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=200, required=False)
     nat_type = forms.ChoiceField(required=False, choices=NatTypeChoices)
@@ -70,6 +70,7 @@ class NatRuleSetForm(NetBoxModelForm):
         model = NatRuleSet
         fields = [
             "name",
+            "owner",
             "description",
             "nat_type",
             "direction",
@@ -96,10 +97,10 @@ class NatRuleSetForm(NetBoxModelForm):
         return self.cleaned_data
 
 
-class NatRuleSetFilterForm(NetBoxModelFilterSetForm):
+class NatRuleSetFilterForm(PrimaryModelFilterSetForm):
     model = NatRuleSet
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "nat_type",
             "direction",
@@ -126,7 +127,7 @@ class NatRuleSetFilterForm(NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class NatRuleSetImportForm(NetBoxModelImportForm):
+class NatRuleSetImportForm(PrimaryModelImportForm):
     name = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=200, required=False)
     nat_type = CSVChoiceField(
@@ -154,6 +155,7 @@ class NatRuleSetImportForm(NetBoxModelImportForm):
         model = NatRuleSet
         fields = (
             "name",
+            "owner",
             "description",
             "nat_type",
             "direction",
@@ -179,7 +181,7 @@ class NatRuleSetImportForm(NetBoxModelImportForm):
         return self.cleaned_data
 
 
-class NatRuleSetBulkEditForm(NetBoxModelBulkEditForm):
+class NatRuleSetBulkEditForm(PrimaryModelBulkEditForm):
     model = NatRuleSet
     description = forms.CharField(max_length=200, required=False)
     nat_type = forms.ChoiceField(required=False, choices=NatTypeChoices)

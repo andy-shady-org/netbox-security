@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 from utilities.forms.rendering import FieldSet, ObjectAttribute
@@ -27,7 +28,6 @@ from netbox_security.models import (
     NatPoolAssignment,
 )
 
-
 __all__ = (
     "NatPoolForm",
     "NatPoolFilterForm",
@@ -38,7 +38,7 @@ __all__ = (
 )
 
 
-class NatPoolForm(NetBoxModelForm):
+class NatPoolForm(PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     pool_type = forms.ChoiceField(
         required=False, choices=PoolTypeChoices, help_text=_("NAT Pool Type")
@@ -55,6 +55,7 @@ class NatPoolForm(NetBoxModelForm):
         model = NatPool
         fields = [
             "name",
+            "owner",
             "pool_type",
             "status",
             "description",
@@ -66,7 +67,7 @@ class NatPoolForm(NetBoxModelForm):
 class NatPoolFilterForm(NetBoxModelFilterSetForm):
     model = NatPool
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet("name", "pool_type", "status"),
     )
     pool_type = forms.ChoiceField(
@@ -78,7 +79,7 @@ class NatPoolFilterForm(NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class NatPoolImportForm(NetBoxModelImportForm):
+class NatPoolImportForm(PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     description = forms.CharField(max_length=200, required=False)
     pool_type = CSVChoiceField(choices=PoolTypeChoices, help_text=_("NAT Pool Type"))
@@ -88,10 +89,10 @@ class NatPoolImportForm(NetBoxModelImportForm):
 
     class Meta:
         model = NatPool
-        fields = ("name", "pool_type", "description", "status", "tags")
+        fields = ("name", "owner", "pool_type", "description", "status", "tags")
 
 
-class NatPoolBulkEditForm(NetBoxModelBulkEditForm):
+class NatPoolBulkEditForm(PrimaryModelBulkEditForm):
     model = NatPool
     pool_type = forms.ChoiceField(required=False, choices=PoolTypeChoices)
     status = forms.ChoiceField(required=False, choices=IPAddressStatusChoices)

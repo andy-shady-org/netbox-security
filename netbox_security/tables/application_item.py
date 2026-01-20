@@ -5,7 +5,6 @@ from netbox.tables.columns import TagColumn
 
 from netbox_security.models import ApplicationItem
 
-
 __all__ = ("ApplicationItemTable",)
 
 

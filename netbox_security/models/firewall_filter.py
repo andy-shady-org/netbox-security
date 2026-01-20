@@ -10,7 +10,6 @@ from netbox.search import SearchIndex, register_search
 from netbox_security.constants import FILTER_ASSIGNMENT_MODELS
 from netbox_security.choices import FamilyChoices
 
-
 __all__ = (
     "FirewallFilter",
     "FirewallFilterAssignment",

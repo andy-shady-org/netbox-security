@@ -1,7 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
-    ChoiceField,
     SerializerMethodField,
     JSONField,
     IntegerField,
@@ -9,24 +8,20 @@ from rest_framework.serializers import (
 from drf_spectacular.utils import extend_schema_field
 
 from netbox.api.fields import ContentTypeField
-from netbox.api.serializers import NetBoxModelSerializer
+from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
 from utilities.api import get_serializer_for_model
 
 from netbox_security.models import NatPool, NatPoolAssignment
 
-from netbox_security.choices import (
-    PoolTypeChoices,
-)
 from netbox_security.constants import (
     POOL_ASSIGNMENT_MODELS,
 )
 
 
-class NatPoolSerializer(NetBoxModelSerializer):
+class NatPoolSerializer(PrimaryModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:natpool-detail"
     )
-    pool_type = ChoiceField(choices=PoolTypeChoices, required=True)
     member_count = IntegerField(read_only=True)
 
     class Meta:

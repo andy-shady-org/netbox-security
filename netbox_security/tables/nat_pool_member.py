@@ -5,7 +5,6 @@ from netbox.tables.columns import TagColumn, ChoiceFieldColumn
 
 from netbox_security.models import NatPoolMember
 
-
 __all__ = ("NatPoolMemberTable",)
 
 

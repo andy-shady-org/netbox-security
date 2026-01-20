@@ -2,7 +2,8 @@ import django_filters
 from django.db.models import Q
 from django.utils.translation import gettext as _
 
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import NetBoxModelFilterSet, PrimaryModelFilterSet
+from utilities.filtersets import register_filterset
 
 from netbox_security.choices import (
     FirewallRuleFromSettingChoices,
@@ -15,7 +16,6 @@ from netbox_security.models import (
     FirewallRuleThenSetting,
 )
 
-
 __all__ = (
     "FirewallFilterRuleFilterSet",
     "FirewallFilterRuleFromSettingFilterSet",
@@ -23,7 +23,8 @@ __all__ = (
 )
 
 
-class FirewallFilterRuleFilterSet(NetBoxModelFilterSet):
+@register_filterset
+class FirewallFilterRuleFilterSet(PrimaryModelFilterSet):
     firewall_filter_id = django_filters.ModelMultipleChoiceFilter(
         queryset=FirewallFilter.objects.all(),
         field_name="firewall_filter",
@@ -48,7 +49,8 @@ class FirewallFilterRuleFilterSet(NetBoxModelFilterSet):
         return queryset.filter(qs_filter).distinct()
 
 
-class FirewallFilterRuleFromSettingFilterSet(NetBoxModelFilterSet):
+@register_filterset
+class FirewallFilterRuleFromSettingFilterSet(PrimaryModelFilterSet):
     key = django_filters.MultipleChoiceFilter(
         choices=FirewallRuleFromSettingChoices, null_value=None, label=_("Setting Name")
     )
@@ -66,7 +68,8 @@ class FirewallFilterRuleFromSettingFilterSet(NetBoxModelFilterSet):
         return queryset.filter(qs_filter).distinct()
 
 
-class FirewallFilterRuleThenSettingFilterSet(NetBoxModelFilterSet):
+@register_filterset
+class FirewallFilterRuleThenSettingFilterSet(PrimaryModelFilterSet):
     key = django_filters.MultipleChoiceFilter(
         choices=FirewallRuleThenSettingChoices, null_value=None, label=_("Setting Name")
     )

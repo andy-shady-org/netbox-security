@@ -7,7 +7,6 @@ from tenancy.tables import TenancyColumnsMixin
 
 from netbox_security.models import SecurityZone, SecurityZoneAssignment
 
-
 __all__ = (
     "SecurityZoneTable",
     "SecurityZoneAssignmentTable",

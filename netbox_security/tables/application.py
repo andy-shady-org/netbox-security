@@ -11,7 +11,6 @@ from tenancy.tables import TenancyColumnsMixin
 
 from netbox_security.models import Application, ApplicationAssignment
 
-
 __all__ = (
     "ApplicationTable",
     "ApplicationAssignmentTable",

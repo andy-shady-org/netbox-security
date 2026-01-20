@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 
@@ -36,7 +37,7 @@ __all__ = (
 )
 
 
-class SecurityZoneForm(TenancyForm, NetBoxModelForm):
+class SecurityZoneForm(TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
@@ -51,6 +52,7 @@ class SecurityZoneForm(TenancyForm, NetBoxModelForm):
         model = SecurityZone
         fields = [
             "name",
+            "owner",
             "identifier",
             "tenant_group",
             "tenant",
@@ -60,10 +62,10 @@ class SecurityZoneForm(TenancyForm, NetBoxModelForm):
         ]
 
 
-class SecurityZoneFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
+class SecurityZoneFilterForm(TenancyFilterForm, PrimaryModelFilterSetForm):
     model = SecurityZone
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "name",
             "identifier",
@@ -73,7 +75,7 @@ class SecurityZoneFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     tags = TagFilterField(model)
 
 
-class SecurityZoneImportForm(NetBoxModelImportForm):
+class SecurityZoneImportForm(PrimaryModelImportForm):
     identifier = forms.CharField(max_length=100, required=False)
     tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
@@ -86,6 +88,7 @@ class SecurityZoneImportForm(NetBoxModelImportForm):
         model = SecurityZone
         fields = (
             "name",
+            "owner",
             "identifier",
             "description",
             "tenant",
@@ -93,7 +96,7 @@ class SecurityZoneImportForm(NetBoxModelImportForm):
         )
 
 
-class SecurityZoneBulkEditForm(NetBoxModelBulkEditForm):
+class SecurityZoneBulkEditForm(PrimaryModelBulkEditForm):
     model = SecurityZone
     description = forms.CharField(max_length=200, required=False)
     tenant_group = DynamicModelChoiceField(

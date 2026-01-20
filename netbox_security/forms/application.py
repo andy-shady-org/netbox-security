@@ -2,9 +2,10 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
-    NetBoxModelBulkEditForm,
-    NetBoxModelForm,
-    NetBoxModelImportForm,
+    PrimaryModelBulkEditForm,
+    PrimaryModelFilterSetForm,
+    PrimaryModelImportForm,
+    PrimaryModelForm,
     NetBoxModelFilterSetForm,
 )
 
@@ -31,7 +32,6 @@ from netbox_security.models import (
 from netbox_security.choices import ProtocolChoices
 from netbox_security.mixins import PortsForm
 
-
 __all__ = (
     "ApplicationForm",
     "ApplicationFilterForm",
@@ -42,7 +42,7 @@ __all__ = (
 )
 
 
-class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
+class ApplicationForm(PortsForm, TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     application_items = DynamicModelMultipleChoiceField(
@@ -58,6 +58,7 @@ class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
     fieldsets = (
         FieldSet(
             "name",
+            "owner",
             "identifier",
             "application_items",
             "protocol",
@@ -88,10 +89,10 @@ class ApplicationForm(PortsForm, TenancyForm, NetBoxModelForm):
         ]
 
 
-class ApplicationFilterForm(PortsForm, TenancyFilterForm, NetBoxModelFilterSetForm):
+class ApplicationFilterForm(PortsForm, TenancyFilterForm, PrimaryModelFilterSetForm):
     model = Application
     fieldsets = (
-        FieldSet("q", "filter_id", "tag"),
+        FieldSet("q", "filter_id", "tag", "owner_id"),
         FieldSet(
             "name",
             "identifier",
@@ -115,7 +116,7 @@ class ApplicationFilterForm(PortsForm, TenancyFilterForm, NetBoxModelFilterSetFo
     tags = TagFilterField(model)
 
 
-class ApplicationImportForm(PortsForm, NetBoxModelImportForm):
+class ApplicationImportForm(PortsForm, PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
@@ -141,6 +142,7 @@ class ApplicationImportForm(PortsForm, NetBoxModelImportForm):
         model = Application
         fields = (
             "name",
+            "owner",
             "identifier",
             "application_items",
             "destination_ports",
@@ -152,7 +154,7 @@ class ApplicationImportForm(PortsForm, NetBoxModelImportForm):
         )
 
 
-class ApplicationBulkEditForm(PortsForm, NetBoxModelBulkEditForm):
+class ApplicationBulkEditForm(PortsForm, PrimaryModelBulkEditForm):
     model = Application
     description = forms.CharField(max_length=200, required=False)
     tags = TagFilterField(model)

@@ -21,7 +21,6 @@ from netbox_security.forms import (
     FirewallFilterRuleImportForm,
 )
 
-
 __all__ = (
     "FirewallFilterRuleView",
     "FirewallFilterRuleListView",

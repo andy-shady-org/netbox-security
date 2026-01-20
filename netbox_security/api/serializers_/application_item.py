@@ -4,12 +4,12 @@ from rest_framework.serializers import (
     ListField,
     IntegerField,
 )
-from netbox.api.serializers import NetBoxModelSerializer
+from netbox.api.serializers import PrimaryModelSerializer
 from netbox_security.models import ApplicationItem
 from netbox_security.choices import ProtocolChoices
 
 
-class ApplicationItemSerializer(NetBoxModelSerializer):
+class ApplicationItemSerializer(PrimaryModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:applicationitem-detail"
     )

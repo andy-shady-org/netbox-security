@@ -16,7 +16,6 @@ from netbox_security.forms import (
     PolicerAssignmentFilterForm,
 )
 
-
 __all__ = (
     "PolicerView",
     "PolicerListView",
