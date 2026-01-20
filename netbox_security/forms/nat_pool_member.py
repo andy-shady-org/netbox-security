@@ -18,7 +18,11 @@ from utilities.forms.fields import (
     CommentField,
 )
 from ipam.models import IPAddress, Prefix, IPRange
-from ipam.choices import IPAddressStatusChoices
+from ipam.choices import (
+    IPAddressStatusChoices,
+    PrefixStatusChoices,
+    IPRangeStatusChoices,
+)
 
 from netbox_security.models import (
     NatPool,
@@ -97,7 +101,9 @@ class NatPoolMemberForm(PortsForm, PrimaryModelForm):
             except MultipleObjectsReturned:
                 ip = IPAddress.objects.filter(address=str(address)).first()
             except ObjectDoesNotExist:
-                ip = IPAddress.objects.create(address=str(address))
+                ip = IPAddress.objects.create(
+                    address=str(address), status=IPAddressStatusChoices.STATUS_ACTIVE
+                )
             self.cleaned_data["address"] = ip
         return self.cleaned_data.get("address")
 
@@ -108,7 +114,9 @@ class NatPoolMemberForm(PortsForm, PrimaryModelForm):
             except MultipleObjectsReturned:
                 network = Prefix.objects.filter(prefix=str(prefix)).first()
             except ObjectDoesNotExist:
-                network = Prefix.objects.create(prefix=str(prefix))
+                network = Prefix.objects.create(
+                    prefix=str(prefix), status=PrefixStatusChoices.STATUS_ACTIVE
+                )
             self.cleaned_data["prefix"] = network
         return self.cleaned_data.get("prefix")
 

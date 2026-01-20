@@ -12,13 +12,13 @@ from netbox_security.models import (
     ApplicationSet,
     ApplicationAssignment,
     ApplicationSetAssignment,
+    SecurityZone,
+    SecurityZonePolicy,
 )
 from netbox_security.filtersets import (
     ApplicationItemFilterSet,
     ApplicationFilterSet,
     ApplicationSetFilterSet,
-    SecurityZone,
-    SecurityZonePolicy,
     ApplicationAssignmentFilterSet,
     ApplicationSetAssignmentFilterSet,
 )

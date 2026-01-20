@@ -1,0 +1,21 @@
+{% load buttons %}
+{% load custom_links %}
+{% load helpers %}
+{% load i18n %}
+{% load plugins %}
+
+<div class="col-md">
+    <div class="card">
+        <h5 class="card-header">
+            {% trans "NAT Pool Members" %}
+            <div class="card-actions">
+                {% if perms.netbox_security.add_natpoolmember %}
+                    <a href="{% url 'plugins:netbox_security:natpoolmember_add' %}?return_url={{ object.get_absolute_url }}&address={{ object.pk }}" class="btn btn-ghost-primary btn-sm">
+                      <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Create NAT Pool Member" %}
+                    </a>
+                {% endif %}
+            </div>
+        </h5>
+        {% htmx_table 'plugins:netbox_security:natpoolmember_list' address_id=object.pk %}
+    </div>
+</div>

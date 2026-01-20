@@ -137,10 +137,55 @@ class InterfaceInfo(PluginTemplateExtension):
         )
 
 
+class IPAddressInfo(PluginTemplateExtension):
+    models = ["ipam.ipaddress"]
+
+    def right_page(self):
+        """ """
+        return self.x_page()
+
+    def x_page(self):
+        """ """
+        return self.render(
+            "netbox_security/natpoolmembers/address.html",
+        )
+
+
+class PrefixInfo(PluginTemplateExtension):
+    models = ["ipam.prefix"]
+
+    def right_page(self):
+        """ """
+        return self.x_page()
+
+    def x_page(self):
+        """ """
+        return self.render(
+            "netbox_security/natpoolmembers/prefix.html",
+        )
+
+
+class IPRangeInfo(PluginTemplateExtension):
+    models = ["ipam.iprange"]
+
+    def right_page(self):
+        """ """
+        return self.x_page()
+
+    def x_page(self):
+        """ """
+        return self.render(
+            "netbox_security/natpoolmembers/iprange.html",
+        )
+
+
 template_extensions = [
     SecurityZoneContextInfo,
     AddressContextInfo,
     AddressSetContextInfo,
     VirtualMachineInfo,
     InterfaceInfo,
+    IPAddressInfo,
+    PrefixInfo,
+    IPRangeInfo,
 ]
