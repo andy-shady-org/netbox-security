@@ -1,6 +1,6 @@
 [project]
 name = "netbox-security"
-version = "1.3.3"
+version = "1.4.0"
 description = "A Netbox plugin for tracking Security and NAT related objects"
 authors = [
     {name="Andy Wilson", email="andy@shady.org"},
@@ -13,7 +13,7 @@ classifiers = [
 ]
 dependencies = [
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 
 [project.urls]
 Homepage = "https://github.com/andy-shady-org/netbox-security"
