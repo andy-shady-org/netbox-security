@@ -9,7 +9,7 @@ from rest_framework.serializers import (
 )
 from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
-from netbox.api.serializers import NetBoxModelSerializer
+from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
 from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 from netbox_security.models import Application, ApplicationAssignment
@@ -18,7 +18,7 @@ from netbox_security.constants import APPLICATION_ASSIGNMENT_MODELS
 from netbox_security.choices import ProtocolChoices
 
 
-class ApplicationSerializer(NetBoxModelSerializer):
+class ApplicationSerializer(PrimaryModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:application-detail"
     )

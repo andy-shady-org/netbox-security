@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from netbox.search import SearchIndex, register_search
 
-from netbox.models import NetBoxModel
+from netbox.models import PrimaryModel
 from ipam.choices import IPAddressStatusChoices
 
 from netbox_security.mixins import PortsMixin
@@ -15,7 +15,7 @@ __all__ = (
 )
 
 
-class NatPoolMember(PortsMixin, NetBoxModel):
+class NatPoolMember(PortsMixin, PrimaryModel):
     """ """
 
     name = models.CharField(max_length=100)

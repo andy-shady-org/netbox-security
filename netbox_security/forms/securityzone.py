@@ -19,7 +19,6 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
 )
 
-from users.models import Owner
 from dcim.models import Device, VirtualDeviceContext, Interface
 from tenancy.models import Tenant, TenantGroup
 

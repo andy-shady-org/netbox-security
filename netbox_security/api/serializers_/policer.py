@@ -2,7 +2,6 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
     BooleanField,
-    ChoiceField,
     SerializerMethodField,
     JSONField,
     IntegerField,
@@ -15,10 +14,6 @@ from tenancy.api.serializers import TenantSerializer
 from utilities.api import get_serializer_for_model
 
 from netbox_security.models import Policer, PolicerAssignment
-from netbox_security.choices import (
-    LossPriorityChoices,
-    ForwardingClassChoices,
-)
 from netbox_security.constants import (
     POLICER_ASSIGNMENT_MODELS,
 )
@@ -36,8 +31,6 @@ class PolicerSerializer(NetBoxModelSerializer):
     bandwidth_limit = IntegerField(required=False, allow_null=True)
     bandwidth_percent = IntegerField(required=False, allow_null=True)
     burst_size_limit = IntegerField(required=False, allow_null=True)
-    loss_priority = ChoiceField(choices=LossPriorityChoices, required=False)
-    forwarding_class = ChoiceField(choices=ForwardingClassChoices, required=False)
 
     class Meta:
         model = Policer

@@ -3,7 +3,7 @@ from typing import Annotated, List
 import strawberry
 import strawberry_django
 
-from netbox.graphql.types import NetBoxObjectType
+from netbox.graphql.types import NetBoxObjectType, PrimaryObjectType
 from ipam.graphql.types import IPAddressType, PrefixType, IPRangeType
 from tenancy.graphql.types import TenantType
 
@@ -45,7 +45,7 @@ from .filters import (
 
 
 @strawberry_django.type(Address, fields="__all__", filters=NetBoxSecurityAddressFilter)
-class NetBoxSecurityAddressType(NetBoxObjectType):
+class NetBoxSecurityAddressType(PrimaryObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
     identifier: str | None
@@ -57,7 +57,7 @@ class NetBoxSecurityAddressType(NetBoxObjectType):
 @strawberry_django.type(
     AddressSet, fields="__all__", filters=NetBoxSecurityAddressSetFilter
 )
-class NetBoxSecurityAddressSetType(NetBoxObjectType):
+class NetBoxSecurityAddressSetType(PrimaryObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
     identifier: str | None
@@ -87,7 +87,7 @@ class NetBoxSecurityAddressListType(NetBoxObjectType):
 @strawberry_django.type(
     ApplicationItem, fields="__all__", filters=NetBoxSecurityApplicationItemFilter
 )
-class NetBoxSecurityApplicationItemType(NetBoxObjectType):
+class NetBoxSecurityApplicationItemType(PrimaryObjectType):
     name: str
     index: int
     protocol: List[str] | None
@@ -98,7 +98,7 @@ class NetBoxSecurityApplicationItemType(NetBoxObjectType):
 @strawberry_django.type(
     Application, fields="__all__", filters=NetBoxSecurityApplicationFilter
 )
-class NetBoxSecurityApplicationType(NetBoxObjectType):
+class NetBoxSecurityApplicationType(PrimaryObjectType):
     name: str
     identifier: str | None
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
@@ -116,7 +116,7 @@ class NetBoxSecurityApplicationType(NetBoxObjectType):
 @strawberry_django.type(
     ApplicationSet, fields="__all__", filters=NetBoxSecurityApplicationSetFilter
 )
-class NetBoxSecurityApplicationSetType(NetBoxObjectType):
+class NetBoxSecurityApplicationSetType(PrimaryObjectType):
     name: str
     identifier: str | None
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
@@ -137,7 +137,7 @@ class NetBoxSecurityApplicationSetType(NetBoxObjectType):
 @strawberry_django.type(
     SecurityZone, fields="__all__", filters=NetBoxSecuritySecurityZoneFilter
 )
-class NetBoxSecuritySecurityZoneType(NetBoxObjectType):
+class NetBoxSecuritySecurityZoneType(PrimaryObjectType):
     name: str
     identifier: str | None
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
@@ -146,7 +146,7 @@ class NetBoxSecuritySecurityZoneType(NetBoxObjectType):
 @strawberry_django.type(
     SecurityZonePolicy, fields="__all__", filters=NetBoxSecuritySecurityZonePolicyFilter
 )
-class NetBoxSecuritySecurityZonePolicyType(NetBoxObjectType):
+class NetBoxSecuritySecurityZonePolicyType(PrimaryObjectType):
     name: str
     identifier: str | None
     source_zone: (
@@ -184,7 +184,7 @@ class NetBoxSecuritySecurityZonePolicyType(NetBoxObjectType):
 
 
 @strawberry_django.type(NatPool, fields="__all__", filters=NetBoxSecurityNatPoolFilter)
-class NetBoxSecurityNatPoolType(NetBoxObjectType):
+class NetBoxSecurityNatPoolType(PrimaryObjectType):
     name: str
     pool_type: str
     status: str
@@ -193,7 +193,7 @@ class NetBoxSecurityNatPoolType(NetBoxObjectType):
 @strawberry_django.type(
     NatPoolMember, fields="__all__", filters=NetBoxSecurityNatPoolMemberFilter
 )
-class NetBoxSecurityNatPoolMemberType(NetBoxObjectType):
+class NetBoxSecurityNatPoolMemberType(PrimaryObjectType):
     pool: (
         Annotated[
             "NetBoxSecurityNatPoolType",
@@ -213,7 +213,7 @@ class NetBoxSecurityNatPoolMemberType(NetBoxObjectType):
 @strawberry_django.type(
     NatRuleSet, fields="__all__", filters=NetBoxSecurityNatRuleSetFilter
 )
-class NetBoxSecurityNatRuleSetType(NetBoxObjectType):
+class NetBoxSecurityNatRuleSetType(PrimaryObjectType):
     source_zones: List[
         Annotated[
             "NetBoxSecuritySecurityZoneType",
@@ -232,7 +232,7 @@ class NetBoxSecurityNatRuleSetType(NetBoxObjectType):
 
 
 @strawberry_django.type(NatRule, fields="__all__", filters=NetBoxSecurityNatRuleFilter)
-class NetBoxSecurityNatRuleType(NetBoxObjectType):
+class NetBoxSecurityNatRuleType(PrimaryObjectType):
     rule_set: (
         Annotated[
             "NetBoxSecurityNatRuleSetType",
@@ -287,7 +287,7 @@ class NetBoxSecurityNatRuleType(NetBoxObjectType):
 
 
 @strawberry_django.type(Policer, fields="__all__", filters=NetBoxSecurityPolicerFilter)
-class NetBoxSecurityPolicerType(NetBoxObjectType):
+class NetBoxSecurityPolicerType(PrimaryObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
 
@@ -295,7 +295,7 @@ class NetBoxSecurityPolicerType(NetBoxObjectType):
 @strawberry_django.type(
     FirewallFilter, fields="__all__", filters=NetBoxSecurityFirewallFilterFilter
 )
-class NetBoxSecurityFirewallFilterType(NetBoxObjectType):
+class NetBoxSecurityFirewallFilterType(PrimaryObjectType):
     tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     name: str
     family: str
@@ -304,7 +304,7 @@ class NetBoxSecurityFirewallFilterType(NetBoxObjectType):
 @strawberry_django.type(
     FirewallFilterRule, fields="__all__", filters=NetBoxSecurityFirewallFilterRuleFilter
 )
-class NetBoxSecurityFirewallFilterRuleType(NetBoxObjectType):
+class NetBoxSecurityFirewallFilterRuleType(PrimaryObjectType):
     firewall_filter: (
         Annotated[
             "NetBoxSecurityFirewallFilterType",

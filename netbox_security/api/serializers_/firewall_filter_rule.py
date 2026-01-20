@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from netbox.api.serializers import NetBoxModelSerializer
+from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
 from utilities.api import get_serializer_for_model
 
 from netbox_security.api.serializers import FirewallFilterSerializer
@@ -19,7 +19,7 @@ __all__ = (
 )
 
 
-class FirewallRuleFromSettingSerializer(NetBoxModelSerializer):
+class FirewallRuleFromSettingSerializer(PrimaryModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:firewallrulefromsetting-detail"
     )
@@ -56,7 +56,7 @@ class FirewallRuleFromSettingSerializer(NetBoxModelSerializer):
         return serializer(obj.assigned_object, context=context, nested=True).data
 
 
-class FirewallRuleThenSettingSerializer(NetBoxModelSerializer):
+class FirewallRuleThenSettingSerializer(PrimaryModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:firewallrulethensetting-detail"
     )
@@ -93,7 +93,7 @@ class FirewallRuleThenSettingSerializer(NetBoxModelSerializer):
         return serializer(obj.assigned_object, context=context, nested=True).data
 
 
-class FirewallFilterRuleSerializer(NetBoxModelSerializer):
+class FirewallFilterRuleSerializer(PrimaryModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:firewallfilterrule-detail"
     )

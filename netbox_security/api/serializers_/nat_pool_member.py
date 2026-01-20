@@ -1,6 +1,6 @@
 from rest_framework.serializers import HyperlinkedIdentityField
 
-from netbox.api.serializers import NetBoxModelSerializer
+from netbox.api.serializers import PrimaryModelSerializer
 from ipam.api.serializers import (
     IPAddressSerializer,
     PrefixSerializer,
@@ -13,7 +13,7 @@ from netbox_security.models import (
 from netbox_security.api.serializers import NatPoolSerializer
 
 
-class NatPoolMemberSerializer(NetBoxModelSerializer):
+class NatPoolMemberSerializer(PrimaryModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:natpoolmember-detail"
     )
@@ -29,6 +29,7 @@ class NatPoolMemberSerializer(NetBoxModelSerializer):
             "url",
             "display",
             "name",
+            "description",
             "pool",
             "status",
             "address",

@@ -1,7 +1,7 @@
 import django_filters
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
-from netbox.filtersets import NetBoxModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from utilities.filtersets import register_filterset
 
 from ipam.models import IPAddress, Prefix, IPRange
@@ -17,7 +17,7 @@ __all__ = ("NatPoolMemberFilterSet",)
 
 
 @register_filterset
-class NatPoolMemberFilterSet(PortsFilterSet, NetBoxModelFilterSet):
+class NatPoolMemberFilterSet(PortsFilterSet, PrimaryModelFilterSet):
     pool_id = django_filters.ModelMultipleChoiceFilter(
         queryset=NatPool.objects.all(),
         field_name="pool",
@@ -73,11 +73,11 @@ class NatPoolMemberFilterSet(PortsFilterSet, NetBoxModelFilterSet):
 
     class Meta:
         model = NatPoolMember
-        fields = ["id", "name"]
+        fields = ["id", "name", "description"]
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""
         if not value.strip():
             return queryset
-        qs_filter = Q(name__icontains=value)
+        qs_filter = Q(name__icontains=value) | Q(description__icontains=value)
         return queryset.filter(qs_filter)

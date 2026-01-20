@@ -1,7 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
-    ChoiceField,
     SerializerMethodField,
     JSONField,
     IntegerField,
@@ -17,10 +16,6 @@ from netbox_security.models import NatRuleSet, NatRuleSetAssignment
 from netbox_security.constants import (
     RULESET_ASSIGNMENT_MODELS,
 )
-from netbox_security.choices import (
-    NatTypeChoices,
-    RuleDirectionChoices,
-)
 
 from netbox_security.api.serializers import SecurityZoneSerializer
 
@@ -29,8 +24,6 @@ class NatRuleSetSerializer(NetBoxModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:natruleset-detail"
     )
-    nat_type = ChoiceField(choices=NatTypeChoices, required=True)
-    direction = ChoiceField(choices=RuleDirectionChoices, required=True)
     rule_count = IntegerField(read_only=True)
     source_zones = SecurityZoneSerializer(
         nested=True, required=False, allow_null=True, many=True

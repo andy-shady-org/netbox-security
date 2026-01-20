@@ -1,7 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
-    ChoiceField,
     SerializerMethodField,
     JSONField,
     ValidationError,
@@ -11,7 +10,7 @@ from rest_framework.serializers import (
 from drf_spectacular.utils import extend_schema_field
 
 from netbox.api.fields import SerializedPKRelatedField, ContentTypeField
-from netbox.api.serializers import NetBoxModelSerializer
+from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
 from ipam.api.serializers import IPAddressSerializer, PrefixSerializer
 from utilities.api import get_serializer_for_model
 from ipam.models import IPAddress, Prefix
@@ -19,27 +18,17 @@ from ipam.models import IPAddress, Prefix
 from netbox_security.models import NatRule, NatRuleAssignment
 from netbox_security.constants import RULE_ASSIGNMENT_MODELS
 
-from netbox_security.choices import (
-    RuleStatusChoices,
-    AddressTypeChoices,
-    CustomInterfaceChoices,
-)
-
 from netbox_security.api.serializers import (
     NatPoolSerializer,
     NatRuleSetSerializer,
 )
 
 
-class NatRuleSerializer(NetBoxModelSerializer):
+class NatRuleSerializer(PrimaryModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:natrule-detail"
     )
     rule_set = NatRuleSetSerializer(nested=True, required=True)
-    status = ChoiceField(choices=RuleStatusChoices, required=False)
-    source_type = ChoiceField(choices=AddressTypeChoices, required=False)
-    destination_type = ChoiceField(choices=AddressTypeChoices, required=False)
-    custom_interface = ChoiceField(choices=CustomInterfaceChoices, required=False)
     source_addresses = SerializedPKRelatedField(
         nested=True,
         queryset=IPAddress.objects.all(),

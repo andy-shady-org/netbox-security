@@ -7,6 +7,7 @@ from netbox.search import SearchIndex, register_search
 from netbox.models import PrimaryModel
 from netbox.models.features import ContactsMixin
 from netbox_security.choices import ActionChoices
+from netbox_security.fields import ChoiceArrayField
 
 __all__ = (
     "SecurityZonePolicy",
@@ -52,6 +53,15 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
         blank=True,
         related_name="%(class)s_application_sets",
     )
+    # policy_actions = ChoiceArrayField(
+    #     base_field=models.CharField(
+    #         choices=ActionChoices, default=ActionChoices.PERMIT
+    #     ),
+    #     verbose_name=_("Policy Actions"),
+    #     blank=True,
+    #     null=True,
+    #     default=list,
+    # )
     policy_actions = ArrayField(
         models.CharField(
             max_length=20,

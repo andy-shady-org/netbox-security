@@ -6,7 +6,11 @@ from rest_framework.serializers import (
 )
 from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
-from netbox.api.serializers import NetBoxModelSerializer, WritableNestedSerializer
+from netbox.api.serializers import (
+    NetBoxModelSerializer,
+    WritableNestedSerializer,
+    PrimaryModelSerializer,
+)
 from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 
@@ -50,7 +54,7 @@ class NestedAddressSetSerializer(WritableNestedSerializer):
         )
 
 
-class AddressSetSerializer(NetBoxModelSerializer):
+class AddressSetSerializer(PrimaryModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:addressset-detail"
     )
