@@ -21,7 +21,6 @@ from ipam.models import IPAddress, Prefix, IPRange
 from ipam.choices import (
     IPAddressStatusChoices,
     PrefixStatusChoices,
-    IPRangeStatusChoices,
 )
 
 from netbox_security.models import (
