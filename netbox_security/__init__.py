@@ -20,5 +20,10 @@ class SecurityConfig(PluginConfig):
         "address_ext_page": "right",
     }
 
+    def ready(self):
+        super().ready()
+
+        import netbox_security.signals.nat_pool_member
+
 
 config = SecurityConfig  # noqa
