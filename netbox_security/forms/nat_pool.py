@@ -64,7 +64,7 @@ class NatPoolForm(PrimaryModelForm):
         ]
 
 
-class NatPoolFilterForm(NetBoxModelFilterSetForm):
+class NatPoolFilterForm(PrimaryModelFilterSetForm):
     model = NatPool
     fieldsets = (
         FieldSet("q", "filter_id", "tag", "owner_id"),

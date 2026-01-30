@@ -9,6 +9,7 @@ from utilities.filters import (
     MultiValueNumberFilter,
 )
 from ipam.choices import IPAddressStatusChoices
+from dcim.models import Device, VirtualDeviceContext
 from virtualization.models import VirtualMachine
 
 from netbox_security.models import (
@@ -41,13 +42,12 @@ class NatPoolFilterSet(PrimaryModelFilterSet):
         model = NatPool
         fields = ["id", "name", "description"]
 
-
-def search(self, queryset, name, value):
-    """Perform the filtered search."""
-    if not value.strip():
-        return queryset
-    qs_filter = Q(name__icontains=value) | Q(description__icontains=value)
-    return queryset.filter(qs_filter)
+    def search(self, queryset, name, value):
+        """Perform the filtered search."""
+        if not value.strip():
+            return queryset
+        qs_filter = Q(name__icontains=value) | Q(description__icontains=value)
+        return queryset.filter(qs_filter)
 
 
 @register_filterset
@@ -61,6 +61,26 @@ class NatPoolAssignmentFilterSet(AssignmentFilterSet):
         queryset=NatPool.objects.all(),
         to_field_name="name",
         label=_("NAT Pool (Name)"),
+    )
+    device = MultiValueCharFilter(
+        method="filter_device",
+        field_name="name",
+        label=_("Device (name)"),
+    )
+    device_id = MultiValueNumberFilter(
+        method="filter_device",
+        field_name="pk",
+        label=_("Device (ID)"),
+    )
+    virtualdevicecontext = MultiValueCharFilter(
+        method="filter_virtualdevicecontext",
+        field_name="name",
+        label=_("Virtual Device Context (name)"),
+    )
+    virtualdevicecontext_id = MultiValueNumberFilter(
+        method="filter_virtualdevicecontext",
+        field_name="pk",
+        label=_("Virtual Device Context (ID)"),
     )
     virtualmachine = MultiValueCharFilter(
         method="filter_virtual_machine",
@@ -76,6 +96,26 @@ class NatPoolAssignmentFilterSet(AssignmentFilterSet):
     class Meta:
         model = NatPoolAssignment
         fields = ("id", "pool_id", "assigned_object_type", "assigned_object_id")
+
+    def filter_device(self, queryset, name, value):
+        if not (devices := Device.objects.filter(**{f"{name}__in": value})).exists():
+            return queryset.none()
+        return queryset.filter(
+            assigned_object_type=ContentType.objects.get_for_model(Device),
+            assigned_object_id__in=devices.values_list("id", flat=True),
+        )
+
+    def filter_virtualdevicecontext(self, queryset, name, value):
+        if not (
+            devices := VirtualDeviceContext.objects.filter(**{f"{name}__in": value})
+        ).exists():
+            return queryset.none()
+        return queryset.filter(
+            assigned_object_type=ContentType.objects.get_for_model(
+                VirtualDeviceContext
+            ),
+            assigned_object_id__in=devices.values_list("id", flat=True),
+        )
 
     def filter_virtual_machine(self, queryset, name, value):
         if not (
