@@ -27,6 +27,7 @@ ZONE_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device")
     | Q(app_label="dcim", model="virtualdevicecontext")
     | Q(app_label="dcim", model="interface")
+    | Q(app_label="virtualization", model="virtualmachine")
 )
 
 ADDRESS_ASSIGNMENT_MODELS = Q(
