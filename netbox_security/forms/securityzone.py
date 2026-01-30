@@ -21,6 +21,7 @@ from utilities.forms.fields import (
 
 from dcim.models import Device, VirtualDeviceContext, Interface
 from tenancy.models import Tenant, TenantGroup
+from virtualization.models import VirtualMachine
 
 from netbox_security.models import (
     SecurityZone,
@@ -162,6 +163,7 @@ class SecurityZoneAssignmentFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "device_id",
             "virtualdevicecontext_id",
+            "virtualmachine_id",
             "interface_id",
             name="Assignments",
         ),
@@ -181,6 +183,11 @@ class SecurityZoneAssignmentFilterForm(NetBoxModelFilterSetForm):
         required=False,
         query_params={"device_id": "$device_id"},
         label=_("Virtual Device Context"),
+    )
+    virtualmachine_id = DynamicModelChoiceField(
+        queryset=VirtualMachine.objects.all(),
+        required=False,
+        label=_("Virtual Machine"),
     )
     interface_id = DynamicModelChoiceField(
         queryset=Interface.objects.all(),
