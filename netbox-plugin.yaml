@@ -1,6 +1,9 @@
 version: 0.1
 package_name: netbox-security
 compatibility:
+  - release: 1.4.2
+    netbox_min: 4.5.0
+    netbox_max: 4.5.1
   - release: 1.4.1
     netbox_min: 4.5.0
     netbox_max: 4.5.1
