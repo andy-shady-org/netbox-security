@@ -10,6 +10,8 @@ from utilities.filters import (
     MultiValueNumberFilter,
 )
 
+from dcim.models import Device, VirtualDeviceContext
+
 from netbox_security.models import (
     AddressList,
     Address,
@@ -116,10 +118,70 @@ class AddressListAssignmentFilterSet(AssignmentFilterSet):
         field_name="pk",
         label=_("Security Zone (ID)"),
     )
+    address = MultiValueCharFilter(
+        method="filter_address",
+        field_name="name",
+        label=_("Address (name)"),
+    )
+    address_id = MultiValueNumberFilter(
+        method="filter_address",
+        field_name="pk",
+        label=_("Address (ID)"),
+    )
+    addressset = MultiValueCharFilter(
+        method="filter_addressset",
+        field_name="name",
+        label=_("Address Set (name)"),
+    )
+    addressset_id = MultiValueNumberFilter(
+        method="filter_addressset",
+        field_name="pk",
+        label=_("Address Set (ID)"),
+    )
+    device = MultiValueCharFilter(
+        method="filter_device",
+        field_name="name",
+        label=_("Device (name)"),
+    )
+    device_id = MultiValueNumberFilter(
+        method="filter_device",
+        field_name="pk",
+        label=_("Device (ID)"),
+    )
+    virtualdevicecontext = MultiValueCharFilter(
+        method="filter_virtualdevicecontext",
+        field_name="name",
+        label=_("Virtual Device Context (name)"),
+    )
+    virtualdevicecontext_id = MultiValueNumberFilter(
+        method="filter_virtualdevicecontext",
+        field_name="pk",
+        label=_("Virtual Device Context (ID)"),
+    )
 
     class Meta:
         model = AddressListAssignment
         fields = ("id", "address_list_id", "assigned_object_type", "assigned_object_id")
+
+    def filter_device(self, queryset, name, value):
+        if not (devices := Device.objects.filter(**{f"{name}__in": value})).exists():
+            return queryset.none()
+        return queryset.filter(
+            assigned_object_type=ContentType.objects.get_for_model(Device),
+            assigned_object_id__in=devices.values_list("id", flat=True),
+        )
+
+    def filter_virtualdevicecontext(self, queryset, name, value):
+        if not (
+            devices := VirtualDeviceContext.objects.filter(**{f"{name}__in": value})
+        ).exists():
+            return queryset.none()
+        return queryset.filter(
+            assigned_object_type=ContentType.objects.get_for_model(
+                VirtualDeviceContext
+            ),
+            assigned_object_id__in=devices.values_list("id", flat=True),
+        )
 
     def filter_zone(self, queryset, name, value):
         if not (
@@ -129,4 +191,22 @@ class AddressListAssignmentFilterSet(AssignmentFilterSet):
         return queryset.filter(
             assigned_object_type=ContentType.objects.get_for_model(SecurityZone),
             assigned_object_id__in=zones.values_list("id", flat=True),
+        )
+
+    def filter_address(self, queryset, name, value):
+        if not (addresses := Address.objects.filter(**{f"{name}__in": value})).exists():
+            return queryset.none()
+        return queryset.filter(
+            assigned_object_type=ContentType.objects.get_for_model(Address),
+            assigned_object_id__in=addresses.values_list("id", flat=True),
+        )
+
+    def filter_addressset(self, queryset, name, value):
+        if not (
+            address_sets := AddressSet.objects.filter(**{f"{name}__in": value})
+        ).exists():
+            return queryset.none()
+        return queryset.filter(
+            assigned_object_type=ContentType.objects.get_for_model(AddressSet),
+            assigned_object_id__in=address_sets.values_list("id", flat=True),
         )
