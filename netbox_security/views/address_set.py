@@ -4,16 +4,20 @@ from django.shortcuts import get_object_or_404
 from netbox.views import generic
 from utilities.views import register_model_view
 
+from dcim.models import Device, VirtualDeviceContext
+from dcim.tables import DeviceTable, VirtualDeviceContextTable
+
 from netbox_security.tables import (
     AddressSetTable,
     AddressSetAssignmentTable,
+    SecurityZoneTable,
 )
 from netbox_security.filtersets import (
     AddressSetFilterSet,
     AddressSetAssignmentFilterSet,
 )
 
-from netbox_security.models import AddressSet, AddressSetAssignment
+from netbox_security.models import AddressSet, AddressSetAssignment, SecurityZone
 from netbox_security.forms import (
     AddressSetFilterForm,
     AddressSetForm,
@@ -42,6 +46,28 @@ __all__ = (
 class AddressSetView(generic.ObjectView):
     queryset = AddressSet.objects.all()
     template_name = "netbox_security/addressset.html"
+
+    def get_extra_context(self, request, instance):
+        device_assignments_table = DeviceTable(
+            Device.objects.filter(address_sets__address_set=instance),
+            orderable=False,
+        )
+        device_assignments_table.configure(request)
+        virtual_device_assignments_table = VirtualDeviceContextTable(
+            VirtualDeviceContext.objects.filter(address_sets__address_set=instance),
+            orderable=False,
+        )
+        virtual_device_assignments_table.configure(request)
+        zone_assignments_table = SecurityZoneTable(
+            SecurityZone.objects.filter(address_sets__address_set=instance),
+            orderable=False,
+        )
+        zone_assignments_table.configure(request)
+        return {
+            "device_assignments_table": device_assignments_table,
+            "virtual_device_assignments_table": virtual_device_assignments_table,
+            "zone_assignments_table": zone_assignments_table,
+        }
 
 
 @register_model_view(AddressSet, "list", path="", detail=False)

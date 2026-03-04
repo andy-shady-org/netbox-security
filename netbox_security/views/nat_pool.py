@@ -6,6 +6,12 @@ from django.shortcuts import get_object_or_404
 from netbox.views import generic
 from utilities.views import register_model_view, ViewTab
 
+from dcim.models import Device, VirtualDeviceContext
+from virtualization.models import VirtualMachine
+
+from dcim.tables import DeviceTable, VirtualDeviceContextTable
+from virtualization.tables import VirtualMachineTable
+
 from netbox_security.models import NatPool, NatPoolMember, NatPoolAssignment
 
 from netbox_security.forms import (
@@ -47,6 +53,28 @@ __all__ = (
 class NatPoolView(generic.ObjectView):
     queryset = NatPool.objects.annotate(member_count=Count("natpoolmember_pools"))
     template_name = "netbox_security/natpool.html"
+
+    def get_extra_context(self, request, instance):
+        device_assignments_table = DeviceTable(
+            Device.objects.filter(nat_pools__pool=instance),
+            orderable=False,
+        )
+        device_assignments_table.configure(request)
+        virtual_device_assignments_table = VirtualDeviceContextTable(
+            VirtualDeviceContext.objects.filter(nat_pools__pool=instance),
+            orderable=False,
+        )
+        virtual_device_assignments_table.configure(request)
+        virtual_machine_assignments_table = VirtualMachineTable(
+            VirtualMachine.objects.filter(nat_pools__pool=instance),
+            orderable=False,
+        )
+        virtual_machine_assignments_table.configure(request)
+        return {
+            "device_assignments_table": device_assignments_table,
+            "virtual_device_assignments_table": virtual_device_assignments_table,
+            "virtual_machine_assignments_table": virtual_machine_assignments_table,
+        }
 
 
 @register_model_view(NatPool, "list", path="", detail=False)

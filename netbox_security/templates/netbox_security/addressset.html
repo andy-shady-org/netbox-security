@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load helpers %}
 {% load plugins %}
+{% load render_table from django_tables2 %}
 
 {% block content %}
 <div class="row">
@@ -63,6 +64,36 @@
                     </td>
                 </tr>
             </table>
+        </div>
+        <div class="card">
+            {% if zone_assignments_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Security Zone Assignment" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Security Zone Assignments" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table zone_assignments_table 'inc/table.html' %}
+            </div>
+        </div>
+        <div class="card">
+            {% if device_assignments_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Device Assignment" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Device Assignments" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table device_assignments_table 'inc/table.html' %}
+            </div>
+        </div>
+        <div class="card">
+            {% if virtual_device_assignments_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Virtual Device Context Assignment" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Virtual Device Context Assignments" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table virtual_device_assignments_table 'inc/table.html' %}
+            </div>
         </div>
         {% include 'inc/panels/comments.html' %}
         {% include 'inc/panels/tags.html' %}

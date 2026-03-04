@@ -6,6 +6,12 @@ from django.shortcuts import get_object_or_404
 
 from utilities.views import register_model_view, ViewTab
 
+from dcim.models import Device, VirtualDeviceContext
+from virtualization.models import VirtualMachine
+
+from dcim.tables import DeviceTable, VirtualDeviceContextTable
+from virtualization.tables import VirtualMachineTable
+
 from netbox_security.models import NatRuleSet, NatRuleSetAssignment, NatRule
 from netbox_security.tables import (
     NatRuleSetTable,
@@ -46,6 +52,28 @@ __all__ = (
 class NatRuleSetView(generic.ObjectView):
     queryset = NatRuleSet.objects.annotate(rule_count=Count("natrule_rules"))
     template_name = "netbox_security/natruleset.html"
+
+    def get_extra_context(self, request, instance):
+        device_assignments_table = DeviceTable(
+            Device.objects.filter(natrulesets__ruleset=instance),
+            orderable=False,
+        )
+        device_assignments_table.configure(request)
+        virtual_device_assignments_table = VirtualDeviceContextTable(
+            VirtualDeviceContext.objects.filter(natrulesets__ruleset=instance),
+            orderable=False,
+        )
+        virtual_device_assignments_table.configure(request)
+        virtual_machine_assignments_table = VirtualMachineTable(
+            VirtualMachine.objects.filter(natrulesets__ruleset=instance),
+            orderable=False,
+        )
+        virtual_machine_assignments_table.configure(request)
+        return {
+            "device_assignments_table": device_assignments_table,
+            "virtual_device_assignments_table": virtual_device_assignments_table,
+            "virtual_machine_assignments_table": virtual_machine_assignments_table,
+        }
 
 
 @register_model_view(NatRuleSet, "list", path="", detail=False)
