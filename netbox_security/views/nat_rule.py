@@ -3,6 +3,10 @@ from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
 from utilities.views import register_model_view
+
+from dcim.models import Interface
+
+from dcim.tables import InterfaceTable
 from ipam.tables import PrefixTable, IPAddressTable, IPRangeTable
 
 from netbox_security.models import NatRule, NatRuleAssignment
@@ -111,6 +115,11 @@ class NatRuleView(generic.ObjectView):
                 "last_updated",
             ),
         )
+        interface_assignments_table = InterfaceTable(
+            Interface.objects.filter(natrules__rule=instance),
+            orderable=False,
+        )
+        interface_assignments_table.configure(request)
 
         return {
             "source_addresses_table": source_addresses_table,
@@ -119,6 +128,7 @@ class NatRuleView(generic.ObjectView):
             "destination_prefixes_table": destination_prefixes_table,
             "source_ranges_table": source_ranges_table,
             "destination_ranges_table": destination_ranges_table,
+            "interface_assignments_table": interface_assignments_table,
         }
 
 

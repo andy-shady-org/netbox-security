@@ -4,6 +4,9 @@ from django.shortcuts import get_object_or_404
 from netbox.views import generic
 from utilities.views import register_model_view
 
+from dcim.models import Device, VirtualDeviceContext
+from dcim.tables import DeviceTable, VirtualDeviceContextTable
+
 from netbox_security.tables import ApplicationTable, ApplicationAssignmentTable
 from netbox_security.filtersets import (
     ApplicationFilterSet,
@@ -39,6 +42,22 @@ __all__ = (
 class ApplicationView(generic.ObjectView):
     queryset = Application.objects.all()
     template_name = "netbox_security/application.html"
+
+    def get_extra_context(self, request, instance):
+        device_assignments_table = DeviceTable(
+            Device.objects.filter(applications__application=instance),
+            orderable=False,
+        )
+        device_assignments_table.configure(request)
+        virtual_device_assignments_table = VirtualDeviceContextTable(
+            VirtualDeviceContext.objects.filter(applications__application=instance),
+            orderable=False,
+        )
+        virtual_device_assignments_table.configure(request)
+        return {
+            "device_assignments_table": device_assignments_table,
+            "virtual_device_assignments_table": virtual_device_assignments_table,
+        }
 
 
 @register_model_view(Application, "list", path="", detail=False)

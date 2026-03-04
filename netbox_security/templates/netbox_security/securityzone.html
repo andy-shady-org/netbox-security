@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load helpers %}
 {% load plugins %}
+{% load render_table from django_tables2 %}
 
 {% block extra_controls %}
     {% if perms.netbox_security.change_securityzonepolicy %}
@@ -55,6 +56,46 @@
                 </tr>
                 {% endif %}
             </table>
+        </div>
+        <div class="card">
+            {% if virtual_machine_assignments_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Virtual Machine Assignment" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Virtual Machine Assignments" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table virtual_machine_assignments_table 'inc/table.html' %}
+            </div>
+        </div>
+        <div class="card">
+            {% if device_assignments_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Device Assignment" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Device Assignments" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table device_assignments_table 'inc/table.html' %}
+            </div>
+        </div>
+        <div class="card">
+            {% if virtual_device_assignments_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Virtual Device Context Assignment" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Virtual Device Context Assignments" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table virtual_device_assignments_table 'inc/table.html' %}
+            </div>
+        </div>
+        <div class="card">
+            {% if interface_assignments_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Interface Assignment" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Interface Assignments" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table interface_assignments_table 'inc/table.html' %}
+            </div>
         </div>
         {% include 'inc/panels/custom_fields.html' %}
         {% plugin_left_page object %}

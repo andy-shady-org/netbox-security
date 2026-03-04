@@ -158,6 +158,16 @@
                 {% render_table destination_ranges_table 'inc/table.html' %}
             </div>
         </div>
+        <div class="card">
+            {% if interface_assignments_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Interface Assignment" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Interface Assignments" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table interface_assignments_table 'inc/table.html' %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock content %}

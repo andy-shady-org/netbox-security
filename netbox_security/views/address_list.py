@@ -9,7 +9,10 @@ from netbox_security.filtersets import (
     AddressListFilterSet,
     AddressListAssignmentFilterSet,
 )
-from netbox_security.tables import AddressListTable, AddressListAssignmentTable
+from netbox_security.tables import (
+    AddressListTable,
+    AddressListAssignmentTable,
+)
 from netbox_security.forms import (
     AddressListForm,
     AddressListFilterForm,
