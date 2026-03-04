@@ -15,6 +15,7 @@ class SecurityConfig(PluginConfig):
     min_version = "4.5.0"
     default_settings = {
         "top_level_menu": True,
+        "assignments_menu": False,
         "virtual_ext_page": "left",
         "interface_ext_page": "full_width",
         "address_ext_page": "right",
