@@ -74,7 +74,7 @@ left, right, full_width. Set empty value for disable.
 * `address_ext_page`: String (default right) Address/Address Set related objects table position. The following values are available:  
 left, right, full_width. Set empty value for disable.
 * `top_level_menu`: Boolean (default True) Display plugin menu at the top level. The following values are available: True, False.
-
+* `assignments_menu`: Boolean (default False) Display assignments within the plugin menu. The following values are available: True, False.
 
 ## Contribute
 

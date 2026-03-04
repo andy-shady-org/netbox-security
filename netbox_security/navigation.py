@@ -344,17 +344,21 @@ assignments_menu_items = (
 
 
 if plugin_settings.get("top_level_menu"):
+    # Build groups tuple conditionally
+    groups = (
+        (_("Address Book"), address_menu_items),
+        (_("Applications"), application_menu_items),
+        (_("Security Zones"), security_menu_items),
+        (_("NAT Pools"), pool_menu_items),
+        (_("NAT Rules"), rule_menu_items),
+        (_("Firewall Filters"), firewall_menu_items),
+    )
+    if plugin_settings.get("assignments_menu"):
+        groups = groups + ((_("Assignments"), assignments_menu_items),)
+
     menu = PluginMenu(
         label=_("Security"),
-        groups=(
-            (_("Address Book"), address_menu_items),
-            (_("Applications"), application_menu_items),
-            (_("Security Zones"), security_menu_items),
-            (_("NAT Pools"), pool_menu_items),
-            (_("NAT Rules"), rule_menu_items),
-            (_("Firewall Filters"), firewall_menu_items),
-            (_("Assignments"), assignments_menu_items),
-        ),
+        groups=groups,
         icon_class="mdi mdi-security",
     )
 else:
@@ -365,5 +369,6 @@ else:
         + pool_menu_items
         + rule_menu_items
         + firewall_menu_items
-        + assignments_menu_items
     )
+    if plugin_settings.get("assignments_menu"):
+        menu_items = menu_items + assignments_menu_items
