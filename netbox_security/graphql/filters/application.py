@@ -1,7 +1,6 @@
 from typing import Annotated, List
 import strawberry
 import strawberry_django
-from strawberry_django import ComparisonFilterLookup
 
 try:
     from strawberry_django import StrFilterLookup
@@ -11,6 +10,7 @@ except ImportError:
 
 from netbox.graphql.filters import PrimaryModelFilter
 from tenancy.graphql.filter_mixins import ContactFilterMixin, TenancyFilterMixin
+from netbox.graphql.filter_lookups import IntegerArrayLookup
 
 from netbox_security.graphql.filter_lookups import (
     ProtocolArrayLookup,
@@ -45,9 +45,15 @@ class NetBoxSecurityApplicationFilter(
         ]
         | None
     ) = strawberry_django.filter_field()
-    destination_ports: List[ComparisonFilterLookup[int]] | None = (
-        strawberry_django.filter_field()
-    )
-    source_ports: List[ComparisonFilterLookup[int]] | None = (
-        strawberry_django.filter_field()
-    )
+    destination_ports: (
+        Annotated[
+            "IntegerArrayLookup", strawberry.lazy("netbox.graphql.filter_lookups")
+        ]
+        | None
+    ) = strawberry_django.filter_field()
+    source_ports: (
+        Annotated[
+            "IntegerArrayLookup", strawberry.lazy("netbox.graphql.filter_lookups")
+        ]
+        | None
+    ) = strawberry_django.filter_field()
