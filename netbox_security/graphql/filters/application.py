@@ -1,10 +1,16 @@
 from typing import Annotated, List
 import strawberry
 import strawberry_django
-from strawberry_django import FilterLookup
+
+try:
+    from strawberry_django import StrFilterLookup
+    from strawberry_django import FilterLookup
+except ImportError:
+    from strawberry_django import FilterLookup as StrFilterLookup
 
 from netbox.graphql.filters import PrimaryModelFilter
 from tenancy.graphql.filter_mixins import ContactFilterMixin, TenancyFilterMixin
+from netbox.graphql.filter_lookups import IntegerArrayLookup
 
 from netbox_security.graphql.filter_lookups import (
     ProtocolArrayLookup,
@@ -23,8 +29,8 @@ __all__ = ("NetBoxSecurityApplicationFilter",)
 class NetBoxSecurityApplicationFilter(
     ContactFilterMixin, TenancyFilterMixin, PrimaryModelFilter
 ):
-    name: FilterLookup[str] | None = strawberry_django.filter_field()
-    identifier: FilterLookup[str] | None = strawberry_django.filter_field()
+    name: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    identifier: StrFilterLookup[str] | None = strawberry_django.filter_field()
     application_items: (
         Annotated[
             "NetBoxSecurityApplicationItemFilter",
@@ -39,5 +45,15 @@ class NetBoxSecurityApplicationFilter(
         ]
         | None
     ) = strawberry_django.filter_field()
-    destination_ports: List[FilterLookup[int]] | None = strawberry_django.filter_field()
-    source_ports: List[FilterLookup[int]] | None = strawberry_django.filter_field()
+    destination_ports: (
+        Annotated[
+            "IntegerArrayLookup", strawberry.lazy("netbox.graphql.filter_lookups")
+        ]
+        | None
+    ) = strawberry_django.filter_field()
+    source_ports: (
+        Annotated[
+            "IntegerArrayLookup", strawberry.lazy("netbox.graphql.filter_lookups")
+        ]
+        | None
+    ) = strawberry_django.filter_field()

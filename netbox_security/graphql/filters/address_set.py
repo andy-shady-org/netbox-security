@@ -1,7 +1,11 @@
-from typing import Annotated, List
+from typing import Annotated
 import strawberry
 import strawberry_django
-from strawberry_django import FilterLookup
+
+try:
+    from strawberry_django import StrFilterLookup
+except ImportError:
+    from strawberry_django import FilterLookup as StrFilterLookup
 
 from netbox.graphql.filters import PrimaryModelFilter
 from tenancy.graphql.filter_mixins import ContactFilterMixin, TenancyFilterMixin
@@ -18,9 +22,9 @@ __all__ = ("NetBoxSecurityAddressSetFilter",)
 class NetBoxSecurityAddressSetFilter(
     ContactFilterMixin, TenancyFilterMixin, PrimaryModelFilter
 ):
-    name: FilterLookup[str] | None = strawberry_django.filter_field()
-    identifier: FilterLookup[str] | None = strawberry_django.filter_field()
-    description: FilterLookup[str] | None = strawberry_django.filter_field()
+    name: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    identifier: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    description: StrFilterLookup[str] | None = strawberry_django.filter_field()
     addresses: (
         Annotated[
             "NetBoxSecurityAddressFilter",

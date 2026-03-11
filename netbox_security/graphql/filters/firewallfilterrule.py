@@ -1,9 +1,14 @@
 from typing import Annotated
 import strawberry
 import strawberry_django
-from strawberry_django import FilterLookup
 from strawberry.scalars import ID
 
+try:
+    from strawberry_django import StrFilterLookup
+except ImportError:
+    from strawberry_django import FilterLookup as StrFilterLookup
+
+from netbox.graphql.filter_lookups import IntegerLookup
 from netbox.graphql.filters import PrimaryModelFilter
 from tenancy.graphql.filter_mixins import ContactFilterMixin
 
@@ -19,8 +24,8 @@ __all__ = ("NetBoxSecurityFirewallFilterRuleFilter",)
 
 @strawberry_django.filter(FirewallFilterRule, lookups=True)
 class NetBoxSecurityFirewallFilterRuleFilter(ContactFilterMixin, PrimaryModelFilter):
-    name: FilterLookup[str] | None = strawberry_django.filter_field()
-    description: FilterLookup[str] | None = strawberry_django.filter_field()
+    name: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    description: StrFilterLookup[str] | None = strawberry_django.filter_field()
     firewall_filter: (
         Annotated[
             "NetBoxSecurityFirewallFilterFilter",
@@ -29,4 +34,7 @@ class NetBoxSecurityFirewallFilterRuleFilter(ContactFilterMixin, PrimaryModelFil
         | None
     ) = strawberry_django.filter_field()
     firewall_filter_id: ID | None = strawberry_django.filter_field()
-    index: FilterLookup[int] | None = strawberry_django.filter_field()
+    index: (
+        Annotated["IntegerLookup", strawberry.lazy("netbox.graphql.filter_lookups")]
+        | None
+    ) = strawberry_django.filter_field()
