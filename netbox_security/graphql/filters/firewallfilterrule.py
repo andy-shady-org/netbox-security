@@ -1,7 +1,6 @@
 from typing import Annotated
 import strawberry
 import strawberry_django
-from strawberry_django import ComparisonFilterLookup
 from strawberry.scalars import ID
 
 try:
@@ -9,6 +8,7 @@ try:
 except ImportError:
     from strawberry_django import FilterLookup as StrFilterLookup
 
+from netbox.graphql.filter_lookups import IntegerLookup
 from netbox.graphql.filters import PrimaryModelFilter
 from tenancy.graphql.filter_mixins import ContactFilterMixin
 
@@ -34,4 +34,7 @@ class NetBoxSecurityFirewallFilterRuleFilter(ContactFilterMixin, PrimaryModelFil
         | None
     ) = strawberry_django.filter_field()
     firewall_filter_id: ID | None = strawberry_django.filter_field()
-    index: ComparisonFilterLookup[int] | None = strawberry_django.filter_field()
+    index: (
+        Annotated["IntegerLookup", strawberry.lazy("netbox.graphql.filter_lookups")]
+        | None
+    ) = strawberry_django.filter_field()

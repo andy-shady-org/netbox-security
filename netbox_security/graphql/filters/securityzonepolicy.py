@@ -11,6 +11,7 @@ except ImportError:
 
 from netbox.graphql.filters import PrimaryModelFilter
 from tenancy.graphql.filter_mixins import ContactFilterMixin
+from netbox.graphql.filter_lookups import IntegerLookup
 
 from netbox_security.graphql.filter_lookups import (
     PolicyActionArrayLookup,
@@ -34,7 +35,10 @@ class NetBoxSecuritySecurityZonePolicyFilter(ContactFilterMixin, PrimaryModelFil
     name: StrFilterLookup[str] | None = strawberry_django.filter_field()
     identifier: StrFilterLookup[str] | None = strawberry_django.filter_field()
     description: StrFilterLookup[str] | None = strawberry_django.filter_field()
-    index: ComparisonFilterLookup[int] | None = strawberry_django.filter_field()
+    index: (
+        Annotated["IntegerLookup", strawberry.lazy("netbox.graphql.filter_lookups")]
+        | None
+    ) = strawberry_django.filter_field()
     source_zone: (
         Annotated[
             "NetBoxSecuritySecurityZoneFilter",

@@ -1,7 +1,7 @@
 from typing import Annotated
 import strawberry
 import strawberry_django
-from strawberry_django import BaseFilterLookup, ComparisonFilterLookup
+from strawberry_django import FilterLookup
 
 try:
     from strawberry_django import StrFilterLookup
@@ -29,23 +29,26 @@ class NetBoxSecurityPolicerFilter(
 ):
     name: StrFilterLookup[str] | None = strawberry_django.filter_field()
     description: StrFilterLookup[str] | None = strawberry_django.filter_field()
-    logical_interface_policer: BaseFilterLookup[bool] | None = (
+    logical_interface_policer: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    physical_interface_policer: BaseFilterLookup[bool] | None = (
+    physical_interface_policer: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    bandwidth_limit: ComparisonFilterLookup[int] | None = (
-        strawberry_django.filter_field()
-    )
-    bandwidth_percent: ComparisonFilterLookup[int] | None = (
-        strawberry_django.filter_field()
-    )
-    burst_size_limit: ComparisonFilterLookup[int] | None = (
-        strawberry_django.filter_field()
-    )
-    discard: BaseFilterLookup[bool] | None = strawberry_django.filter_field()
-    out_of_profile: BaseFilterLookup[bool] | None = strawberry_django.filter_field()
+    bandwidth_limit: (
+        Annotated["IntegerLookup", strawberry.lazy("netbox.graphql.filter_lookups")]
+        | None
+    ) = strawberry_django.filter_field()
+    bandwidth_percent: (
+        Annotated["IntegerLookup", strawberry.lazy("netbox.graphql.filter_lookups")]
+        | None
+    ) = strawberry_django.filter_field()
+    burst_size_limit: (
+        Annotated["IntegerLookup", strawberry.lazy("netbox.graphql.filter_lookups")]
+        | None
+    ) = strawberry_django.filter_field()
+    discard: FilterLookup[bool] | None = strawberry_django.filter_field()
+    out_of_profile: FilterLookup[bool] | None = strawberry_django.filter_field()
     loss_priority: (
         Annotated[
             "NetBoxSecurityLossPriorityEnum",
