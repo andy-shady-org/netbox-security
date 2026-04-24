@@ -36,6 +36,7 @@ class AddressListView(generic.ObjectListView):
     filterset = AddressListFilterSet
     filterset_form = AddressListFilterForm
     table = AddressListTable
+    actions = ()
 
 
 @register_model_view(AddressList, "add", detail=False)
