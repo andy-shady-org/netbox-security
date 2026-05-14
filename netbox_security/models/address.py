@@ -64,7 +64,7 @@ class Address(ContactsMixin, PrimaryModel):
         ]
         constraints = [
             models.CheckConstraint(
-                check=(
+                condition=(
                     # Choice 1: GFK is defined, DNS is totally empty (NULL or "")
                     models.Q(assigned_object_id__isnull=False, dns_name__isnull=True)
                     | models.Q(assigned_object_id__isnull=False, dns_name="")
