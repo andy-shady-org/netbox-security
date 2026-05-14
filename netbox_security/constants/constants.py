@@ -4,6 +4,13 @@ Constants for filters
 
 from django.db.models import Q
 
+ADDRESS_FIELD_ASSIGNMENT_MODELS = Q(
+    Q(app_label="ipam", model="prefix")
+    | Q(app_label="ipam", model="iprange")
+    | Q(app_label="ipam", model="ipaddress")
+    | Q(app_label="netbox_security", model="customprefix")
+)
+
 ADDRESS_LIST_ASSIGNMENT_MODELS = Q(
     Q(app_label="netbox_security", model="address")
     | Q(app_label="netbox_security", model="addressset")

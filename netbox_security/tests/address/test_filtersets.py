@@ -3,11 +3,18 @@ from django.test import TestCase
 from netaddr import IPNetwork
 from dcim.models import Site, Manufacturer
 from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
-from ipam.models import IPRange
+from ipam.models import IPRange, Prefix, IPAddress
 from tenancy.models import Tenant, TenantGroup
 from utilities.testing import ChangeLoggedFilterSetTests
 
-from netbox_security.models import Address, AddressList, AddressSet, AddressAssignment
+from netbox_security.models import (
+    Address,
+    AddressList,
+    AddressSet,
+    AddressAssignment,
+    CustomPrefix,
+)
+
 from netbox_security.filtersets import (
     AddressFilterSet,
     AddressListFilterSet,
@@ -36,6 +43,44 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         )
         Tenant.objects.bulk_create(cls.tenants)
 
+        cls.custom_prefixes = (
+            CustomPrefix(prefix=IPNetwork("1.1.1.1/32")),
+            CustomPrefix(prefix=IPNetwork("1.1.1.2/32")),
+            CustomPrefix(prefix=IPNetwork("1.1.1.3/32")),
+        )
+        CustomPrefix.objects.bulk_create(cls.custom_prefixes)
+
+        cls.prefixes = (
+            Prefix(
+                prefix="1.1.1.0/24",
+                status="active",
+            ),
+            Prefix(
+                prefix="1.1.2.0/24",
+                status="active",
+            ),
+            Prefix(
+                prefix="1.1.3.0/24",
+                status="active",
+            ),
+        )
+        Prefix.objects.bulk_create(cls.prefixes)
+
+        cls.ip_addresses = (
+            IPAddress(
+                address="1.1.1.1/24",
+                status="active",
+            ),
+            IPAddress(
+                address="1.1.2.1/24",
+                status="active",
+            ),
+            IPAddress(
+                address="1.1.3.1/24",
+                status="active",
+            ),
+        )
+        IPAddress.objects.bulk_create(cls.ip_addresses)
         cls.ranges = (
             IPRange(
                 start_address=IPNetwork("1.1.1.2/24"),
@@ -59,13 +104,80 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         IPRange.objects.bulk_create(cls.ranges)
 
         cls.addresses = (
-            Address(name="address-1", address="1.1.1.4/32", tenant=cls.tenants[0]),
-            Address(name="address-2", address="1.1.1.5/32", tenant=cls.tenants[1]),
-            Address(name="address-3", address="1.1.1.6/32", tenant=cls.tenants[2]),
-            Address(name="address-4", ip_range=cls.ranges[0], tenant=cls.tenants[2]),
-            Address(name="address-5", ip_range=cls.ranges[1], tenant=cls.tenants[2]),
             Address(
-                name="address-6", dns_name="test.example.com", tenant=cls.tenants[2]
+                name="address-1",
+                assigned_object_id=cls.custom_prefixes[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="customprefix"
+                ),
+                tenant=cls.tenants[0],
+            ),
+            Address(
+                name="address-2",
+                assigned_object_id=cls.custom_prefixes[1].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="customprefix"
+                ),
+                tenant=cls.tenants[1],
+            ),
+            Address(
+                name="address-3",
+                assigned_object_id=cls.custom_prefixes[2].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="customprefix"
+                ),
+                tenant=cls.tenants[2],
+            ),
+            Address(
+                name="address-4",
+                assigned_object_id=cls.ranges[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="ipam", model="iprange"
+                ),
+                tenant=cls.tenants[2],
+            ),
+            Address(
+                name="address-5",
+                assigned_object_id=cls.ranges[1].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="ipam", model="iprange"
+                ),
+                tenant=cls.tenants[2],
+            ),
+            Address(
+                name="address-6",
+                assigned_object_id=cls.prefixes[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="ipam", model="prefix"
+                ),
+                tenant=cls.tenants[2],
+            ),
+            Address(
+                name="address-7",
+                assigned_object_id=cls.prefixes[1].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="ipam", model="prefix"
+                ),
+                tenant=cls.tenants[2],
+            ),
+            Address(
+                name="address-8",
+                assigned_object_id=cls.ip_addresses[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="ipam", model="ipaddress"
+                ),
+                tenant=cls.tenants[2],
+            ),
+            Address(
+                name="address-9",
+                assigned_object_id=cls.ip_addresses[1].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="ipam", model="ipaddress"
+                ),
+                tenant=cls.tenants[2],
+            ),
+            Address(
+                name="address-10", dns_name="test.example.com", tenant=cls.tenants[2]
             ),
         )
         for address in cls.addresses:
@@ -102,10 +214,28 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         params = {"dns_name": ["test.example.com"]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
+    def test_custom_prefix(self):
+        params = {"custom_prefix_id": [self.custom_prefixes[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"custom_prefix": [self.custom_prefixes[0].prefix]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
     def test_ip_range(self):
         params = {"ip_range_id": [self.ranges[0].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"ip_range": [self.ranges[0].start_address]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_prefix(self):
+        params = {"prefix_id": [self.prefixes[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"prefix": [self.prefixes[0].prefix]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_ip_address(self):
+        params = {"ip_address_id": [self.ip_addresses[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"ip_address": [self.ip_addresses[0].address]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_tenant(self):
@@ -124,7 +254,7 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         }
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
-    def test_addresses(self):
+    def test_address_sets(self):
         params = {
             "address_set_id": [
                 self.address_sets[0].pk,
@@ -132,9 +262,7 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 self.address_sets[2].pk,
             ]
         }
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 6)
-        params = {"address": self.addresses[0].address}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 10)
 
     def test_assignment(self):
         self.filterset = AddressListFilterSet
@@ -153,6 +281,12 @@ class AddressAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
 
     @classmethod
     def setUpTestData(cls):
+        cls.custom_prefixes = (
+            CustomPrefix(prefix=IPNetwork("1.1.1.1/32")),
+            CustomPrefix(prefix=IPNetwork("1.1.1.2/32")),
+            CustomPrefix(prefix=IPNetwork("1.1.1.3/32")),
+        )
+        CustomPrefix.objects.bulk_create(cls.custom_prefixes)
         cls.ranges = (
             IPRange(
                 start_address=IPNetwork("1.1.1.2/24"),
@@ -178,15 +312,39 @@ class AddressAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         cls.addresses = (
             Address(
                 name="address-1",
-                address="1.1.1.4/32",
+                assigned_object_id=cls.custom_prefixes[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="customprefix"
+                ),
             ),
             Address(
                 name="address-2",
-                address="1.1.1.5/32",
+                assigned_object_id=cls.custom_prefixes[1].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="customprefix"
+                ),
             ),
-            Address(name="address-3", address="1.1.1.6/32"),
-            Address(name="address-4", ip_range=cls.ranges[0]),
-            Address(name="address-5", ip_range=cls.ranges[1]),
+            Address(
+                name="address-3",
+                assigned_object_id=cls.custom_prefixes[2].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="customprefix"
+                ),
+            ),
+            Address(
+                name="address-4",
+                assigned_object_id=cls.ranges[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="ipam", model="iprange"
+                ),
+            ),
+            Address(
+                name="address-5",
+                assigned_object_id=cls.ranges[1].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="ipam", model="iprange"
+                ),
+            ),
             Address(name="address-6", dns_name="test.example.com"),
         )
         Address.objects.bulk_create(cls.addresses)

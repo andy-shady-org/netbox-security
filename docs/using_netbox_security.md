@@ -102,6 +102,7 @@ This can be done at any time, especially when items that should show up in the g
 
 NetBox Security can manage ten different object types: 
 
+* CustomPrefix
 * Address
 * AddressSet
 * SecurityZone
@@ -143,7 +144,10 @@ Interfaces
 ![Interface Associations](img/interface.png)
 
 
-### Addresses, Address Sets and Address Lists
+### Custom Prefixes, Addresses, Address Sets and Address Lists
+
+Custom Prefixes and used to store IP Prefixes that are not defined in Netbox IPAM. 
+This is useful for storing prefixes that are used in firewall policies but are not necessarily part of the IPAM data, e.g. a prefix that is used for a specific service or application.
 
 Addresses and Address Sets are normally used by security zone policies as source and destination list elements. 
 To ensure that both can be used, each Address and AddressSet object needs to be assigned to a unique AddressList object.
@@ -152,6 +156,13 @@ AddressList objects are then used as the list items for the relevant source and 
 #### Permissions
 
 The following Django permissions are applicable to Address objects:
+
+| Permission                            | Action                  |
+|---------------------------------------|-------------------------|
+| `netbox_security.add_customprefix`    | Create new view objects |
+| `netbox_security.change_customprefix` | Edit view information   |
+| `netbox_security.delete_customprefix` | Delete a view object    |
+| `netbox_security.view_customprefix`   | View view information   |
 
 | Permission                       | Action                  |
 |----------------------------------|-------------------------|

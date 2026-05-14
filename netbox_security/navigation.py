@@ -43,6 +43,25 @@ address_menu_items = (
             ),
         ),
     ),
+    PluginMenuItem(
+        link="plugins:netbox_security:customprefix_list",
+        link_text=_("Custom Prefixes"),
+        permissions=["netbox_security.view_customprefix"],
+        buttons=(
+            PluginMenuButton(
+                "plugins:netbox_security:customprefix_add",
+                _("Add"),
+                "mdi mdi-plus-thick",
+                permissions=["netbox_security.add_customprefix"],
+            ),
+            PluginMenuButton(
+                "plugins:netbox_security:customprefix_bulk_import",
+                _("Import"),
+                "mdi mdi-upload",
+                permissions=["netbox_security.add_customprefix"],
+            ),
+        ),
+    ),
 )
 application_menu_items = (
     PluginMenuItem(

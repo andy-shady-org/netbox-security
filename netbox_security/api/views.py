@@ -3,6 +3,7 @@ from netbox.api.viewsets import NetBoxModelViewSet
 from django.db.models import Count
 
 from .serializers import (
+    CustomPrefixSerializer,
     AddressListSerializer,
     AddressListAssignmentSerializer,
     AddressSetSerializer,
@@ -34,6 +35,7 @@ from .serializers import (
 )
 
 from netbox_security.models import (
+    CustomPrefix,
     AddressList,
     AddressListAssignment,
     AddressSet,
@@ -65,6 +67,7 @@ from netbox_security.models import (
 )
 
 from netbox_security.filtersets import (
+    CustomPrefixFilterSet,
     AddressListFilterSet,
     AddressListAssignmentFilterSet,
     AddressSetFilterSet,
@@ -99,6 +102,12 @@ from netbox_security.filtersets import (
 class NetBoxSecurityRootView(APIRootView):
     def get_view_name(self):
         return "NetBoxSecurity"
+
+
+class CustomPrefixViewSet(NetBoxModelViewSet):
+    queryset = CustomPrefix.objects.all()
+    serializer_class = CustomPrefixSerializer
+    filterset_class = CustomPrefixFilterSet
 
 
 class AddressListViewSet(NetBoxModelViewSet):
