@@ -9,6 +9,7 @@ from .application import *
 from .application_set import *
 from .securityzone import *
 from .security_zone_policy import *
+from .custom_prefix import *
 from .address_set import *
 from .address import *
 from .address_list import *

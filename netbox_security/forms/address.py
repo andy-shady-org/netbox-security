@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from netbox.forms import (
     PrimaryModelBulkEditForm,
@@ -10,8 +11,11 @@ from netbox.forms import (
 )
 
 from tenancy.forms import TenancyForm, TenancyFilterForm
-from ipam.formfields import IPNetworkFormField
-from utilities.forms.rendering import FieldSet, ObjectAttribute
+from utilities.forms.rendering import (
+    FieldSet,
+    ObjectAttribute,
+    TabbedGroups,
+)
 from utilities.forms.fields import (
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
@@ -20,12 +24,13 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
 )
 
-from ipam.models import IPRange
+from ipam.models import IPRange, Prefix, IPAddress
 from dcim.models import Device, VirtualDeviceContext
 from tenancy.models import Tenant, TenantGroup
 
 from netbox_security.models import (
     Address,
+    CustomPrefix,
     AddressAssignment,
     SecurityZone,
 )
@@ -43,10 +48,30 @@ __all__ = (
 class AddressForm(TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     identifier = forms.CharField(max_length=100, required=False)
-    address = IPNetworkFormField(
+    ipam_prefix = DynamicModelChoiceField(
+        queryset=Prefix.objects.all(),
         required=False,
-        label=_("Address"),
-        help_text=_("The IP address or prefix value in x.x.x.x/yy format"),
+        selector=True,
+        label=_("Prefix"),
+    )
+    ipam_ipaddress = DynamicModelChoiceField(
+        queryset=IPAddress.objects.all(),
+        required=False,
+        selector=True,
+        label=_("IP Address"),
+    )
+    ipam_iprange = DynamicModelChoiceField(
+        queryset=IPRange.objects.all(),
+        required=False,
+        selector=True,
+        label=_("IP Range"),
+    )
+    custom_prefix = DynamicModelChoiceField(
+        queryset=CustomPrefix.objects.all(),
+        required=False,
+        selector=True,
+        quick_add=True,
+        label=_("Custom Prefix"),
     )
     dns_name = forms.CharField(
         max_length=255,
@@ -64,10 +89,16 @@ class AddressForm(TenancyForm, PrimaryModelForm):
         FieldSet(
             "name",
             "identifier",
-            "address",
-            "dns_name",
-            "ip_range",
             "description",
+        ),
+        FieldSet(
+            TabbedGroups(
+                FieldSet("ipam_prefix", name=_("Prefix")),
+                FieldSet("ipam_ipaddress", name=_("IP Address")),
+                FieldSet("ipam_iprange", name=_("IP Range")),
+                FieldSet("custom_prefix", name=_("Custom Prefix")),
+                FieldSet("dns_name", name=_("DNS Name")),
+            ),
             name=_("Address Parameters"),
         ),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
@@ -81,15 +112,64 @@ class AddressForm(TenancyForm, PrimaryModelForm):
             "name",
             "owner",
             "identifier",
-            "address",
+            "ipam_prefix",
+            "ipam_ipaddress",
+            "ipam_iprange",
+            "custom_prefix",
             "dns_name",
-            "ip_range",
             "tenant_group",
             "tenant",
             "description",
             "comments",
             "tags",
         ]
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get("instance")
+        initial = kwargs.get("initial", {}).copy()
+        if instance:
+            if type(instance.assigned_object) is Prefix:
+                initial["ipam_prefix"] = instance.assigned_object
+            elif type(instance.assigned_object) is IPAddress:
+                initial["ipam_ipaddress"] = instance.assigned_object
+            elif type(instance.assigned_object) is IPRange:
+                initial["ipam_iprange"] = instance.assigned_object
+            elif type(instance.assigned_object) is CustomPrefix:
+                initial["custom_prefix"] = instance.assigned_object
+        kwargs["initial"] = initial
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        super().clean()
+        # Handle object assignment
+        selected_objects = [
+            field
+            for field in (
+                "ipam_prefix",
+                "ipam_ipaddress",
+                "ipam_iprange",
+                "custom_prefix",
+                "dns_name",
+            )
+            if self.cleaned_data[field]
+        ]
+        if len(selected_objects) > 1:
+            raise forms.ValidationError(
+                {
+                    selected_objects[1]: _(
+                        "You can only assign a Prefix, IP Address, an IP Range, a Custom Prefix or a DNS Name."
+                    )
+                }
+            )
+        elif selected_objects:
+            if selected_objects[0] != "dns_name":
+                self.instance.assigned_object = self.cleaned_data[selected_objects[0]]
+        else:
+            raise ValidationError(
+                _(
+                    "A DNS Name, Prefix, IP Address, IP Range or Custom Prefix must be specified"
+                )
+            )
 
 
 class AddressFilterForm(TenancyFilterForm, PrimaryModelFilterSetForm):
@@ -99,19 +179,52 @@ class AddressFilterForm(TenancyFilterForm, PrimaryModelFilterSetForm):
         FieldSet(
             "name",
             "identifier",
-            "address",
             "dns_name",
-            "ip_range_id",
             name=_("Address"),
+        ),
+        FieldSet(
+            "prefix_id",
+            "ipaddress_id",
+            "iprange_id",
+            "customprefix_id",
+            name="Assignments",
         ),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
-    ip_range_id = DynamicModelChoiceField(
+    tags = TagFilterField(model)
+
+    name = forms.CharField(
+        required=False,
+        label=_("Name"),
+    )
+    identifier = forms.CharField(
+        required=False,
+        label=_("Identifier"),
+    )
+    dns_name = forms.CharField(
+        required=False,
+        label=_("DNS Name"),
+    )
+    prefix_id = DynamicModelChoiceField(
+        queryset=Prefix.objects.all(),
+        required=False,
+        label=_("Prefix"),
+    )
+    ipaddress_id = DynamicModelChoiceField(
+        queryset=IPAddress.objects.all(),
+        required=False,
+        label=_("IP Address"),
+    )
+    iprange_id = DynamicModelChoiceField(
         queryset=IPRange.objects.all(),
         required=False,
         label=_("IP Range"),
     )
-    tags = TagFilterField(model)
+    customprefix_id = DynamicModelChoiceField(
+        queryset=CustomPrefix.objects.all(),
+        required=False,
+        label=_("Custom Prefix"),
+    )
 
 
 class AddressImportForm(PrimaryModelImportForm):
@@ -124,21 +237,10 @@ class AddressImportForm(PrimaryModelImportForm):
         to_field_name="name",
         label=_("Tenant"),
     )
-    address = forms.CharField(
-        max_length=64,
-        required=False,
-        help_text=_("The IP address or prefix value in x.x.x.x/yy format"),
-    )
     dns_name = forms.CharField(
         max_length=255,
         required=False,
         help_text=_("Fully qualified hostname (wildcard allowed)"),
-    )
-    ip_range = CSVModelChoiceField(
-        queryset=IPRange.objects.all(),
-        required=False,
-        to_field_name="start_address",
-        help_text=_("An IP Address Range"),
     )
 
     class Meta:
@@ -147,9 +249,7 @@ class AddressImportForm(PrimaryModelImportForm):
             "name",
             "owner",
             "identifier",
-            "address",
             "dns_name",
-            "ip_range",
             "description",
             "tenant",
             "tags",
@@ -170,25 +270,9 @@ class AddressBulkEditForm(PrimaryModelBulkEditForm):
         required=False,
         label=_("Tenant"),
     )
-    address = forms.CharField(
-        max_length=64,
-        required=False,
-        help_text=_("The IP address or prefix value in x.x.x.x/yy format"),
-    )
-    dns_name = forms.CharField(
-        max_length=255,
-        required=False,
-        help_text=_("Fully qualified hostname (wildcard allowed)"),
-    )
-    ip_range = DynamicModelChoiceField(
-        queryset=IPRange.objects.all(),
-        required=False,
-        to_field_name="start_address",
-        help_text=_("An IP Address Range"),
-    )
     nullable_fields = ["description", "tenant"]
     fieldsets = (
-        FieldSet("address", "dns_name", "ip_range", "description"),
+        FieldSet("description"),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )

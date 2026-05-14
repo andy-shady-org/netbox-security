@@ -63,6 +63,11 @@ class NetBoxSecurityGraphQLMixin:
                 # this would require a fragment query
                 continue
             elif isinstance(field.type, StrawberryOptional) and isinstance(
+                field.type.of_type, StrawberryUnion
+            ):
+                # this would require a fragment query
+                continue
+            elif isinstance(field.type, StrawberryOptional) and isinstance(
                 field.type.of_type, LazyType
             ):
                 fields_string += f"{field.name} {{ id }}\n"

@@ -5,12 +5,15 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.core.exceptions import ValidationError
 from netbox.models import PrimaryModel, NetBoxModel
 from netbox.models.features import ContactsMixin
+from ipam.models import IPAddress, Prefix, IPRange
 from dcim.models import Device, VirtualDeviceContext
-from ipam.fields import IPNetworkField
 from netbox.search import SearchIndex, register_search
 
-from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
-from netbox_security.models import SecurityZone
+from netbox_security.constants import (
+    ADDRESS_ASSIGNMENT_MODELS,
+    ADDRESS_FIELD_ASSIGNMENT_MODELS,
+)
+from netbox_security.models import SecurityZone, CustomPrefix
 from netbox_security.validators import validate_fqdn
 
 __all__ = ("Address", "AddressAssignment", "AddressIndex")
@@ -25,8 +28,17 @@ class Address(ContactsMixin, PrimaryModel):
         blank=True,
         null=True,
     )
-    address = IPNetworkField(
-        blank=True, null=True, help_text=_("An IP or Prefix in x.x.x.x/yy format")
+    assigned_object_type = models.ForeignKey(
+        to="contenttypes.ContentType",
+        limit_choices_to=ADDRESS_FIELD_ASSIGNMENT_MODELS,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+    assigned_object_id = models.PositiveBigIntegerField(null=True, blank=True)
+    assigned_object = GenericForeignKey(
+        ct_field="assigned_object_type", fk_field="assigned_object_id"
     )
     dns_name = models.CharField(
         max_length=255,
@@ -34,13 +46,6 @@ class Address(ContactsMixin, PrimaryModel):
         null=True,
         help_text=_("Fully qualified hostname (wildcard allowed)"),
         validators=[validate_fqdn],
-    )
-    ip_range = models.ForeignKey(
-        "ipam.IPRange",
-        blank=True,
-        null=True,
-        related_name="+",
-        on_delete=models.SET_NULL,
     )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
@@ -52,25 +57,48 @@ class Address(ContactsMixin, PrimaryModel):
 
     class Meta:
         verbose_name_plural = _("Addresses")
-        ordering = ("name", "address", "dns_name", "ip_range")
+        ordering = ("name",)
         unique_together = [
             "name",
             "identifier",
+        ]
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    # Choice 1: GFK is defined, DNS is totally empty (NULL or "")
+                    models.Q(assigned_object_id__isnull=False, dns_name__isnull=True)
+                    | models.Q(assigned_object_id__isnull=False, dns_name="")
+                    |
+                    # Choice 2: GFK is null, DNS contains actual string values
+                    models.Q(assigned_object_id__isnull=True, dns_name__isnull=False)
+                    & ~models.Q(dns_name="")
+                ),
+                name="exclusive_assigned_object_or_dns_name",
+            )
         ]
 
     def __str__(self):
         if self.dns_name:
             return f"{self.name}: {self.dns_name}"
         else:
-            return f"{self.name}: {self.address}"
+            return f"{self.name}: {self.assigned_object}"
 
     def get_absolute_url(self):
         return reverse("plugins:netbox_security:address", args=[self.pk])
 
     def clean(self):
-        if not any([self.address, self.dns_name, self.ip_range]):
+        super().clean()
+        has_gfk = bool(self.assigned_object_id)
+        has_dns = bool(self.dns_name)
+
+        # 1. Enforce that at least one field must be filled
+        if not has_gfk and not has_dns:
+            raise ValidationError("Requires either an assigned object or a dns name.")
+
+        # 2. Enforce mutual exclusivity (cannot have both)
+        if has_gfk and has_dns:
             raise ValidationError(
-                "Requires either an address, a dns name or an IP Range"
+                "Cannot define both an assigned object and a dns name at the same time."
             )
 
 
@@ -116,13 +144,39 @@ class AddressIndex(SearchIndex):
     model = Address
     fields = (
         ("name", 100),
-        ("address", 100),
         ("dns_name", 100),
-        ("ip_range", 100),
         ("identifier", 300),
         ("description", 500),
     )
 
+
+GenericRelation(
+    to=Address,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="custom_prefixes",
+).contribute_to_class(CustomPrefix, "addresses")
+
+GenericRelation(
+    to=Address,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="prefixes",
+).contribute_to_class(Prefix, "addresses")
+
+GenericRelation(
+    to=Address,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="ip_addresses",
+).contribute_to_class(IPAddress, "addresses")
+
+GenericRelation(
+    to=Address,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="ip_ranges",
+).contribute_to_class(IPRange, "addresses")
 
 GenericRelation(
     to=AddressAssignment,

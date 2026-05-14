@@ -1,8 +1,9 @@
 from netaddr import IPNetwork
 from utilities.testing import APIViewTestCases
+from django.contrib.contenttypes.models import ContentType
 from ipam.models import IPRange
 from netbox_security.tests.custom import APITestCase, NetBoxSecurityGraphQLMixin
-from netbox_security.models import Address
+from netbox_security.models import Address, CustomPrefix
 
 
 class AddressAPITestCase(
@@ -18,24 +19,15 @@ class AddressAPITestCase(
     model = Address
 
     brief_fields = [
-        "address",
+        "assigned_object_id",
+        "assigned_object_type",
         "description",
         "display",
         "dns_name",
         "id",
         "identifier",
-        "ip_range",
         "name",
         "url",
-    ]
-
-    create_data = [
-        {"name": "address-1", "address": "1.1.1.1/32"},
-        {"name": "address-2", "address": "1.1.1.2/32"},
-        {"name": "address-3", "address": "1.1.1.3/32"},
-        {"name": "address-4", "dns_name": "test.example.com"},
-        {"name": "address-5", "dns_name": "*.example.com"},
-        {"name": "address-6", "dns_name": "example.com"},
     ]
 
     bulk_update_data = {
@@ -44,6 +36,12 @@ class AddressAPITestCase(
 
     @classmethod
     def setUpTestData(cls):
+        cls.custom_prefixes = (
+            CustomPrefix(prefix=IPNetwork("1.1.1.1/32")),
+            CustomPrefix(prefix=IPNetwork("1.1.1.2/32")),
+            CustomPrefix(prefix=IPNetwork("1.1.1.3/32")),
+        )
+        CustomPrefix.objects.bulk_create(cls.custom_prefixes)
         cls.ranges = (
             IPRange(
                 start_address=IPNetwork("1.1.1.2/24"),
@@ -67,12 +65,63 @@ class AddressAPITestCase(
         IPRange.objects.bulk_create(cls.ranges)
 
         addresses = (
-            Address(name="address-7", address="1.1.1.4/32"),
-            Address(name="address-8", address="1.1.1.5/32"),
-            Address(name="address-9", address="1.1.1.6/32"),
-            Address(name="address-11", dns_name="test1.example.com"),
-            Address(name="address-12", ip_range=cls.ranges[0]),
-            Address(name="address-13", ip_range=cls.ranges[1]),
-            Address(name="address-14", dns_name="test2.example.com"),
+            Address(
+                name="address-7",
+                assigned_object_id=cls.custom_prefixes[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="customprefix"
+                ),
+            ),
+            Address(
+                name="address-8",
+                assigned_object_id=cls.custom_prefixes[1].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="customprefix"
+                ),
+            ),
+            Address(
+                name="address-9",
+                assigned_object_id=cls.custom_prefixes[2].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="netbox_security", model="customprefix"
+                ),
+            ),
+            Address(
+                name="address-10",
+                assigned_object_id=cls.ranges[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="ipam", model="iprange"
+                ),
+            ),
+            Address(
+                name="address-11",
+                assigned_object_id=cls.ranges[0].pk,
+                assigned_object_type=ContentType.objects.get(
+                    app_label="ipam", model="iprange"
+                ),
+            ),
+            Address(name="address-12", dns_name="test1.example.com"),
+            Address(name="address-13", dns_name="test2.example.com"),
         )
         Address.objects.bulk_create(addresses)
+
+        cls.create_data = [
+            {
+                "name": "address-1",
+                "assigned_object_type": "netbox_security.customprefix",
+                "assigned_object_id": cls.custom_prefixes[0].pk,
+            },
+            {
+                "name": "address-2",
+                "assigned_object_type": "netbox_security.customprefix",
+                "assigned_object_id": cls.custom_prefixes[1].pk,
+            },
+            {
+                "name": "address-3",
+                "assigned_object_type": "ipam.iprange",
+                "assigned_object_id": cls.ranges[0].pk,
+            },
+            {"name": "address-4", "dns_name": "test.example.com"},
+            {"name": "address-5", "dns_name": "*.example.com"},
+            {"name": "address-6", "dns_name": "example.com"},
+        ]

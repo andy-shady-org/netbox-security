@@ -104,6 +104,14 @@ class ApplicationFilterForm(PortsForm, TenancyFilterForm, PrimaryModelFilterSetF
         ),
         FieldSet("tenant_group_id", "tenant_id", name=_("Tenancy")),
     )
+    name = forms.CharField(
+        required=False,
+        label=_("Name"),
+    )
+    identifier = forms.CharField(
+        required=False,
+        label=_("Identifier"),
+    )
     application_items_id = DynamicModelMultipleChoiceField(
         queryset=ApplicationItem.objects.all(),
         label=_("Application Items"),

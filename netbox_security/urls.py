@@ -10,6 +10,15 @@ from .views import *  # noqa: F401
 app_name = "netbox_security"
 
 urlpatterns = [
+    # Custom Prefixes
+    path(
+        "custom-prefix/",
+        include(get_model_urls("netbox_security", "customprefix", detail=False)),
+    ),
+    path(
+        "custom-prefix/<int:pk>/",
+        include(get_model_urls("netbox_security", "customprefix")),
+    ),
     # Addresses
     path(
         "address/",

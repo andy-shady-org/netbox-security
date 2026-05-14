@@ -1,4 +1,5 @@
 from .schema import (
+    NetBoxSecurityCustomPrefixQuery,
     NetBoxSecurityAddressQuery,
     NetBoxSecurityAddressSetQuery,
     NetBoxSecurityAddressListQuery,
@@ -17,6 +18,7 @@ from .schema import (
 )
 
 schema = [
+    NetBoxSecurityCustomPrefixQuery,
     NetBoxSecurityAddressQuery,
     NetBoxSecurityAddressSetQuery,
     NetBoxSecurityAddressListQuery,

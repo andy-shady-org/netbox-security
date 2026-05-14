@@ -15,6 +15,11 @@ __all__ = (
 
 class AddressTable(TenancyColumnsMixin, NetBoxTable):
     name = tables.LinkColumn()
+    assigned_object = tables.Column(
+        linkify=True,
+        orderable=False,
+        verbose_name=_("Assigned Object"),
+    )
     tags = TagColumn(url_name="plugins:netbox_security:address_list")
 
     class Meta(NetBoxTable.Meta):
@@ -24,9 +29,8 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
             "name",
             "identifier",
             "description",
-            "address",
+            "assigned_object",
             "dns_name",
-            "ip_range",
             "tenant",
             "tags",
         )
@@ -34,9 +38,8 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
             "name",
             "identifier",
             "description",
-            "address",
+            "assigned_object",
             "dns_name",
-            "ip_range",
             "tenant",
         )
 

@@ -17,7 +17,10 @@
 
 
 ## Features
+
 This plugin provides following Models:
+
+* CustomPrefix
 * Addresses
 * Address Sets
 * Address Lists

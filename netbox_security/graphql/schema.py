@@ -4,6 +4,7 @@ import strawberry
 import strawberry_django
 
 from .types import (
+    NetBoxSecurityCustomPrefixType,
     NetBoxSecurityAddressType,
     NetBoxSecurityAddressSetType,
     NetBoxSecurityAddressListType,
@@ -20,6 +21,16 @@ from .types import (
     NetBoxSecurityFirewallFilterType,
     NetBoxSecurityFirewallFilterRuleType,
 )
+
+
+@strawberry.type(name="Query")
+class NetBoxSecurityCustomPrefixQuery:
+    netbox_security_customprefix: NetBoxSecurityCustomPrefixType = (
+        strawberry_django.field()
+    )
+    netbox_security_customprefix_list: List[NetBoxSecurityCustomPrefixType] = (
+        strawberry_django.field()
+    )
 
 
 @strawberry.type(name="Query")
