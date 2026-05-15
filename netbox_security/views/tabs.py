@@ -1,6 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 
 from dcim.models import Device, VirtualDeviceContext
+from virtualization.models import VirtualMachine
 from netbox.views import generic
 from utilities.views import register_model_view, ViewTab
 
@@ -19,6 +20,16 @@ class DeviceSecurityView(generic.ObjectView):
 class VirtualDeviceContextSecurityView(generic.ObjectView):
     queryset = VirtualDeviceContext.objects.all()
     template_name = "netbox_security/virtual_device_context/security.html"
+    tab = ViewTab(
+        label=_("Security"),
+        hide_if_empty=True,
+    )
+
+
+@register_model_view(VirtualMachine, name="security")
+class VirtualMachineSecurityView(generic.ObjectView):
+    queryset = VirtualMachine.objects.all()
+    template_name = "netbox_security/virtualmachine/security.html"
     tab = ViewTab(
         label=_("Security"),
         hide_if_empty=True,

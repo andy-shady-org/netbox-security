@@ -6,6 +6,8 @@ from utilities.views import register_model_view
 
 from dcim.models import Device, VirtualDeviceContext
 from dcim.tables import DeviceTable, VirtualDeviceContextTable
+from virtualization.models import VirtualMachine
+from virtualization.tables import VirtualMachineTable
 
 from netbox_security.tables import (
     AddressSetTable,
@@ -58,6 +60,11 @@ class AddressSetView(generic.ObjectView):
             orderable=False,
         )
         virtual_device_assignments_table.configure(request)
+        virtual_machine_assignments_table = VirtualMachineTable(
+            VirtualMachine.objects.filter(address_sets__address_set=instance),
+            orderable=False,
+        )
+        virtual_machine_assignments_table.configure(request)
         zone_assignments_table = SecurityZoneTable(
             SecurityZone.objects.filter(address_sets__address_set=instance),
             orderable=False,
@@ -66,6 +73,7 @@ class AddressSetView(generic.ObjectView):
         return {
             "device_assignments_table": device_assignments_table,
             "virtual_device_assignments_table": virtual_device_assignments_table,
+            "virtual_machine_assignments_table": virtual_machine_assignments_table,
             "zone_assignments_table": zone_assignments_table,
         }
 

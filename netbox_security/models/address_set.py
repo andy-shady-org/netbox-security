@@ -5,6 +5,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from netbox.models import PrimaryModel, NetBoxModel
 from netbox.models.features import ContactsMixin
 from dcim.models import Device, VirtualDeviceContext
+from virtualization.models import VirtualMachine
 from netbox.search import SearchIndex, register_search
 
 from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
@@ -124,3 +125,10 @@ GenericRelation(
     object_id_field="assigned_object_id",
     related_query_name="virtualdevicecontext",
 ).contribute_to_class(VirtualDeviceContext, "address_sets")
+
+GenericRelation(
+    to=AddressSetAssignment,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="virtualmachine",
+).contribute_to_class(VirtualMachine, "address_sets")
