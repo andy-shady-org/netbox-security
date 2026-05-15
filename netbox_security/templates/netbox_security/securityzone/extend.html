@@ -33,7 +33,7 @@
             {% endif %}
         </div>
     </h5>
-    {% htmx_table 'plugins:netbox_security:addressassignment_list' device_id=object.pk %}
+    {% htmx_table 'plugins:netbox_security:addressassignment_list' security_zone_id=object.pk %}
 </div>
 <div class="card">
     <h5 class="card-header">
@@ -51,5 +51,5 @@
             {% endif %}
         </div>
     </h5>
-    {% htmx_table 'plugins:netbox_security:addresssetassignment_list' device_id=object.pk %}
+    {% htmx_table 'plugins:netbox_security:addresssetassignment_list' security_zone_id=object.pk %}
 </div>
