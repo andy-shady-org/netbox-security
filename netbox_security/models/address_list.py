@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from netbox.models import NetBoxModel
 from dcim.models import Device, VirtualDeviceContext
+from virtualization.models import VirtualMachine
 from netbox.search import SearchIndex, register_search
 
 from netbox_security.constants import (
@@ -134,3 +135,10 @@ GenericRelation(
     object_id_field="assigned_object_id",
     related_query_name="virtualdevicecontext",
 ).contribute_to_class(VirtualDeviceContext, "address_lists")
+
+GenericRelation(
+    to=AddressListAssignment,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="virtualmachine",
+).contribute_to_class(VirtualMachine, "address_lists")

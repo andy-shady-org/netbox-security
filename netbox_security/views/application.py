@@ -6,6 +6,8 @@ from utilities.views import register_model_view
 
 from dcim.models import Device, VirtualDeviceContext
 from dcim.tables import DeviceTable, VirtualDeviceContextTable
+from virtualization.models import VirtualMachine
+from virtualization.tables import VirtualMachineTable
 
 from netbox_security.tables import ApplicationTable, ApplicationAssignmentTable
 from netbox_security.filtersets import (
@@ -54,9 +56,15 @@ class ApplicationView(generic.ObjectView):
             orderable=False,
         )
         virtual_device_assignments_table.configure(request)
+        virtual_machine_assignments_table = VirtualMachineTable(
+            VirtualMachine.objects.filter(applications__application=instance),
+            orderable=False,
+        )
+        virtual_machine_assignments_table.configure(request)
         return {
             "device_assignments_table": device_assignments_table,
             "virtual_device_assignments_table": virtual_device_assignments_table,
+            "virtual_machine_assignments_table": virtual_machine_assignments_table,
         }
 
 

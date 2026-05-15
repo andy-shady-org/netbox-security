@@ -40,12 +40,14 @@ ZONE_ASSIGNMENT_MODELS = Q(
 ADDRESS_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device")
     | Q(app_label="dcim", model="virtualdevicecontext")
+    | Q(app_label="virtualization", model="virtualmachine")
     | Q(app_label="netbox_security", model="securityzone")
 )
 
 FILTER_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device")
     | Q(app_label="dcim", model="virtualdevicecontext")
+    | Q(app_label="virtualization", model="virtualmachine")
 )
 
 FILTER_SETTING_ASSIGNMENT_MODELS = Q(
@@ -55,9 +57,11 @@ FILTER_SETTING_ASSIGNMENT_MODELS = Q(
 POLICER_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device")
     | Q(app_label="dcim", model="virtualdevicecontext")
+    | Q(app_label="virtualization", model="virtualmachine")
 )
 
 APPLICATION_ASSIGNMENT_MODELS = Q(
     Q(app_label="dcim", model="device")
     | Q(app_label="dcim", model="virtualdevicecontext")
+    | Q(app_label="virtualization", model="virtualmachine")
 )

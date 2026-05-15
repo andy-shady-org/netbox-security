@@ -10,6 +10,7 @@ from utilities.filters import (
     MultiValueNumberFilter,
 )
 from dcim.models import Device, VirtualDeviceContext
+from virtualization.models import VirtualMachine
 
 from netbox_security.models import (
     AddressSet,
@@ -112,6 +113,16 @@ class AddressSetAssignmentFilterSet(AssignmentFilterSet):
         field_name="pk",
         label=_("Virtual Device Context (ID)"),
     )
+    virtualmachine = MultiValueCharFilter(
+        method="filter_virtual_machine",
+        field_name="name",
+        label=_("Virtual Machine (name)"),
+    )
+    virtualmachine_id = MultiValueNumberFilter(
+        method="filter_virtual_machine",
+        field_name="pk",
+        label=_("Virtual Machine (ID)"),
+    )
 
     class Meta:
         model = AddressSetAssignment
@@ -144,5 +155,15 @@ class AddressSetAssignmentFilterSet(AssignmentFilterSet):
             assigned_object_type=ContentType.objects.get_for_model(
                 VirtualDeviceContext
             ),
+            assigned_object_id__in=devices.values_list("id", flat=True),
+        )
+
+    def filter_virtual_machine(self, queryset, name, value):
+        if not (
+            devices := VirtualMachine.objects.filter(**{f"{name}__in": value})
+        ).exists():
+            return queryset.none()
+        return queryset.filter(
+            assigned_object_type=ContentType.objects.get_for_model(VirtualMachine),
             assigned_object_id__in=devices.values_list("id", flat=True),
         )

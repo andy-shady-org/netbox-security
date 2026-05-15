@@ -5,6 +5,8 @@ from django.shortcuts import get_object_or_404
 
 from dcim.models import Device, VirtualDeviceContext
 from dcim.tables import DeviceTable, VirtualDeviceContextTable
+from virtualization.models import VirtualMachine
+from virtualization.tables import VirtualMachineTable
 
 from netbox_security.tables import PolicerTable, PolicerAssignmentTable
 from netbox_security.filtersets import PolicerFilterSet, PolicerAssignmentFilterSet
@@ -48,9 +50,15 @@ class PolicerView(generic.ObjectView):
             orderable=False,
         )
         virtual_device_assignments_table.configure(request)
+        virtual_machine_assignments_table = VirtualMachineTable(
+            VirtualMachine.objects.filter(policers__policer=instance),
+            orderable=False,
+        )
+        virtual_machine_assignments_table.configure(request)
         return {
             "device_assignments_table": device_assignments_table,
             "virtual_device_assignments_table": virtual_device_assignments_table,
+            "virtual_machine_assignments_table": virtual_machine_assignments_table,
         }
 
 
