@@ -39,7 +39,7 @@
                     {% endif %}
                 </div>
             </h5>
-            {% htmx_table 'plugins:netbox_security:addresslistassignment_list' device_id=object.pk %}
+            {% htmx_table 'plugins:netbox_security:addresslistassignment_list' virtualmachine_id=object.pk %}
         </div>
     </div>
 </div>
@@ -61,7 +61,7 @@
                     {% endif %}
                 </div>
             </h5>
-            {% htmx_table 'plugins:netbox_security:firewallfilterassignment_list' device_id=object.pk %}
+            {% htmx_table 'plugins:netbox_security:firewallfilterassignment_list' virtualmachine_id=object.pk %}
         </div>
     </div>
         <div class="col-md-6">
@@ -81,7 +81,7 @@
                     {% endif %}
                 </div>
             </h5>
-            {% htmx_table 'plugins:netbox_security:policerassignment_list' device_id=object.pk %}
+            {% htmx_table 'plugins:netbox_security:policerassignment_list' virtualmachine_id=object.pk %}
         </div>
     </div>
 </div>
@@ -145,7 +145,7 @@
                     {% endif %}
                 </div>
             </h5>
-            {% htmx_table 'plugins:netbox_security:applicationassignment_list' device_id=object.pk %}
+            {% htmx_table 'plugins:netbox_security:applicationassignment_list' virtualmachine_id=object.pk %}
         </div>
     </div>
     <div class="col-md-6">
@@ -165,7 +165,7 @@
                     {% endif %}
                 </div>
             </h5>
-            {% htmx_table 'plugins:netbox_security:applicationsetassignment_list' device_id=object.pk %}
+            {% htmx_table 'plugins:netbox_security:applicationsetassignment_list' virtualmachine_id=object.pk %}
         </div>
     </div>
 </div>
@@ -187,7 +187,7 @@
                     {% endif %}
                 </div>
             </h5>
-            {% htmx_table 'plugins:netbox_security:addressassignment_list' device_id=object.pk %}
+            {% htmx_table 'plugins:netbox_security:addressassignment_list' virtualmachine_id=object.pk %}
         </div>
     </div>
     <div class="col-md-6">
@@ -207,7 +207,7 @@
                     {% endif %}
                 </div>
             </h5>
-            {% htmx_table 'plugins:netbox_security:addresssetassignment_list' device_id=object.pk %}
+            {% htmx_table 'plugins:netbox_security:addresssetassignment_list' virtualmachine_id=object.pk %}
         </div>
     </div>
 </div>

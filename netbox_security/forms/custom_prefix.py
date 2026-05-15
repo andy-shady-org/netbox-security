@@ -18,7 +18,6 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
 )
 
-from ipam.models import IPRange
 from tenancy.models import Tenant, TenantGroup
 
 from netbox_security.models import (
