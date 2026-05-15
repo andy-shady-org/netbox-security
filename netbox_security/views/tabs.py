@@ -1,5 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
+from ipam.models import IPAddress, IPRange, Prefix
 from dcim.models import Device, VirtualDeviceContext
 from virtualization.models import VirtualMachine
 from netbox.views import generic
@@ -30,6 +31,36 @@ class VirtualDeviceContextSecurityView(generic.ObjectView):
 class VirtualMachineSecurityView(generic.ObjectView):
     queryset = VirtualMachine.objects.all()
     template_name = "netbox_security/virtualmachine/security.html"
+    tab = ViewTab(
+        label=_("Security"),
+        hide_if_empty=True,
+    )
+
+
+@register_model_view(IPAddress, name="security")
+class IPAddressSecurityView(generic.ObjectView):
+    queryset = IPAddress.objects.all()
+    template_name = "netbox_security/ipaddress/security.html"
+    tab = ViewTab(
+        label=_("Security"),
+        hide_if_empty=True,
+    )
+
+
+@register_model_view(Prefix, name="security")
+class PrefixSecurityView(generic.ObjectView):
+    queryset = Prefix.objects.all()
+    template_name = "netbox_security/prefix/security.html"
+    tab = ViewTab(
+        label=_("Security"),
+        hide_if_empty=True,
+    )
+
+
+@register_model_view(IPRange, name="security")
+class IPRangeSecurityView(generic.ObjectView):
+    queryset = IPRange.objects.all()
+    template_name = "netbox_security/iprange/security.html"
     tab = ViewTab(
         label=_("Security"),
         hide_if_empty=True,
