@@ -62,7 +62,15 @@ class SecurityZoneFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
 
     class Meta:
         model = SecurityZone
-        fields = ["id", "name", "description", "identifier", "prefix_id", "ip_address_id", "ip_range_id"]
+        fields = [
+            "id",
+            "name",
+            "description",
+            "identifier",
+            "prefix_id",
+            "ip_address_id",
+            "ip_range_id",
+        ]
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""
@@ -96,13 +104,13 @@ class SecurityZoneFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
         ).distinct()
 
     def filter_prefix(self, queryset, name, value):
-        return self._filter_by_assigned_object(queryset, value, 'ipam', 'prefix')
+        return self._filter_by_assigned_object(queryset, value, "ipam", "prefix")
 
     def filter_ip_address(self, queryset, name, value):
-        return self._filter_by_assigned_object(queryset, value, 'ipam', 'ipaddress')
+        return self._filter_by_assigned_object(queryset, value, "ipam", "ipaddress")
 
     def filter_ip_range(self, queryset, name, value):
-        return self._filter_by_assigned_object(queryset, value, 'ipam', 'iprange')
+        return self._filter_by_assigned_object(queryset, value, "ipam", "iprange")
 
 
 @register_filterset
