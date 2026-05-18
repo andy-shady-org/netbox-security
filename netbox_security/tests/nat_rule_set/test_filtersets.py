@@ -513,13 +513,19 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
     def test_ip_address_id(self):
         params = {"ip_address_id": [self.addresses[0].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"ip_address_id": [self.addresses[2].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_prefix_id(self):
         params = {"prefix_id": [self.prefixes[0].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"prefix_id": [self.prefixes[2].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_ip_range_id(self):
         params = {"ip_range_id": [self.ranges[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"ip_range_id": [self.ranges[2].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
