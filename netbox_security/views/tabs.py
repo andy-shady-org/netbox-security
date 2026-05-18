@@ -11,6 +11,7 @@ from netbox_security.models import (
     NatRule,
     SecurityZone,
 )
+from netbox_security.utilities import get_address_set_hierarchy
 
 from netbox.views import generic
 from utilities.views import register_model_view, ViewTab
@@ -129,6 +130,14 @@ def _iprange_related_total_count(obj):
     return _related_total_count(obj, IPRange, _annotate_iprange_queryset)
 
 
+def _policy_context(app_label, model, object_id):
+    return get_address_set_hierarchy(
+        app_label=app_label,
+        model=model,
+        object_id=object_id,
+    )
+
+
 @register_model_view(Device, name="security")
 class DeviceSecurityView(generic.ObjectView):
     queryset = Device.objects.all()
@@ -169,6 +178,11 @@ class IPAddressSecurityView(generic.ObjectView):
         hide_if_empty=True,
     )
 
+    def get_extra_context(self, request, instance):
+        return {
+            "policy_context": _policy_context("ipam", "ipaddress", instance.pk),
+        }
+
 
 @register_model_view(Prefix, name="security")
 class PrefixSecurityView(generic.ObjectView):
@@ -180,6 +194,11 @@ class PrefixSecurityView(generic.ObjectView):
         hide_if_empty=True,
     )
 
+    def get_extra_context(self, request, instance):
+        return {
+            "policy_context": _policy_context("ipam", "prefix", instance.pk),
+        }
+
 
 @register_model_view(IPRange, name="security")
 class IPRangeSecurityView(generic.ObjectView):
@@ -190,3 +209,8 @@ class IPRangeSecurityView(generic.ObjectView):
         badge=_iprange_related_total_count,
         hide_if_empty=True,
     )
+
+    def get_extra_context(self, request, instance):
+        return {
+            "policy_context": _policy_context("ipam", "iprange", instance.pk),
+        }

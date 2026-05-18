@@ -54,12 +54,10 @@ class SecurityZonePolicyForm(PrimaryModelForm):
     )
     source_address = DynamicModelMultipleChoiceField(
         queryset=AddressList.objects.all(),
-        quick_add=True,
         required=False,
     )
     destination_address = DynamicModelMultipleChoiceField(
         queryset=AddressList.objects.all(),
-        quick_add=True,
         required=False,
     )
     applications = DynamicModelMultipleChoiceField(
