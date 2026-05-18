@@ -8,6 +8,7 @@ from netbox_security.tables import (
 from netbox_security.filtersets import CustomPrefixFilterSet
 
 from netbox_security.models import CustomPrefix, Address
+from netbox_security.utilities import get_address_set_hierarchy
 from netbox_security.forms import (
     CustomPrefixFilterForm,
     CustomPrefixForm,
@@ -38,6 +39,11 @@ class CustomPrefixView(generic.ObjectView):
         )
         return {
             "address_assignments_table": address_assignments_table,
+            "policy_context": get_address_set_hierarchy(
+                app_label="netbox_security",
+                model="customprefix",
+                object_id=instance.pk,
+            ),
         }
 
 
