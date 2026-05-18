@@ -21,9 +21,9 @@ def _count_subquery(qs):
         Subquery(
             qs.order_by()
             .annotate(_group=Value(1))
-            .values('_group')
-            .annotate(c=Count('pk', distinct=True))
-            .values('c')[:1]
+            .values("_group")
+            .annotate(c=Count("pk", distinct=True))
+            .values("c")[:1]
         ),
         Value(0),
         output_field=IntegerField(),
@@ -38,9 +38,9 @@ def _annotate_ipam_security_queryset(
     nat_rule_source_field,
     nat_rule_destination_field,
 ):
-    nat_pool_member_filter = {f'{nat_pool_member_field}_id': OuterRef('pk')}
-    nat_rule_source_filter = {nat_rule_source_field: OuterRef('pk')}
-    nat_rule_destination_filter = {nat_rule_destination_field: OuterRef('pk')}
+    nat_pool_member_filter = {f"{nat_pool_member_field}_id": OuterRef("pk")}
+    nat_rule_source_filter = {nat_rule_source_field: OuterRef("pk")}
+    nat_rule_destination_filter = {nat_rule_destination_field: OuterRef("pk")}
 
     return queryset.annotate(
         nat_pool_member_count=_count_subquery(
@@ -53,24 +53,24 @@ def _annotate_ipam_security_queryset(
         ),
         address_count=_count_subquery(
             Address.objects.filter(
-                assigned_object_type__app_label='ipam',
+                assigned_object_type__app_label="ipam",
                 assigned_object_type__model=assigned_object_model,
-                assigned_object_id=OuterRef('pk'),
+                assigned_object_id=OuterRef("pk"),
             )
         ),
         security_zone_count=_count_subquery(
             SecurityZone.objects.filter(
-                addresses__address__assigned_object_type__app_label='ipam',
+                addresses__address__assigned_object_type__app_label="ipam",
                 addresses__address__assigned_object_type__model=assigned_object_model,
-                addresses__address__assigned_object_id=OuterRef('pk'),
+                addresses__address__assigned_object_id=OuterRef("pk"),
             ).distinct()
         ),
     ).annotate(
         related_total_count=(
-            F('nat_pool_member_count')
-            + F('nat_rule_count')
-            + F('address_count')
-            + F('security_zone_count')
+            F("nat_pool_member_count")
+            + F("nat_rule_count")
+            + F("address_count")
+            + F("security_zone_count")
         )
     )
 
@@ -78,40 +78,40 @@ def _annotate_ipam_security_queryset(
 def _annotate_ipaddress_queryset(queryset):
     return _annotate_ipam_security_queryset(
         queryset,
-        assigned_object_model='ipaddress',
-        nat_pool_member_field='address',
-        nat_rule_source_field='source_addresses',
-        nat_rule_destination_field='destination_addresses',
+        assigned_object_model="ipaddress",
+        nat_pool_member_field="address",
+        nat_rule_source_field="source_addresses",
+        nat_rule_destination_field="destination_addresses",
     )
 
 
 def _annotate_prefix_queryset(queryset):
     return _annotate_ipam_security_queryset(
         queryset,
-        assigned_object_model='prefix',
-        nat_pool_member_field='prefix',
-        nat_rule_source_field='source_prefixes',
-        nat_rule_destination_field='destination_prefixes',
+        assigned_object_model="prefix",
+        nat_pool_member_field="prefix",
+        nat_rule_source_field="source_prefixes",
+        nat_rule_destination_field="destination_prefixes",
     )
 
 
 def _annotate_iprange_queryset(queryset):
     return _annotate_ipam_security_queryset(
         queryset,
-        assigned_object_model='iprange',
-        nat_pool_member_field='address_range',
-        nat_rule_source_field='source_ranges',
-        nat_rule_destination_field='destination_ranges',
+        assigned_object_model="iprange",
+        nat_pool_member_field="address_range",
+        nat_rule_source_field="source_ranges",
+        nat_rule_destination_field="destination_ranges",
     )
 
 
 def _related_total_count(obj, model, annotate_queryset):
     # Tabs are rendered from the base IPAddress object view; ensure the badge works even if the instance isn't annotated.
-    if hasattr(obj, 'related_total_count'):
+    if hasattr(obj, "related_total_count"):
         return obj.related_total_count
     return (
         annotate_queryset(model.objects.filter(pk=obj.pk))
-        .values_list('related_total_count', flat=True)
+        .values_list("related_total_count", flat=True)
         .first()
         or 0
     )

@@ -85,7 +85,7 @@ class NatRuleFilterSet(PortsFilterSet, PrimaryModelFilterSet):
     )
     ip_address_id = django_filters.ModelMultipleChoiceFilter(
         queryset=IPAddress.objects.all(),
-        method='filter_ip_address_id',
+        method="filter_ip_address_id",
         label=_("IP Address (ID)"),
     )
     source_prefix_id = django_filters.ModelMultipleChoiceFilter(
@@ -114,7 +114,7 @@ class NatRuleFilterSet(PortsFilterSet, PrimaryModelFilterSet):
     )
     prefix_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Prefix.objects.all(),
-        method='filter_prefix_id',
+        method="filter_prefix_id",
         label=_("Prefix (ID)"),
     )
     destination_range_id = django_filters.ModelMultipleChoiceFilter(
@@ -143,7 +143,7 @@ class NatRuleFilterSet(PortsFilterSet, PrimaryModelFilterSet):
     )
     ip_range_id = django_filters.ModelMultipleChoiceFilter(
         queryset=IPRange.objects.all(),
-        method='filter_ip_range_id',
+        method="filter_ip_range_id",
         label=_("IP Range (ID)"),
     )
     source_pool_id = django_filters.ModelMultipleChoiceFilter(
@@ -191,18 +191,24 @@ class NatRuleFilterSet(PortsFilterSet, PrimaryModelFilterSet):
             return queryset
         object_ids = [obj.pk for obj in value]
         return queryset.filter(
-            Q(**{f'{source_field}__id__in': object_ids})
-            | Q(**{f'{destination_field}__id__in': object_ids})
+            Q(**{f"{source_field}__id__in": object_ids})
+            | Q(**{f"{destination_field}__id__in": object_ids})
         ).distinct()
 
     def filter_ip_address_id(self, queryset, name, value):
-        return self._filter_any_side(queryset, value, 'source_addresses', 'destination_addresses')
+        return self._filter_any_side(
+            queryset, value, "source_addresses", "destination_addresses"
+        )
 
     def filter_prefix_id(self, queryset, name, value):
-        return self._filter_any_side(queryset, value, 'source_prefixes', 'destination_prefixes')
+        return self._filter_any_side(
+            queryset, value, "source_prefixes", "destination_prefixes"
+        )
 
     def filter_ip_range_id(self, queryset, name, value):
-        return self._filter_any_side(queryset, value, 'source_ranges', 'destination_ranges')
+        return self._filter_any_side(
+            queryset, value, "source_ranges", "destination_ranges"
+        )
 
 
 @register_filterset
