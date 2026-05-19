@@ -75,6 +75,9 @@ class AddressSetHierarchyTestCase(TestCase):
 
         self.assertEqual(result["assigned_object_id"], self.prefix.pk)
         self.assertIn(self.address.pk, result["address_ids"])
+        self.assertEqual(
+            [obj.pk for obj in result["address_objects"]], [self.address.pk]
+        )
 
         self.assertEqual(
             set(result["direct_address_set_ids"]),
@@ -87,6 +90,15 @@ class AddressSetHierarchyTestCase(TestCase):
         self.assertEqual(
             {tuple(path) for path in result["address_set_paths"]},
             {(self.root_set.pk, self.leaf_set.pk)},
+        )
+        self.assertEqual(len(result["address_set_hierarchy_rows"]), 1)
+        self.assertEqual(
+            [obj.pk for obj in result["address_set_hierarchy_rows"][0]["path"]],
+            [self.root_set.pk, self.leaf_set.pk],
+        )
+        self.assertEqual(
+            result["address_set_hierarchy_rows"][0]["address"].pk,
+            self.address.pk,
         )
 
         self.assertEqual(
@@ -104,6 +116,10 @@ class AddressSetHierarchyTestCase(TestCase):
                 (self.policy_destination.pk, "destination"),
             },
         )
+        for row in result["policy_paths"]:
+            self.assertIn("context_object", row)
+            self.assertIn("address_list", row)
+        self.assertTrue(any(row["context_object"] for row in result["policy_paths"]))
 
     def test_returns_empty_for_unassigned_ipam_object(self):
         unassigned_prefix = Prefix.objects.create(prefix=IPNetwork("10.2.0.0/24"))
@@ -116,9 +132,11 @@ class AddressSetHierarchyTestCase(TestCase):
 
         self.assertEqual(result["assigned_object_id"], unassigned_prefix.pk)
         self.assertEqual(result["address_ids"], [])
+        self.assertEqual(result["address_objects"], [])
         self.assertEqual(result["direct_address_set_ids"], [])
         self.assertEqual(result["all_address_set_ids"], [])
         self.assertEqual(result["address_set_paths"], [])
+        self.assertEqual(result["address_set_hierarchy_rows"], [])
         self.assertEqual(result["address_list_ids"], [])
         self.assertEqual(result["policy_paths"], [])
 
@@ -131,8 +149,10 @@ class AddressSetHierarchyTestCase(TestCase):
 
         self.assertIsNone(result["assigned_object_id"])
         self.assertEqual(result["address_ids"], [])
+        self.assertEqual(result["address_objects"], [])
         self.assertEqual(result["direct_address_set_ids"], [])
         self.assertEqual(result["all_address_set_ids"], [])
         self.assertEqual(result["address_set_paths"], [])
+        self.assertEqual(result["address_set_hierarchy_rows"], [])
         self.assertEqual(result["address_list_ids"], [])
         self.assertEqual(result["policy_paths"], [])
