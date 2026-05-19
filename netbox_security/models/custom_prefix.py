@@ -1,5 +1,7 @@
 from django.urls import reverse
 from django.db import models
+from taggit.managers import TaggableManager
+from extras.managers import NetBoxTaggableManager
 from netbox.models import PrimaryModel
 from netbox.models.features import ContactsMixin
 from ipam.fields import IPNetworkField
@@ -13,6 +15,12 @@ __all__ = (
 
 class CustomPrefix(ContactsMixin, PrimaryModel):
     prefix = IPNetworkField(help_text="IPv4 or IPv6 network with mask")
+    tags = TaggableManager(
+        through='extras.TaggedItem',
+        ordering=('weight', 'name'),
+        manager=NetBoxTaggableManager,
+        related_name='netbox_security_customprefix_set',
+    )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
         on_delete=models.SET_NULL,
@@ -25,6 +33,7 @@ class CustomPrefix(ContactsMixin, PrimaryModel):
     prerequisite_models = ()
 
     class Meta:
+        default_related_name = "%(app_label)s_%(model_name)s_set"
         ordering = [
             "prefix",
         ]
