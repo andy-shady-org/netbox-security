@@ -17,6 +17,7 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
         return {
             "assigned_object_id": None,
             "address_ids": [],
+            "address_objects": [],
             "direct_address_set_ids": [],
             "all_address_set_ids": [],
             "address_set_paths": [],
@@ -37,6 +38,7 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
         return {
             "assigned_object_id": object_id,
             "address_ids": [],
+            "address_objects": [],
             "direct_address_set_ids": [],
             "all_address_set_ids": [],
             "address_set_paths": [],
@@ -181,6 +183,9 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
     return {
         "assigned_object_id": object_id,
         "address_ids": sorted(address_ids),
+        "address_objects": list(
+            Address.objects.filter(id__in=address_ids).order_by("name", "pk")
+        ),
         "direct_address_set_ids": sorted(direct_address_set_ids),
         "all_address_set_ids": sorted(all_address_set_ids),
         "address_set_paths": [list(path) for path in unique_addressset_paths],
