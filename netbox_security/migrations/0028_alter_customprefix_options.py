@@ -6,12 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('netbox_security', '0027_alter_addressassignment_assigned_object_type_and_more'),
+        (
+            "netbox_security",
+            "0027_alter_addressassignment_assigned_object_type_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='customprefix',
-            options={'default_related_name': '%(app_label)s_%(model_name)s_set', 'ordering': ['prefix']},
+            name="customprefix",
+            options={
+                "default_related_name": "%(app_label)s_%(model_name)s_set",
+                "ordering": ["prefix"],
+            },
         ),
     ]

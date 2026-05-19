@@ -16,10 +16,10 @@ __all__ = (
 class CustomPrefix(ContactsMixin, PrimaryModel):
     prefix = IPNetworkField(help_text="IPv4 or IPv6 network with mask")
     tags = TaggableManager(
-        through='extras.TaggedItem',
-        ordering=('weight', 'name'),
+        through="extras.TaggedItem",
+        ordering=("weight", "name"),
         manager=NetBoxTaggableManager,
-        related_name='netbox_security_customprefix_set',
+        related_name="netbox_security_customprefix_set",
     )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
