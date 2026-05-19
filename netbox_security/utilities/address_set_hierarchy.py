@@ -22,6 +22,7 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
             "all_address_set_ids": [],
             "address_set_paths": [],
             "address_set_object_paths": [],
+            "address_set_hierarchy_rows": [],
             "address_set_name_paths": [],
             "address_list_ids": [],
             "address_list_names": [],
@@ -43,6 +44,7 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
             "all_address_set_ids": [],
             "address_set_paths": [],
             "address_set_object_paths": [],
+            "address_set_hierarchy_rows": [],
             "address_set_name_paths": [],
             "address_list_ids": [],
             "address_list_names": [],
@@ -95,12 +97,34 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
         return paths
 
     addressset_paths = []
+    paths_by_direct_set = {}
     for direct_id in sorted(direct_address_set_ids):
-        addressset_paths.extend(build_addressset_paths(direct_id))
+        direct_paths = build_addressset_paths(direct_id)
+        paths_by_direct_set[direct_id] = direct_paths
+        addressset_paths.extend(direct_paths)
     unique_addressset_paths = sorted({tuple(path) for path in addressset_paths})
+    direct_memberships = (
+        AddressSet.objects.filter(addresses__id__in=address_ids)
+        .values_list("addresses__id", "id")
+        .distinct()
+    )
+    direct_sets_by_address = defaultdict(set)
+    for address_id, address_set_id in direct_memberships:
+        direct_sets_by_address[address_id].add(address_set_id)
+
+    address_object_map = {
+        obj.pk: obj for obj in Address.objects.filter(id__in=address_ids)
+    }
     address_set_object_map = {
         obj.pk: obj for obj in AddressSet.objects.filter(id__in=all_address_set_ids)
     }
+
+    hierarchy_rows = set()
+    for address_id in sorted(address_ids):
+        for direct_set_id in sorted(direct_sets_by_address.get(address_id, ())):
+            for path in paths_by_direct_set.get(direct_set_id, [[direct_set_id]]):
+                hierarchy_rows.add((tuple(path), address_id))
+    sorted_hierarchy_rows = sorted(hierarchy_rows)
 
     address_ct = ContentType.objects.get_for_model(Address)
     address_set_ct = ContentType.objects.get_for_model(AddressSet)
@@ -132,8 +156,30 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
             destination_address__id__in=address_list_ids
         ).distinct()
 
+        source_policy_ids = set(source_policies.values_list("id", flat=True))
+        destination_policy_ids = set(destination_policies.values_list("id", flat=True))
+
         for policy in source_policies:
             policy_object_map[policy.pk] = policy
+        for policy in destination_policies:
+            policy_object_map[policy.pk] = policy
+
+        source_links = SecurityZonePolicy.source_address.through.objects.filter(
+            securityzonepolicy_id__in=source_policy_ids,
+            addresslist_id__in=address_list_ids,
+        ).values_list("securityzonepolicy_id", "addresslist_id")
+        destination_links = (
+            SecurityZonePolicy.destination_address.through.objects.filter(
+                securityzonepolicy_id__in=destination_policy_ids,
+                addresslist_id__in=address_list_ids,
+            ).values_list("securityzonepolicy_id", "addresslist_id")
+        )
+
+        for policy_id, address_list_id in source_links:
+            policy = policy_object_map.get(policy_id)
+            address_list = address_list_object_map.get(address_list_id)
+            if not policy:
+                continue
             policy_rows.append(
                 {
                     "policy_id": policy.pk,
@@ -145,10 +191,26 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
                     "destination_zone_id": policy.destination_zone_id,
                     "source_zone_name": policy.source_zone.name,
                     "destination_zone_name": policy.destination_zone.name,
+                    "address_list_id": address_list_id,
+                    "address_list_name": address_list.name if address_list else "",
+                    "context_model": (
+                        address_list.assigned_object_type.model
+                        if address_list and address_list.assigned_object_type_id
+                        else ""
+                    ),
+                    "context_object_id": (
+                        address_list.assigned_object_id
+                        if address_list and address_list.assigned_object_id
+                        else 0
+                    ),
                 }
             )
-        for policy in destination_policies:
-            policy_object_map[policy.pk] = policy
+
+        for policy_id, address_list_id in destination_links:
+            policy = policy_object_map.get(policy_id)
+            address_list = address_list_object_map.get(address_list_id)
+            if not policy:
+                continue
             policy_rows.append(
                 {
                     "policy_id": policy.pk,
@@ -160,6 +222,18 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
                     "destination_zone_id": policy.destination_zone_id,
                     "source_zone_name": policy.source_zone.name,
                     "destination_zone_name": policy.destination_zone.name,
+                    "address_list_id": address_list_id,
+                    "address_list_name": address_list.name if address_list else "",
+                    "context_model": (
+                        address_list.assigned_object_type.model
+                        if address_list and address_list.assigned_object_type_id
+                        else ""
+                    ),
+                    "context_object_id": (
+                        address_list.assigned_object_id
+                        if address_list and address_list.assigned_object_id
+                        else 0
+                    ),
                 }
             )
 
@@ -175,6 +249,10 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
                 row["destination_zone_id"],
                 row["source_zone_name"],
                 row["destination_zone_name"],
+                row["address_list_id"],
+                row["address_list_name"],
+                row["context_model"],
+                row["context_object_id"],
             )
             for row in policy_rows
         }
@@ -192,6 +270,16 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
         "address_set_object_paths": [
             [address_set_object_map.get(address_set_id) for address_set_id in path]
             for path in unique_addressset_paths
+        ],
+        "address_set_hierarchy_rows": [
+            {
+                "path": [
+                    address_set_object_map.get(address_set_id)
+                    for address_set_id in path
+                ],
+                "address": address_object_map.get(address_id),
+            }
+            for path, address_id in sorted_hierarchy_rows
         ],
         "address_set_name_paths": [
             [
@@ -226,6 +314,16 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
                 "destination_zone_id": row[6],
                 "source_zone_name": row[7],
                 "destination_zone_name": row[8],
+                "address_list_id": row[9],
+                "address_list_name": row[10],
+                "address_list": address_list_object_map.get(row[9]),
+                "context_model": row[11],
+                "context_object_id": row[12],
+                "context_object": (
+                    address_list_object_map.get(row[9]).assigned_object
+                    if address_list_object_map.get(row[9])
+                    else None
+                ),
                 "policy": policy_object_map.get(row[0]),
                 "source_zone": (
                     policy_object_map.get(row[0]).source_zone

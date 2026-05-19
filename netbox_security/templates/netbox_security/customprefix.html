@@ -50,6 +50,7 @@
                     <table class="table table-hover attr-table">
                         <thead>
                             <tr>
+                                <th>{% trans "Address/Set" %}</th>
                                 <th>{% trans "Security Policy" %}</th>
                                 <th>{% trans "Policy Actions" %}</th>
                                 <th>{% trans "Direction" %}</th>
@@ -59,6 +60,15 @@
                         <tbody>
                             {% for row in policy_context.policy_paths %}
                                 <tr>
+                                    <td>
+                                        {% if row.context_object %}
+                                            {{ row.context_object|linkify }}
+                                        {% elif row.address_list %}
+                                            {{ row.address_list|linkify }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
                                     <td>{{ row.policy|linkify }}</td>
                                     <td>
                                         {% for action in row.policy_actions %}
@@ -77,22 +87,25 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                {% elif policy_context.address_set_object_paths %}
+                {% elif policy_context.address_set_hierarchy_rows %}
                     <span class="text-muted">{% trans "No policy context found yet; showing Address Set hierarchy." %}</span>
                 {% elif policy_context.address_objects %}
                     <span class="text-muted">{% trans "No policy context found yet; showing Direct Addresses." %}</span>
                 {% else %}
                     <span class="text-muted">{% trans "No policy context found for this object." %}</span>
                 {% endif %}
-                {% if policy_context.address_set_object_paths %}
+                {% if policy_context.address_set_hierarchy_rows %}
                     <p class="text-muted mb-1 mt-2">{% trans "Address Set Hierarchy" %}</p>
                     <ul class="mb-0 ps-3">
-                        {% for path in policy_context.address_set_object_paths %}
+                        {% for row in policy_context.address_set_hierarchy_rows %}
                             <li class="mb-1">
-                                {% for address_set in path %}
+                                {% for address_set in row.path %}
                                     {% if not forloop.first %} &rarr; {% endif %}
                                     {{ address_set|linkify }}
                                 {% endfor %}
+                                {% if row.address %}
+                                    {% if row.path %} &rarr; {% endif %}[{{ row.address|linkify }}]
+                                {% endif %}
                             </li>
                         {% endfor %}
                     </ul>
