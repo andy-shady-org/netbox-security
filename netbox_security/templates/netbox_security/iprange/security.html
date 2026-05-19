@@ -109,19 +109,32 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                    {% if policy_context.address_set_object_paths %}
-                        <p class="text-muted mb-1">{% trans "Address Set Hierarchy" %}</p>
+                {% elif policy_context.address_set_object_paths %}
+                    <span class="text-muted">{% trans "No policy context found yet; showing Address Set hierarchy." %}</span>
+                {% elif policy_context.address_objects %}
+                    <span class="text-muted">{% trans "No policy context found yet; showing Direct Addresses." %}</span>
+                {% else %}
+                    <span class="text-muted">{% trans "No policy context found for this object." %}</span>
+                {% endif %}
+                {% if policy_context.address_set_object_paths %}
+                    <p class="text-muted mb-1 mt-2">{% trans "Address Set Hierarchy" %}</p>
+                    <ul class="mb-0 ps-3">
                         {% for path in policy_context.address_set_object_paths %}
-                            <div>
+                            <li class="mb-1">
                                 {% for address_set in path %}
                                     {% if not forloop.first %} &rarr; {% endif %}
                                     {{ address_set|linkify }}
                                 {% endfor %}
-                            </div>
+                            </li>
                         {% endfor %}
-                    {% endif %}
-                {% else %}
-                    <span class="text-muted">{% trans "No policy context found for this object." %}</span>
+                    </ul>
+                {% elif policy_context.address_objects %}
+                    <p class="text-muted mb-1 mt-2">{% trans "Direct Addresses" %}</p>
+                    <ul class="mb-0 ps-3">
+                        {% for address in policy_context.address_objects %}
+                            <li class="mb-1">{{ address|linkify }}</li>
+                        {% endfor %}
+                    </ul>
                 {% endif %}
             </div>
         </div>
