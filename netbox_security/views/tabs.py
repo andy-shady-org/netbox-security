@@ -119,15 +119,24 @@ def _related_total_count(obj, model, annotate_queryset):
 
 
 def _ipaddress_related_total_count(obj):
-    return _related_total_count(obj, IPAddress, _annotate_ipaddress_queryset)
+    return max(
+        _related_total_count(obj, IPAddress, _annotate_ipaddress_queryset),
+        _policy_context_related_total_count("ipam", "ipaddress", obj.pk),
+    )
 
 
 def _prefix_related_total_count(obj):
-    return _related_total_count(obj, Prefix, _annotate_prefix_queryset)
+    return max(
+        _related_total_count(obj, Prefix, _annotate_prefix_queryset),
+        _policy_context_related_total_count("ipam", "prefix", obj.pk),
+    )
 
 
 def _iprange_related_total_count(obj):
-    return _related_total_count(obj, IPRange, _annotate_iprange_queryset)
+    return max(
+        _related_total_count(obj, IPRange, _annotate_iprange_queryset),
+        _policy_context_related_total_count("ipam", "iprange", obj.pk),
+    )
 
 
 def _policy_context(app_label, model, object_id):
@@ -136,6 +145,19 @@ def _policy_context(app_label, model, object_id):
         model=model,
         object_id=object_id,
     )
+
+
+def _policy_context_related_total_count(app_label, model, object_id):
+    """Count total security context items including inherited addresses."""
+    policy_context = _policy_context(app_label, model, object_id)
+
+    # Count all relevant items: direct addresses, inherited addresses, and policy paths
+    count = (
+        len(policy_context.get("address_objects", []))
+        + len(policy_context.get("inherited_address_objects", []))
+        + len(policy_context.get("policy_paths", []))
+    )
+    return count
 
 
 @register_model_view(Device, name="security")

@@ -84,6 +84,7 @@
                             <tr>
                                 <th>{% trans "Address/Set" %}</th>
                                 <th>{% trans "Security Policy" %}</th>
+                                <th>{% trans "Policy Index" %}</th>
                                 <th>{% trans "Policy Actions" %}</th>
                                 <th>{% trans "Direction" %}</th>
                                 <th>{% trans "Security Zones" %}</th>
@@ -102,6 +103,7 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ row.policy|linkify }}</td>
+                                    <td>{{ row.policy_index }}</td>
                                     <td>
                                         {% for action in row.policy_actions %}
                                             <span class="badge text-bg-{% if action == 'permit' %}green
@@ -121,10 +123,18 @@
                     </table>
                 {% elif policy_context.address_set_hierarchy_rows %}
                     <span class="text-muted">{% trans "No policy context found yet; showing Address Set hierarchy." %}</span>
-                {% elif policy_context.address_objects %}
-                    <span class="text-muted">{% trans "No policy context found yet; showing Direct Addresses." %}</span>
+                {% elif policy_context.address_objects or policy_context.inherited_address_objects %}
+                    <span class="text-muted">{% trans "No policy context found yet; showing Addresses." %}</span>
                 {% else %}
                     <span class="text-muted">{% trans "No policy context found for this object." %}</span>
+                {% endif %}
+                {% if policy_context.inherited_address_objects %}
+                    <p class="text-muted mb-1 mt-2">{% trans "Inherited Addresses (from parent prefixes)" %}</p>
+                    <ul class="mb-0 ps-3">
+                        {% for address in policy_context.inherited_address_objects %}
+                            <li class="mb-1">{{ address|linkify }}</li>
+                        {% endfor %}
+                    </ul>
                 {% endif %}
                 {% if policy_context.address_set_hierarchy_rows %}
                     <p class="text-muted mb-1 mt-2">{% trans "Address Set Hierarchy" %}</p>
