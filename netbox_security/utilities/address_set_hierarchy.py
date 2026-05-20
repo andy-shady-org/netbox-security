@@ -5,6 +5,116 @@ from django.contrib.contenttypes.models import ContentType
 from netbox_security.models import Address, AddressList, AddressSet, SecurityZonePolicy
 
 
+def _get_inherited_address_ids(target_object, direct_address_ids):
+    """Get address IDs inherited from parent objects.
+
+    For Prefix, IPRange, and IPAddress objects, traverse up the IPAM hierarchy
+    to find addresses assigned to parent prefixes.
+    For CustomPrefix objects, find parent CustomPrefixes that contain them.
+    """
+    from ipam.models import Prefix
+    from netbox_security.models import CustomPrefix
+
+    inherited_address_ids = []
+
+    # Only IPAM objects and CustomPrefix can have inheritance
+    if not hasattr(target_object, "_meta"):
+        return inherited_address_ids
+
+    model_name = target_object._meta.model_name
+
+    # Handle Prefix inheritance
+    if model_name == "prefix":
+        # Get parent prefixes and their addresses
+        parent_prefixes = target_object.get_parents()
+        parent_address_ids = list(
+            Address.objects.filter(
+                assigned_object_type__app_label="ipam",
+                assigned_object_type__model="prefix",
+                assigned_object_id__in=parent_prefixes.values_list("id", flat=True),
+            ).values_list("id", flat=True)
+        )
+        inherited_address_ids.extend(parent_address_ids)
+
+    # Handle IPRange inheritance
+    elif model_name == "iprange":
+        # Get all prefixes that contain this IP range.
+        # Use .ip to strip the mask and compare host addresses only, matching
+        # how NetBox itself resolves parent prefixes for an IPRange (ipam/views.py).
+        if target_object.vrf:
+            parent_prefixes = Prefix.objects.filter(
+                vrf=target_object.vrf,
+                prefix__net_contains_or_equals=str(target_object.start_address.ip),
+            ).filter(
+                prefix__net_contains_or_equals=str(target_object.end_address.ip),
+            )
+        else:
+            parent_prefixes = Prefix.objects.filter(
+                vrf__isnull=True,
+                prefix__net_contains_or_equals=str(target_object.start_address.ip),
+            ).filter(
+                prefix__net_contains_or_equals=str(target_object.end_address.ip),
+            )
+        parent_address_ids = list(
+            Address.objects.filter(
+                assigned_object_type__app_label="ipam",
+                assigned_object_type__model="prefix",
+                assigned_object_id__in=parent_prefixes.values_list("id", flat=True),
+            ).values_list("id", flat=True)
+        )
+        inherited_address_ids.extend(parent_address_ids)
+
+    # Handle IPAddress inheritance
+    elif model_name == "ipaddress":
+        # Get all prefixes that contain this IP address.
+        # Use prefix__net_contains with the bare host address (no mask), matching
+        # how NetBox's own filterset resolves parent prefixes for an IPAddress
+        # (ipam/filtersets.py line 488).
+        if target_object.vrf:
+            parent_prefixes = Prefix.objects.filter(
+                vrf=target_object.vrf,
+                prefix__net_contains=str(target_object.address.ip),
+            )
+        else:
+            parent_prefixes = Prefix.objects.filter(
+                vrf__isnull=True,
+                prefix__net_contains=str(target_object.address.ip),
+            )
+        parent_address_ids = list(
+            Address.objects.filter(
+                assigned_object_type__app_label="ipam",
+                assigned_object_type__model="prefix",
+                assigned_object_id__in=parent_prefixes.values_list("id", flat=True),
+            ).values_list("id", flat=True)
+        )
+        inherited_address_ids.extend(parent_address_ids)
+
+    # Handle CustomPrefix inheritance
+    elif model_name == "customprefix":
+        # Resolve parent custom prefixes using NetBox-style network lookup semantics.
+        # Use stringified prefix for consistent DB operator behavior and exclude self.
+        parent_custom_prefixes = CustomPrefix.objects.filter(
+            prefix__net_contains_or_equals=str(target_object.prefix),
+        ).exclude(pk=target_object.pk)
+        parent_address_ids = list(
+            Address.objects.filter(
+                assigned_object_type__app_label="netbox_security",
+                assigned_object_type__model="customprefix",
+                assigned_object_id__in=parent_custom_prefixes.values_list(
+                    "id", flat=True
+                ),
+            ).values_list("id", flat=True)
+        )
+        inherited_address_ids.extend(parent_address_ids)
+
+    # Remove direct addresses from inherited list to avoid duplicates
+    return [
+        addr_id
+        for addr_id in inherited_address_ids
+        if addr_id not in direct_address_ids
+    ]
+
+
 def get_address_set_hierarchy(*, app_label, model, object_id):
     """Return transitive security context for an assigned IPAM object.
 
@@ -18,6 +128,8 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
             "assigned_object_id": None,
             "address_ids": [],
             "address_objects": [],
+            "inherited_address_ids": [],
+            "inherited_address_objects": [],
             "direct_address_set_ids": [],
             "all_address_set_ids": [],
             "address_set_paths": [],
@@ -35,11 +147,23 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
             assigned_object_id=object_id,
         ).values_list("id", flat=True)
     )
-    if not address_ids:
+
+    # Get inherited addresses for IPAM child objects and CustomPrefix
+    inherited_address_ids = []
+    target_object = content_type.model_class().objects.filter(pk=object_id).first()
+    if target_object:
+        inherited_address_ids = _get_inherited_address_ids(target_object, address_ids)
+
+    # Combine direct and inherited addresses for hierarchy computation
+    effective_address_ids = sorted(set(address_ids) | set(inherited_address_ids))
+
+    if not effective_address_ids:
         return {
             "assigned_object_id": object_id,
             "address_ids": [],
             "address_objects": [],
+            "inherited_address_ids": [],
+            "inherited_address_objects": [],
             "direct_address_set_ids": [],
             "all_address_set_ids": [],
             "address_set_paths": [],
@@ -57,14 +181,21 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
         .distinct()
     )
 
+    # Also get address sets from inherited addresses
+    inherited_address_set_ids = set(
+        AddressSet.objects.filter(addresses__id__in=inherited_address_ids)
+        .values_list("id", flat=True)
+        .distinct()
+    )
+
     relation_field = AddressSet._meta.get_field("address_sets")
     parent_field = relation_field.m2m_field_name()
     child_field = relation_field.m2m_reverse_field_name()
     through_model = relation_field.remote_field.through
 
     parent_map = defaultdict(set)
-    all_address_set_ids = set(direct_address_set_ids)
-    frontier = set(direct_address_set_ids)
+    all_address_set_ids = set(direct_address_set_ids) | inherited_address_set_ids
+    frontier = all_address_set_ids.copy()
 
     while frontier:
         relation_rows = through_model.objects.filter(
@@ -98,7 +229,7 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
 
     addressset_paths = []
     paths_by_direct_set = {}
-    for direct_id in sorted(direct_address_set_ids):
+    for direct_id in sorted(direct_address_set_ids | inherited_address_set_ids):
         direct_paths = build_addressset_paths(direct_id)
         paths_by_direct_set[direct_id] = direct_paths
         addressset_paths.extend(direct_paths)
@@ -108,19 +239,28 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
         .values_list("addresses__id", "id")
         .distinct()
     )
+    # Also get memberships from inherited addresses
+    inherited_memberships = (
+        AddressSet.objects.filter(addresses__id__in=inherited_address_ids)
+        .values_list("addresses__id", "id")
+        .distinct()
+    )
+
     direct_sets_by_address = defaultdict(set)
     for address_id, address_set_id in direct_memberships:
         direct_sets_by_address[address_id].add(address_set_id)
+    for address_id, address_set_id in inherited_memberships:
+        direct_sets_by_address[address_id].add(address_set_id)
 
     address_object_map = {
-        obj.pk: obj for obj in Address.objects.filter(id__in=address_ids)
+        obj.pk: obj for obj in Address.objects.filter(id__in=effective_address_ids)
     }
     address_set_object_map = {
         obj.pk: obj for obj in AddressSet.objects.filter(id__in=all_address_set_ids)
     }
 
     hierarchy_rows = set()
-    for address_id in sorted(address_ids):
+    for address_id in sorted(effective_address_ids):
         for direct_set_id in sorted(direct_sets_by_address.get(address_id, ())):
             for path in paths_by_direct_set.get(direct_set_id, [[direct_set_id]]):
                 hierarchy_rows.add((tuple(path), address_id))
@@ -132,7 +272,7 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
     address_list_ids = set(
         AddressList.objects.filter(
             assigned_object_type=address_ct,
-            assigned_object_id__in=address_ids,
+            assigned_object_id__in=effective_address_ids,
         ).values_list("id", flat=True)
     )
     if all_address_set_ids:
@@ -255,7 +395,8 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
                 row["context_object_id"],
             )
             for row in policy_rows
-        }
+        },
+        key=lambda row: (row[2], row[0], row[4], row[9]),
     )
 
     return {
@@ -263,6 +404,10 @@ def get_address_set_hierarchy(*, app_label, model, object_id):
         "address_ids": sorted(address_ids),
         "address_objects": list(
             Address.objects.filter(id__in=address_ids).order_by("name", "pk")
+        ),
+        "inherited_address_ids": sorted(inherited_address_ids),
+        "inherited_address_objects": list(
+            Address.objects.filter(id__in=inherited_address_ids).order_by("name", "pk")
         ),
         "direct_address_set_ids": sorted(direct_address_set_ids),
         "all_address_set_ids": sorted(all_address_set_ids),
