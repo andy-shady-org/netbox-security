@@ -512,3 +512,103 @@ class CustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
         # Verify the policy is included
         policy_ids = [p["policy_id"] for p in policy_paths]
         self.assertIn(self.policy.pk, policy_ids)
+
+
+class IPAMToCustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
+    """IPAM objects should inherit policy context from containing CustomPrefixes."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.global_custom_prefix = CustomPrefix.objects.create(
+            prefix=IPNetwork("0.0.0.0/0")
+        )
+        cls.ip_address = IPAddress.objects.create(address=IPNetwork("172.162.1.1/32"))
+
+        cls.custom_prefix_address = Address.objects.create(
+            name="customprefix-global-address",
+            assigned_object_type=ContentType.objects.get(
+                app_label="netbox_security", model="customprefix"
+            ),
+            assigned_object_id=cls.global_custom_prefix.pk,
+        )
+
+        cls.address_set = AddressSet.objects.create(name="cp-address-set")
+        cls.address_set.addresses.add(cls.custom_prefix_address)
+
+        address_set_ct = ContentType.objects.get_for_model(AddressSet)
+        cls.address_list = AddressList.objects.create(
+            name="cp-policy-list",
+            assigned_object_type=address_set_ct,
+            assigned_object_id=cls.address_set.pk,
+        )
+
+        cls.source_zone = SecurityZone.objects.create(name="cp-source-zone")
+        cls.destination_zone = SecurityZone.objects.create(name="cp-dest-zone")
+        cls.policy = SecurityZonePolicy.objects.create(
+            name="cp-inherited-policy",
+            index=21,
+            source_zone=cls.source_zone,
+            destination_zone=cls.destination_zone,
+            policy_actions=["permit"],
+        )
+        cls.policy.source_address.add(cls.address_list)
+
+    def test_ipaddress_inherits_from_custom_prefix(self):
+        result = get_address_set_hierarchy(
+            app_label="ipam", model="ipaddress", object_id=self.ip_address.pk
+        )
+
+        self.assertIn(self.custom_prefix_address.pk, result["inherited_address_ids"])
+        policy_ids = [p["policy_id"] for p in result["policy_paths"]]
+        self.assertIn(self.policy.pk, policy_ids)
+
+
+class CustomPrefixToIPAMInheritedAddressPolicyContextTestCase(TestCase):
+    """CustomPrefixes should inherit policy context from containing IPAM objects."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.global_prefix = Prefix.objects.create(prefix=IPNetwork("0.0.0.0/0"))
+        cls.custom_prefix = CustomPrefix.objects.create(
+            prefix=IPNetwork("172.162.0.0/16")
+        )
+
+        cls.ipam_prefix_address = Address.objects.create(
+            name="ipam-global-prefix-address",
+            assigned_object_type=ContentType.objects.get(
+                app_label="ipam", model="prefix"
+            ),
+            assigned_object_id=cls.global_prefix.pk,
+        )
+
+        cls.address_set = AddressSet.objects.create(name="ipam-address-set")
+        cls.address_set.addresses.add(cls.ipam_prefix_address)
+
+        address_set_ct = ContentType.objects.get_for_model(AddressSet)
+        cls.address_list = AddressList.objects.create(
+            name="ipam-policy-list",
+            assigned_object_type=address_set_ct,
+            assigned_object_id=cls.address_set.pk,
+        )
+
+        cls.source_zone = SecurityZone.objects.create(name="ipam-source-zone")
+        cls.destination_zone = SecurityZone.objects.create(name="ipam-dest-zone")
+        cls.policy = SecurityZonePolicy.objects.create(
+            name="ipam-inherited-policy",
+            index=22,
+            source_zone=cls.source_zone,
+            destination_zone=cls.destination_zone,
+            policy_actions=["permit"],
+        )
+        cls.policy.destination_address.add(cls.address_list)
+
+    def test_custom_prefix_inherits_from_ipam_prefix(self):
+        result = get_address_set_hierarchy(
+            app_label="netbox_security",
+            model="customprefix",
+            object_id=self.custom_prefix.pk,
+        )
+
+        self.assertIn(self.ipam_prefix_address.pk, result["inherited_address_ids"])
+        policy_ids = [p["policy_id"] for p in result["policy_paths"]]
+        self.assertIn(self.policy.pk, policy_ids)
