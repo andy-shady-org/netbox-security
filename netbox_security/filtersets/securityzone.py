@@ -30,6 +30,9 @@ __all__ = (
 
 @register_filterset
 class SecurityZoneFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
+    allow_intra_zone = django_filters.BooleanFilter(
+        label=_("Allow Intra Zone Policies")
+    )
     source_zone_id = django_filters.ModelMultipleChoiceFilter(
         field_name="natruleset_source_zones",
         queryset=SecurityZone.objects.all(),
@@ -65,6 +68,7 @@ class SecurityZoneFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
         fields = [
             "id",
             "name",
+            "allow_intra_zone",
             "description",
             "identifier",
             "prefix_id",

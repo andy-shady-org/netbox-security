@@ -113,7 +113,7 @@ class SecurityZonePolicyForm(PrimaryModelForm):
         if (source_zone := self.cleaned_data.get("source_zone")) is not None and (
             destination_zone := self.cleaned_data.get("destination_zone")
         ) is not None:
-            if source_zone == destination_zone:
+            if source_zone == destination_zone and not source_zone.allow_intra_zone:
                 error_message_mismatch_zones = (
                     "Cannot have the same source and destination zone within a policy"
                 )
@@ -251,7 +251,7 @@ class SecurityZonePolicyImportForm(PrimaryModelImportForm):
         if (source_zone := self.cleaned_data.get("source_zone")) is not None and (
             destination_zone := self.cleaned_data.get("destination_zone")
         ) is not None:
-            if source_zone == destination_zone:
+            if source_zone == destination_zone and not source_zone.allow_intra_zone:
                 error_message_mismatch_zones = (
                     "Cannot have the same source and destination zone within a policy"
                 )

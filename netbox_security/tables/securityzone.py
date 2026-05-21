@@ -15,6 +15,7 @@ __all__ = (
 
 class SecurityZoneTable(TenancyColumnsMixin, NetBoxTable):
     name = tables.LinkColumn()
+    allow_intra_zone = tables.BooleanColumn()
     source_policy_count = tables.Column()
     destination_policy_count = tables.Column()
     tags = TagColumn(url_name="plugins:netbox_security:securityzone_list")
@@ -25,6 +26,7 @@ class SecurityZoneTable(TenancyColumnsMixin, NetBoxTable):
             "id",
             "name",
             "identifier",
+            "allow_intra_zone",
             "description",
             "source_policy_count",
             "destination_policy_count",
@@ -34,6 +36,7 @@ class SecurityZoneTable(TenancyColumnsMixin, NetBoxTable):
         default_columns = (
             "name",
             "identifier",
+            "allow_intra_zone",
             "description",
             "source_policy_count",
             "destination_policy_count",

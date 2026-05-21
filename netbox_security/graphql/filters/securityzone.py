@@ -19,4 +19,5 @@ class NetBoxSecuritySecurityZoneFilter(
 ):
     name: StrFilterLookup[str] | None = strawberry_django.filter_field()
     identifier: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    allow_intra_zone: StrFilterLookup[bool] | None = strawberry_django.filter_field()
     description: StrFilterLookup[str] | None = strawberry_django.filter_field()

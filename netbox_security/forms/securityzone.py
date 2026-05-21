@@ -42,8 +42,21 @@ class SecurityZoneForm(TenancyForm, PrimaryModelForm):
     name = forms.CharField(max_length=64, required=True)
     identifier = forms.CharField(max_length=100, required=False)
     description = forms.CharField(max_length=200, required=False)
+    allow_intra_zone = forms.BooleanField(
+        required=False,
+        help_text=_(
+            "Allow policies within this zone to have the same source and destination zone"
+        ),
+        label="Allow Intra Zone Policies",
+    )
     fieldsets = (
-        FieldSet("name", "identifier", "description", name=_("Security Zone")),
+        FieldSet(
+            "name",
+            "identifier",
+            "description",
+            "allow_intra_zone",
+            name=_("Security Zone"),
+        ),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
@@ -55,6 +68,7 @@ class SecurityZoneForm(TenancyForm, PrimaryModelForm):
             "name",
             "owner",
             "identifier",
+            "allow_intra_zone",
             "tenant_group",
             "tenant",
             "description",
@@ -78,6 +92,9 @@ class SecurityZoneFilterForm(TenancyFilterForm, PrimaryModelFilterSetForm):
 
 class SecurityZoneImportForm(PrimaryModelImportForm):
     identifier = forms.CharField(max_length=100, required=False)
+    allow_intra_zone = forms.BooleanField(
+        required=False, help_text=_("Allow intra zone policies")
+    )
     tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
@@ -91,6 +108,7 @@ class SecurityZoneImportForm(PrimaryModelImportForm):
             "name",
             "owner",
             "identifier",
+            "allow_intra_zone",
             "description",
             "tenant",
             "tags",
@@ -99,6 +117,9 @@ class SecurityZoneImportForm(PrimaryModelImportForm):
 
 class SecurityZoneBulkEditForm(PrimaryModelBulkEditForm):
     model = SecurityZone
+    allow_intra_zone = forms.BooleanField(
+        required=False, help_text=_("Allow intra zone policies")
+    )
     description = forms.CharField(max_length=200, required=False)
     tenant_group = DynamicModelChoiceField(
         queryset=TenantGroup.objects.all(),
@@ -113,7 +134,7 @@ class SecurityZoneBulkEditForm(PrimaryModelBulkEditForm):
     tags = TagFilterField(model)
     nullable_fields = ["description", "tenant"]
     fieldsets = (
-        FieldSet("description"),
+        FieldSet("allow_intra_zone", "description"),
         FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet("tags", name=_("Tags")),
     )
