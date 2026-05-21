@@ -77,6 +77,7 @@ class SecurityZoneAPITestCase(
             self._get_detail_url(zone),
             {"allow_intra_zone": False},
             format="json",
+            **self.header,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -299,7 +300,9 @@ class SecurityZonePolicyAPITestCase(
             "destination_zone": self.zones[0].pk,
         }
 
-        response = self.client.post(self._get_list_url(), payload, format="json")
+        response = self.client.post(
+            self._get_list_url(), payload, format="json", **self.header
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response_data = response.json()
@@ -323,6 +326,8 @@ class SecurityZonePolicyAPITestCase(
             "destination_zone": zone.pk,
         }
 
-        response = self.client.post(self._get_list_url(), payload, format="json")
+        response = self.client.post(
+            self._get_list_url(), payload, format="json", **self.header
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
