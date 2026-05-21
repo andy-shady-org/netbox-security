@@ -43,7 +43,7 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
             "dns_name",
             "tenant",
             "tenant_group",
-            "tags"
+            "tags",
         )
 
 
