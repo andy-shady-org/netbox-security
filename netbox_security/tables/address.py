@@ -32,6 +32,7 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
             "assigned_object",
             "dns_name",
             "tenant",
+            "tenant_group",
             "tags",
         )
         default_columns = (
@@ -41,6 +42,8 @@ class AddressTable(TenancyColumnsMixin, NetBoxTable):
             "assigned_object",
             "dns_name",
             "tenant",
+            "tenant_group",
+            "tags"
         )
 
 

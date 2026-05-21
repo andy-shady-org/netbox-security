@@ -3,7 +3,6 @@ from utilities.views import register_model_view
 
 from netbox_security.tables import (
     CustomPrefixTable,
-    AddressTable,
 )
 from netbox_security.filtersets import CustomPrefixFilterSet
 
@@ -33,12 +32,7 @@ class CustomPrefixView(generic.ObjectView):
     template_name = "netbox_security/customprefix.html"
 
     def get_extra_context(self, request, instance):
-        address_assignments_table = AddressTable(
-            Address.objects.filter(custom_prefixes__prefix=instance.prefix),
-            orderable=False,
-        )
         return {
-            "address_assignments_table": address_assignments_table,
             "policy_context": get_address_set_hierarchy(
                 app_label="netbox_security",
                 model="customprefix",
