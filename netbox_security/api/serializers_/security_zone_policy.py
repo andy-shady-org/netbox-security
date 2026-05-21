@@ -87,10 +87,19 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
 
         errors = {}
 
-        # Check for same source and destination zones
-        source_zone = data.get("source_zone")
-        destination_zone = data.get("destination_zone")
-        if source_zone and destination_zone and source_zone == destination_zone:
+        # For partial updates, fall back to the instance's current zones.
+        source_zone = data.get(
+            "source_zone", getattr(self.instance, "source_zone", None)
+        )
+        destination_zone = data.get(
+            "destination_zone", getattr(self.instance, "destination_zone", None)
+        )
+        if (
+            source_zone
+            and destination_zone
+            and source_zone == destination_zone
+            and not source_zone.allow_intra_zone
+        ):
             message = (
                 "Cannot have the same source and destination zones within a policy."
             )

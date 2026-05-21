@@ -31,6 +31,10 @@
                     <td>{{ object.identifier }}</td>
                 </tr>
                 <tr>
+                    <th scope="row">{% trans "Allow Intra-Zone Policies" %}</th>
+                    <td>{% checkmark object.allow_intra_zone %}</td>
+                </tr>
+                <tr>
                     <td>{% trans "Source Policy Count" %}</td>
                     <td>{{ object.source_policy_count|placeholder }}</td>
                 </tr>

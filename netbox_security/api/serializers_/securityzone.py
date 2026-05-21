@@ -4,6 +4,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
     JSONField,
     IntegerField,
+    BooleanField,
 )
 from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
@@ -19,6 +20,7 @@ class SecurityZoneSerializer(PrimaryModelSerializer):
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:securityzone-detail"
     )
+    allow_intra_zone = BooleanField(required=False, default=False)
     source_policy_count = IntegerField(read_only=True)
     destination_policy_count = IntegerField(read_only=True)
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
@@ -31,6 +33,7 @@ class SecurityZoneSerializer(PrimaryModelSerializer):
             "display",
             "name",
             "identifier",
+            "allow_intra_zone",
             "description",
             "tenant",
             "source_policy_count",
@@ -47,6 +50,7 @@ class SecurityZoneSerializer(PrimaryModelSerializer):
             "display",
             "name",
             "identifier",
+            "allow_intra_zone",
             "source_policy_count",
             "destination_policy_count",
             "description",

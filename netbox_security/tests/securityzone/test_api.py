@@ -1,4 +1,5 @@
 from netaddr import IPNetwork
+from rest_framework import status
 from utilities.testing import APIViewTestCases
 from netbox_security.tests.custom import APITestCase, NetBoxSecurityGraphQLMixin
 from django.contrib.contenttypes.models import ContentType
@@ -27,6 +28,7 @@ class SecurityZoneAPITestCase(
     model = SecurityZone
 
     brief_fields = [
+        "allow_intra_zone",
         "description",
         "destination_policy_count",
         "display",
@@ -55,6 +57,32 @@ class SecurityZoneAPITestCase(
             SecurityZone(name="GREEN"),
         )
         SecurityZone.objects.bulk_create(zones)
+
+    def test_update_disallow_intra_zone_rejected_with_same_zone_policies(self):
+        self.add_permissions(
+            "netbox_security.view_securityzone",
+            "netbox_security.change_securityzone",
+        )
+
+        zone = SecurityZone.objects.create(name="INTRA-ZONE", allow_intra_zone=True)
+        SecurityZonePolicy.objects.create(
+            name="intra-zone-policy",
+            index=999,
+            source_zone=zone,
+            destination_zone=zone,
+            policy_actions=["permit"],
+        )
+
+        response = self.client.patch(
+            self._get_detail_url(zone),
+            {"allow_intra_zone": False},
+            format="json",
+            **self.header,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response_data = response.json()
+        self.assertIn("allow_intra_zone", response_data)
 
 
 class SecurityZonePolicyAPITestCase(
@@ -257,3 +285,49 @@ class SecurityZonePolicyAPITestCase(
         self.assertEqual(
             set(self.policy.application_sets.all()), set(self.application_sets)
         )
+
+    def test_create_same_zone_rejected_when_intra_zone_not_allowed(self):
+        self.add_permissions(
+            "netbox_security.view_securityzonepolicy",
+            "netbox_security.add_securityzonepolicy",
+        )
+
+        payload = {
+            "name": "policy-same-zone-denied",
+            "index": 100,
+            "policy_actions": ["permit"],
+            "source_zone": self.zones[0].pk,
+            "destination_zone": self.zones[0].pk,
+        }
+
+        response = self.client.post(
+            self._get_list_url(), payload, format="json", **self.header
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response_data = response.json()
+        self.assertIn("source_zone", response_data)
+        self.assertIn("destination_zone", response_data)
+
+    def test_create_same_zone_allowed_when_intra_zone_enabled(self):
+        self.add_permissions(
+            "netbox_security.view_securityzonepolicy",
+            "netbox_security.add_securityzonepolicy",
+        )
+
+        zone = SecurityZone.objects.create(
+            name="ZONE-INTRA-ALLOWED", allow_intra_zone=True
+        )
+        payload = {
+            "name": "policy-same-zone-allowed",
+            "index": 101,
+            "policy_actions": ["permit"],
+            "source_zone": zone.pk,
+            "destination_zone": zone.pk,
+        }
+
+        response = self.client.post(
+            self._get_list_url(), payload, format="json", **self.header
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

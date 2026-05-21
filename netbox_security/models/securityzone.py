@@ -1,6 +1,7 @@
 from django.urls import reverse
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from netbox.search import SearchIndex, register_search
@@ -31,6 +32,12 @@ class SecurityZone(ContactsMixin, PrimaryModel):
         blank=True,
         null=True,
     )
+    allow_intra_zone = models.BooleanField(
+        default=False,
+        help_text=_(
+            "Allow policies to be created with the same zone as source and destination."
+        ),
+    )
 
     class Meta:
         verbose_name_plural = _("Security Zones")
@@ -47,6 +54,36 @@ class SecurityZone(ContactsMixin, PrimaryModel):
 
     def get_absolute_url(self):
         return reverse("plugins:netbox_security:securityzone", args=[self.pk])
+
+    def clean(self):
+        super().clean()
+
+        if self.pk is None or self.allow_intra_zone:
+            return
+
+        previous_allow_intra_zone = (
+            type(self)
+            .objects.filter(pk=self.pk)
+            .values_list("allow_intra_zone", flat=True)
+            .first()
+        )
+        if not previous_allow_intra_zone:
+            return
+
+        from .security_zone_policy import SecurityZonePolicy
+
+        has_same_zone_policies = SecurityZonePolicy.objects.filter(
+            source_zone=self,
+            destination_zone=self,
+        ).exists()
+        if has_same_zone_policies:
+            raise ValidationError(
+                {
+                    "allow_intra_zone": _(
+                        "Cannot disable intra-zone traffic while policies exist with this zone as both source and destination."
+                    )
+                }
+            )
 
     @classmethod
     def annotated_queryset(cls):
