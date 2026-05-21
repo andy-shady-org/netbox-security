@@ -5,6 +5,127 @@ from django.contrib.contenttypes.models import ContentType
 from netbox_security.models import Address, AddressList, AddressSet, SecurityZonePolicy
 
 
+def _get_object_span(obj):
+    """Return (start, end, version) for IP-bearing objects, else None."""
+    model_name = obj._meta.model_name
+
+    if model_name in ("prefix", "customprefix"):
+        return int(obj.prefix.first), int(obj.prefix.last), int(obj.prefix.version)
+
+    if model_name == "ipaddress":
+        ip = int(obj.address.ip)
+        return ip, ip, int(obj.address.version)
+
+    if model_name == "iprange":
+        return (
+            int(obj.start_address.ip),
+            int(obj.end_address.ip),
+            int(obj.start_address.version),
+        )
+
+    return None
+
+
+def _span_contains(parent_span, child_span):
+    if not parent_span or not child_span:
+        return False
+
+    parent_start, parent_end, parent_version = parent_span
+    child_start, child_end, child_version = child_span
+    if parent_version != child_version:
+        return False
+
+    return parent_start <= child_start and parent_end >= child_end
+
+
+def _get_parent_customprefix_address_ids(target_object):
+    """Return address IDs assigned to CustomPrefixes that contain target_object."""
+    from netbox_security.models import CustomPrefix
+
+    target_span = _get_object_span(target_object)
+    if not target_span:
+        return []
+
+    address_rows = list(
+        Address.objects.filter(
+            assigned_object_type__app_label="netbox_security",
+            assigned_object_type__model="customprefix",
+        ).values_list("id", "assigned_object_id")
+    )
+    if not address_rows:
+        return []
+
+    custom_prefixes = {
+        obj.pk: obj
+        for obj in CustomPrefix.objects.filter(
+            pk__in={assigned_object_id for _, assigned_object_id in address_rows}
+        )
+    }
+
+    inherited_ids = []
+    for address_id, assigned_object_id in address_rows:
+        custom_prefix = custom_prefixes.get(assigned_object_id)
+        if not custom_prefix:
+            continue
+        if _span_contains(_get_object_span(custom_prefix), target_span):
+            inherited_ids.append(address_id)
+
+    return inherited_ids
+
+
+def _get_parent_ipam_address_ids(target_object):
+    """Return address IDs assigned to IPAM objects that contain target_object."""
+    from ipam.models import IPAddress, IPRange, Prefix
+
+    target_span = _get_object_span(target_object)
+    if not target_span:
+        return []
+
+    address_rows = list(
+        Address.objects.filter(
+            assigned_object_type__app_label="ipam",
+            assigned_object_type__model__in=("prefix", "ipaddress", "iprange"),
+        ).values_list("id", "assigned_object_type__model", "assigned_object_id")
+    )
+    if not address_rows:
+        return []
+
+    object_ids_by_model = defaultdict(set)
+    for _, model_name, object_id in address_rows:
+        object_ids_by_model[model_name].add(object_id)
+
+    model_objects = {
+        "prefix": {
+            obj.pk: obj
+            for obj in Prefix.objects.filter(
+                pk__in=object_ids_by_model.get("prefix", set())
+            )
+        },
+        "ipaddress": {
+            obj.pk: obj
+            for obj in IPAddress.objects.filter(
+                pk__in=object_ids_by_model.get("ipaddress", set())
+            )
+        },
+        "iprange": {
+            obj.pk: obj
+            for obj in IPRange.objects.filter(
+                pk__in=object_ids_by_model.get("iprange", set())
+            )
+        },
+    }
+
+    inherited_ids = []
+    for address_id, model_name, object_id in address_rows:
+        parent_object = model_objects.get(model_name, {}).get(object_id)
+        if not parent_object:
+            continue
+        if _span_contains(_get_object_span(parent_object), target_span):
+            inherited_ids.append(address_id)
+
+    return inherited_ids
+
+
 def _get_inherited_address_ids(target_object, direct_address_ids):
     """Get address IDs inherited from parent objects.
 
@@ -106,6 +227,16 @@ def _get_inherited_address_ids(target_object, direct_address_ids):
             ).values_list("id", flat=True)
         )
         inherited_address_ids.extend(parent_address_ids)
+
+    # Cross-model inheritance: IPAM objects inherit from containing CustomPrefixes.
+    if model_name in ("prefix", "iprange", "ipaddress"):
+        inherited_address_ids.extend(
+            _get_parent_customprefix_address_ids(target_object)
+        )
+
+    # Cross-model inheritance: CustomPrefixes inherit from containing IPAM objects.
+    elif model_name == "customprefix":
+        inherited_address_ids.extend(_get_parent_ipam_address_ids(target_object))
 
     # Remove direct addresses from inherited list to avoid duplicates
     return [
