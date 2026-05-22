@@ -56,6 +56,18 @@ class ApplicationItemFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         )
         ApplicationItem.objects.bulk_create(cls.items)
 
+        cls.applications = (
+            Application(
+                name="app-item-test-1", source_ports=[80], destination_ports=[80]
+            ),
+            Application(
+                name="app-item-test-2", source_ports=[443], destination_ports=[443]
+            ),
+        )
+        Application.objects.bulk_create(cls.applications)
+        cls.applications[0].application_items.set([cls.items[0], cls.items[1]])
+        cls.applications[1].application_items.set([cls.items[2]])
+
     def test_name(self):
         params = {"name": ["item-1", "item-2"]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
@@ -77,6 +89,18 @@ class ApplicationItemFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_ports": 4}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_application_id(self):
+        params = {"application_id": [self.applications[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"application_id": [self.applications[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_application(self):
+        params = {"application": [self.applications[0].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"application": [self.applications[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
 class ApplicationFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):

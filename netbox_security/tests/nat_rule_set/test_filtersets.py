@@ -25,6 +25,7 @@ from netbox_security.choices import (
     AddressTypeChoices,
     RuleDirectionChoices,
     NatTypeChoices,
+    CustomInterfaceChoices,
 )
 
 
@@ -266,6 +267,7 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 destination_pool=cls.pools[2],
                 source_ports=[1, 2, 3],
                 destination_ports=[4, 5, 6],
+                custom_interface=CustomInterfaceChoices.INTERFACE,
             ),
             NatRule(
                 name="rule-2",
@@ -278,6 +280,7 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 destination_pool=cls.pools[0],
                 source_ports=[4, 5, 6],
                 destination_ports=[1, 2, 3],
+                custom_interface=CustomInterfaceChoices.NAT_OFF,
             ),
             NatRule(
                 name="rule-3",
@@ -290,6 +293,7 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
                 destination_pool=cls.pools[1],
                 source_ports=[1, 2, 3],
                 destination_ports=[4, 5, 6],
+                custom_interface=CustomInterfaceChoices.NAT_OFF,
             ),
         )
         for item in cls.rules:
@@ -527,6 +531,19 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"ip_range_id": [self.ranges[2].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_custom_interface(self):
+        params = {"custom_interface": [CustomInterfaceChoices.INTERFACE]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"custom_interface": [CustomInterfaceChoices.NAT_OFF]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {
+            "custom_interface": [
+                CustomInterfaceChoices.INTERFACE,
+                CustomInterfaceChoices.NAT_OFF,
+            ]
+        }
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
 
 class NatRuleSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):

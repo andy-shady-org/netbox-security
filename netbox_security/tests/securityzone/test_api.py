@@ -309,6 +309,28 @@ class SecurityZonePolicyAPITestCase(
         self.assertIn("source_zone", response_data)
         self.assertIn("destination_zone", response_data)
 
+    def test_create_empty_policy_actions_rejected(self):
+        self.add_permissions(
+            "netbox_security.view_securityzonepolicy",
+            "netbox_security.add_securityzonepolicy",
+        )
+
+        payload = {
+            "name": "policy-empty-actions",
+            "index": 102,
+            "policy_actions": [],
+            "source_zone": self.zones[0].pk,
+            "destination_zone": self.zones[1].pk,
+        }
+
+        response = self.client.post(
+            self._get_list_url(), payload, format="json", **self.header
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response_data = response.json()
+        self.assertIn("policy_actions", response_data)
+
     def test_create_same_zone_allowed_when_intra_zone_enabled(self):
         self.add_permissions(
             "netbox_security.view_securityzonepolicy",

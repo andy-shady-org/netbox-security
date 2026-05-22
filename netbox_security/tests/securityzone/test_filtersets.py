@@ -384,6 +384,19 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         params = {"application_sets": [self.application_sets[2].name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
+    def test_policy_actions(self):
+        params = {"policy_actions": [ActionChoices.PERMIT]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+        params = {"policy_actions": [ActionChoices.DENY]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+        params = {"policy_actions": [ActionChoices.PERMIT, ActionChoices.DENY]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+
+        params = {"policy_actions": [ActionChoices.REJECT]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
+
 
 class SecurityZoneAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
     queryset = SecurityZoneAssignment.objects.all()

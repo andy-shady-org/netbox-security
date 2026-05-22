@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
+from netbox.api.serializers import PrimaryModelSerializer
 from utilities.api import get_serializer_for_model
 
 from netbox_security.api.serializers import FirewallFilterSerializer

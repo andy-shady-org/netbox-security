@@ -94,8 +94,8 @@ from netbox_security.filtersets import (
     FirewallFilterFilterSet,
     FirewallFilterAssignmentFilterSet,
     FirewallFilterRuleFilterSet,
-    FirewallFilterRuleFromSettingFilterSet,
-    FirewallFilterRuleThenSettingFilterSet,
+    FirewallRuleFromSettingFilterSet,
+    FirewallRuleThenSettingFilterSet,
 )
 
 
@@ -303,10 +303,10 @@ class FirewallFilterRuleViewSet(NetBoxModelViewSet):
 class FirewallRuleFromSettingViewSet(NetBoxModelViewSet):
     queryset = FirewallRuleFromSetting.objects.all()
     serializer_class = FirewallRuleFromSettingSerializer
-    filterset_class = FirewallFilterRuleFromSettingFilterSet
+    filterset_class = FirewallRuleFromSettingFilterSet
 
 
 class FirewallRuleThenSettingViewSet(NetBoxModelViewSet):
     queryset = FirewallRuleThenSetting.objects.all()
     serializer_class = FirewallRuleThenSettingSerializer
-    filterset_class = FirewallFilterRuleThenSettingFilterSet
+    filterset_class = FirewallRuleThenSettingFilterSet

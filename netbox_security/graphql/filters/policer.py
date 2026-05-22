@@ -9,6 +9,7 @@ except ImportError:
     from strawberry_django import FilterLookup as StrFilterLookup
 
 from netbox.graphql.filters import PrimaryModelFilter
+from netbox.graphql.filter_lookups import IntegerLookup
 from tenancy.graphql.filter_mixins import ContactFilterMixin, TenancyFilterMixin
 
 from netbox_security.graphql.enums import (

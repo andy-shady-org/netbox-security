@@ -10,13 +10,21 @@ from netbox_security.models import (
     FirewallFilter,
     FirewallFilterRule,
     FirewallFilterAssignment,
+    FirewallRuleFromSetting,
+    FirewallRuleThenSetting,
 )
 from netbox_security.filtersets import (
     FirewallFilterFilterSet,
     FirewallFilterRuleFilterSet,
     FirewallFilterAssignmentFilterSet,
+    FirewallRuleFromSettingFilterSet,
+    FirewallRuleThenSettingFilterSet,
 )
-from netbox_security.choices import FamilyChoices
+from netbox_security.choices import (
+    FamilyChoices,
+    FirewallRuleFromSettingChoices,
+    FirewallRuleThenSettingChoices,
+)
 
 
 class FirewallFilterFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
@@ -255,3 +263,141 @@ class FirewallFilterAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetT
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"virtualdevicecontext": [self.virtual[0].name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+
+class FirewallRuleFromSettingFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+    queryset = FirewallRuleFromSetting.objects.all()
+    filterset = FirewallRuleFromSettingFilterSet
+    ignore_fields = ("from_settings",)
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.ff = (
+            FirewallFilter(name="filter-from-1", family=FamilyChoices.INET),
+            FirewallFilter(name="filter-from-2", family=FamilyChoices.INET),
+        )
+        FirewallFilter.objects.bulk_create(cls.ff)
+
+        cls.rules = (
+            FirewallFilterRule(name="rule-from-1", firewall_filter=cls.ff[0], index=10),
+            FirewallFilterRule(name="rule-from-2", firewall_filter=cls.ff[1], index=10),
+            FirewallFilterRule(name="rule-from-3", firewall_filter=cls.ff[1], index=20),
+        )
+        for rule in cls.rules:
+            rule.save()
+
+        rule_ct = ContentType.objects.get_for_model(FirewallFilterRule)
+        cls.settings = (
+            FirewallRuleFromSetting(
+                key=FirewallRuleFromSettingChoices.ADDRESS,
+                value="value-1",
+                assigned_object_type=rule_ct,
+                assigned_object_id=cls.rules[0].pk,
+            ),
+            FirewallRuleFromSetting(
+                key=FirewallRuleFromSettingChoices.PORT,
+                value="value-2",
+                assigned_object_type=rule_ct,
+                assigned_object_id=cls.rules[1].pk,
+            ),
+            FirewallRuleFromSetting(
+                key=FirewallRuleFromSettingChoices.PROTOCOL,
+                value="value-1",
+                assigned_object_type=rule_ct,
+                assigned_object_id=cls.rules[2].pk,
+            ),
+        )
+        for s in cls.settings:
+            s.save()
+
+    def test_key(self):
+        params = {"key": [FirewallRuleFromSettingChoices.ADDRESS]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {
+            "key": [
+                FirewallRuleFromSettingChoices.PORT,
+                FirewallRuleFromSettingChoices.PROTOCOL,
+            ]
+        }
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_value(self):
+        params = {"value": ["value-1"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"value": ["value-2"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_firewall_filter_rule_id(self):
+        params = {"firewall_filter_rule_id": [self.rules[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"firewall_filter_rule_id": [self.rules[1].pk, self.rules[2].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+
+class FirewallRuleThenSettingFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+    queryset = FirewallRuleThenSetting.objects.all()
+    filterset = FirewallRuleThenSettingFilterSet
+    ignore_fields = ("then_settings",)
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.ff = (
+            FirewallFilter(name="filter-then-1", family=FamilyChoices.INET),
+            FirewallFilter(name="filter-then-2", family=FamilyChoices.INET),
+        )
+        FirewallFilter.objects.bulk_create(cls.ff)
+
+        cls.rules = (
+            FirewallFilterRule(name="rule-then-1", firewall_filter=cls.ff[0], index=10),
+            FirewallFilterRule(name="rule-then-2", firewall_filter=cls.ff[1], index=10),
+            FirewallFilterRule(name="rule-then-3", firewall_filter=cls.ff[1], index=20),
+        )
+        for rule in cls.rules:
+            rule.save()
+
+        rule_ct = ContentType.objects.get_for_model(FirewallFilterRule)
+        cls.settings = (
+            FirewallRuleThenSetting(
+                key=FirewallRuleThenSettingChoices.ACCEPT,
+                value="value-1",
+                assigned_object_type=rule_ct,
+                assigned_object_id=cls.rules[0].pk,
+            ),
+            FirewallRuleThenSetting(
+                key=FirewallRuleThenSettingChoices.DISCARD,
+                value="value-2",
+                assigned_object_type=rule_ct,
+                assigned_object_id=cls.rules[1].pk,
+            ),
+            FirewallRuleThenSetting(
+                key=FirewallRuleThenSettingChoices.LOG,
+                value="value-1",
+                assigned_object_type=rule_ct,
+                assigned_object_id=cls.rules[2].pk,
+            ),
+        )
+        for s in cls.settings:
+            s.save()
+
+    def test_key(self):
+        params = {"key": [FirewallRuleThenSettingChoices.ACCEPT]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {
+            "key": [
+                FirewallRuleThenSettingChoices.DISCARD,
+                FirewallRuleThenSettingChoices.LOG,
+            ]
+        }
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_value(self):
+        params = {"value": ["value-1"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"value": ["value-2"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_firewall_filter_rule_id(self):
+        params = {"firewall_filter_rule_id": [self.rules[0].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"firewall_filter_rule_id": [self.rules[1].pk, self.rules[2].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
