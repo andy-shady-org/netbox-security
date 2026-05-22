@@ -88,9 +88,11 @@ class FirewallRuleFromSettingDeleteView(generic.ObjectDeleteView):
     queryset = FirewallRuleFromSetting.objects.all()
 
 
-@register_model_view(FirewallRuleFromSetting, "bulk_delete", path="delete")
+@register_model_view(
+    FirewallRuleFromSetting, "bulk_delete", path="delete", detail=False
+)
 class FirewallRuleFromSettingBulkDeleteView(generic.BulkDeleteView):
-    queryset = FirewallFilterRule.objects.all()
+    queryset = FirewallRuleFromSetting.objects.all()
     table = FirewallRuleFromSettingTable
 
 
@@ -110,7 +112,9 @@ class FirewallRuleThenSettingDeleteView(generic.ObjectDeleteView):
     queryset = FirewallRuleThenSetting.objects.all()
 
 
-@register_model_view(FirewallRuleThenSetting, "bulk_delete", path="delete")
+@register_model_view(
+    FirewallRuleThenSetting, "bulk_delete", path="delete", detail=False
+)
 class FirewallRuleThenSettingBulkDeleteView(generic.BulkDeleteView):
     queryset = FirewallRuleThenSetting.objects.all()
     table = FirewallRuleThenSettingTable

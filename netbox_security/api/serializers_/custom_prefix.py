@@ -9,7 +9,7 @@ from netbox_security.models import CustomPrefix
 
 class CustomPrefixSerializer(PrimaryModelSerializer):
     url = HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_security-api:address-detail"
+        view_name="plugins-api:netbox_security-api:customprefix-detail"
     )
     tenant = TenantSerializer(nested=True, required=False, allow_null=True)
     prefix = IPNetworkField(required=False, allow_null=True)

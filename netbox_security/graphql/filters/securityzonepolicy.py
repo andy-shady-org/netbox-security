@@ -1,7 +1,6 @@
 from typing import Annotated
 import strawberry
 import strawberry_django
-from strawberry_django import ComparisonFilterLookup
 from strawberry.scalars import ID
 
 try:

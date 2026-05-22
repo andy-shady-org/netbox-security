@@ -69,7 +69,7 @@ class AddressListFilterSet(NetBoxModelFilterSet):
 
     class Meta:
         model = AddressList
-        fields = ["id", "assigned_object_type", "assigned_object_id"]
+        fields = ["id", "name", "assigned_object_type", "assigned_object_id"]
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""

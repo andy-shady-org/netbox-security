@@ -3,7 +3,11 @@ import django_tables2 as tables
 from netbox.tables import NetBoxTable
 from netbox.tables.columns import TagColumn
 
-from netbox_security.models import FirewallFilterRule, FirewallRuleFromSetting
+from netbox_security.models import (
+    FirewallFilterRule,
+    FirewallRuleFromSetting,
+    FirewallRuleThenSetting,
+)
 
 __all__ = (
     "FirewallFilterRuleTable",
@@ -42,6 +46,6 @@ class FirewallRuleFromSettingTable(NetBoxTable):
 
 class FirewallRuleThenSettingTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
-        model = FirewallRuleFromSetting
+        model = FirewallRuleThenSetting
         fields = ("pk", "assigned_object", "key", "value")
         default_columns = ("pk", "assigned_object", "key", "value")

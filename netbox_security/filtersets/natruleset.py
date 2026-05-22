@@ -96,6 +96,11 @@ class NatRuleSetAssignmentFilterSet(AssignmentFilterSet):
         to_field_name="name",
         label=_("NAT Ruleset (Name)"),
     )
+    device = MultiValueCharFilter(
+        method="filter_device",
+        field_name="name",
+        label=_("Device (name)"),
+    )
     device_id = MultiValueNumberFilter(
         method="filter_device",
         field_name="pk",

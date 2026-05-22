@@ -1,6 +1,6 @@
 from django.urls import reverse
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
+from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
 from netbox.search import SearchIndex, register_search
 
@@ -53,26 +53,30 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
         blank=True,
         related_name="%(class)s_application_sets",
     )
-    # policy_actions = ChoiceArrayField(
-    #     base_field=models.CharField(
-    #         choices=ActionChoices, default=ActionChoices.PERMIT
-    #     ),
-    #     verbose_name=_("Policy Actions"),
-    #     blank=True,
-    #     null=True,
-    #     default=list,
-    # )
-    policy_actions = ArrayField(
-        models.CharField(
+    policy_actions = ChoiceArrayField(
+        base_field=models.CharField(
             max_length=20,
-            blank=True,
-            null=True,
             choices=ActionChoices,
-            default=ActionChoices.PERMIT,
+            blank=False,
+            null=False,
         ),
         size=4,
+        blank=False,
+        null=False,
+        validators=[MinLengthValidator(1)],
         verbose_name=_("Policy Actions"),
     )
+    # policy_actions = ArrayField(
+    #     models.CharField(
+    #         max_length=20,
+    #         blank=True,
+    #         null=True,
+    #         choices=ActionChoices,
+    #         default=ActionChoices.PERMIT,
+    #     ),
+    #     size=4,
+    #     verbose_name=_("Policy Actions"),
+    # )
     prerequisite_models = ("netbox_security.SecurityZone",)
 
     class Meta:

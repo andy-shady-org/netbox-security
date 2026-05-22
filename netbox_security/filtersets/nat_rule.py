@@ -12,7 +12,11 @@ from netbox_security.models import (
     NatRuleAssignment,
 )
 
-from netbox_security.choices import AddressTypeChoices, RuleStatusChoices
+from netbox_security.choices import (
+    AddressTypeChoices,
+    RuleStatusChoices,
+    CustomInterfaceChoices,
+)
 from netbox_security.mixins import PortsFilterSet, AssignmentFilterSet
 
 __all__ = (
@@ -169,6 +173,11 @@ class NatRuleFilterSet(PortsFilterSet, PrimaryModelFilterSet):
         field_name="destination_pool__name",
         to_field_name="name",
         label=_("Destination Pool (Name)"),
+    )
+
+    custom_interface = django_filters.MultipleChoiceFilter(
+        choices=CustomInterfaceChoices,
+        required=False,
     )
 
     class Meta:

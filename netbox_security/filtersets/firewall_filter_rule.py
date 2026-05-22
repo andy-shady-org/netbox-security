@@ -1,9 +1,11 @@
 import django_filters
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.translation import gettext as _
 
-from netbox.filtersets import NetBoxModelFilterSet, PrimaryModelFilterSet
+from netbox.filtersets import PrimaryModelFilterSet
 from utilities.filtersets import register_filterset
+from utilities.filters import MultiValueCharFilter, MultiValueNumberFilter
 
 from netbox_security.choices import (
     FirewallRuleFromSettingChoices,
@@ -18,8 +20,8 @@ from netbox_security.models import (
 
 __all__ = (
     "FirewallFilterRuleFilterSet",
-    "FirewallFilterRuleFromSettingFilterSet",
-    "FirewallFilterRuleThenSettingFilterSet",
+    "FirewallRuleFromSettingFilterSet",
+    "FirewallRuleThenSettingFilterSet",
 )
 
 
@@ -50,38 +52,92 @@ class FirewallFilterRuleFilterSet(PrimaryModelFilterSet):
 
 
 @register_filterset
-class FirewallFilterRuleFromSettingFilterSet(PrimaryModelFilterSet):
+class FirewallRuleFromSettingFilterSet(PrimaryModelFilterSet):
+    assigned_object_id = MultiValueNumberFilter(
+        field_name="assigned_object_id",
+        label=_("Assigned Object ID"),
+    )
     key = django_filters.MultipleChoiceFilter(
         choices=FirewallRuleFromSettingChoices, null_value=None, label=_("Setting Name")
+    )
+    value = MultiValueCharFilter(
+        field_name="value",
+        label=_("Value"),
+    )
+    firewall_filter_rule_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=FirewallFilterRule.objects.all(),
+        method="filter_firewall_filter_rule_id",
+        label=_("Firewall Filter Rule (ID)"),
     )
 
     class Meta:
         model = FirewallRuleFromSetting
         fields = [
+            "id",
+            "assigned_object_id",
             "key",
+            "value",
+            "description",
         ]
 
     def search(self, queryset, name, value):
         if not value.strip():
             return queryset
-        qs_filter = Q(key__icontains=value)
+        qs_filter = Q(key__icontains=value) | Q(value__icontains=value)
         return queryset.filter(qs_filter).distinct()
+
+    def filter_firewall_filter_rule_id(self, queryset, name, value):
+        if not value:
+            return queryset
+
+        rule_ct = ContentType.objects.get_for_model(FirewallFilterRule)
+        return queryset.filter(
+            assigned_object_type=rule_ct,
+            assigned_object_id__in=[rule.pk for rule in value],
+        )
 
 
 @register_filterset
-class FirewallFilterRuleThenSettingFilterSet(PrimaryModelFilterSet):
+class FirewallRuleThenSettingFilterSet(PrimaryModelFilterSet):
+    assigned_object_id = MultiValueNumberFilter(
+        field_name="assigned_object_id",
+        label=_("Assigned Object ID"),
+    )
     key = django_filters.MultipleChoiceFilter(
         choices=FirewallRuleThenSettingChoices, null_value=None, label=_("Setting Name")
+    )
+    value = MultiValueCharFilter(
+        field_name="value",
+        label=_("Value"),
+    )
+    firewall_filter_rule_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=FirewallFilterRule.objects.all(),
+        method="filter_firewall_filter_rule_id",
+        label=_("Firewall Filter Rule (ID)"),
     )
 
     class Meta:
         model = FirewallRuleThenSetting
         fields = [
+            "id",
+            "assigned_object_id",
             "key",
+            "value",
+            "description",
         ]
 
     def search(self, queryset, name, value):
         if not value.strip():
             return queryset
-        qs_filter = Q(key__icontains=value)
+        qs_filter = Q(key__icontains=value) | Q(value__icontains=value)
         return queryset.filter(qs_filter).distinct()
+
+    def filter_firewall_filter_rule_id(self, queryset, name, value):
+        if not value:
+            return queryset
+
+        rule_ct = ContentType.objects.get_for_model(FirewallFilterRule)
+        return queryset.filter(
+            assigned_object_type=rule_ct,
+            assigned_object_id__in=[rule.pk for rule in value],
+        )

@@ -37,8 +37,9 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
         nested=True, required=False, allow_null=True, many=True
     )
     policy_actions = ListField(
-        child=ChoiceField(choices=ActionChoices, required=False),
+        child=ChoiceField(choices=tuple(ActionChoices), required=False),
         required=True,
+        allow_empty=False,
     )
 
     class Meta:

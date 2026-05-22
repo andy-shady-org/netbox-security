@@ -1,10 +1,9 @@
-from typing import Annotated, List
+from typing import Annotated
 import strawberry
 import strawberry_django
 
 try:
     from strawberry_django import StrFilterLookup
-    from strawberry_django import FilterLookup
 except ImportError:
     from strawberry_django import FilterLookup as StrFilterLookup
 

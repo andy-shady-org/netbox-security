@@ -29,6 +29,12 @@ class ApplicationItemFilterSet(PortsFilterSet, PrimaryModelFilterSet):
         to_field_name="id",
         label=_("Application (ID)"),
     )
+    application = django_filters.ModelMultipleChoiceFilter(
+        queryset=Application.objects.all(),
+        field_name="application_application_items__name",
+        to_field_name="name",
+        label=_("Application (Name)"),
+    )
 
     class Meta:
         model = ApplicationItem
