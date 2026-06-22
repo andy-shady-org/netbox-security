@@ -59,13 +59,12 @@ jobs:
           - name: Set up configuration
             working-directory: netbox
             run: |
-                ln -s $(pwd)/../netbox-security/media/configuration.testing.py netbox/netbox/configuration.py
-
                 python -m pip install --upgrade pip
                 python -m pip install tblib
                 pip install -r requirements.txt -U
 
           - name: Run tests
             working-directory: netbox
-            run: |
+            run: >
+                NETBOX_CONFIGURATION=netbox_security.tests.configuration
                 python netbox/manage.py test netbox_security.tests --parallel -v2
