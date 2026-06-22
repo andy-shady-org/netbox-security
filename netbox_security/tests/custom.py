@@ -140,4 +140,3 @@ class APITestCase(NetBoxAPITestCase):
     def _get_list_url(self):
         viewname = f"plugins-api:{self._get_view_namespace()}:{self.model._meta.model_name}-list"
         return reverse(viewname)
-

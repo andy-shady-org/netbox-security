@@ -107,7 +107,9 @@ class SecurityZonePolicyAPITestCase(
         {
             "name": "policy_actions__contains",
             "filters": "policy_actions: {contains: [PERMIT]}",
-            "expected": lambda qs: qs.filter(policy_actions__contains=[ActionChoices.PERMIT]),
+            "expected": lambda qs: qs.filter(
+                policy_actions__contains=[ActionChoices.PERMIT]
+            ),
         },
     )
 
@@ -176,14 +178,22 @@ class SecurityZonePolicyAPITestCase(
                 index=5,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                policy_actions=[ActionChoices.PERMIT, ActionChoices.COUNT, ActionChoices.LOG],
+                policy_actions=[
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
             ),
             SecurityZonePolicy(
                 name="policy-6",
                 index=6,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                policy_actions=[ActionChoices.PERMIT, ActionChoices.COUNT, ActionChoices.LOG],
+                policy_actions=[
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
             ),
         )
         SecurityZonePolicy.objects.bulk_create(cls.policies)
@@ -259,7 +269,11 @@ class SecurityZonePolicyAPITestCase(
             index=8,
             source_zone=cls.zones[0],
             destination_zone=cls.zones[1],
-            policy_actions=[ActionChoices.PERMIT, ActionChoices.COUNT, ActionChoices.LOG],
+            policy_actions=[
+                ActionChoices.PERMIT,
+                ActionChoices.COUNT,
+                ActionChoices.LOG,
+            ],
         )
         cls.policy.source_address.add(cls.addresses_lists[0])
         cls.policy.destination_address.add(cls.addresses_lists[1])
@@ -271,21 +285,33 @@ class SecurityZonePolicyAPITestCase(
             {
                 "name": "policy-1",
                 "index": 1,
-                "policy_actions": [ActionChoices.PERMIT, ActionChoices.COUNT, ActionChoices.LOG],
+                "policy_actions": [
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
             },
             {
                 "name": "policy-2",
                 "index": 2,
-                "policy_actions": [ActionChoices.PERMIT, ActionChoices.COUNT, ActionChoices.LOG],
+                "policy_actions": [
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
             },
             {
                 "name": "policy-3",
                 "index": 3,
-                "policy_actions": [ActionChoices.PERMIT, ActionChoices.COUNT, ActionChoices.LOG],
+                "policy_actions": [
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
             },
