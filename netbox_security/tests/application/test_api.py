@@ -16,6 +16,17 @@ class ApplicationItemAPITestCase(
 ):
     model = ApplicationItem
 
+    # TODO: Remove this override once NetBox fixes enum-backed ArrayLookup
+    # auto-filter rendering in utilities.testing.api (_emit_array_lookup_filter_tests).
+    graphql_auto_filter_exclude = ("protocol",)
+    graphql_filter_tests = (
+        {
+            "name": "protocol__contains",
+            "filters": "protocol: {contains: [TCP]}",
+            "expected": lambda qs: qs.filter(protocol__contains=[ProtocolChoices.TCP]),
+        },
+    )
+
     brief_fields = [
         "description",
         "destination_ports",
@@ -95,6 +106,17 @@ class ApplicationAPITestCase(
     APIViewTestCases.GraphQLTestCase,
 ):
     model = Application
+
+    # TODO: Remove this override once NetBox fixes enum-backed ArrayLookup
+    # auto-filter rendering in utilities.testing.api (_emit_array_lookup_filter_tests).
+    graphql_auto_filter_exclude = ("protocol",)
+    graphql_filter_tests = (
+        {
+            "name": "protocol__contains",
+            "filters": "protocol: {contains: [TCP]}",
+            "expected": lambda qs: qs.filter(protocol__contains=[ProtocolChoices.TCP]),
+        },
+    )
 
     brief_fields = [
         "application_items",

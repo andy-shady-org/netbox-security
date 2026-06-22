@@ -9,7 +9,14 @@ license-files = ["LICENSE"]
 readme = "README.md"
 keywords = ["netbox", "netbox-plugin", "security"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable"
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Django",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
 ]
@@ -29,4 +36,4 @@ build-backend = 'setuptools.build_meta'
 exclude = ["examples*", "media*", "*.tests*"]
 
 [tool.setuptools.package-data]
-"netbox_security" = ["templates/**/*.html"]
+"netbox_security" = ["templates/**/*.html", "tests/query_counts.json"]

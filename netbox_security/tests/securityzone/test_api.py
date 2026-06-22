@@ -12,7 +12,10 @@ from netbox_security.models import (
     ApplicationSet,
     CustomPrefix,
 )
-from netbox_security.choices import ProtocolChoices
+from netbox_security.choices import (
+    ProtocolChoices,
+    ActionChoices,
+)
 
 
 class SecurityZoneAPITestCase(
@@ -70,7 +73,7 @@ class SecurityZoneAPITestCase(
             index=999,
             source_zone=zone,
             destination_zone=zone,
-            policy_actions=["permit"],
+            policy_actions=[ActionChoices.PERMIT],
         )
 
         response = self.client.patch(
@@ -96,6 +99,19 @@ class SecurityZonePolicyAPITestCase(
     APIViewTestCases.GraphQLTestCase,
 ):
     model = SecurityZonePolicy
+
+    # TODO: Remove this override once NetBox fixes enum-backed ArrayLookup
+    # auto-filter rendering in utilities.testing.api (_emit_array_lookup_filter_tests).
+    graphql_auto_filter_exclude = ("policy_actions",)
+    graphql_filter_tests = (
+        {
+            "name": "policy_actions__contains",
+            "filters": "policy_actions: {contains: [PERMIT]}",
+            "expected": lambda qs: qs.filter(
+                policy_actions__contains=[ActionChoices.PERMIT]
+            ),
+        },
+    )
 
     brief_fields = [
         "application_sets",
@@ -162,14 +178,22 @@ class SecurityZonePolicyAPITestCase(
                 index=5,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                policy_actions=["permit", "count", "log"],
+                policy_actions=[
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
             ),
             SecurityZonePolicy(
                 name="policy-6",
                 index=6,
                 source_zone=cls.zones[0],
                 destination_zone=cls.zones[1],
-                policy_actions=["permit", "count", "log"],
+                policy_actions=[
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
             ),
         )
         SecurityZonePolicy.objects.bulk_create(cls.policies)
@@ -245,7 +269,11 @@ class SecurityZonePolicyAPITestCase(
             index=8,
             source_zone=cls.zones[0],
             destination_zone=cls.zones[1],
-            policy_actions=["permit", "count", "log"],
+            policy_actions=[
+                ActionChoices.PERMIT,
+                ActionChoices.COUNT,
+                ActionChoices.LOG,
+            ],
         )
         cls.policy.source_address.add(cls.addresses_lists[0])
         cls.policy.destination_address.add(cls.addresses_lists[1])
@@ -257,21 +285,33 @@ class SecurityZonePolicyAPITestCase(
             {
                 "name": "policy-1",
                 "index": 1,
-                "policy_actions": ["permit", "count", "log"],
+                "policy_actions": [
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
             },
             {
                 "name": "policy-2",
                 "index": 2,
-                "policy_actions": ["permit", "count", "log"],
+                "policy_actions": [
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
             },
             {
                 "name": "policy-3",
                 "index": 3,
-                "policy_actions": ["permit", "count", "log"],
+                "policy_actions": [
+                    ActionChoices.PERMIT,
+                    ActionChoices.COUNT,
+                    ActionChoices.LOG,
+                ],
                 "source_zone": cls.zones[0].pk,
                 "destination_zone": cls.zones[1].pk,
             },
@@ -295,7 +335,7 @@ class SecurityZonePolicyAPITestCase(
         payload = {
             "name": "policy-same-zone-denied",
             "index": 100,
-            "policy_actions": ["permit"],
+            "policy_actions": [ActionChoices.PERMIT],
             "source_zone": self.zones[0].pk,
             "destination_zone": self.zones[0].pk,
         }
@@ -343,7 +383,7 @@ class SecurityZonePolicyAPITestCase(
         payload = {
             "name": "policy-same-zone-allowed",
             "index": 101,
-            "policy_actions": ["permit"],
+            "policy_actions": [ActionChoices.PERMIT],
             "source_zone": zone.pk,
             "destination_zone": zone.pk,
         }
