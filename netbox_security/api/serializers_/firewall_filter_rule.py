@@ -115,6 +115,9 @@ class FirewallFilterRuleSerializer(PrimaryModelSerializer):
             "description",
             "comments",
             "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
         )
         brief_fields = (
             "url",
