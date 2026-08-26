@@ -67,4 +67,5 @@ jobs:
             working-directory: netbox
             run: >
                 NETBOX_CONFIGURATION=netbox_security.tests.configuration
-                python netbox/manage.py test netbox_security.tests --parallel -v2
+                UPDATE_QUERY_COUNTS=1
+                python netbox/manage.py test netbox_security.tests -v2
