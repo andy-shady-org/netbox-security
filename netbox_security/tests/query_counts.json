@@ -13,7 +13,7 @@
   "customprefix:list_objects_with_permission": 19,
   "firewallfilter:api_list_objects": 13,
   "firewallfilter:list_objects_with_permission": 19,
-  "firewallfilterrule:api_list_objects": 15,
+  "firewallfilterrule:api_list_objects": 16,
   "firewallfilterrule:list_objects_with_permission": 21,
   "natpool:api_list_objects": 13,
   "natpool:list_objects_with_permission": 19,
