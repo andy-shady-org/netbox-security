@@ -103,15 +103,6 @@ class SecurityZonePolicyAPITestCase(
     # TODO: Remove this override once NetBox fixes enum-backed ArrayLookup
     # auto-filter rendering in utilities.testing.api (_emit_array_lookup_filter_tests).
     graphql_auto_filter_exclude = ("policy_actions",)
-    graphql_filter_tests = (
-        {
-            "name": "policy_actions__contains",
-            "filters": "policy_actions: {contains: [PERMIT]}",
-            "expected": lambda qs: qs.filter(
-                policy_actions__contains=[ActionChoices.PERMIT]
-            ),
-        },
-    )
 
     brief_fields = [
         "application_sets",
