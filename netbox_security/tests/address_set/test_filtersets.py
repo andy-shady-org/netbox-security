@@ -5,7 +5,7 @@ from django.test import TestCase
 from dcim.models import Site, Manufacturer
 from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
 from tenancy.models import Tenant, TenantGroup
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from netbox_security.models import (
     Address,
@@ -21,7 +21,7 @@ from netbox_security.filtersets import (
 )
 
 
-class AddressSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class AddressSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = AddressSet.objects.all()
     filterset = AddressSetFilterSet
 
@@ -137,7 +137,7 @@ class AddressSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class AddressSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class AddressSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = AddressSetAssignment.objects.all()
     filterset = AddressSetAssignmentFilterSet
 
@@ -162,7 +162,7 @@ class AddressSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests
         DeviceType.objects.bulk_create(cls.types)
 
         cls.roles = (
-            DeviceRole(name="role-1", slug="role-1", level=0, lft=1, rght=2, tree_id=1),
+            DeviceRole(name="role-1", slug="role-1"),
         )
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (

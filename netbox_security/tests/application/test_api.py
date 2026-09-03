@@ -59,6 +59,7 @@ class ApplicationItemAPITestCase(
     bulk_update_data = {
         "description": "Test Item",
     }
+    bulk_update_invalid_data = {"protocol": ["ABC"]}
 
     @classmethod
     def setUpTestData(cls):

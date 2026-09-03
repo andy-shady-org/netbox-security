@@ -5,7 +5,7 @@ from dcim.models import Site, Manufacturer
 from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
 from ipam.models import IPRange, Prefix, IPAddress
 from tenancy.models import Tenant, TenantGroup
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from netbox_security.models import (
     Address,
@@ -22,7 +22,7 @@ from netbox_security.filtersets import (
 )
 
 
-class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = Address.objects.all()
     filterset = AddressFilterSet
 
@@ -275,7 +275,7 @@ class AddressFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class AddressAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class AddressAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = AddressAssignment.objects.all()
     filterset = AddressAssignmentFilterSet
 
@@ -361,7 +361,7 @@ class AddressAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         DeviceType.objects.bulk_create(cls.types)
 
         cls.roles = (
-            DeviceRole(name="role-1", slug="role-1", level=0, lft=1, rght=2, tree_id=1),
+            DeviceRole(name="role-1", slug="role-1"),
         )
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (

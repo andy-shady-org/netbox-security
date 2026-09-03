@@ -1,7 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
 from netaddr import IPNetwork
 from django.test import TestCase
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 from ipam.choices import IPAddressStatusChoices
 from dcim.models import Site, Manufacturer
 from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
@@ -29,7 +29,7 @@ from netbox_security.choices import (
 )
 
 
-class NatRuleSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class NatRuleSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = NatRuleSet.objects.all()
     filterset = NatRuleSetFilterSet
 
@@ -121,7 +121,7 @@ class NatRuleSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
 
-class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = NatRule.objects.all()
     filterset = NatRuleFilterSet
 
@@ -546,7 +546,7 @@ class NatRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
 
-class NatRuleSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class NatRuleSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = NatRuleSetAssignment.objects.all()
     filterset = NatRuleSetAssignmentFilterSet
 
@@ -583,7 +583,7 @@ class NatRuleSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests
         DeviceType.objects.bulk_create(cls.types)
 
         cls.roles = (
-            DeviceRole(name="role-1", slug="role-1", level=0, lft=1, rght=2, tree_id=1),
+            DeviceRole(name="role-1", slug="role-1"),
         )
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (
