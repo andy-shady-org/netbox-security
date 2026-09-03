@@ -1,7 +1,7 @@
 from django.test import TestCase
 from netaddr import IPNetwork
 from tenancy.models import Tenant, TenantGroup
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from netbox_security.models import (
     CustomPrefix,
@@ -12,7 +12,7 @@ from netbox_security.filtersets import (
 )
 
 
-class CustomPrefixFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class CustomPrefixFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = CustomPrefix.objects.all()
     filterset = CustomPrefixFilterSet
 

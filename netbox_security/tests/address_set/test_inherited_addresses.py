@@ -13,7 +13,7 @@ from netbox_security.models import (
     SecurityZone,
     SecurityZonePolicy,
 )
-from netbox_security.utilities import get_address_set_hierarchy
+from netbox_security.utils import get_address_set_hierarchy
 
 
 class PrefixInheritedAddressTestCase(TestCase):

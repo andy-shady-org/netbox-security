@@ -7,7 +7,7 @@ from netbox_security.tables import (
 from netbox_security.filtersets import CustomPrefixFilterSet
 
 from netbox_security.models import CustomPrefix
-from netbox_security.utilities import get_address_set_hierarchy
+from netbox_security.utils import get_address_set_hierarchy
 from netbox_security.forms import (
     CustomPrefixFilterForm,
     CustomPrefixForm,

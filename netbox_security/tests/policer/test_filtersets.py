@@ -4,7 +4,7 @@ from django.test import TestCase
 from dcim.models import Site, Manufacturer
 from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
 from tenancy.models import Tenant, TenantGroup
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from netbox_security.models import Policer, PolicerAssignment
 from netbox_security.filtersets import PolicerFilterSet, PolicerAssignmentFilterSet
@@ -14,7 +14,7 @@ from netbox_security.choices import (
 )
 
 
-class PolicerFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class PolicerFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = Policer.objects.all()
     filterset = PolicerFilterSet
 
@@ -105,7 +105,7 @@ class PolicerFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
 
 
-class PolicerAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class PolicerAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = PolicerAssignment.objects.all()
     filterset = PolicerAssignmentFilterSet
 
@@ -147,9 +147,7 @@ class PolicerAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         )
         DeviceType.objects.bulk_create(cls.types)
 
-        cls.roles = (
-            DeviceRole(name="role-1", slug="role-1", level=0, lft=1, rght=2, tree_id=1),
-        )
+        cls.roles = (DeviceRole(name="role-1", slug="role-1"),)
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (
             Device(

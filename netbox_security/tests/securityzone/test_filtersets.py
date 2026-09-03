@@ -5,7 +5,7 @@ from django.test import TestCase
 from dcim.models import Site, Manufacturer
 from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
 from tenancy.models import Tenant, TenantGroup
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from netbox_security.models import (
     SecurityZonePolicy,
@@ -34,7 +34,7 @@ from netbox_security.choices import (
 )
 
 
-class SecurityZoneFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class SecurityZoneFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = SecurityZone.objects.all()
     filterset = SecurityZoneFilterSet
 
@@ -115,7 +115,7 @@ class SecurityZoneFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 4)
 
 
-class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = SecurityZonePolicy.objects.all()
     filterset = SecurityZonePolicyFilterSet
 
@@ -398,7 +398,7 @@ class SecurityZonePolicyFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
 
 
-class SecurityZoneAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class SecurityZoneAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = SecurityZoneAssignment.objects.all()
     filterset = SecurityZoneAssignmentFilterSet
 
@@ -423,9 +423,7 @@ class SecurityZoneAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTes
         )
         DeviceType.objects.bulk_create(cls.types)
 
-        cls.roles = (
-            DeviceRole(name="role-1", slug="role-1", level=0, lft=1, rght=2, tree_id=1),
-        )
+        cls.roles = (DeviceRole(name="role-1", slug="role-1"),)
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (
             Device(

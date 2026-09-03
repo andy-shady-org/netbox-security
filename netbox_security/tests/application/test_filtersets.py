@@ -4,7 +4,7 @@ from django.test import TestCase
 from dcim.models import Site, Manufacturer
 from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
 from tenancy.models import Tenant, TenantGroup
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from netbox_security.models import (
     ApplicationItem,
@@ -25,7 +25,7 @@ from netbox_security.filtersets import (
 from netbox_security.choices import ProtocolChoices, ActionChoices
 
 
-class ApplicationItemFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class ApplicationItemFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = ApplicationItem.objects.all()
     filterset = ApplicationItemFilterSet
 
@@ -103,7 +103,7 @@ class ApplicationItemFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class ApplicationFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class ApplicationFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = Application.objects.all()
     filterset = ApplicationFilterSet
 
@@ -291,7 +291,7 @@ class ApplicationFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
 
-class ApplicationSetFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class ApplicationSetFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = ApplicationSet.objects.all()
     filterset = ApplicationSetFilterSet
 
@@ -484,7 +484,7 @@ class ApplicationSetFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
 
-class ApplicationAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class ApplicationAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = ApplicationAssignment.objects.all()
     filterset = ApplicationAssignmentFilterSet
 
@@ -521,9 +521,7 @@ class ApplicationAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTest
         )
         DeviceType.objects.bulk_create(cls.types)
 
-        cls.roles = (
-            DeviceRole(name="role-1", slug="role-1", level=0, lft=1, rght=2, tree_id=1),
-        )
+        cls.roles = (DeviceRole(name="role-1", slug="role-1"),)
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (
             Device(
@@ -615,7 +613,9 @@ class ApplicationAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTest
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class ApplicationSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class ApplicationSetAssignmentFilterSetTestCase(
+    TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = ApplicationSetAssignment.objects.all()
     filterset = ApplicationSetAssignmentFilterSet
 
@@ -645,9 +645,7 @@ class ApplicationSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetT
         )
         DeviceType.objects.bulk_create(cls.types)
 
-        cls.roles = (
-            DeviceRole(name="role-1", slug="role-1", level=0, lft=1, rght=2, tree_id=1),
-        )
+        cls.roles = (DeviceRole(name="role-1", slug="role-1"),)
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (
             Device(

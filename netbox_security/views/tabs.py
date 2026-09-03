@@ -11,7 +11,7 @@ from netbox_security.models import (
     NatRule,
     SecurityZone,
 )
-from netbox_security.utilities import get_address_set_hierarchy
+from netbox_security.utils import get_address_set_hierarchy
 
 from netbox.views import generic
 from utilities.views import register_model_view, ViewTab

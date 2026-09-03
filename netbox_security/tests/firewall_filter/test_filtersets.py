@@ -4,7 +4,7 @@ from django.test import TestCase
 from dcim.models import Site, Manufacturer
 from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
 from tenancy.models import Tenant, TenantGroup
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from netbox_security.models import (
     FirewallFilter,
@@ -27,7 +27,7 @@ from netbox_security.choices import (
 )
 
 
-class FirewallFilterFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class FirewallFilterFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = FirewallFilter.objects.all()
     filterset = FirewallFilterFilterSet
 
@@ -89,7 +89,7 @@ class FirewallFilterFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class FirewallFilterRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class FirewallFilterRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = FirewallFilterRule.objects.all()
     filterset = FirewallFilterRuleFilterSet
 
@@ -147,7 +147,9 @@ class FirewallFilterRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
 
-class FirewallFilterAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class FirewallFilterAssignmentFilterSetTestCase(
+    TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = FirewallFilterAssignment.objects.all()
     filterset = FirewallFilterAssignmentFilterSet
 
@@ -171,9 +173,7 @@ class FirewallFilterAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetT
         )
         DeviceType.objects.bulk_create(cls.types)
 
-        cls.roles = (
-            DeviceRole(name="role-1", slug="role-1", level=0, lft=1, rght=2, tree_id=1),
-        )
+        cls.roles = (DeviceRole(name="role-1", slug="role-1"),)
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (
             Device(
@@ -265,7 +265,9 @@ class FirewallFilterAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetT
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class FirewallRuleFromSettingFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class FirewallRuleFromSettingFilterSetTestCase(
+    TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = FirewallRuleFromSetting.objects.all()
     filterset = FirewallRuleFromSettingFilterSet
     ignore_fields = ("from_settings",)
@@ -334,7 +336,9 @@ class FirewallRuleFromSettingFilterSetTestCase(TestCase, ChangeLoggedFilterSetTe
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
 
-class FirewallRuleThenSettingFilterSetTestCase(TestCase, ChangeLoggedFilterSetTests):
+class FirewallRuleThenSettingFilterSetTestCase(
+    TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = FirewallRuleThenSetting.objects.all()
     filterset = FirewallRuleThenSettingFilterSet
     ignore_fields = ("then_settings",)

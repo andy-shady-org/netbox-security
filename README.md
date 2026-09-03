@@ -43,7 +43,7 @@ This plugin provides following Models:
 | NetBox 4.4     | \>= 1.3.0               |
 | NetBox 4.5     | \>= 1.4.0               |
 | NetBox 4.6     | \>= 1.5.0               |
-| NetBox 4.7     | \>= 1.5.0               |
+| NetBox 4.7     | \>= 1.6.0               |
 
 ## Installation
 
