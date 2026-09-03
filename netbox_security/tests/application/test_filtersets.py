@@ -521,9 +521,7 @@ class ApplicationAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTest
         )
         DeviceType.objects.bulk_create(cls.types)
 
-        cls.roles = (
-            DeviceRole(name="role-1", slug="role-1"),
-        )
+        cls.roles = (DeviceRole(name="role-1", slug="role-1"),)
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (
             Device(
@@ -615,7 +613,9 @@ class ApplicationAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTest
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class ApplicationSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class ApplicationSetAssignmentFilterSetTestCase(
+    TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = ApplicationSetAssignment.objects.all()
     filterset = ApplicationSetAssignmentFilterSet
 
@@ -645,9 +645,7 @@ class ApplicationSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetT
         )
         DeviceType.objects.bulk_create(cls.types)
 
-        cls.roles = (
-            DeviceRole(name="role-1", slug="role-1"),
-        )
+        cls.roles = (DeviceRole(name="role-1", slug="role-1"),)
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (
             Device(

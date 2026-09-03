@@ -360,9 +360,7 @@ class AddressAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixi
         )
         DeviceType.objects.bulk_create(cls.types)
 
-        cls.roles = (
-            DeviceRole(name="role-1", slug="role-1"),
-        )
+        cls.roles = (DeviceRole(name="role-1", slug="role-1"),)
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (
             Device(

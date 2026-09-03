@@ -147,7 +147,9 @@ class FirewallFilterRuleFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixi
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
 
-class FirewallFilterAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class FirewallFilterAssignmentFilterSetTestCase(
+    TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = FirewallFilterAssignment.objects.all()
     filterset = FirewallFilterAssignmentFilterSet
 
@@ -171,9 +173,7 @@ class FirewallFilterAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetT
         )
         DeviceType.objects.bulk_create(cls.types)
 
-        cls.roles = (
-            DeviceRole(name="role-1", slug="role-1"),
-        )
+        cls.roles = (DeviceRole(name="role-1", slug="role-1"),)
         DeviceRole.objects.bulk_create(cls.roles)
         cls.devices = (
             Device(
@@ -265,7 +265,9 @@ class FirewallFilterAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetT
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class FirewallRuleFromSettingFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class FirewallRuleFromSettingFilterSetTestCase(
+    TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = FirewallRuleFromSetting.objects.all()
     filterset = FirewallRuleFromSettingFilterSet
     ignore_fields = ("from_settings",)
@@ -334,7 +336,9 @@ class FirewallRuleFromSettingFilterSetTestCase(TestCase, ChangeLoggedFilterSetTe
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
 
-class FirewallRuleThenSettingFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class FirewallRuleThenSettingFilterSetTestCase(
+    TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = FirewallRuleThenSetting.objects.all()
     filterset = FirewallRuleThenSettingFilterSet
     ignore_fields = ("then_settings",)
