@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
 from utilities.views import register_model_view
+from netbox.object_actions import BulkExport
 
 from dcim.models import Device, VirtualDeviceContext
 from dcim.tables import DeviceTable, VirtualDeviceContextTable
@@ -124,9 +125,7 @@ class AddressSetAssignmentListView(generic.ObjectListView):
     filterset = AddressSetAssignmentFilterSet
     filterset_form = AddressSetAssignmentFilterForm
     table = AddressSetAssignmentTable
-    actions = {
-        "export": {"view"},
-    }
+    actions = [BulkExport]
 
 
 @register_model_view(AddressSetAssignment, "add", detail=False)

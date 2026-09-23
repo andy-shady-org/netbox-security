@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
 from utilities.views import register_model_view, ViewTab
+from netbox.object_actions import BulkExport
 
 from dcim.models import Device, VirtualDeviceContext
 from virtualization.models import VirtualMachine
@@ -141,9 +142,7 @@ class NatPoolAssignmentListView(generic.ObjectListView):
     filterset = NatPoolAssignmentFilterSet
     filterset_form = NatPoolAssignmentFilterForm
     table = NatPoolAssignmentTable
-    actions = {
-        "export": {"view"},
-    }
+    actions = [BulkExport]
 
 
 @register_model_view(NatPoolAssignment, "add", detail=False)

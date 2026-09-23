@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
 from utilities.views import register_model_view
+from netbox.object_actions import BulkExport
 
 from dcim.models import Device, VirtualDeviceContext
 from virtualization.models import VirtualMachine
@@ -124,9 +125,7 @@ class SecurityZoneAssignmentListView(generic.ObjectListView):
     filterset = SecurityZoneAssignmentFilterSet
     filterset_form = SecurityZoneAssignmentFilterForm
     table = SecurityZoneAssignmentTable
-    actions = {
-        "export": {"view"},
-    }
+    actions = [BulkExport]
 
 
 @register_model_view(SecurityZoneAssignment, "add", detail=False)

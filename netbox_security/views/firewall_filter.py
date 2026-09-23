@@ -4,6 +4,7 @@ from django.db.models import Count
 
 from netbox.views import generic
 from utilities.views import register_model_view
+from netbox.object_actions import BulkExport
 
 from dcim.models import Device, VirtualDeviceContext
 from dcim.tables import DeviceTable, VirtualDeviceContextTable
@@ -124,9 +125,7 @@ class FirewallFilterAssignmentListView(generic.ObjectListView):
     filterset = FirewallFilterAssignmentFilterSet
     filterset_form = FirewallFilterAssignmentFilterForm
     table = FirewallFilterAssignmentTable
-    actions = {
-        "export": {"view"},
-    }
+    actions = [BulkExport]
 
 
 @register_model_view(FirewallFilterAssignment, "add", detail=False)
