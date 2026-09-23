@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from utilities.views import register_model_view, ViewTab
+from netbox.object_actions import BulkExport
 
 from dcim.models import Device, VirtualDeviceContext
 from virtualization.models import VirtualMachine
@@ -140,9 +141,7 @@ class NatRuleSetAssignmentListView(generic.ObjectListView):
     filterset = NatRuleSetAssignmentFilterSet
     filterset_form = NatRuleSetAssignmentFilterForm
     table = NatRuleSetAssignmentTable
-    actions = {
-        "export": {"view"},
-    }
+    actions = [BulkExport]
 
 
 @register_model_view(NatRuleSetAssignment, "add", detail=False)

@@ -2,6 +2,7 @@ from netbox.views import generic
 from utilities.views import register_model_view
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
+from netbox.object_actions import BulkExport
 
 from dcim.models import Device, VirtualDeviceContext
 from dcim.tables import DeviceTable, VirtualDeviceContextTable
@@ -108,9 +109,7 @@ class PolicerAssignmentListView(generic.ObjectListView):
     filterset = PolicerAssignmentFilterSet
     filterset_form = PolicerAssignmentFilterForm
     table = PolicerAssignmentTable
-    actions = {
-        "export": {"view"},
-    }
+    actions = [BulkExport]
 
 
 @register_model_view(PolicerAssignment, "add", detail=False)

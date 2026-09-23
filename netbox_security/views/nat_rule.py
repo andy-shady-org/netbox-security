@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
 from utilities.views import register_model_view
+from netbox.object_actions import BulkExport
 
 from dcim.models import Interface
 
@@ -178,9 +179,7 @@ class NatRuleAssignmentListView(generic.ObjectListView):
     filterset = NatRuleAssignmentFilterSet
     filterset_form = NatRuleAssignmentFilterForm
     table = NatRuleAssignmentTable
-    actions = {
-        "export": {"view"},
-    }
+    actions = [BulkExport]
 
 
 @register_model_view(NatRuleAssignment, "edit")

@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from netbox.views import generic
 from utilities.views import register_model_view
+from netbox.object_actions import BulkExport
 
 from netbox_security.models import AddressList, AddressListAssignment
 from netbox_security.filtersets import (
@@ -73,9 +74,7 @@ class AddressListAssignmentListView(generic.ObjectListView):
     filterset = AddressListAssignmentFilterSet
     filterset_form = AddressListAssignmentFilterForm
     table = AddressListAssignmentTable
-    actions = {
-        "export": {"view"},
-    }
+    actions = [BulkExport]
 
 
 @register_model_view(AddressListAssignment, "add", detail=False)
