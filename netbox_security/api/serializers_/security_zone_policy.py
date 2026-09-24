@@ -107,15 +107,33 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
             errors["source_zone"] = [message]
             errors["destination_zone"] = [message]
 
-        # Check for overlapping source and destination addresses
         source_address = data.get("source_address")
+        if source_address is None:
+            source_address = (
+                self.instance.source_address.all() if self.instance is not None else []
+            )
+
         destination_address = data.get("destination_address")
-        if source_address and destination_address:
-            overlap = set(source_address) & set(destination_address)
-            if overlap:
-                message = "Cannot have the same source and destination addresses within a policy."
-                errors["source_address"] = [message]
-                errors["destination_address"] = [message]
+        if destination_address is None:
+            destination_address = (
+                self.instance.destination_address.all()
+                if self.instance is not None
+                else []
+            )
+
+        # Allow overlapping addresses only within a zone allowing intra-zone traffic.
+        allow_overlap = (
+            source_zone is not None
+            and source_zone == destination_zone
+            and source_zone.allow_intra_zone
+        )
+        overlap = set(source_address) & set(destination_address)
+        if overlap and not allow_overlap:
+            message = (
+                "Cannot have the same source and destination addresses within a policy."
+            )
+            errors["source_address"] = [message]
+            errors["destination_address"] = [message]
 
         if errors:
             raise ValidationError(errors)

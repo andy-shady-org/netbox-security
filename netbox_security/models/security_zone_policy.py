@@ -66,17 +66,6 @@ class SecurityZonePolicy(ContactsMixin, PrimaryModel):
         validators=[MinLengthValidator(1)],
         verbose_name=_("Policy Actions"),
     )
-    # policy_actions = ArrayField(
-    #     models.CharField(
-    #         max_length=20,
-    #         blank=True,
-    #         null=True,
-    #         choices=ActionChoices,
-    #         default=ActionChoices.PERMIT,
-    #     ),
-    #     size=4,
-    #     verbose_name=_("Policy Actions"),
-    # )
     prerequisite_models = ("netbox_security.SecurityZone",)
 
     class Meta:
