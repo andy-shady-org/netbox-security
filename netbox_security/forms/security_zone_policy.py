@@ -132,9 +132,7 @@ class SecurityZonePolicyForm(PrimaryModelForm):
         if source_address is not None and destination_address is not None:
             overlap = set(source_address) & set(destination_address)
             if overlap and not allow_overlap:
-                message = (
-                    "Cannot have the same source and destination addresses within a policy"
-                )
+                message = "Cannot have the same source and destination addresses within a policy"
                 error_message["source_address"] = [message]
                 error_message["destination_address"] = [message]
         if error_message:
@@ -281,9 +279,7 @@ class SecurityZonePolicyImportForm(PrimaryModelImportForm):
         if source_address is not None and destination_address is not None:
             overlap = set(source_address) & set(destination_address)
             if overlap and not allow_overlap:
-                message = (
-                    "Cannot have the same source and destination addresses within a policy"
-                )
+                message = "Cannot have the same source and destination addresses within a policy"
                 error_message["source_address"] = [message]
                 error_message["destination_address"] = [message]
         if error_message:
