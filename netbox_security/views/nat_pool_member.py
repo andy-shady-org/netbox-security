@@ -41,6 +41,10 @@ class NatPoolMemberEditView(generic.ObjectEditView):
     queryset = NatPoolMember.objects.all()
     form = NatPoolMemberForm
 
+    def alter_object(self, obj, request, url_args, url_kwargs):
+        obj._status_sync_user = request.user
+        return super().alter_object(obj, request, url_args, url_kwargs)
+
 
 @register_model_view(NatPoolMember, "delete")
 class NatPoolMemberDeleteView(generic.ObjectDeleteView):
@@ -54,11 +58,19 @@ class NatPoolMemberBulkEditView(generic.BulkEditView):
     table = NatPoolMemberTable
     form = NatPoolMemberBulkEditForm
 
+    def pre_save_operations(self, form, obj):
+        super().pre_save_operations(form, obj)
+        obj._status_sync_user = self.request.user
+
 
 @register_model_view(NatPoolMember, "bulk_import", detail=False)
 class NatPoolMemberBulkImportView(generic.BulkImportView):
     queryset = NatPoolMember.objects.all()
     model_form = NatPoolMemberImportForm
+
+    def save_object(self, object_form, request):
+        object_form.request_user = request.user
+        return super().save_object(object_form, request)
 
 
 @register_model_view(NatPoolMember, "bulk_delete", path="delete", detail=False)

@@ -35,6 +35,7 @@ __all__ = (
 
 
 class NatPoolMemberForm(PortsForm, PrimaryModelForm):
+    request_user = None
     name = forms.CharField(max_length=64, required=True)
     description = forms.CharField(max_length=200, required=False)
     pool = DynamicModelChoiceField(
@@ -82,13 +83,21 @@ class NatPoolMemberForm(PortsForm, PrimaryModelForm):
             "name",
             "owner",
             "pool",
+            "status",
             "address",
             "prefix",
             "address_range",
+            "description",
             "source_ports",
             "destination_ports",
+            "comments",
             "tags",
         ]
+
+    def save(self, *args, **kwargs):
+        if self.request_user is not None:
+            self.instance._status_sync_user = self.request_user
+        return super().save(*args, **kwargs)
 
 
 class NatPoolMemberFilterForm(PortsForm, PrimaryModelFilterSetForm):
@@ -127,6 +136,7 @@ class NatPoolMemberFilterForm(PortsForm, PrimaryModelFilterSetForm):
 
 
 class NatPoolMemberImportForm(PortsForm, PrimaryModelImportForm):
+    request_user = None
     name = forms.CharField(max_length=200, required=True)
     description = forms.CharField(max_length=200, required=False)
     vrf = CSVModelChoiceField(
@@ -246,6 +256,11 @@ class NatPoolMemberImportForm(PortsForm, PrimaryModelImportForm):
             raise ValidationError(
                 _("Enter a valid IPv4 or IPv6 address with mask.")
             ) from exc
+
+    def save(self, *args, **kwargs):
+        if self.request_user is not None:
+            self.instance._status_sync_user = self.request_user
+        return super().save(*args, **kwargs)
 
 
 class NatPoolMemberBulkEditForm(PortsForm, PrimaryModelBulkEditForm):

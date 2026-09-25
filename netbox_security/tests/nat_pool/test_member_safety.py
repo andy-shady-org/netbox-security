@@ -67,6 +67,15 @@ class NatPoolMemberSafetyTestCase(TestCase):
         restrict_form_fields(form, self.user)
         return form
 
+    def grant_change_permission(self):
+        permission = ObjectPermission.objects.create(
+            name="reference-change", actions=["change"]
+        )
+        permission.object_types.set(
+            ContentType.objects.get_for_models(IPAddress, Prefix, IPRange).values()
+        )
+        permission.users.add(self.user)
+
     def test_text_import_selects_global_or_named_scope(self):
         for context, expected in (
             ({}, self.global_ip),
@@ -150,6 +159,19 @@ class NatPoolMemberSafetyTestCase(TestCase):
         self.assertEqual(self.global_ip.status, "reserved")
         self.assertEqual(NatPoolMember.objects.count(), 1)
 
+    def test_import_save_updates_status_when_user_can_change_target(self):
+        self.grant_change_permission()
+        form = self.import_form(address="192.0.2.1/24", status="deprecated")
+        form.request_user = self.user
+        self.assertTrue(form.is_valid(), form.errors)
+
+        member = form.save()
+
+        self.global_ip.refresh_from_db()
+        self.assertEqual(member.status, "deprecated")
+        self.assertEqual(self.global_ip.status, "deprecated")
+        self.assertEqual(self.global_ip.assigned_object, self.interface)
+
     def test_tenant_disambiguates_and_prefix_text_is_supported(self):
         IPAddress.objects.create(address=IPNetwork("192.0.2.1/24"), vrf=self.vrf)
         self.assertFalse(
@@ -192,9 +214,66 @@ class NatPoolMemberSafetyTestCase(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.cleaned_data["address_range"], scoped_range)
 
+    def test_api_validation_updates_ipam_status_when_user_can_change_target(self):
+        self.grant_change_permission()
+
+        for field, obj in (
+            ("address", self.global_ip),
+            ("prefix", self.prefix),
+            ("address_range", self.ip_range),
+        ):
+            with self.subTest(field=field):
+                serializer = NatPoolMemberSerializer(
+                    data={
+                        "name": f"{field}-sync",
+                        "pool": self.pool.pk,
+                        "status": "deprecated",
+                        field: obj.pk,
+                    },
+                    context={"request": SimpleNamespace(user=self.user)},
+                )
+                self.assertTrue(serializer.is_valid(), serializer.errors)
+
+                member = serializer.save()
+                obj.refresh_from_db()
+                self.assertEqual(member.status, "deprecated")
+                self.assertEqual(obj.status, "deprecated")
+
+                serializer = NatPoolMemberSerializer(
+                    member,
+                    data={"status": "active"},
+                    partial=True,
+                    context={"request": SimpleNamespace(user=self.user)},
+                )
+                self.assertTrue(serializer.is_valid(), serializer.errors)
+                serializer.save()
+
+                obj.refresh_from_db()
+                self.assertEqual(obj.status, "active")
+
+        self.global_ip.refresh_from_db()
+        self.assertEqual(self.global_ip.assigned_object, self.interface)
+
     def test_invalid_range_end_is_a_form_error(self):
         form = self.import_form(
             address_range="192.0.2.2/24", address_range_end="invalid"
         )
         self.assertFalse(form.is_valid())
         self.assertIn("address_range_end", form.errors)
+
+    def test_prefix_and_range_reject_ipaddress_only_statuses(self):
+        for values in (
+            {"name": "prefix-invalid", "pool": self.pool.pk, "prefix": self.prefix.pk},
+            {
+                "name": "range-invalid",
+                "pool": self.pool.pk,
+                "address_range": self.ip_range.pk,
+            },
+        ):
+            with self.subTest(values=values):
+                serializer = NatPoolMemberSerializer(
+                    data={**values, "status": "dhcp"},
+                    context={"request": SimpleNamespace(user=self.user)},
+                )
+                self.assertFalse(serializer.is_valid())
+                self.assertIn("status", serializer.errors)

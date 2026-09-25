@@ -72,6 +72,41 @@ class NatPoolMember(PortsMixin, PrimaryModel):
     def get_absolute_url(self):
         return reverse("plugins:netbox_security:natpoolmember", args=[self.pk])
 
+    def _get_status_target(self):
+        if self.address is not None:
+            return self.address
+        if self.prefix is not None:
+            return self.prefix
+        if self.address_range is not None:
+            return self.address_range
+        return None
+
+    def _get_status_target_model(self):
+        if self.address is not None:
+            return self._meta.get_field("address").remote_field.model
+        if self.prefix is not None:
+            return self._meta.get_field("prefix").remote_field.model
+        if self.address_range is not None:
+            return self._meta.get_field("address_range").remote_field.model
+        return None
+
+    def sync_related_object_status(self, user):
+        target_model = self._get_status_target_model()
+        target = self._get_status_target()
+
+        if user is None or target_model is None or target is None:
+            return False
+
+        queryset = target_model.objects.all()
+        restricted_queryset = getattr(queryset, "restrict")(user, "change")
+        target = restricted_queryset.filter(pk=target.pk).first()
+        if target is None or target.status == self.status:
+            return False
+
+        target.status = self.status
+        target.save(update_fields=["status"])
+        return True
+
     def clean(self):
         super().clean()
         # make sure that only one field is set
@@ -96,6 +131,24 @@ class NatPoolMember(PortsMixin, PrimaryModel):
         # at least one field must be set
         if self.prefix is None and self.address is None and self.address_range is None:
             raise ValidationError({"prefix": "Cannot set all fields to Null"})
+
+        if target_model := self._get_status_target_model():
+            status_field = target_model._meta.get_field("status")
+            try:
+                status_field.clean(self.status, self)
+            except ValidationError as exc:
+                raise ValidationError({"status": exc.messages}) from exc
+
+    def save(self, *args, **kwargs):
+        sync_user = getattr(self, "_status_sync_user", None)
+
+        rv = super().save(*args, **kwargs)
+
+        if sync_user is not None:
+            self.sync_related_object_status(sync_user)
+            self._status_sync_user = None
+
+        return rv
 
 
 @register_search
