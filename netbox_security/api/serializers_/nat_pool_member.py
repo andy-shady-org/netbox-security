@@ -43,3 +43,21 @@ class NatPoolMemberSerializer(PrimaryModelSerializer):
             "last_updated",
         )
         brief_fields = ("id", "url", "display", "name", "pool", "status")
+
+    def _sync_related_object_status(self, instance):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+
+        if user is not None:
+            instance.sync_related_object_status(user)
+
+        return instance
+
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        return self._sync_related_object_status(instance)
+
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+        return self._sync_related_object_status(instance)
+
