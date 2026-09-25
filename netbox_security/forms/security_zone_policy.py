@@ -107,38 +107,6 @@ class SecurityZonePolicyForm(PrimaryModelForm):
             "tags",
         ]
 
-    def clean(self):
-        super().clean()
-        error_message = {}
-        if (source_zone := self.cleaned_data.get("source_zone")) is not None and (
-            destination_zone := self.cleaned_data.get("destination_zone")
-        ) is not None:
-            if source_zone == destination_zone and not source_zone.allow_intra_zone:
-                error_message_mismatch_zones = (
-                    "Cannot have the same source and destination zone within a policy"
-                )
-                error_message["source_zone"] = [error_message_mismatch_zones]
-                error_message["destination_zone"] = [error_message_mismatch_zones]
-        source_address = self.cleaned_data.get("source_address")
-        destination_address = self.cleaned_data.get("destination_address")
-        source_zone = self.cleaned_data.get("source_zone")
-        destination_zone = self.cleaned_data.get("destination_zone")
-
-        allow_overlap = (
-            source_zone is not None
-            and source_zone == destination_zone
-            and source_zone.allow_intra_zone
-        )
-        if source_address is not None and destination_address is not None:
-            overlap = set(source_address) & set(destination_address)
-            if overlap and not allow_overlap:
-                message = "Cannot have the same source and destination addresses within a policy"
-                error_message["source_address"] = [message]
-                error_message["destination_address"] = [message]
-        if error_message:
-            raise forms.ValidationError(error_message)
-        return self.cleaned_data
-
 
 class SecurityZonePolicyFilterForm(PrimaryModelFilterSetForm):
     model = SecurityZonePolicy
@@ -253,38 +221,6 @@ class SecurityZonePolicyImportForm(PrimaryModelImportForm):
             "policy_actions",
             "tags",
         )
-
-    def clean(self):
-        super().clean()
-        error_message = {}
-        if (source_zone := self.cleaned_data.get("source_zone")) is not None and (
-            destination_zone := self.cleaned_data.get("destination_zone")
-        ) is not None:
-            if source_zone == destination_zone and not source_zone.allow_intra_zone:
-                error_message_mismatch_zones = (
-                    "Cannot have the same source and destination zone within a policy"
-                )
-                error_message["source_zone"] = [error_message_mismatch_zones]
-                error_message["destination_zone"] = [error_message_mismatch_zones]
-        source_address = self.cleaned_data.get("source_address")
-        destination_address = self.cleaned_data.get("destination_address")
-        source_zone = self.cleaned_data.get("source_zone")
-        destination_zone = self.cleaned_data.get("destination_zone")
-
-        allow_overlap = (
-            source_zone is not None
-            and source_zone == destination_zone
-            and source_zone.allow_intra_zone
-        )
-        if source_address is not None and destination_address is not None:
-            overlap = set(source_address) & set(destination_address)
-            if overlap and not allow_overlap:
-                message = "Cannot have the same source and destination addresses within a policy"
-                error_message["source_address"] = [message]
-                error_message["destination_address"] = [message]
-        if error_message:
-            raise forms.ValidationError(error_message)
-        return self.cleaned_data
 
 
 class SecurityZonePolicyBulkEditForm(PrimaryModelBulkEditForm):

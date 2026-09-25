@@ -60,6 +60,14 @@ class SecurityZonePolicyBulkEditView(generic.BulkEditView):
     table = SecurityZonePolicyTable
     form = SecurityZonePolicyBulkEditForm
 
+    def pre_save_operations(self, form, obj):
+        super().pre_save_operations(form, obj)
+        # BulkEditView may stage [] for arbitrary _nullify entries, although
+        # it only clears fields listed in nullable_fields when saving.
+        for name in ("source_address", "destination_address"):
+            if name not in form.nullable_fields and not form.cleaned_data.get(name):
+                obj._m2m_values.pop(name, None)
+
 
 @register_model_view(SecurityZonePolicy, "bulk_delete", path="delete", detail=False)
 class SecurityZonePolicyBulkDeleteView(generic.BulkDeleteView):
