@@ -12,6 +12,7 @@ from netbox_security.models import (
     SecurityZone,
 )
 from netbox_security.utils import get_address_set_hierarchy
+from netbox_security.utils.policy_candidates import add_policy_candidates
 
 from netbox.context import current_request
 from netbox.views import generic
@@ -145,12 +146,13 @@ def _iprange_related_total_count(obj):
     return _related_total_count(obj, IPRange, _annotate_iprange_queryset)
 
 
-def _policy_context(app_label, model, object_id, *, user):
+def _policy_context(app_label, model, object_id, *, user, include_candidates=False):
     return get_address_set_hierarchy(
         user=user,
         app_label=app_label,
         model=model,
         object_id=object_id,
+        include_candidates=include_candidates,
     )
 
 
@@ -195,13 +197,17 @@ class IPAddressSecurityView(generic.ObjectView):
     )
 
     def get_extra_context(self, request, instance):
+        context = _policy_context(
+            "ipam",
+            "ipaddress",
+            instance.pk,
+            user=request.user,
+            include_candidates=True,
+        )
         return {
-            "policy_context": _policy_context(
-                "ipam",
-                "ipaddress",
-                instance.pk,
-                user=request.user,
-            ),
+            "policy_context": add_policy_candidates(
+                context, instance, user=request.user
+            )
         }
 
 

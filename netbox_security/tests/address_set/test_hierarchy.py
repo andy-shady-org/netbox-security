@@ -72,6 +72,7 @@ class AddressSetHierarchyTestCase(TestCase):
 
     def test_returns_transitive_addressset_and_policy_context(self):
         result = get_address_set_hierarchy(
+            member_zone_ids=[self.source_zone.pk, self.destination_zone.pk],
             user=self.user,
             app_label="ipam",
             model="prefix",
@@ -180,3 +181,104 @@ class AddressSetHierarchyTestCase(TestCase):
         self.assertEqual(result["address_ids"], [])
         self.assertEqual(result["all_address_set_ids"], [])
         self.assertEqual(result["policy_paths"], [])
+
+    def test_branching_hierarchy_is_truncated_and_warns(self):
+        from unittest.mock import patch
+        from django.template.loader import render_to_string
+        from netbox_security.utils.hierarchy_limits import (
+            HierarchyBudget,
+            HierarchyLimits,
+        )
+
+        other_root = AddressSet.objects.create(name="other-root")
+        other_root.address_sets.add(self.leaf_set)
+        budget = HierarchyBudget(HierarchyLimits(paths=1))
+        with patch(
+            "netbox_security.utils.address_set_hierarchy.HierarchyBudget",
+            return_value=budget,
+        ):
+            result = get_address_set_hierarchy(
+                user=self.user,
+                app_label="ipam",
+                model="prefix",
+                object_id=self.prefix.pk,
+            )
+        self.assertTrue(result["hierarchy_truncated"])
+        self.assertEqual(len(result["address_set_paths"]), 1)
+        html = render_to_string(
+            "netbox_security/inc/hierarchy_warning.html", {"policy_context": result}
+        )
+        self.assertIn("not a complete list", html)
+
+    def test_deep_hierarchy_discovery_is_bounded(self):
+        from unittest.mock import patch
+        from netbox_security.utils.hierarchy_limits import (
+            HierarchyBudget,
+            HierarchyLimits,
+        )
+
+        child = self.root_set
+        for index in range(8):
+            parent = AddressSet.objects.create(name=f"deep-parent-{index}")
+            parent.address_sets.add(child)
+            child = parent
+        with patch(
+            "netbox_security.utils.address_set_hierarchy.HierarchyBudget",
+            return_value=HierarchyBudget(HierarchyLimits(depth=3)),
+        ):
+            result = get_address_set_hierarchy(
+                user=self.user,
+                app_label="ipam",
+                model="prefix",
+                object_id=self.prefix.pk,
+            )
+        self.assertTrue(result["hierarchy_truncated"])
+        self.assertEqual(len(result["all_address_set_ids"]), 3)
+        self.assertTrue(all(len(path) <= 3 for path in result["address_set_paths"]))
+
+    def test_address_path_multiplication_is_bounded(self):
+        from unittest.mock import patch
+        from netbox_security.utils.hierarchy_limits import (
+            HierarchyBudget,
+            HierarchyLimits,
+        )
+
+        for index in range(4):
+            parent = AddressSet.objects.create(name=f"wide-parent-{index}")
+            parent.address_sets.add(self.leaf_set)
+        for index in range(2):
+            address = Address.objects.create(
+                name=f"extra-address-{index}",
+                assigned_object_type=self.address.assigned_object_type,
+                assigned_object_id=self.prefix.pk,
+            )
+            self.leaf_set.addresses.add(address)
+        with patch(
+            "netbox_security.utils.address_set_hierarchy.HierarchyBudget",
+            return_value=HierarchyBudget(HierarchyLimits(rows=4)),
+        ):
+            result = get_address_set_hierarchy(
+                user=self.user,
+                app_label="ipam",
+                model="prefix",
+                object_id=self.prefix.pk,
+            )
+        self.assertTrue(result["hierarchy_truncated"])
+        self.assertEqual(len(result["address_set_hierarchy_rows"]), 4)
+        self.assertLessEqual(len(result["policy_paths"]), 4)
+
+    def test_badge_does_not_expand_hierarchy(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from netbox.context import current_request
+        from netbox_security.views.tabs import _prefix_related_total_count
+
+        token = current_request.set(SimpleNamespace(user=self.user))
+        try:
+            with patch(
+                "netbox_security.views.tabs.get_address_set_hierarchy",
+                side_effect=AssertionError("Badge must not expand hierarchy"),
+            ):
+                self.assertGreaterEqual(_prefix_related_total_count(self.prefix), 1)
+        finally:
+            current_request.reset(token)

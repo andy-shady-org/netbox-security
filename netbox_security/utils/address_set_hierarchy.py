@@ -1,6 +1,8 @@
 from collections import defaultdict
+from itertools import islice
 
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 
 from netbox_security.models import (
     Address,
@@ -9,6 +11,11 @@ from netbox_security.models import (
     SecurityZone,
     SecurityZonePolicy,
 )
+
+from .hierarchy_limits import HierarchyBudget, discover_parents, expand_paths
+from .zone_membership import resolve_zone_membership
+
+_AUTO_ZONE_CONTEXT = object()
 
 
 def _get_object_span(obj):
@@ -44,7 +51,7 @@ def _span_contains(parent_span, child_span):
     return parent_start <= child_start and parent_end >= child_end
 
 
-def _get_parent_customprefix_address_ids(target_object, *, user):
+def _get_parent_customprefix_address_ids(target_object, *, user, budget):
     """Return address IDs assigned to CustomPrefixes that contain target_object."""
     from netbox_security.models import CustomPrefix
 
@@ -52,12 +59,13 @@ def _get_parent_customprefix_address_ids(target_object, *, user):
     if not target_span:
         return []
 
-    address_rows = list(
+    address_rows = budget.take(
         Address.objects.restrict(user, "view")
         .filter(
             assigned_object_type__app_label="netbox_security",
             assigned_object_type__model="customprefix",
         )
+        .order_by("pk")
         .values_list("id", "assigned_object_id")
     )
     if not address_rows:
@@ -81,7 +89,7 @@ def _get_parent_customprefix_address_ids(target_object, *, user):
     return inherited_ids
 
 
-def _get_parent_ipam_address_ids(target_object, *, user):
+def _get_parent_ipam_address_ids(target_object, *, user, budget):
     """Return address IDs assigned to IPAM objects that contain target_object."""
     from ipam.models import IPAddress, IPRange, Prefix
 
@@ -89,12 +97,13 @@ def _get_parent_ipam_address_ids(target_object, *, user):
     if not target_span:
         return []
 
-    address_rows = list(
+    address_rows = budget.take(
         Address.objects.restrict(user, "view")
         .filter(
             assigned_object_type__app_label="ipam",
             assigned_object_type__model__in=("prefix", "ipaddress", "iprange"),
         )
+        .order_by("pk")
         .values_list("id", "assigned_object_type__model", "assigned_object_id")
     )
     if not address_rows:
@@ -136,7 +145,7 @@ def _get_parent_ipam_address_ids(target_object, *, user):
     return inherited_ids
 
 
-def _get_inherited_address_ids(target_object, direct_address_ids, *, user):
+def _get_inherited_address_ids(target_object, direct_address_ids, *, user, budget):
     """Get address IDs inherited from parent objects.
 
     For Prefix, IPRange, and IPAddress objects, traverse up the IPAM hierarchy
@@ -158,13 +167,14 @@ def _get_inherited_address_ids(target_object, direct_address_ids, *, user):
     if model_name == "prefix":
         # Get parent prefixes and their addresses
         parent_prefixes = target_object.get_parents().restrict(user, "view")
-        parent_address_ids = list(
+        parent_address_ids = budget.take(
             Address.objects.restrict(user, "view")
             .filter(
                 assigned_object_type__app_label="ipam",
                 assigned_object_type__model="prefix",
                 assigned_object_id__in=parent_prefixes.values_list("id", flat=True),
             )
+            .order_by("pk")
             .values_list("id", flat=True)
         )
         inherited_address_ids.extend(parent_address_ids)
@@ -196,13 +206,14 @@ def _get_inherited_address_ids(target_object, direct_address_ids, *, user):
                     prefix__net_contains_or_equals=str(target_object.end_address.ip),
                 )
             )
-        parent_address_ids = list(
+        parent_address_ids = budget.take(
             Address.objects.restrict(user, "view")
             .filter(
                 assigned_object_type__app_label="ipam",
                 assigned_object_type__model="prefix",
                 assigned_object_id__in=parent_prefixes.values_list("id", flat=True),
             )
+            .order_by("pk")
             .values_list("id", flat=True)
         )
         inherited_address_ids.extend(parent_address_ids)
@@ -223,13 +234,14 @@ def _get_inherited_address_ids(target_object, direct_address_ids, *, user):
                 vrf__isnull=True,
                 prefix__net_contains=str(target_object.address.ip),
             )
-        parent_address_ids = list(
+        parent_address_ids = budget.take(
             Address.objects.restrict(user, "view")
             .filter(
                 assigned_object_type__app_label="ipam",
                 assigned_object_type__model="prefix",
                 assigned_object_id__in=parent_prefixes.values_list("id", flat=True),
             )
+            .order_by("pk")
             .values_list("id", flat=True)
         )
         inherited_address_ids.extend(parent_address_ids)
@@ -245,7 +257,7 @@ def _get_inherited_address_ids(target_object, direct_address_ids, *, user):
             )
             .exclude(pk=target_object.pk)
         )
-        parent_address_ids = list(
+        parent_address_ids = budget.take(
             Address.objects.restrict(user, "view")
             .filter(
                 assigned_object_type__app_label="netbox_security",
@@ -254,6 +266,7 @@ def _get_inherited_address_ids(target_object, direct_address_ids, *, user):
                     "id", flat=True
                 ),
             )
+            .order_by("pk")
             .values_list("id", flat=True)
         )
         inherited_address_ids.extend(parent_address_ids)
@@ -261,13 +274,15 @@ def _get_inherited_address_ids(target_object, direct_address_ids, *, user):
     # Cross-model inheritance: IPAM objects inherit from containing CustomPrefixes.
     if model_name in ("prefix", "iprange", "ipaddress"):
         inherited_address_ids.extend(
-            _get_parent_customprefix_address_ids(target_object, user=user)
+            _get_parent_customprefix_address_ids(
+                target_object, user=user, budget=budget
+            )
         )
 
     # Cross-model inheritance: CustomPrefixes inherit from containing IPAM objects.
     elif model_name == "customprefix":
         inherited_address_ids.extend(
-            _get_parent_ipam_address_ids(target_object, user=user)
+            _get_parent_ipam_address_ids(target_object, user=user, budget=budget)
         )
 
     # Remove direct addresses from inherited list to avoid duplicates
@@ -278,13 +293,25 @@ def _get_inherited_address_ids(target_object, direct_address_ids, *, user):
     ]
 
 
-def get_address_set_hierarchy(*, user, app_label, model, object_id):
+def get_address_set_hierarchy(
+    *,
+    user,
+    app_label,
+    model,
+    object_id,
+    member_zone_ids=_AUTO_ZONE_CONTEXT,
+    include_candidates=False,
+):
     """Return transitive security context for an assigned IPAM object.
 
     Traversal:
     assigned object -> Address -> AddressSet (direct + parent hierarchy) ->
     AddressList -> SecurityZonePolicy (source/destination)
+
+    Policy rows require independently resolved zone membership. An explicit
+    member_zone_ids iterable supplies trusted caller context; None means unknown.
     """
+    budget = HierarchyBudget()
     content_type = ContentType.objects.filter(app_label=app_label, model=model).first()
     target_model = content_type.model_class() if content_type else None
     target_object = (
@@ -294,6 +321,9 @@ def get_address_set_hierarchy(*, user, app_label, model, object_id):
     )
     if target_object is None:
         return {
+            "hierarchy_truncated": budget.truncated,
+            "zone_context_known": False,
+            "member_zone_ids": [],
             "assigned_object_id": None,
             "address_ids": [],
             "address_objects": [],
@@ -310,18 +340,37 @@ def get_address_set_hierarchy(*, user, app_label, model, object_id):
             "policy_paths": [],
         }
 
-    address_ids = list(
+    if member_zone_ids is _AUTO_ZONE_CONTEXT:
+        member_zone_ids = resolve_zone_membership(target_object, user=user)
+    zone_context_known = member_zone_ids is not None
+    # Permission filtering is independent of actual network membership.
+    membership_budget = HierarchyBudget()
+    visible_member_zone_ids = membership_budget.take(
+        SecurityZone.objects.restrict(user, "view")
+        .filter(pk__in=member_zone_ids if zone_context_known else [])
+        .order_by("pk")
+        .values_list("pk", flat=True)
+    )
+    if membership_budget.truncated or (
+        zone_context_known and not visible_member_zone_ids
+    ):
+        zone_context_known = False
+    if not zone_context_known:
+        visible_member_zone_ids = []
+
+    address_ids = budget.take(
         Address.objects.restrict(user, "view")
         .filter(
             assigned_object_type=content_type,
             assigned_object_id=object_id,
         )
+        .order_by("pk")
         .values_list("id", flat=True)
     )
 
     # Get inherited addresses for IPAM child objects and CustomPrefix
     inherited_address_ids = _get_inherited_address_ids(
-        target_object, address_ids, user=user
+        target_object, address_ids, user=user, budget=budget
     )
 
     # Combine direct and inherited addresses for hierarchy computation
@@ -329,6 +378,9 @@ def get_address_set_hierarchy(*, user, app_label, model, object_id):
 
     if not effective_address_ids:
         return {
+            "hierarchy_truncated": budget.truncated,
+            "zone_context_known": zone_context_known,
+            "member_zone_ids": visible_member_zone_ids,
             "assigned_object_id": object_id,
             "address_ids": [],
             "address_objects": [],
@@ -345,97 +397,78 @@ def get_address_set_hierarchy(*, user, app_label, model, object_id):
             "policy_paths": [],
         }
 
-    direct_address_set_ids = set(
-        AddressSet.objects.restrict(user, "view")
-        .filter(addresses__id__in=address_ids)
-        .values_list("id", flat=True)
-        .distinct()
-    )
+    def seed_sets(ids):
+        return set(
+            budget.take(
+                AddressSet.objects.restrict(user, "view")
+                .filter(addresses__id__in=ids)
+                .order_by("pk")
+                .values_list("id", flat=True)
+                .distinct(),
+                limit=budget.limits.nodes,
+            )
+        )
 
-    # Also get address sets from inherited addresses
-    inherited_address_set_ids = set(
-        AddressSet.objects.restrict(user, "view")
-        .filter(addresses__id__in=inherited_address_ids)
-        .values_list("id", flat=True)
-        .distinct()
-    )
+    direct_address_set_ids = seed_sets(address_ids)
+    inherited_address_set_ids = seed_sets(inherited_address_ids)
 
     relation_field = AddressSet._meta.get_field("address_sets")
     parent_field = relation_field.m2m_field_name()
     child_field = relation_field.m2m_reverse_field_name()
     through_model = relation_field.remote_field.through
 
-    parent_map = defaultdict(set)
-    all_address_set_ids = set(direct_address_set_ids) | inherited_address_set_ids
-    frontier = all_address_set_ids.copy()
-
     visible_set_ids = AddressSet.objects.restrict(user, "view").values("pk")
 
-    while frontier:
-        relation_rows = through_model.objects.filter(
-            **{
-                f"{child_field}_id__in": list(frontier),
-                f"{parent_field}_id__in": visible_set_ids,
-            }
-        ).values_list(f"{parent_field}_id", f"{child_field}_id")
+    def fetch_parents(frontier):
+        return (
+            through_model.objects.filter(
+                **{
+                    f"{child_field}_id__in": sorted(frontier),
+                    f"{parent_field}_id__in": visible_set_ids,
+                }
+            )
+            .order_by(f"{child_field}_id", f"{parent_field}_id")
+            .values_list(f"{parent_field}_id", f"{child_field}_id")
+        )
 
-        new_frontier = set()
-        for parent_id, child_id in relation_rows:
-            parent_map[child_id].add(parent_id)
-            if parent_id not in all_address_set_ids:
-                all_address_set_ids.add(parent_id)
-                new_frontier.add(parent_id)
-
-        frontier = new_frontier
-
-    def build_addressset_paths(child_id, trail=None):
-        if trail is None:
-            trail = set()
-        if child_id in trail:
-            return []
-
-        parents = sorted(parent_map.get(child_id, ()))
-        if not parents:
-            return [[child_id]]
-
-        paths = []
-        for parent_id in parents:
-            for parent_path in build_addressset_paths(parent_id, trail | {child_id}):
-                paths.append([*parent_path, child_id])
-        return paths
-
-    addressset_paths = []
-    paths_by_direct_set = {}
-    for direct_id in sorted(direct_address_set_ids | inherited_address_set_ids):
-        direct_paths = build_addressset_paths(direct_id)
-        paths_by_direct_set[direct_id] = direct_paths
-        addressset_paths.extend(direct_paths)
-    unique_addressset_paths = sorted({tuple(path) for path in addressset_paths})
+    all_address_set_ids, parent_map = discover_parents(
+        direct_address_set_ids | inherited_address_set_ids, fetch_parents, budget
+    )
+    direct_address_set_ids &= all_address_set_ids
+    inherited_address_set_ids &= all_address_set_ids
+    paths_by_direct_set = expand_paths(
+        parent_map, direct_address_set_ids | inherited_address_set_ids, budget
+    )
+    unique_addressset_paths = sorted(
+        {path for paths in paths_by_direct_set.values() for path in paths}
+    )
     direct_memberships = (
         AddressSet.objects.restrict(user, "view")
-        .filter(addresses__id__in=address_ids)
+        .filter(addresses__id__in=address_ids, pk__in=all_address_set_ids)
+        .order_by("pk", "addresses__id")
         .values_list("addresses__id", "id")
         .distinct()
     )
     # Also get memberships from inherited addresses
     inherited_memberships = (
         AddressSet.objects.restrict(user, "view")
-        .filter(addresses__id__in=inherited_address_ids)
+        .filter(addresses__id__in=inherited_address_ids, pk__in=all_address_set_ids)
+        .order_by("pk", "addresses__id")
         .values_list("addresses__id", "id")
         .distinct()
     )
 
     direct_sets_by_address = defaultdict(set)
-    for address_id, address_set_id in direct_memberships:
+    for address_id, address_set_id in budget.take(direct_memberships):
         direct_sets_by_address[address_id].add(address_set_id)
-    for address_id, address_set_id in inherited_memberships:
+    for address_id, address_set_id in budget.take(inherited_memberships):
         direct_sets_by_address[address_id].add(address_set_id)
 
     address_object_map = {
         obj.pk: obj
-        for obj in Address.objects.restrict(user, "view").filter(
-            id__in=effective_address_ids
-        )
+        for obj in Address.objects.restrict(user, "view")
+        .filter(id__in=effective_address_ids)
+        .prefetch_related("assigned_object")
     }
     address_set_object_map = {
         obj.pk: obj
@@ -444,57 +477,84 @@ def get_address_set_hierarchy(*, user, app_label, model, object_id):
         )
     }
 
-    hierarchy_rows = set()
-    for address_id in sorted(effective_address_ids):
-        for direct_set_id in sorted(direct_sets_by_address.get(address_id, ())):
-            for path in paths_by_direct_set.get(direct_set_id, [[direct_set_id]]):
-                hierarchy_rows.add((tuple(path), address_id))
-    sorted_hierarchy_rows = sorted(hierarchy_rows)
+    def iter_hierarchy_rows():
+        for address_id in sorted(effective_address_ids):
+            for direct_set_id in sorted(direct_sets_by_address.get(address_id, ())):
+                for path in paths_by_direct_set.get(direct_set_id, ()):
+                    yield (path, address_id)
+
+    hierarchy_rows = list(islice(iter_hierarchy_rows(), budget.limits.rows + 1))
+    if len(hierarchy_rows) > budget.limits.rows:
+        budget.truncated = True
+    sorted_hierarchy_rows = sorted(hierarchy_rows[: budget.limits.rows])
 
     address_ct = ContentType.objects.get_for_model(Address)
     address_set_ct = ContentType.objects.get_for_model(AddressSet)
 
     address_list_ids = set(
-        AddressList.objects.restrict(user, "view")
-        .filter(
-            assigned_object_type=address_ct,
-            assigned_object_id__in=effective_address_ids,
-        )
-        .values_list("id", flat=True)
-    )
-    if all_address_set_ids:
-        address_list_ids.update(
+        budget.take(
             AddressList.objects.restrict(user, "view")
             .filter(
-                assigned_object_type=address_set_ct,
-                assigned_object_id__in=all_address_set_ids,
+                Q(
+                    assigned_object_type=address_ct,
+                    assigned_object_id__in=effective_address_ids,
+                )
+                | Q(
+                    assigned_object_type=address_set_ct,
+                    assigned_object_id__in=all_address_set_ids,
+                )
             )
+            .order_by("pk")
             .values_list("id", flat=True)
         )
+    )
     address_list_object_map = {
         obj.pk: obj
-        for obj in AddressList.objects.restrict(user, "view").filter(
-            id__in=address_list_ids
-        )
+        for obj in AddressList.objects.restrict(user, "view")
+        .filter(id__in=address_list_ids)
+        .select_related("assigned_object_type")
+        .prefetch_related("assigned_object")
     }
 
     policy_rows = []
     policy_object_map = {}
-    if address_list_ids:
+    if address_list_ids and (zone_context_known or include_candidates):
         visible_zone_ids = SecurityZone.objects.restrict(user, "view").values("pk")
-        policies = SecurityZonePolicy.objects.restrict(user, "view").filter(
-            source_zone_id__in=visible_zone_ids,
-            destination_zone_id__in=visible_zone_ids,
+        policies = (
+            SecurityZonePolicy.objects.restrict(user, "view")
+            .filter(
+                source_zone_id__in=visible_zone_ids,
+                destination_zone_id__in=visible_zone_ids,
+            )
+            .select_related("source_zone", "destination_zone")
         )
-        source_policies = policies.filter(
-            source_address__id__in=address_list_ids
-        ).distinct()
-        destination_policies = policies.filter(
-            destination_address__id__in=address_list_ids
-        ).distinct()
+        source_policies = budget.take(
+            policies.filter(
+                source_address__id__in=address_list_ids,
+            )
+            .filter(
+                Q()
+                if include_candidates
+                else Q(source_zone_id__in=visible_member_zone_ids)
+            )
+            .order_by("index", "pk")
+            .distinct()
+        )
+        destination_policies = budget.take(
+            policies.filter(
+                destination_address__id__in=address_list_ids,
+            )
+            .filter(
+                Q()
+                if include_candidates
+                else Q(destination_zone_id__in=visible_member_zone_ids)
+            )
+            .order_by("index", "pk")
+            .distinct()
+        )
 
-        source_policy_ids = set(source_policies.values_list("id", flat=True))
-        destination_policy_ids = set(destination_policies.values_list("id", flat=True))
+        source_policy_ids = {policy.pk for policy in source_policies}
+        destination_policy_ids = {policy.pk for policy in destination_policies}
 
         for policy in source_policies:
             policy_object_map[policy.pk] = policy
@@ -512,7 +572,12 @@ def get_address_set_hierarchy(*, user, app_label, model, object_id):
             ).values_list("securityzonepolicy_id", "addresslist_id")
         )
 
-        for policy_id, address_list_id in source_links:
+        for policy_id, address_list_id in budget.take(
+            source_links.order_by("securityzonepolicy_id", "addresslist_id")
+        ):
+            if len(policy_rows) >= budget.limits.rows:
+                budget.truncated = True
+                break
             policy = policy_object_map.get(policy_id)
             address_list = address_list_object_map.get(address_list_id)
             if not policy:
@@ -543,7 +608,12 @@ def get_address_set_hierarchy(*, user, app_label, model, object_id):
                 }
             )
 
-        for policy_id, address_list_id in destination_links:
+        for policy_id, address_list_id in budget.take(
+            destination_links.order_by("securityzonepolicy_id", "addresslist_id")
+        ):
+            if len(policy_rows) >= budget.limits.rows:
+                budget.truncated = True
+                break
             policy = policy_object_map.get(policy_id)
             address_list = address_list_object_map.get(address_list_id)
             if not policy:
@@ -597,18 +667,23 @@ def get_address_set_hierarchy(*, user, app_label, model, object_id):
     )
 
     return {
+        "zone_context_known": zone_context_known,
+        "member_zone_ids": visible_member_zone_ids,
+        "hierarchy_truncated": budget.truncated,
         "assigned_object_id": object_id,
         "address_ids": sorted(address_ids),
-        "address_objects": list(
-            Address.objects.restrict(user, "view")
-            .filter(id__in=address_ids)
-            .order_by("name", "pk")
+        "address_objects": sorted(
+            (address_object_map[pk] for pk in address_ids if pk in address_object_map),
+            key=lambda obj: (obj.name, obj.pk),
         ),
         "inherited_address_ids": sorted(inherited_address_ids),
-        "inherited_address_objects": list(
-            Address.objects.restrict(user, "view")
-            .filter(id__in=inherited_address_ids)
-            .order_by("name", "pk")
+        "inherited_address_objects": sorted(
+            (
+                address_object_map[pk]
+                for pk in set(inherited_address_ids)
+                if pk in address_object_map
+            ),
+            key=lambda obj: (obj.name, obj.pk),
         ),
         "direct_address_set_ids": sorted(direct_address_set_ids),
         "all_address_set_ids": sorted(all_address_set_ids),
