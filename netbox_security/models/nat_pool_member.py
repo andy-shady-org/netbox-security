@@ -7,8 +7,6 @@ from netbox.search import SearchIndex, register_search
 from netbox.models import PrimaryModel
 from ipam.choices import (
     IPAddressStatusChoices,
-    PrefixStatusChoices,
-    IPRangeStatusChoices,
 )
 
 from netbox_security.mixins import PortsMixin
@@ -69,7 +67,7 @@ class NatPoolMember(PortsMixin, PrimaryModel):
         return f"{self.name}"
 
     def get_status_color(self):
-        return IPAddressStatusChoices.colors.get(self.status)
+        return getattr(IPAddressStatusChoices, "colors", {}).get(self.status)
 
     def get_absolute_url(self):
         return reverse("plugins:netbox_security:natpoolmember", args=[self.pk])
@@ -98,20 +96,6 @@ class NatPoolMember(PortsMixin, PrimaryModel):
         # at least one field must be set
         if self.prefix is None and self.address is None and self.address_range is None:
             raise ValidationError({"prefix": "Cannot set all fields to Null"})
-
-        # set object status to active
-        if self.address and self.address.status != IPAddressStatusChoices.STATUS_ACTIVE:
-            self.address.status = IPAddressStatusChoices.STATUS_ACTIVE
-            self.address.save()
-        if self.prefix and self.prefix.status != PrefixStatusChoices.STATUS_ACTIVE:
-            self.prefix.status = PrefixStatusChoices.STATUS_ACTIVE
-            self.prefix.save()
-        if (
-            self.address_range
-            and self.address_range.status != IPRangeStatusChoices.STATUS_ACTIVE
-        ):
-            self.address_range.status = IPRangeStatusChoices.STATUS_ACTIVE
-            self.address_range.save()
 
 
 @register_search
