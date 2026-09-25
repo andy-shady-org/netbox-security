@@ -1,7 +1,6 @@
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
     ListField,
-    ValidationError,
     ChoiceField,
 )
 from netbox.api.serializers import NetBoxModelSerializer
@@ -81,64 +80,6 @@ class SecurityZonePolicySerializer(NetBoxModelSerializer):
             "application_sets",
             "policy_actions",
         )
-
-    def validate(self, data):
-        if not isinstance(data, dict):
-            return super().validate(data)
-
-        errors = {}
-
-        # For partial updates, fall back to the instance's current zones.
-        source_zone = data.get(
-            "source_zone", getattr(self.instance, "source_zone", None)
-        )
-        destination_zone = data.get(
-            "destination_zone", getattr(self.instance, "destination_zone", None)
-        )
-        if (
-            source_zone
-            and destination_zone
-            and source_zone == destination_zone
-            and not source_zone.allow_intra_zone
-        ):
-            message = (
-                "Cannot have the same source and destination zones within a policy."
-            )
-            errors["source_zone"] = [message]
-            errors["destination_zone"] = [message]
-
-        source_address = data.get("source_address")
-        if source_address is None:
-            source_address = (
-                self.instance.source_address.all() if self.instance is not None else []
-            )
-
-        destination_address = data.get("destination_address")
-        if destination_address is None:
-            destination_address = (
-                self.instance.destination_address.all()
-                if self.instance is not None
-                else []
-            )
-
-        # Allow overlapping addresses only within a zone allowing intra-zone traffic.
-        allow_overlap = (
-            source_zone is not None
-            and source_zone == destination_zone
-            and source_zone.allow_intra_zone
-        )
-        overlap = set(source_address) & set(destination_address)
-        if overlap and not allow_overlap:
-            message = (
-                "Cannot have the same source and destination addresses within a policy."
-            )
-            errors["source_address"] = [message]
-            errors["destination_address"] = [message]
-
-        if errors:
-            raise ValidationError(errors)
-
-        return super().validate(data)
 
     def create(self, validated_data):
         source_address = validated_data.pop("source_address", None)
