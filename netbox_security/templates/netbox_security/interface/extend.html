@@ -5,7 +5,7 @@
 {% load plugins %}
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "NAT Rules" %}
@@ -25,7 +25,7 @@
             {% htmx_table 'plugins:netbox_security:natruleassignment_list' interface_id=object.pk %}
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Security Zones" %}

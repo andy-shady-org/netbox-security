@@ -106,7 +106,7 @@ class InterfaceInfo(PluginTemplateExtension):
     def x_page(self):
         """ """
         return self.render(
-            "netbox_security/interface/interface_extend.html",
+            "netbox_security/interface/extend.html",
         )
 
 

@@ -52,6 +52,27 @@
                 </tr>
             </table>
         </div>
+        {% include 'inc/panels/comments.html' %}
+        {% include 'inc/panels/tags.html' %}
+        {% include 'inc/panels/custom_fields.html' %}
+        {% plugin_left_page object %}
+    </div>
+    <div class="col-md-6">
+        {% plugin_right_page object %}
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <h5 class="card-header">
+                Source Zones
+            </h5>
+            {% htmx_table 'plugins:netbox_security:securityzone_list' source_zone_id=object.pk %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                Destination Zones
+            </h5>
+            {% htmx_table 'plugins:netbox_security:securityzone_list' destination_zone_id=object.pk %}
+        </div>
         <div class="card">
             {% if virtual_machine_assignments_table.rows|length == 1 %}
                 <h2 class="card-header">{% trans "Virtual Machine Assignment" %}</h2>
@@ -82,23 +103,7 @@
                 {% render_table virtual_device_assignments_table 'inc/table.html' %}
             </div>
         </div>
-        {% include 'inc/panels/custom_fields.html' %}
-        {% include 'inc/panels/tags.html' %}
-        {% include 'inc/panels/comments.html' %}
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <h5 class="card-header">
-                Source Zones
-            </h5>
-            {% htmx_table 'plugins:netbox_security:securityzone_list' source_zone_id=object.pk %}
-        </div>
-        <div class="card">
-            <h5 class="card-header">
-                Destination Zones
-            </h5>
-            {% htmx_table 'plugins:netbox_security:securityzone_list' destination_zone_id=object.pk %}
-        </div>
+        {% plugin_full_width_page object %}
     </div>
 </div>
 {% endblock %}

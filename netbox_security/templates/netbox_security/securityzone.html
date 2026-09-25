@@ -61,6 +61,29 @@
                 {% endif %}
             </table>
         </div>
+        {% include 'inc/panels/comments.html' %}
+        {% include 'inc/panels/tags.html' %}
+        {% include 'inc/panels/custom_fields.html' %}
+        {% plugin_left_page object %}
+    </div>
+    <div class="col-md-6">
+        {% plugin_right_page object %}
+    </div>
+</div>
+<div class="row">
+    <div class="col col-md-12">
+        <div class="card">
+            <h5 class="card-header">
+                Source Policies
+            </h5>
+            {% htmx_table 'plugins:netbox_security:securityzonepolicy_list' source_zone_id=object.pk %}
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                Destination Policies
+            </h5>
+            {% htmx_table 'plugins:netbox_security:securityzonepolicy_list' destination_zone_id=object.pk %}
+        </div>
         <div class="card">
             {% if virtual_machine_assignments_table.rows|length == 1 %}
                 <h2 class="card-header">{% trans "Virtual Machine Assignment" %}</h2>
@@ -100,29 +123,6 @@
             <div class="table-responsive">
                 {% render_table interface_assignments_table 'inc/table.html' %}
             </div>
-        </div>
-        {% include 'inc/panels/custom_fields.html' %}
-        {% plugin_left_page object %}
-    </div>
-    <div class="col-md-6">
-        {% include 'inc/panels/tags.html' %}
-        {% include 'inc/panels/comments.html' %}
-        {% plugin_right_page object %}
-    </div>
-</div>
-<div class="row">
-    <div class="col col-md-12">
-        <div class="card">
-            <h5 class="card-header">
-                Source Policies
-            </h5>
-            {% htmx_table 'plugins:netbox_security:securityzonepolicy_list' source_zone_id=object.pk %}
-        </div>
-        <div class="card">
-            <h5 class="card-header">
-                Destination Policies
-            </h5>
-            {% htmx_table 'plugins:netbox_security:securityzonepolicy_list' destination_zone_id=object.pk %}
         </div>
     </div>
     {% plugin_full_width_page object %}

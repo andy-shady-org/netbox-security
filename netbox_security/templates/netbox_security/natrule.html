@@ -93,11 +93,15 @@
                 </tr>
             </table>
         </div>
-        {% include 'inc/panels/custom_fields.html' %}
-        {% include 'inc/panels/tags.html' %}
         {% include 'inc/panels/comments.html' %}
+        {% include 'inc/panels/tags.html' %}
+        {% include 'inc/panels/custom_fields.html' %}
+        {% plugin_left_page object %}
     </div>
-    <div class="col-md-6">
+    <div class="col col-md-6">
+        {% plugin_right_page object %}
+    </div>
+    <div class="col-md-12">
         <div class="card">
             {% if source_addresses_table.rows|length == 1 %}
                 <h2 class="card-header">Source Address - Address Type: {{ object.source_type|placeholder }}</h2>
@@ -168,6 +172,7 @@
                 {% render_table interface_assignments_table 'inc/table.html' %}
             </div>
         </div>
+        {% plugin_full_width_page object %}
     </div>
 </div>
 {% endblock content %}

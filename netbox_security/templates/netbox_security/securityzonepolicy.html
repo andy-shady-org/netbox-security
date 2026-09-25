@@ -59,11 +59,15 @@
                 </tr>
             </table>
         </div>
-      {% include 'inc/panels/custom_fields.html' %}
-      {% include 'inc/panels/tags.html' %}
-      {% include 'inc/panels/comments.html' %}
+        {% include 'inc/panels/comments.html' %}
+        {% include 'inc/panels/tags.html' %}
+        {% include 'inc/panels/custom_fields.html' %}
+        {% plugin_left_page object %}
     </div>
     <div class="col col-md-6">
+        {% plugin_right_page object %}
+    </div>
+    <div class="col col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Source Addresses" %}
@@ -88,6 +92,7 @@
             </h5>
             {% htmx_table 'plugins:netbox_security:applicationset_list' security_zone_policy_id=object.pk %}
         </div>
+        {% plugin_full_width_page object %}
     </div>
 </div>
 {% endblock %}
