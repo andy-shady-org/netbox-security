@@ -5,6 +5,11 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
+{% if not policy_context.routing_context_known %}
+<div class="alert alert-warning" role="alert">
+  {% trans "Routing context is unknown. IPAM inheritance is not evaluated across VRFs. Direct address-book relationships are still shown." %}
+</div>
+{% endif %}
 {% include "netbox_security/inc/hierarchy_warning.html" %}
 {% include "netbox_security/inc/zone_context_warning.html" %}
 <div class="row">

@@ -16,6 +16,7 @@ from .hierarchy_limits import HierarchyBudget, discover_parents, expand_paths
 from .zone_membership import resolve_zone_membership
 
 _AUTO_ZONE_CONTEXT = object()
+_UNKNOWN_VRF = object()
 
 
 def _get_object_span(obj):
@@ -89,9 +90,30 @@ def _get_parent_customprefix_address_ids(target_object, *, user, budget):
     return inherited_ids
 
 
-def _get_parent_ipam_address_ids(target_object, *, user, budget):
+def _get_parent_ipam_address_ids(
+    target_object, *, user, budget, routing_vrf_id=_UNKNOWN_VRF
+):
     """Return address IDs assigned to IPAM objects that contain target_object."""
     from ipam.models import IPAddress, IPRange, Prefix
+
+    if routing_vrf_id is _UNKNOWN_VRF:
+        return []
+
+    scoped_objects = {
+        name: model.objects.restrict(user, "view").filter(vrf_id=routing_vrf_id)
+        for name, model in (
+            ("prefix", Prefix),
+            ("ipaddress", IPAddress),
+            ("iprange", IPRange),
+        )
+    }
+    eligible = Q(pk__in=[])
+    for name, queryset in scoped_objects.items():
+        eligible |= Q(
+            assigned_object_type__app_label="ipam",
+            assigned_object_type__model=name,
+            assigned_object_id__in=queryset.order_by().values("pk"),
+        )
 
     target_span = _get_object_span(target_object)
     if not target_span:
@@ -100,8 +122,7 @@ def _get_parent_ipam_address_ids(target_object, *, user, budget):
     address_rows = budget.take(
         Address.objects.restrict(user, "view")
         .filter(
-            assigned_object_type__app_label="ipam",
-            assigned_object_type__model__in=("prefix", "ipaddress", "iprange"),
+            eligible,
         )
         .order_by("pk")
         .values_list("id", "assigned_object_type__model", "assigned_object_id")
@@ -114,24 +135,11 @@ def _get_parent_ipam_address_ids(target_object, *, user, budget):
         object_ids_by_model[model_name].add(object_id)
 
     model_objects = {
-        "prefix": {
+        name: {
             obj.pk: obj
-            for obj in Prefix.objects.restrict(user, "view").filter(
-                pk__in=object_ids_by_model.get("prefix", set())
-            )
-        },
-        "ipaddress": {
-            obj.pk: obj
-            for obj in IPAddress.objects.restrict(user, "view").filter(
-                pk__in=object_ids_by_model.get("ipaddress", set())
-            )
-        },
-        "iprange": {
-            obj.pk: obj
-            for obj in IPRange.objects.restrict(user, "view").filter(
-                pk__in=object_ids_by_model.get("iprange", set())
-            )
-        },
+            for obj in queryset.filter(pk__in=object_ids_by_model.get(name, set()))
+        }
+        for name, queryset in scoped_objects.items()
     }
 
     inherited_ids = []
@@ -145,7 +153,9 @@ def _get_parent_ipam_address_ids(target_object, *, user, budget):
     return inherited_ids
 
 
-def _get_inherited_address_ids(target_object, direct_address_ids, *, user, budget):
+def _get_inherited_address_ids(
+    target_object, direct_address_ids, *, user, budget, routing_vrf_id=_UNKNOWN_VRF
+):
     """Get address IDs inherited from parent objects.
 
     For Prefix, IPRange, and IPAddress objects, traverse up the IPAM hierarchy
@@ -166,7 +176,11 @@ def _get_inherited_address_ids(target_object, direct_address_ids, *, user, budge
     # Handle Prefix inheritance
     if model_name == "prefix":
         # Get parent prefixes and their addresses
-        parent_prefixes = target_object.get_parents().restrict(user, "view")
+        parent_prefixes = (
+            target_object.get_parents()
+            .restrict(user, "view")
+            .filter(vrf_id=target_object.vrf_id)
+        )
         parent_address_ids = budget.take(
             Address.objects.restrict(user, "view")
             .filter(
@@ -282,7 +296,9 @@ def _get_inherited_address_ids(target_object, direct_address_ids, *, user, budge
     # Cross-model inheritance: CustomPrefixes inherit from containing IPAM objects.
     elif model_name == "customprefix":
         inherited_address_ids.extend(
-            _get_parent_ipam_address_ids(target_object, user=user, budget=budget)
+            _get_parent_ipam_address_ids(
+                target_object, user=user, budget=budget, routing_vrf_id=routing_vrf_id
+            )
         )
 
     # Remove direct addresses from inherited list to avoid duplicates
@@ -301,6 +317,7 @@ def get_address_set_hierarchy(
     object_id,
     member_zone_ids=_AUTO_ZONE_CONTEXT,
     include_candidates=False,
+    routing_vrf_id=_UNKNOWN_VRF,
 ):
     """Return transitive security context for an assigned IPAM object.
 
@@ -308,9 +325,14 @@ def get_address_set_hierarchy(
     assigned object -> Address -> AddressSet (direct + parent hierarchy) ->
     AddressList -> SecurityZonePolicy (source/destination)
 
+    IPAM targets use their own VRF. For CustomPrefixes, routing_vrf_id must
+    explicitly select a VRF (or None for the global table) to inherit from IPAM.
+    Omission retains address-book relationships without IPAM inheritance.
+
     Policy rows require independently resolved zone membership. An explicit
     member_zone_ids iterable supplies trusted caller context; None means unknown.
     """
+    # Omitted routing context differs from the explicit global table (None).
     budget = HierarchyBudget()
     content_type = ContentType.objects.filter(app_label=app_label, model=model).first()
     target_model = content_type.model_class() if content_type else None
@@ -319,8 +341,20 @@ def get_address_set_hierarchy(
         if target_model is not None
         else None
     )
+    if target_object is not None and hasattr(target_object, "vrf_id"):
+        routing_vrf_id = target_object.vrf_id
+    routing_context = {
+        "routing_context_known": target_object is not None
+        and routing_vrf_id is not _UNKNOWN_VRF,
+        "routing_vrf_id": (
+            routing_vrf_id
+            if target_object is not None and routing_vrf_id is not _UNKNOWN_VRF
+            else None
+        ),
+    }
     if target_object is None:
         return {
+            **routing_context,
             "hierarchy_truncated": budget.truncated,
             "zone_context_known": False,
             "member_zone_ids": [],
@@ -370,7 +404,11 @@ def get_address_set_hierarchy(
 
     # Get inherited addresses for IPAM child objects and CustomPrefix
     inherited_address_ids = _get_inherited_address_ids(
-        target_object, address_ids, user=user, budget=budget
+        target_object,
+        address_ids,
+        user=user,
+        budget=budget,
+        routing_vrf_id=routing_vrf_id,
     )
 
     # Combine direct and inherited addresses for hierarchy computation
@@ -378,6 +416,7 @@ def get_address_set_hierarchy(
 
     if not effective_address_ids:
         return {
+            **routing_context,
             "hierarchy_truncated": budget.truncated,
             "zone_context_known": zone_context_known,
             "member_zone_ids": visible_member_zone_ids,
@@ -667,6 +706,7 @@ def get_address_set_hierarchy(
     )
 
     return {
+        **routing_context,
         "zone_context_known": zone_context_known,
         "member_zone_ids": visible_member_zone_ids,
         "hierarchy_truncated": budget.truncated,

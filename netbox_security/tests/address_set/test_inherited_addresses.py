@@ -653,6 +653,7 @@ class CustomPrefixToIPAMInheritedAddressPolicyContextTestCase(TestCase):
 
     def test_custom_prefix_inherits_from_ipam_prefix(self):
         result = get_address_set_hierarchy(
+            routing_vrf_id=None,
             member_zone_ids=[self.destination_zone.pk],
             user=self.user,
             app_label="netbox_security",
@@ -668,6 +669,7 @@ class CustomPrefixToIPAMInheritedAddressPolicyContextTestCase(TestCase):
 
     def test_source_zone_does_not_match_destination_address(self):
         result = get_address_set_hierarchy(
+            routing_vrf_id=None,
             member_zone_ids=[self.source_zone.pk],
             user=self.user,
             app_label="netbox_security",
