@@ -1,10 +1,5 @@
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from netbox_security.models import NatPoolMember
+"""Signal module for NatPoolMember.
 
-
-@receiver(post_save, sender=NatPoolMember)
-def add_ipaddress_assignment_post_save(instance, **kwargs):
-    if instance.address:
-        instance.address.assigned_object = instance
-        instance.address.save()
+NatPoolMember creation must not mutate referenced IPAM objects or overwrite any
+existing assignment on an IP address.
+"""

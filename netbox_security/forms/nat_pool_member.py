@@ -211,7 +211,12 @@ class NatPoolMemberImportForm(PortsForm, PrimaryModelImportForm):
                 **scope_filters,
             )
             if address_range_end := self.data.get("address_range_end"):
-                queryset = queryset.filter(end_address=address_range_end)
+                try:
+                    queryset = queryset.filter(
+                        end_address=str(IPNetwork(str(address_range_end)))
+                    )
+                except Exception:
+                    pass
             address_range_field.queryset = queryset
 
     class Meta:
