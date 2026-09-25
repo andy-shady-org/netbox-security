@@ -47,44 +47,62 @@ __all__ = (
 
 @register_model_view(SecurityZone)
 class SecurityZoneView(generic.ObjectView):
-    queryset = SecurityZone.annotated_queryset()
+    queryset = SecurityZone.objects.all()
     template_name = "netbox_security/securityzone.html"
 
+    def get_queryset(self, request):
+        return SecurityZone.annotated_queryset(
+            user=request.user, queryset=super().get_queryset(request)
+        )
+
     def get_extra_context(self, request, instance):
-        device_assignments_table = DeviceTable(
-            Device.objects.filter(security_zones__zone=instance),
-            orderable=False,
-        )
-        device_assignments_table.configure(request)
-        virtual_device_assignments_table = VirtualDeviceContextTable(
-            VirtualDeviceContext.objects.filter(security_zones__zone=instance),
-            orderable=False,
-        )
-        virtual_device_assignments_table.configure(request)
-        virtual_machine_assignments_table = VirtualMachineTable(
-            VirtualMachine.objects.filter(security_zones__zone=instance),
-            orderable=False,
-        )
-        virtual_machine_assignments_table.configure(request)
-        interface_assignments_table = InterfaceTable(
-            Interface.objects.filter(security_zones__zone=instance),
-            orderable=False,
-        )
-        interface_assignments_table.configure(request)
-        return {
-            "device_assignments_table": device_assignments_table,
-            "virtual_device_assignments_table": virtual_device_assignments_table,
-            "virtual_machine_assignments_table": virtual_machine_assignments_table,
-            "interface_assignments_table": interface_assignments_table,
+        table_definitions = {
+            "device_assignments_table": (
+                DeviceTable,
+                Device.objects.restrict(request.user, "view").filter(
+                    security_zones__zone=instance
+                ),
+            ),
+            "virtual_device_assignments_table": (
+                VirtualDeviceContextTable,
+                VirtualDeviceContext.objects.restrict(request.user, "view").filter(
+                    security_zones__zone=instance
+                ),
+            ),
+            "virtual_machine_assignments_table": (
+                VirtualMachineTable,
+                VirtualMachine.objects.restrict(request.user, "view").filter(
+                    security_zones__zone=instance
+                ),
+            ),
+            "interface_assignments_table": (
+                InterfaceTable,
+                Interface.objects.restrict(request.user, "view").filter(
+                    security_zones__zone=instance
+                ),
+            ),
         }
+
+        context = {}
+        for name, (table_class, queryset) in table_definitions.items():
+            table = table_class(queryset, orderable=False)
+            table.configure(request)
+            context[name] = table
+
+        return context
 
 
 @register_model_view(SecurityZone, "list", path="", detail=False)
 class SecurityZoneListView(generic.ObjectListView):
-    queryset = SecurityZone.annotated_queryset()
+    queryset = SecurityZone.objects.all()
     filterset = SecurityZoneFilterSet
     filterset_form = SecurityZoneFilterForm
     table = SecurityZoneTable
+
+    def get_queryset(self, request):
+        return SecurityZone.annotated_queryset(
+            user=request.user, queryset=super().get_queryset(request)
+        )
 
 
 @register_model_view(SecurityZone, "add", detail=False)

@@ -177,18 +177,14 @@ class ApplicationSetAssignmentViewSet(NetBoxModelViewSet):
 
 
 class SecurityZoneViewSet(NetBoxModelViewSet):
-    queryset = SecurityZone.objects.prefetch_related("tenant", "tags").annotate(
-        source_policy_count=Count(
-            "source_zone_policies",
-            distinct=True,
-        ),
-        destination_policy_count=Count(
-            "destination_zone_policies",
-            distinct=True,
-        ),
-    )
+    queryset = SecurityZone.objects.prefetch_related("tenant", "tags")
     serializer_class = SecurityZoneSerializer
     filterset_class = SecurityZoneFilterSet
+
+    def get_queryset(self):
+        return SecurityZone.annotated_queryset(
+            user=self.request.user, queryset=super().get_queryset()
+        )
 
 
 class SecurityZoneAssignmentViewSet(NetBoxModelViewSet):

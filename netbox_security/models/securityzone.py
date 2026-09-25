@@ -86,27 +86,24 @@ class SecurityZone(ContactsMixin, PrimaryModel):
             )
 
     @classmethod
-    def annotated_queryset(cls):
-        """Construct an efficient queryset for this model and related data."""
-        return (
-            cls.objects.defer("id")
-            .prefetch_related("source_zone_policies", "destination_zone_policies")
-            .annotate(
-                source_policy_count=models.Count(
-                    "source_zone_policies",
-                    filter=models.Q(
-                        source_zone_policies__source_zone=models.F("pk"),
-                    ),
-                    distinct=True,
-                ),
-                destination_policy_count=models.Count(
-                    "destination_zone_policies",
-                    filter=models.Q(
-                        destination_zone_policies__destination_zone=models.F("pk"),
-                    ),
-                    distinct=True,
-                ),
-            )
+    def annotated_queryset(cls, *, user, queryset=None):
+        """Annotate zone counts using only policies visible to the requesting user."""
+        from netbox_security.models import SecurityZonePolicy
+
+        visible_policies = SecurityZonePolicy.objects.restrict(user, "view").values("pk")
+        if queryset is None:
+            queryset = cls.objects.all()
+        return queryset.annotate(
+            source_policy_count=models.Count(
+                "source_zone_policies",
+                filter=models.Q(source_zone_policies__in=visible_policies),
+                distinct=True,
+            ),
+            destination_policy_count=models.Count(
+                "destination_zone_policies",
+                filter=models.Q(destination_zone_policies__in=visible_policies),
+                distinct=True,
+            ),
         )
 
 

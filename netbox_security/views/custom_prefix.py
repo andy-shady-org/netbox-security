@@ -34,6 +34,7 @@ class CustomPrefixView(generic.ObjectView):
     def get_extra_context(self, request, instance):
         return {
             "policy_context": get_address_set_hierarchy(
+                user=request.user,
                 app_label="netbox_security",
                 model="customprefix",
                 object_id=instance.pk,

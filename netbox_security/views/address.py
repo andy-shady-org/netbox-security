@@ -48,32 +48,39 @@ class AddressView(generic.ObjectView):
     template_name = "netbox_security/address.html"
 
     def get_extra_context(self, request, instance):
-        device_assignments_table = DeviceTable(
-            Device.objects.filter(addresses__address=instance),
-            orderable=False,
-        )
-        device_assignments_table.configure(request)
-        virtual_device_assignments_table = VirtualDeviceContextTable(
-            VirtualDeviceContext.objects.filter(addresses__address=instance),
-            orderable=False,
-        )
-        virtual_device_assignments_table.configure(request)
-        virtual_machine_assignments_table = VirtualMachineTable(
-            VirtualMachine.objects.filter(addresses__address=instance),
-            orderable=False,
-        )
-        virtual_machine_assignments_table.configure(request)
-        zone_assignments_table = SecurityZoneTable(
-            SecurityZone.objects.filter(addresses__address=instance),
-            orderable=False,
-        )
-        zone_assignments_table.configure(request)
-        return {
-            "device_assignments_table": device_assignments_table,
-            "virtual_device_assignments_table": virtual_device_assignments_table,
-            "virtual_machine_assignments_table": virtual_machine_assignments_table,
-            "zone_assignments_table": zone_assignments_table,
+        table_definitions = {
+            "device_assignments_table": (
+                DeviceTable,
+                Device.objects.restrict(request.user, "view").filter(
+                    addresses__address=instance
+                ),
+            ),
+            "virtual_device_assignments_table": (
+                VirtualDeviceContextTable,
+                VirtualDeviceContext.objects.restrict(request.user, "view").filter(
+                    addresses__address=instance
+                ),
+            ),
+            "virtual_machine_assignments_table": (
+                VirtualMachineTable,
+                VirtualMachine.objects.restrict(request.user, "view").filter(
+                    addresses__address=instance
+                ),
+            ),
+            "zone_assignments_table": (
+                SecurityZoneTable,
+                SecurityZone.objects.restrict(request.user, "view").filter(
+                    addresses__address=instance
+                ),
+            ),
         }
+        context = {}
+        for name, (table_class, queryset) in table_definitions.items():
+            table = table_class(queryset, orderable=False)
+            table.configure(request)
+            context[name] = table
+
+        return context
 
 
 @register_model_view(Address, "list", path="", detail=False)
