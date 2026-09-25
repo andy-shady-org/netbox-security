@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from netaddr import IPNetwork
@@ -16,6 +17,9 @@ from netbox_security.utils import get_address_set_hierarchy
 class AddressSetHierarchyTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         cls.prefix = Prefix.objects.create(prefix=IPNetwork("10.1.0.0/24"))
         cls.address = Address.objects.create(
             name="prefix-address",
@@ -68,6 +72,7 @@ class AddressSetHierarchyTestCase(TestCase):
 
     def test_returns_transitive_addressset_and_policy_context(self):
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam",
             model="prefix",
             object_id=self.prefix.pk,
@@ -125,6 +130,7 @@ class AddressSetHierarchyTestCase(TestCase):
         unassigned_prefix = Prefix.objects.create(prefix=IPNetwork("10.2.0.0/24"))
 
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam",
             model="prefix",
             object_id=unassigned_prefix.pk,
@@ -142,6 +148,7 @@ class AddressSetHierarchyTestCase(TestCase):
 
     def test_returns_empty_for_unknown_content_type(self):
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="not_real",
             model="missing",
             object_id=1,
@@ -155,4 +162,19 @@ class AddressSetHierarchyTestCase(TestCase):
         self.assertEqual(result["address_set_paths"], [])
         self.assertEqual(result["address_set_hierarchy_rows"], [])
         self.assertEqual(result["address_list_ids"], [])
+        self.assertEqual(result["policy_paths"], [])
+
+    def test_returns_empty_for_inaccessible_root(self):
+        user = get_user_model().objects.create_user(username="restricted-hierarchy-user")
+
+        result = get_address_set_hierarchy(
+            user=user,
+            app_label="ipam",
+            model="prefix",
+            object_id=self.prefix.pk,
+        )
+
+        self.assertIsNone(result["assigned_object_id"])
+        self.assertEqual(result["address_ids"], [])
+        self.assertEqual(result["all_address_set_ids"], [])
         self.assertEqual(result["policy_paths"], [])

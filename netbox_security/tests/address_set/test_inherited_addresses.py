@@ -1,5 +1,6 @@
 """Tests for inherited address functionality in Security Policy Context."""
 
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from netaddr import IPNetwork
@@ -21,6 +22,9 @@ class PrefixInheritedAddressTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         # Create parent and child prefixes
         cls.parent_prefix = Prefix.objects.create(prefix=IPNetwork("10.0.0.0/8"))
         cls.child_prefix = Prefix.objects.create(prefix=IPNetwork("10.1.0.0/24"))
@@ -59,6 +63,7 @@ class PrefixInheritedAddressTestCase(TestCase):
     def test_child_prefix_inherits_parent_addresses(self):
         """Child prefix should show both direct and inherited addresses."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam",
             model="prefix",
             object_id=self.child_prefix.pk,
@@ -80,6 +85,7 @@ class PrefixInheritedAddressTestCase(TestCase):
     def test_child_prefix_no_direct_address_inherits_parent_addresses(self):
         """Child prefix with no direct address should still show inherited addresses."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam",
             model="prefix",
             object_id=self.child_prefix_no_direct.pk,
@@ -96,6 +102,7 @@ class PrefixInheritedAddressTestCase(TestCase):
     def test_parent_prefix_shows_own_addresses_not_inherited(self):
         """Parent prefix should not show child addresses as inherited."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam",
             model="prefix",
             object_id=self.parent_prefix.pk,
@@ -114,6 +121,9 @@ class IPAddressInheritedAddressTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         # Create parent prefix
         cls.parent_prefix = Prefix.objects.create(prefix=IPNetwork("10.1.0.0/24"))
 
@@ -150,6 +160,7 @@ class IPAddressInheritedAddressTestCase(TestCase):
     def test_ip_address_with_direct_also_inherits_parent(self):
         """IP address with a direct assignment should also show inherited parent addresses."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam",
             model="ipaddress",
             object_id=self.ip_address_with_direct.pk,
@@ -161,6 +172,7 @@ class IPAddressInheritedAddressTestCase(TestCase):
     def test_ip_address_no_direct_inherits_parent(self):
         """IP address with NO direct assignment should show inherited parent addresses."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam",
             model="ipaddress",
             object_id=self.ip_address_no_direct.pk,
@@ -180,6 +192,9 @@ class IPRangeInheritedAddressTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         # Create parent prefix
         cls.parent_prefix = Prefix.objects.create(prefix=IPNetwork("10.1.0.0/24"))
 
@@ -202,6 +217,7 @@ class IPRangeInheritedAddressTestCase(TestCase):
     def test_ip_range_no_direct_inherits_parent(self):
         """IP range with NO direct assignment should show inherited parent prefix addresses."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam",
             model="iprange",
             object_id=self.ip_range_no_direct.pk,
@@ -219,6 +235,9 @@ class InheritedAddressSetHierarchyTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         # Create parent and child prefixes
         cls.parent_prefix = Prefix.objects.create(prefix=IPNetwork("10.0.0.0/8"))
         cls.child_prefix = Prefix.objects.create(prefix=IPNetwork("10.1.0.0/24"))
@@ -242,6 +261,7 @@ class InheritedAddressSetHierarchyTestCase(TestCase):
     def test_child_prefix_shows_inherited_address_set_hierarchy(self):
         """Child prefix should show address set hierarchy for inherited addresses."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam",
             model="prefix",
             object_id=self.child_prefix.pk,
@@ -270,6 +290,9 @@ class InheritedAddressPolicyContextTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         # Create parent and child prefixes
         cls.parent_prefix = Prefix.objects.create(prefix=IPNetwork("10.0.0.0/8"))
         cls.child_prefix = Prefix.objects.create(prefix=IPNetwork("10.1.0.0/24"))
@@ -311,6 +334,7 @@ class InheritedAddressPolicyContextTestCase(TestCase):
     def test_child_prefix_shows_policy_from_inherited_addresses(self):
         """Child prefix should show policy derived from inherited addresses."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam",
             model="prefix",
             object_id=self.child_prefix.pk,
@@ -330,6 +354,9 @@ class CustomPrefixInheritedAddressTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         # Create parent and child custom prefixes
         cls.parent_custom_prefix = CustomPrefix.objects.create(
             prefix=IPNetwork("10.0.0.0/8")
@@ -361,6 +388,7 @@ class CustomPrefixInheritedAddressTestCase(TestCase):
     def test_child_custom_prefix_inherits_parent_addresses(self):
         """Child custom prefix should show both direct and inherited addresses."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="netbox_security",
             model="customprefix",
             object_id=self.child_custom_prefix.pk,
@@ -382,6 +410,7 @@ class CustomPrefixInheritedAddressTestCase(TestCase):
     def test_parent_custom_prefix_shows_own_addresses_not_inherited(self):
         """Parent custom prefix should not show child addresses as inherited."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="netbox_security",
             model="customprefix",
             object_id=self.parent_custom_prefix.pk,
@@ -400,6 +429,9 @@ class CustomPrefixInheritedAddressSetHierarchyTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         # Create parent and child custom prefixes
         cls.parent_custom_prefix = CustomPrefix.objects.create(
             prefix=IPNetwork("10.0.0.0/8")
@@ -427,6 +459,7 @@ class CustomPrefixInheritedAddressSetHierarchyTestCase(TestCase):
     def test_child_custom_prefix_shows_inherited_address_set_hierarchy(self):
         """Child custom prefix should show address set hierarchy for inherited addresses."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="netbox_security",
             model="customprefix",
             object_id=self.child_custom_prefix.pk,
@@ -455,6 +488,9 @@ class CustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         # Create parent and child custom prefixes
         cls.parent_custom_prefix = CustomPrefix.objects.create(
             prefix=IPNetwork("10.0.0.0/8")
@@ -500,6 +536,7 @@ class CustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
     def test_child_custom_prefix_shows_policy_from_inherited_addresses(self):
         """Child custom prefix should show policy derived from inherited addresses."""
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="netbox_security",
             model="customprefix",
             object_id=self.child_custom_prefix.pk,
@@ -519,6 +556,9 @@ class IPAMToCustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         cls.global_custom_prefix = CustomPrefix.objects.create(
             prefix=IPNetwork("0.0.0.0/0")
         )
@@ -555,6 +595,7 @@ class IPAMToCustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
 
     def test_ipaddress_inherits_from_custom_prefix(self):
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="ipam", model="ipaddress", object_id=self.ip_address.pk
         )
 
@@ -568,6 +609,9 @@ class CustomPrefixToIPAMInheritedAddressPolicyContextTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="hierarchy-test-user", is_superuser=True, is_staff=True
+        )
         cls.global_prefix = Prefix.objects.create(prefix=IPNetwork("0.0.0.0/0"))
         cls.custom_prefix = CustomPrefix.objects.create(
             prefix=IPNetwork("172.162.0.0/16")
@@ -604,6 +648,7 @@ class CustomPrefixToIPAMInheritedAddressPolicyContextTestCase(TestCase):
 
     def test_custom_prefix_inherits_from_ipam_prefix(self):
         result = get_address_set_hierarchy(
+            user=self.user,
             app_label="netbox_security",
             model="customprefix",
             object_id=self.custom_prefix.pk,

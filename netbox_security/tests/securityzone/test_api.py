@@ -61,6 +61,23 @@ class SecurityZoneAPITestCase(
         )
         SecurityZone.objects.bulk_create(zones)
 
+    def test_list_objects_has_stable_default_ordering(self):
+        self.add_permissions("netbox_security.view_securityzone")
+        SecurityZone.objects.create(name="A-FIRST", identifier="second")
+        SecurityZone.objects.create(name="A-FIRST", identifier="first")
+        expected_ids = list(
+            SecurityZone.objects.order_by("name", "pk").values_list("pk", flat=True)[:2]
+        )
+
+        response = self.client.get(
+            self._get_list_url(), {"limit": 2}, **self.header
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            [zone["id"] for zone in response.json()["results"]], expected_ids
+        )
+
     def test_update_disallow_intra_zone_rejected_with_same_zone_policies(self):
         self.add_permissions(
             "netbox_security.view_securityzone",

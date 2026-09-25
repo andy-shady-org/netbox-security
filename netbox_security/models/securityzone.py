@@ -95,7 +95,7 @@ class SecurityZone(ContactsMixin, PrimaryModel):
         )
         if queryset is None:
             queryset = cls.objects.all()
-        return queryset.annotate(
+        queryset = queryset.annotate(
             source_policy_count=models.Count(
                 "source_zone_policies",
                 filter=models.Q(source_zone_policies__in=visible_policies),
@@ -107,6 +107,10 @@ class SecurityZone(ContactsMixin, PrimaryModel):
                 distinct=True,
             ),
         )
+        # Aggregate annotations do not retain Meta.ordering for pagination.
+        if not queryset.ordered:
+            queryset = queryset.order_by("name", "pk")
+        return queryset
 
 
 class SecurityZoneAssignment(NetBoxModel):
