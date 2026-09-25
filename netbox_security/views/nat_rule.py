@@ -51,7 +51,7 @@ class NatRuleView(generic.ObjectView):
 
     def get_extra_context(self, request, instance):
         source_addresses_table = IPAddressTable(
-            instance.source_addresses.all(),
+            instance.source_addresses.restrict(request.user, "view"),
             orderable=False,
             exclude=(
                 "created",
@@ -59,7 +59,7 @@ class NatRuleView(generic.ObjectView):
             ),
         )
         destination_addresses_table = IPAddressTable(
-            instance.destination_addresses.all(),
+            instance.destination_addresses.restrict(request.user, "view"),
             orderable=False,
             exclude=(
                 "created",
@@ -67,7 +67,7 @@ class NatRuleView(generic.ObjectView):
             ),
         )
         source_prefixes_table = PrefixTable(
-            instance.source_prefixes.all(),
+            instance.source_prefixes.restrict(request.user, "view"),
             orderable=False,
             exclude=(
                 "prefix_flat",
@@ -84,7 +84,7 @@ class NatRuleView(generic.ObjectView):
             ),
         )
         destination_prefixes_table = PrefixTable(
-            instance.destination_prefixes.all(),
+            instance.destination_prefixes.restrict(request.user, "view"),
             orderable=False,
             exclude=(
                 "prefix_flat",
@@ -101,7 +101,7 @@ class NatRuleView(generic.ObjectView):
             ),
         )
         source_ranges_table = IPRangeTable(
-            instance.source_ranges.all(),
+            instance.source_ranges.restrict(request.user, "view"),
             orderable=False,
             exclude=(
                 "created",
@@ -109,7 +109,7 @@ class NatRuleView(generic.ObjectView):
             ),
         )
         destination_ranges_table = IPRangeTable(
-            instance.destination_ranges.all(),
+            instance.destination_ranges.restrict(request.user, "view"),
             orderable=False,
             exclude=(
                 "created",
@@ -117,7 +117,9 @@ class NatRuleView(generic.ObjectView):
             ),
         )
         interface_assignments_table = InterfaceTable(
-            Interface.objects.filter(natrules__rule=instance),
+            Interface.objects.restrict(request.user, "view").filter(
+                natrules__rule=instance
+            ),
             orderable=False,
         )
         interface_assignments_table.configure(request)

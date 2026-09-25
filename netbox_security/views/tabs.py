@@ -13,6 +13,7 @@ from netbox_security.models import (
 )
 from netbox_security.utils import get_address_set_hierarchy
 
+from netbox.context import current_request
 from netbox.views import generic
 from utilities.views import register_model_view, ViewTab
 
@@ -34,6 +35,7 @@ def _count_subquery(qs):
 def _annotate_ipam_security_queryset(
     queryset,
     *,
+    user,
     assigned_object_model,
     nat_pool_member_field,
     nat_rule_source_field,
@@ -45,26 +47,30 @@ def _annotate_ipam_security_queryset(
 
     return queryset.annotate(
         nat_pool_member_count=_count_subquery(
-            NatPoolMember.objects.filter(**nat_pool_member_filter)
+            NatPoolMember.objects.restrict(user, "view").filter(
+                **nat_pool_member_filter
+            )
         ),
         nat_rule_count=_count_subquery(
-            NatRule.objects.filter(
+            NatRule.objects.restrict(user, "view").filter(
                 Q(**nat_rule_source_filter) | Q(**nat_rule_destination_filter)
             )
         ),
         address_count=_count_subquery(
-            Address.objects.filter(
+            Address.objects.restrict(user, "view").filter(
                 assigned_object_type__app_label="ipam",
                 assigned_object_type__model=assigned_object_model,
                 assigned_object_id=OuterRef("pk"),
             )
         ),
         security_zone_count=_count_subquery(
-            SecurityZone.objects.filter(
+            SecurityZone.objects.restrict(user, "view")
+            .filter(
                 addresses__address__assigned_object_type__app_label="ipam",
                 addresses__address__assigned_object_type__model=assigned_object_model,
                 addresses__address__assigned_object_id=OuterRef("pk"),
-            ).distinct()
+            )
+            .distinct()
         ),
     ).annotate(
         related_total_count=(
@@ -76,9 +82,10 @@ def _annotate_ipam_security_queryset(
     )
 
 
-def _annotate_ipaddress_queryset(queryset):
+def _annotate_ipaddress_queryset(queryset, *, user):
     return _annotate_ipam_security_queryset(
         queryset,
+        user=user,
         assigned_object_model="ipaddress",
         nat_pool_member_field="address",
         nat_rule_source_field="source_addresses",
@@ -86,9 +93,10 @@ def _annotate_ipaddress_queryset(queryset):
     )
 
 
-def _annotate_prefix_queryset(queryset):
+def _annotate_prefix_queryset(queryset, *, user):
     return _annotate_ipam_security_queryset(
         queryset,
+        user=user,
         assigned_object_model="prefix",
         nat_pool_member_field="prefix",
         nat_rule_source_field="source_prefixes",
@@ -96,9 +104,10 @@ def _annotate_prefix_queryset(queryset):
     )
 
 
-def _annotate_iprange_queryset(queryset):
+def _annotate_iprange_queryset(queryset, *, user):
     return _annotate_ipam_security_queryset(
         queryset,
+        user=user,
         assigned_object_model="iprange",
         nat_pool_member_field="address_range",
         nat_rule_source_field="source_ranges",
@@ -107,11 +116,17 @@ def _annotate_iprange_queryset(queryset):
 
 
 def _related_total_count(obj, model, annotate_queryset):
-    # Tabs are rendered from the base IPAddress object view; ensure the badge works even if the instance isn't annotated.
-    if hasattr(obj, "related_total_count"):
-        return obj.related_total_count
+    # Badge callbacks receive only the object; resolve the user from this request.
+    request = current_request.get()
+    if request is None or getattr(request, "user", None) is None:
+        return 0
+
+    # Recompute for this user instead of trusting annotations from another queryset.
     return (
-        annotate_queryset(model.objects.filter(pk=obj.pk))
+        annotate_queryset(
+            model.objects.restrict(request.user, "view").filter(pk=obj.pk),
+            user=request.user,
+        )
         .values_list("related_total_count", flat=True)
         .first()
         or 0
@@ -119,45 +134,24 @@ def _related_total_count(obj, model, annotate_queryset):
 
 
 def _ipaddress_related_total_count(obj):
-    return max(
-        _related_total_count(obj, IPAddress, _annotate_ipaddress_queryset),
-        _policy_context_related_total_count("ipam", "ipaddress", obj.pk),
-    )
+    return _related_total_count(obj, IPAddress, _annotate_ipaddress_queryset)
 
 
 def _prefix_related_total_count(obj):
-    return max(
-        _related_total_count(obj, Prefix, _annotate_prefix_queryset),
-        _policy_context_related_total_count("ipam", "prefix", obj.pk),
-    )
+    return _related_total_count(obj, Prefix, _annotate_prefix_queryset)
 
 
 def _iprange_related_total_count(obj):
-    return max(
-        _related_total_count(obj, IPRange, _annotate_iprange_queryset),
-        _policy_context_related_total_count("ipam", "iprange", obj.pk),
-    )
+    return _related_total_count(obj, IPRange, _annotate_iprange_queryset)
 
 
-def _policy_context(app_label, model, object_id):
+def _policy_context(app_label, model, object_id, *, user):
     return get_address_set_hierarchy(
+        user=user,
         app_label=app_label,
         model=model,
         object_id=object_id,
     )
-
-
-def _policy_context_related_total_count(app_label, model, object_id):
-    """Count total security context items including inherited addresses."""
-    policy_context = _policy_context(app_label, model, object_id)
-
-    # Count all relevant items: direct addresses, inherited addresses, and policy paths
-    count = (
-        len(policy_context.get("address_objects", []))
-        + len(policy_context.get("inherited_address_objects", []))
-        + len(policy_context.get("policy_paths", []))
-    )
-    return count
 
 
 @register_model_view(Device, name="security")
@@ -192,7 +186,7 @@ class VirtualMachineSecurityView(generic.ObjectView):
 
 @register_model_view(IPAddress, name="security")
 class IPAddressSecurityView(generic.ObjectView):
-    queryset = _annotate_ipaddress_queryset(IPAddress.objects.all())
+    queryset = IPAddress.objects.all()
     template_name = "netbox_security/ipaddress/security.html"
     tab = ViewTab(
         label=_("Security"),
@@ -202,13 +196,18 @@ class IPAddressSecurityView(generic.ObjectView):
 
     def get_extra_context(self, request, instance):
         return {
-            "policy_context": _policy_context("ipam", "ipaddress", instance.pk),
+            "policy_context": _policy_context(
+                "ipam",
+                "ipaddress",
+                instance.pk,
+                user=request.user,
+            ),
         }
 
 
 @register_model_view(Prefix, name="security")
 class PrefixSecurityView(generic.ObjectView):
-    queryset = _annotate_prefix_queryset(Prefix.objects.all())
+    queryset = Prefix.objects.all()
     template_name = "netbox_security/prefix/security.html"
     tab = ViewTab(
         label=_("Security"),
@@ -218,13 +217,18 @@ class PrefixSecurityView(generic.ObjectView):
 
     def get_extra_context(self, request, instance):
         return {
-            "policy_context": _policy_context("ipam", "prefix", instance.pk),
+            "policy_context": _policy_context(
+                "ipam",
+                "prefix",
+                instance.pk,
+                user=request.user,
+            ),
         }
 
 
 @register_model_view(IPRange, name="security")
 class IPRangeSecurityView(generic.ObjectView):
-    queryset = _annotate_iprange_queryset(IPRange.objects.all())
+    queryset = IPRange.objects.all()
     template_name = "netbox_security/iprange/security.html"
     tab = ViewTab(
         label=_("Security"),
@@ -234,5 +238,10 @@ class IPRangeSecurityView(generic.ObjectView):
 
     def get_extra_context(self, request, instance):
         return {
-            "policy_context": _policy_context("ipam", "iprange", instance.pk),
+            "policy_context": _policy_context(
+                "ipam",
+                "iprange",
+                instance.pk,
+                user=request.user,
+            ),
         }

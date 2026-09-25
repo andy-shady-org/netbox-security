@@ -55,26 +55,33 @@ class NatRuleSetView(generic.ObjectView):
     template_name = "netbox_security/natruleset.html"
 
     def get_extra_context(self, request, instance):
-        device_assignments_table = DeviceTable(
-            Device.objects.filter(natrulesets__ruleset=instance),
-            orderable=False,
-        )
-        device_assignments_table.configure(request)
-        virtual_device_assignments_table = VirtualDeviceContextTable(
-            VirtualDeviceContext.objects.filter(natrulesets__ruleset=instance),
-            orderable=False,
-        )
-        virtual_device_assignments_table.configure(request)
-        virtual_machine_assignments_table = VirtualMachineTable(
-            VirtualMachine.objects.filter(natrulesets__ruleset=instance),
-            orderable=False,
-        )
-        virtual_machine_assignments_table.configure(request)
-        return {
-            "device_assignments_table": device_assignments_table,
-            "virtual_device_assignments_table": virtual_device_assignments_table,
-            "virtual_machine_assignments_table": virtual_machine_assignments_table,
+        table_definitions = {
+            "device_assignments_table": (
+                DeviceTable,
+                Device.objects.restrict(request.user, "view").filter(
+                    natrulesets__ruleset=instance
+                ),
+            ),
+            "virtual_device_assignments_table": (
+                VirtualDeviceContextTable,
+                VirtualDeviceContext.objects.restrict(request.user, "view").filter(
+                    natrulesets__ruleset=instance
+                ),
+            ),
+            "virtual_machine_assignments_table": (
+                VirtualMachineTable,
+                VirtualMachine.objects.restrict(request.user, "view").filter(
+                    natrulesets__ruleset=instance
+                ),
+            ),
         }
+        context = {}
+        for name, (table_class, queryset) in table_definitions.items():
+            table = table_class(queryset, orderable=False)
+            table.configure(request)
+            context[name] = table
+
+        return context
 
 
 @register_model_view(NatRuleSet, "list", path="", detail=False)
