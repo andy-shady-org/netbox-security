@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from netbox.api.serializers import PrimaryModelSerializer
 
-from netbox_security.api.serializers import FirewallFilterSerializer
+from .firewall_filter import FirewallFilterSerializer
 
 from netbox_security.models import (
     FirewallFilterRule,

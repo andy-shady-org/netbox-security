@@ -11,7 +11,7 @@ from netbox.api.fields import ContentTypeField
 from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
 from tenancy.api.serializers import TenantSerializer
 from netbox_security.models import Application, ApplicationAssignment
-from netbox_security.api.serializers import ApplicationItemSerializer
+from .application_item import ApplicationItemSerializer
 from netbox_security.constants import APPLICATION_ASSIGNMENT_MODELS
 from netbox_security.choices import ProtocolChoices
 

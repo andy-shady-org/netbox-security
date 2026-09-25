@@ -4,12 +4,10 @@ from rest_framework.serializers import (
     ChoiceField,
 )
 from netbox.api.serializers import NetBoxModelSerializer
-from netbox_security.api.serializers import (
-    SecurityZoneSerializer,
-    AddressListSerializer,
-    ApplicationSerializer,
-    ApplicationSetSerializer,
-)
+from .securityzone import SecurityZoneSerializer
+from .address_list import AddressListSerializer
+from .application import ApplicationSerializer
+from .application_set import ApplicationSetSerializer
 from netbox_security.models import (
     SecurityZonePolicy,
 )

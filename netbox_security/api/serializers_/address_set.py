@@ -10,7 +10,7 @@ from netbox.api.serializers import (
 from tenancy.api.serializers import TenantSerializer
 
 from netbox_security.models import AddressSet, AddressSetAssignment
-from netbox_security.api.serializers import AddressSerializer
+from .address import AddressSerializer
 from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
 
 

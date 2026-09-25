@@ -10,7 +10,7 @@ from netbox_security.models import (
     NatPoolMember,
 )
 
-from netbox_security.api.serializers import NatPoolSerializer
+from .nat_pool import NatPoolSerializer
 
 
 class NatPoolMemberSerializer(PrimaryModelSerializer):

@@ -15,7 +15,7 @@ from netbox_security.constants import (
     RULESET_ASSIGNMENT_MODELS,
 )
 
-from netbox_security.api.serializers import SecurityZoneSerializer
+from .securityzone import SecurityZoneSerializer
 
 
 class NatRuleSetSerializer(NetBoxModelSerializer):
