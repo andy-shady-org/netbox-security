@@ -277,4 +277,3 @@ class NatPoolMemberSafetyTestCase(TestCase):
                 )
                 self.assertFalse(serializer.is_valid())
                 self.assertIn("status", serializer.errors)
-

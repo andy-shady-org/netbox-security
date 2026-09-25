@@ -60,4 +60,3 @@ class NatPoolMemberSerializer(PrimaryModelSerializer):
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
         return self._sync_related_object_status(instance)
-
