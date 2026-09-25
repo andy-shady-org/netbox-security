@@ -334,6 +334,7 @@ class InheritedAddressPolicyContextTestCase(TestCase):
     def test_child_prefix_shows_policy_from_inherited_addresses(self):
         """Child prefix should show policy derived from inherited addresses."""
         result = get_address_set_hierarchy(
+            member_zone_ids=[self.source_zone.pk],
             user=self.user,
             app_label="ipam",
             model="prefix",
@@ -536,6 +537,7 @@ class CustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
     def test_child_custom_prefix_shows_policy_from_inherited_addresses(self):
         """Child custom prefix should show policy derived from inherited addresses."""
         result = get_address_set_hierarchy(
+            member_zone_ids=[self.source_zone.pk],
             user=self.user,
             app_label="netbox_security",
             model="customprefix",
@@ -595,6 +597,7 @@ class IPAMToCustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
 
     def test_ipaddress_inherits_from_custom_prefix(self):
         result = get_address_set_hierarchy(
+            member_zone_ids=[self.source_zone.pk],
             user=self.user,
             app_label="ipam",
             model="ipaddress",
@@ -650,6 +653,7 @@ class CustomPrefixToIPAMInheritedAddressPolicyContextTestCase(TestCase):
 
     def test_custom_prefix_inherits_from_ipam_prefix(self):
         result = get_address_set_hierarchy(
+            member_zone_ids=[self.destination_zone.pk],
             user=self.user,
             app_label="netbox_security",
             model="customprefix",
@@ -657,5 +661,19 @@ class CustomPrefixToIPAMInheritedAddressPolicyContextTestCase(TestCase):
         )
 
         self.assertIn(self.ipam_prefix_address.pk, result["inherited_address_ids"])
-        policy_ids = [p["policy_id"] for p in result["policy_paths"]]
-        self.assertIn(self.policy.pk, policy_ids)
+        self.assertEqual(
+            {(row["policy_id"], row["direction"]) for row in result["policy_paths"]},
+            {(self.policy.pk, "destination")},
+        )
+
+    def test_source_zone_does_not_match_destination_address(self):
+        result = get_address_set_hierarchy(
+            member_zone_ids=[self.source_zone.pk],
+            user=self.user,
+            app_label="netbox_security",
+            model="customprefix",
+            object_id=self.custom_prefix.pk,
+        )
+
+        self.assertIn(self.ipam_prefix_address.pk, result["inherited_address_ids"])
+        self.assertEqual(result["policy_paths"], [])

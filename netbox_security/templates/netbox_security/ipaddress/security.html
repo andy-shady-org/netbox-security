@@ -6,6 +6,23 @@
 {% load plugins %}
 
 {% block content %}
+{% include "netbox_security/inc/hierarchy_warning.html" %}
+<div class="card mb-3">
+    <div class="card-body">
+        <strong>{% trans "IP" %}:</strong> {{ object.address }}
+        · <strong>{% trans "Zone context" %}:</strong>
+        {% for zone in policy_context.member_zones %}{{ zone|linkify }}{% if not forloop.last %}, {% endif %}{% empty %}{% trans "Unknown" %}{% endfor %}
+        {% if policy_context.zone_device %} · <strong>{% trans "Device" %}:</strong> {{ policy_context.zone_device|linkify }}{% endif %}
+        {% if policy_context.zone_interface and policy_context.zone_context_known %}
+            <div class="text-muted">{% trans "Zone membership determined from interface" %} {{ policy_context.zone_interface|linkify }}.</div>
+        {% endif %}
+    </div>
+</div>
+{% if not policy_context.zone_context_known %}
+<div class="alert alert-info" role="alert">
+    {% trans "Zone membership is unknown. These policies match the IP address, but their zone applicability has not been confirmed." %}
+</div>
+{% endif %}
 <div class="row">
     <div class="col-md-6">
         <div class="card">
@@ -76,57 +93,20 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <h5 class="card-header">{% trans "Security Policy Context" %}</h5>
+            <h5 class="card-header">{% trans "Policy candidates" %}</h5>
             <div class="card-body">
-                {% if policy_context.policy_paths %}
-                    <table class="table table-hover attr-table">
-                        <thead>
-                            <tr>
-                                <th>{% trans "Address/Set" %}</th>
-                                <th>{% trans "Security Policy" %}</th>
-                                <th>{% trans "Policy Index" %}</th>
-                                <th>{% trans "Policy Actions" %}</th>
-                                <th>{% trans "Direction" %}</th>
-                                <th>{% trans "Security Zones" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for row in policy_context.policy_paths %}
-                                <tr>
-                                    <td>
-                                        {% if row.context_object %}
-                                            {{ row.context_object|linkify }}
-                                        {% elif row.address_list %}
-                                            {{ row.address_list|linkify }}
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ row.policy|linkify }}</td>
-                                    <td>{{ row.policy_index }}</td>
-                                    <td>
-                                        {% for action in row.policy_actions %}
-                                            <span class="badge text-bg-{% if action == 'permit' %}green
-                                            {% elif action == 'deny' %}red
-                                            {% elif action == 'log' %}orange
-                                            {% elif action == 'count' %}orange
-                                            {% elif action == 'reject' %}red
-                                            {% endif %}"
-                                            >{{ action }}</span>
-                                        {% endfor %}
-                                    </td>
-                                    <td>{{ row.direction }}</td>
-                                    <td>{{ row.source_zone|linkify }} &rarr; {{ row.destination_zone|linkify }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% elif policy_context.address_set_hierarchy_rows %}
-                    <span class="text-muted">{% trans "No policy context found yet; showing Address Set hierarchy." %}</span>
-                {% elif policy_context.address_objects or policy_context.inherited_address_objects %}
-                    <span class="text-muted">{% trans "No policy context found yet; showing Addresses." %}</span>
+                <p class="text-muted">{% trans "These results describe this IP's side of each policy, not a connectivity verdict. The other endpoint, applications, and policy order also affect the outcome. Details include only visible criteria and may be incomplete." %}</p>
+                {% if policy_context.policy_candidates %}
+                    {% include "netbox_security/inc/policy_candidates_table.html" with rows=policy_context.policy_candidates %}
                 {% else %}
-                    <span class="text-muted">{% trans "No policy context found for this object." %}</span>
+                    <p class="text-muted">{% trans "No policy candidates found within the displayed address relationships and zone context." %}</p>
+                {% endif %}
+                {% if policy_context.excluded_policy_candidates %}
+                    <details class="mt-3 mb-3">
+                        <summary>{% trans "Other address matches — excluded for this context" %} ({{ policy_context.excluded_policy_candidates|length }})</summary>
+                        <p class="text-muted mt-2">{% trans "These policies match the address, but their zone or address-book scope does not match this context." %}</p>
+                        {% include "netbox_security/inc/policy_candidates_table.html" with rows=policy_context.excluded_policy_candidates %}
+                    </details>
                 {% endif %}
                 {% if policy_context.inherited_address_objects %}
                     <p class="text-muted mb-1 mt-2">{% trans "Inherited Addresses (from parent prefixes)" %}</p>

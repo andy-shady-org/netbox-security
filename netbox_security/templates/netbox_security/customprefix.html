@@ -5,6 +5,8 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
+{% include "netbox_security/inc/hierarchy_warning.html" %}
+{% include "netbox_security/inc/zone_context_warning.html" %}
 <div class="row">
     <div class="col col-md-6">
         <div class="card">
@@ -92,6 +94,8 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                {% elif not policy_context.zone_context_known %}
+                    <span class="text-muted">{% trans "Policies are not listed without confirmed zone membership." %}</span>
                 {% elif policy_context.address_set_hierarchy_rows %}
                     <span class="text-muted">{% trans "No policy context found yet; showing Address Set hierarchy." %}</span>
                 {% elif policy_context.address_objects or policy_context.inherited_address_objects %}

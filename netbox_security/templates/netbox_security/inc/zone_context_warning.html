@@ -1,0 +1,6 @@
+{% load i18n %}
+{% if not policy_context.zone_context_known %}
+<div class="alert alert-info" role="alert">
+    {% trans "Zone membership could not be established from visible assignments. Address relationships are shown, but policy applicability is unconfirmed." %}
+</div>
+{% endif %}

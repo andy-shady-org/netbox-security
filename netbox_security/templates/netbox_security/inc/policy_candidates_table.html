@@ -1,0 +1,81 @@
+{% load helpers i18n %}
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th scope="col">{% trans "Policy" %}</th>
+            <th scope="col">{% trans "Policy zones" %}</th>
+            <th scope="col">{% trans "IP matches as" %}</th>
+            <th scope="col">{% trans "Matched address entry" %}</th>
+            <th scope="col">{% trans "Address book" %}</th>
+            <th scope="col">{% trans "Configured actions" %}</th>
+            <th scope="col">{% trans "Result" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for row in rows %}
+        <tr>
+            <td>
+                {{ row.policy|linkify }}
+                <div class="text-muted">{% trans "Index" %}: {{ row.policy_index }}</div>
+                <details class="mt-1">
+                    <summary>{% trans "Match and policy details" %}</summary>
+                    <dl class="mt-2 mb-0">
+                        <dt>{% trans "Visible source criteria" %}</dt>
+                        <dd>
+                        {% for entry in row.criteria.source_address %}
+                            <a href="{{ entry.get_absolute_url }}">{{ entry.name }}</a>{% if not forloop.last %}, {% endif %}
+                        {% empty %}{% trans "None specified or visible" %}{% endfor %}
+                        </dd>
+                        <dt>{% trans "Visible destination criteria" %}</dt>
+                        <dd>
+                        {% for entry in row.criteria.destination_address %}
+                            <a href="{{ entry.get_absolute_url }}">{{ entry.name }}</a>{% if not forloop.last %}, {% endif %}
+                        {% empty %}{% trans "None specified or visible" %}{% endfor %}
+                        </dd>
+                        <dt>{% trans "Applications / application sets" %}</dt>
+                        <dd>
+                        {% for entry in row.criteria.applications %}
+                            <a href="{{ entry.get_absolute_url }}">{{ entry.name }}</a>{% if not forloop.last %}, {% endif %}
+                        {% empty %}{% trans "No applications specified or visible" %}{% endfor %}
+                        {% for entry in row.criteria.application_sets %}
+                            · <a href="{{ entry.get_absolute_url }}">{{ entry.name }}</a>
+                        {% endfor %}
+                        </dd>
+                        <dt>{% trans "Matched hierarchy path" %}</dt>
+                        <dd>
+                        {% for entry in row.matched_path %}
+                            {% if not forloop.first %} &rarr; {% endif %}{{ entry|linkify }}
+                        {% empty %}{% trans "Path or scope could not be confirmed" %}{% endfor %}
+                        </dd>
+                    </dl>
+                    <a href="{{ row.policy.get_absolute_url }}">{% trans "Open policy" %}</a>
+                </details>
+            </td>
+            <td>{{ row.source_zone|linkify }} &rarr; {{ row.destination_zone|linkify }}</td>
+            <td>{% if row.direction == 'source' %}{% trans "Source" %}{% else %}{% trans "Destination" %}{% endif %}</td>
+            <td>
+                {{ row.context_object|linkify }}
+                {% if row.address_list %}<div class="text-muted">{{ row.address_list.name }}</div>{% endif %}
+            </td>
+            <td>{% trans row.address_book %}</td>
+            <td>{% for action in row.policy_actions %}<span class="badge text-bg-secondary">{{ action }}</span> {% endfor %}</td>
+            <td>
+                {% if row.match_status == 'zone_confirmed' %}
+                    <span class="badge text-bg-success">{% trans "Address and zone match" %}</span>
+                {% elif row.match_status == 'zone_mismatch' %}
+                    <span class="badge text-bg-secondary">{% trans "Zone mismatch" %}</span>
+                    <div class="small">{% trans "This policy requires" %} {{ row.required_zone|linkify }} {% trans "on the matching side." %}</div>
+                {% elif row.match_status == 'scope_mismatch' %}
+                    <span class="badge text-bg-secondary">{% trans "Address-book scope mismatch" %}</span>
+                    <div class="small">{% trans "The matched definition is not available in this policy's zone/device context." %}</div>
+                {% else %}
+                    <span class="badge text-bg-warning">{% trans "Address match only — applicability unconfirmed" %}</span>
+                    <div class="small">{% trans "Zone membership or address-book scope could not be confirmed." %}</div>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>

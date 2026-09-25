@@ -1,0 +1,6 @@
+{% load i18n %}
+{% if policy_context.hierarchy_truncated %}
+<div class="alert alert-warning" role="alert">
+    {% trans "Some relationships are omitted because the hierarchy exceeds display limits or contains a cycle. This is not a complete list of related security policies." %}
+</div>
+{% endif %}
