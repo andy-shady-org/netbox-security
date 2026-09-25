@@ -1,6 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from typing import cast
 
 from netbox.forms import (
     PrimaryModelBulkEditForm,
@@ -8,6 +9,7 @@ from netbox.forms import (
     PrimaryModelImportForm,
     PrimaryModelForm,
 )
+from netaddr import IPNetwork
 from utilities.forms.rendering import FieldSet, TabbedGroups
 from utilities.forms.fields import (
     DynamicModelChoiceField,
@@ -17,16 +19,11 @@ from utilities.forms.fields import (
     CSVModelChoiceField,
     CommentField,
 )
-from ipam.models import IPAddress, Prefix, IPRange
-from ipam.choices import (
-    IPAddressStatusChoices,
-    PrefixStatusChoices,
-)
+from ipam.choices import IPAddressStatusChoices
+from ipam.models import IPAddress, Prefix, IPRange, VRF
+from tenancy.models import Tenant
 
-from netbox_security.models import (
-    NatPool,
-    NatPoolMember,
-)
+from netbox_security.models import NatPool, NatPoolMember
 from netbox_security.mixins import PortsForm
 
 __all__ = (
@@ -93,45 +90,6 @@ class NatPoolMemberForm(PortsForm, PrimaryModelForm):
             "tags",
         ]
 
-    def clean_address(self):
-        if (address := self.cleaned_data.get("address")) is not None:
-            try:
-                ip = IPAddress.objects.get(address=str(address))
-            except MultipleObjectsReturned:
-                ip = IPAddress.objects.filter(address=str(address)).first()
-            except ObjectDoesNotExist:
-                ip = IPAddress.objects.create(
-                    address=str(address), status=IPAddressStatusChoices.STATUS_ACTIVE
-                )
-            self.cleaned_data["address"] = ip
-        return self.cleaned_data.get("address")
-
-    def clean_prefix(self):
-        if (prefix := self.cleaned_data.get("prefix")) is not None:
-            try:
-                network = Prefix.objects.get(prefix=str(prefix))
-            except MultipleObjectsReturned:
-                network = Prefix.objects.filter(prefix=str(prefix)).first()
-            except ObjectDoesNotExist:
-                network = Prefix.objects.create(
-                    prefix=str(prefix), status=PrefixStatusChoices.STATUS_ACTIVE
-                )
-            self.cleaned_data["prefix"] = network
-        return self.cleaned_data.get("prefix")
-
-    def clean_address_range(self):
-        if (address_range := self.cleaned_data.get("address_range")) is not None:
-            try:
-                address_range = IPRange.objects.get(
-                    start_address=str(address_range.start_address)
-                )
-            except MultipleObjectsReturned:
-                address_range = IPRange.objects.filter(
-                    start_address=str(address_range.start_address)
-                ).first()
-            self.cleaned_data["address_range"] = address_range
-        return self.cleaned_data.get("address_range")
-
 
 class NatPoolMemberFilterForm(PortsForm, PrimaryModelFilterSetForm):
     model = NatPoolMember
@@ -171,6 +129,18 @@ class NatPoolMemberFilterForm(PortsForm, PrimaryModelFilterSetForm):
 class NatPoolMemberImportForm(PortsForm, PrimaryModelImportForm):
     name = forms.CharField(max_length=200, required=True)
     description = forms.CharField(max_length=200, required=False)
+    vrf = CSVModelChoiceField(
+        queryset=VRF.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Optional VRF used to disambiguate text lookups"),
+    )
+    tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Optional tenant used to disambiguate text lookups"),
+    )
     pool = CSVModelChoiceField(
         queryset=NatPool.objects.all(),
         required=True,
@@ -178,24 +148,76 @@ class NatPoolMemberImportForm(PortsForm, PrimaryModelImportForm):
         help_text=_("NAT Pool (Name)"),
     )
     address = CSVModelChoiceField(
-        queryset=IPAddress.objects.filter(),
+        queryset=IPAddress.objects.all(),
         required=False,
         to_field_name="address",
         help_text=_("IP Address"),
     )
     prefix = CSVModelChoiceField(
-        queryset=Prefix.objects.filter(),
+        queryset=Prefix.objects.all(),
         required=False,
         to_field_name="prefix",
         help_text=_("Prefix"),
     )
+    address_range_end = forms.CharField(
+        required=False,
+        help_text=_("Ending address for an IP range (used to disambiguate ranges)"),
+    )
     address_range = CSVModelChoiceField(
-        queryset=IPRange.objects.filter(),
+        queryset=IPRange.objects.all(),
         required=False,
         to_field_name="start_address",
         help_text=_("IPv4 or IPv6 start address (with mask)"),
     )
     status = CSVChoiceField(choices=IPAddressStatusChoices, help_text=_("Status"))
+
+    @staticmethod
+    def _scope_filters_from_data(data):
+        vrf = data.get("vrf")
+        tenant = data.get("tenant")
+
+        if vrf and tenant:
+            return {"vrf__name": vrf, "tenant__name": tenant}
+        if vrf:
+            return {"vrf__name": vrf}
+        if tenant:
+            return {"tenant__name": tenant}
+        return {"vrf__isnull": True, "tenant__isnull": True}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not self.data:
+            return
+
+        scope_filters = self._scope_filters_from_data(self.data)
+        address_field = cast(CSVModelChoiceField, self.fields["address"])
+        prefix_field = cast(CSVModelChoiceField, self.fields["prefix"])
+        address_range_field = cast(CSVModelChoiceField, self.fields["address_range"])
+
+        if address := self.data.get("address"):
+            address_field.queryset = IPAddress.objects.filter(
+                address=address,
+                **scope_filters,
+            )
+        if prefix := self.data.get("prefix"):
+            prefix_field.queryset = Prefix.objects.filter(
+                prefix=prefix,
+                **scope_filters,
+            )
+        if address_range := self.data.get("address_range"):
+            queryset = IPRange.objects.filter(
+                start_address=address_range,
+                **scope_filters,
+            )
+            if address_range_end := self.data.get("address_range_end"):
+                try:
+                    queryset = queryset.filter(
+                        end_address=str(IPNetwork(str(address_range_end)))
+                    )
+                except Exception:
+                    pass
+            address_range_field.queryset = queryset
 
     class Meta:
         model = NatPoolMember
@@ -203,36 +225,27 @@ class NatPoolMemberImportForm(PortsForm, PrimaryModelImportForm):
             "name",
             "owner",
             "pool",
+            "vrf",
+            "tenant",
             "status",
             "address",
             "prefix",
             "address_range",
+            "address_range_end",
             "source_ports",
             "destination_ports",
             "tags",
         )
 
-    def clean_address(self):
-        if (address := self.cleaned_data.get("address")) is not None:
-            try:
-                ip = IPAddress.objects.get(address=str(address))
-            except MultipleObjectsReturned:
-                ip = IPAddress.objects.filter(address=str(address)).first()
-            except ObjectDoesNotExist:
-                ip = IPAddress.objects.create(address=str(address))
-            self.cleaned_data["address"] = ip
-            return self.cleaned_data["address"]
-
-    def clean_prefix(self):
-        if (prefix := self.cleaned_data.get("prefix")) is not None:
-            try:
-                network = Prefix.objects.get(prefix=str(prefix))
-            except MultipleObjectsReturned:
-                network = Prefix.objects.filter(prefix=str(prefix)).first()
-            except ObjectDoesNotExist:
-                network = Prefix.objects.create(prefix=str(prefix))
-            self.cleaned_data["prefix"] = network
-            return self.cleaned_data["prefix"]
+    def clean_address_range_end(self):
+        if not (end_value := self.cleaned_data.get("address_range_end")):
+            return None
+        try:
+            return str(IPNetwork(str(end_value)))
+        except Exception as exc:
+            raise ValidationError(
+                _("Enter a valid IPv4 or IPv6 address with mask.")
+            ) from exc
 
 
 class NatPoolMemberBulkEditForm(PortsForm, PrimaryModelBulkEditForm):

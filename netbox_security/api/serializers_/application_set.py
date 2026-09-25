@@ -6,7 +6,7 @@ from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
 from tenancy.api.serializers import TenantSerializer
 from netbox_security.models import ApplicationSet, ApplicationSetAssignment
 from netbox_security.constants import APPLICATION_ASSIGNMENT_MODELS
-from netbox_security.api.serializers import ApplicationSerializer
+from .application import ApplicationSerializer
 
 
 class NestedApplicationSetSerializer(NetBoxModelSerializer):

@@ -1,9 +1,9 @@
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
-
 from netbox.views import generic
 from utilities.views import register_model_view
 from netbox.object_actions import BulkExport
+
+from netbox_security.utils.assignment import get_assigned_object
+from netbox_security.constants import ADDRESS_LIST_ASSIGNMENT_MODELS
 
 from netbox_security.models import AddressList, AddressListAssignment
 from netbox_security.filtersets import (
@@ -46,15 +46,14 @@ class AddressListEditView(generic.ObjectEditView):
     queryset = AddressList.objects.all()
     form = AddressListForm
 
-    def alter_object(self, instance, request, args, kwargs):
-        if not instance.pk:
-            content_type = get_object_or_404(
-                ContentType, pk=request.GET.get("assigned_object_type")
+    def alter_object(self, obj, request, url_args, url_kwargs):
+        if not obj.pk:
+            obj.assigned_object = get_assigned_object(
+                request,
+                allowed_content_type_filter=ADDRESS_LIST_ASSIGNMENT_MODELS,
             )
-            instance.assigned_object = get_object_or_404(
-                content_type.model_class(), pk=request.GET.get("assigned_object_id")
-            )
-        return instance
+
+        return obj
 
     def get_extra_addanother_params(self, request):
         return {
@@ -83,15 +82,14 @@ class AddressListAssignmentEditView(generic.ObjectEditView):
     queryset = AddressListAssignment.objects.all()
     form = AddressListAssignmentForm
 
-    def alter_object(self, instance, request, args, kwargs):
-        if not instance.pk:
-            content_type = get_object_or_404(
-                ContentType, pk=request.GET.get("assigned_object_type")
+    def alter_object(self, obj, request, url_args, url_kwargs):
+        if not obj.pk:
+            obj.assigned_object = get_assigned_object(
+                request,
+                allowed_content_type_filter=ADDRESS_LIST_ASSIGNMENT_MODELS,
             )
-            instance.assigned_object = get_object_or_404(
-                content_type.model_class(), pk=request.GET.get("assigned_object_id")
-            )
-        return instance
+
+        return obj
 
     def get_extra_addanother_params(self, request):
         return {

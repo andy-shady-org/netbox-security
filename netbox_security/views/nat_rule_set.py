@@ -1,9 +1,8 @@
-from netbox.views import generic
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Count
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
 
+from netbox.context import current_request
+from netbox.views import generic
 from utilities.views import register_model_view, ViewTab
 from netbox.object_actions import BulkExport
 
@@ -12,6 +11,9 @@ from virtualization.models import VirtualMachine
 
 from dcim.tables import DeviceTable, VirtualDeviceContextTable
 from virtualization.tables import VirtualMachineTable
+
+from netbox_security.utils.assignment import get_assigned_object
+from netbox_security.constants import RULESET_ASSIGNMENT_MODELS
 
 from netbox_security.models import NatRuleSet, NatRuleSetAssignment, NatRule
 from netbox_security.tables import (
@@ -47,6 +49,13 @@ __all__ = (
     "NatRuleSetAssignmentListView",
     "NatRuleSetAssignmentBulkDeleteView",
 )
+
+
+def _natrule_count(obj):
+    request = current_request.get()
+    if request is None or getattr(request, "user", None) is None:
+        return 0
+    return obj.natrule_rules.restrict(request.user, "view").count()
 
 
 @register_model_view(NatRuleSet)
@@ -134,12 +143,12 @@ class NatRuleSetRulesView(generic.ObjectChildrenView):
     tab = ViewTab(
         label=_("NAT Rules"),
         permission="netbox_security.view_natrule",
-        badge=lambda obj: obj.natrule_rules.count(),
+        badge=lambda obj: _natrule_count(obj),
         hide_if_empty=True,
     )
 
     def get_children(self, request, parent):
-        return parent.natrule_rules
+        return parent.natrule_rules.restrict(request.user, "view")
 
 
 @register_model_view(NatRuleSetAssignment, "list", path="", detail=False)
@@ -157,15 +166,14 @@ class NatRuleSetAssignmentEditView(generic.ObjectEditView):
     queryset = NatRuleSetAssignment.objects.all()
     form = NatRuleSetAssignmentForm
 
-    def alter_object(self, instance, request, args, kwargs):
-        if not instance.pk:
-            content_type = get_object_or_404(
-                ContentType, pk=request.GET.get("assigned_object_type")
+    def alter_object(self, obj, request, url_args, url_kwargs):
+        if not obj.pk:
+            obj.assigned_object = get_assigned_object(
+                request,
+                allowed_content_type_filter=RULESET_ASSIGNMENT_MODELS,
             )
-            instance.assigned_object = get_object_or_404(
-                content_type.model_class(), pk=request.GET.get("assigned_object_id")
-            )
-        return instance
+
+        return obj
 
     def get_extra_addanother_params(self, request):
         return {

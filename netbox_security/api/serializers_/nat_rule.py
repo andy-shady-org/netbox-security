@@ -16,10 +16,8 @@ from ipam.models import IPAddress, Prefix
 from netbox_security.models import NatRule, NatRuleAssignment
 from netbox_security.constants import RULE_ASSIGNMENT_MODELS
 
-from netbox_security.api.serializers import (
-    NatPoolSerializer,
-    NatRuleSetSerializer,
-)
+from .nat_pool import NatPoolSerializer
+from .nat_rule_set import NatRuleSetSerializer
 
 
 class NatRuleSerializer(PrimaryModelSerializer):
