@@ -3,14 +3,12 @@ from rest_framework.serializers import (
     IntegerField,
     HyperlinkedIdentityField,
     SerializerMethodField,
-    JSONField,
     CharField,
 )
-from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
 from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
-from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
+from netbox_security.mixins import GenericAssignmentValidationMixin
 from netbox_security.models import Address, AddressAssignment
 from netbox_security.constants import (
     ADDRESS_ASSIGNMENT_MODELS,
@@ -18,7 +16,10 @@ from netbox_security.constants import (
 )
 
 
-class AddressSerializer(PrimaryModelSerializer):
+class AddressSerializer(GenericAssignmentValidationMixin, PrimaryModelSerializer):
+    assignment_models = ADDRESS_FIELD_ASSIGNMENT_MODELS
+    assignment_permission = "view"
+    allow_empty_assignment = True
     url = HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:address-detail"
     )
@@ -66,7 +67,7 @@ class AddressSerializer(PrimaryModelSerializer):
         )
 
     def to_internal_value(self, data):
-        if isinstance(data, dict) and self.instance is None:
+        if isinstance(data, dict) and self.instance is None and not self.nested:
             # Keep dns_name-only creates valid in bulk operations where omitted fields
             # can otherwise be treated as required by per-item validation.
             data = data.copy()
@@ -75,16 +76,13 @@ class AddressSerializer(PrimaryModelSerializer):
 
         return super().to_internal_value(data)
 
-    @extend_schema_field(JSONField(allow_null=True))
-    def get_assigned_object(self, obj):
-        if obj.assigned_object is None:
-            return None
-        serializer = get_serializer_for_model(obj.assigned_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.assigned_object, nested=True, context=context).data
 
-
-class AddressAssignmentSerializer(NetBoxModelSerializer):
+class AddressAssignmentSerializer(
+    GenericAssignmentValidationMixin, NetBoxModelSerializer
+):
+    assignment_models = ADDRESS_ASSIGNMENT_MODELS
+    assignment_permission = "change"
+    allow_empty_assignment = False
     address = AddressSerializer(nested=True, required=True, allow_null=False)
     assigned_object_type = ContentTypeField(
         queryset=ContentType.objects.filter(ADDRESS_ASSIGNMENT_MODELS)
@@ -112,11 +110,3 @@ class AddressAssignmentSerializer(NetBoxModelSerializer):
             "assigned_object_type",
             "assigned_object_id",
         )
-
-    @extend_schema_field(JSONField(allow_null=True))
-    def get_assigned_object(self, obj):
-        if obj.assigned_object is None:
-            return None
-        serializer = get_serializer_for_model(obj.assigned_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.assigned_object, nested=True, context=context).data

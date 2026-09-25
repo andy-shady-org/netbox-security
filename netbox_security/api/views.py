@@ -1,6 +1,8 @@
+from netbox_security.mixins import GenericAssignmentViewSetMixin
 from rest_framework.routers import APIRootView
 from netbox.api.viewsets import NetBoxModelViewSet
 from django.db.models import Count
+
 
 from .serializers import (
     CustomPrefixSerializer,
@@ -110,13 +112,13 @@ class CustomPrefixViewSet(NetBoxModelViewSet):
     filterset_class = CustomPrefixFilterSet
 
 
-class AddressListViewSet(NetBoxModelViewSet):
+class AddressListViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = AddressList.objects.all()
     serializer_class = AddressListSerializer
     filterset_class = AddressListFilterSet
 
 
-class AddressListAssignmentViewSet(NetBoxModelViewSet):
+class AddressListAssignmentViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = AddressListAssignment.objects.all()
     serializer_class = AddressListAssignmentSerializer
     filterset_class = AddressListAssignmentFilterSet
@@ -128,19 +130,19 @@ class AddressSetViewSet(NetBoxModelViewSet):
     filterset_class = AddressSetFilterSet
 
 
-class AddressSetAssignmentViewSet(NetBoxModelViewSet):
+class AddressSetAssignmentViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = AddressSetAssignment.objects.all()
     serializer_class = AddressSetAssignmentSerializer
     filterset_class = AddressSetAssignmentFilterSet
 
 
-class AddressViewSet(NetBoxModelViewSet):
+class AddressViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = Address.objects.prefetch_related("tenant", "tags")
     serializer_class = AddressSerializer
     filterset_class = AddressFilterSet
 
 
-class AddressAssignmentViewSet(NetBoxModelViewSet):
+class AddressAssignmentViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = AddressAssignment.objects.all()
     serializer_class = AddressAssignmentSerializer
     filterset_class = AddressAssignmentFilterSet
@@ -158,7 +160,7 @@ class ApplicationViewSet(NetBoxModelViewSet):
     filterset_class = ApplicationFilterSet
 
 
-class ApplicationAssignmentViewSet(NetBoxModelViewSet):
+class ApplicationAssignmentViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = ApplicationAssignment.objects.all()
     serializer_class = ApplicationAssignmentSerializer
     filterset_class = ApplicationAssignmentFilterSet
@@ -170,7 +172,9 @@ class ApplicationSetViewSet(NetBoxModelViewSet):
     filterset_class = ApplicationSetFilterSet
 
 
-class ApplicationSetAssignmentViewSet(NetBoxModelViewSet):
+class ApplicationSetAssignmentViewSet(
+    GenericAssignmentViewSetMixin, NetBoxModelViewSet
+):
     queryset = ApplicationSetAssignment.objects.all()
     serializer_class = ApplicationSetAssignmentSerializer
     filterset_class = ApplicationSetAssignmentFilterSet
@@ -187,7 +191,7 @@ class SecurityZoneViewSet(NetBoxModelViewSet):
         )
 
 
-class SecurityZoneAssignmentViewSet(NetBoxModelViewSet):
+class SecurityZoneAssignmentViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = SecurityZoneAssignment.objects.all()
     serializer_class = SecurityZoneAssignmentSerializer
     filterset_class = SecurityZoneAssignmentFilterSet
@@ -213,7 +217,7 @@ class NatPoolViewSet(NetBoxModelViewSet):
     filterset_class = NatPoolFilterSet
 
 
-class NatPoolAssignmentViewSet(NetBoxModelViewSet):
+class NatPoolAssignmentViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = NatPoolAssignment.objects.all()
     serializer_class = NatPoolAssignmentSerializer
     filterset_class = NatPoolAssignmentFilterSet
@@ -235,7 +239,7 @@ class NatRuleSetViewSet(NetBoxModelViewSet):
     filterset_class = NatRuleSetFilterSet
 
 
-class NatRuleSetAssignmentViewSet(NetBoxModelViewSet):
+class NatRuleSetAssignmentViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = NatRuleSetAssignment.objects.all()
     serializer_class = NatRuleSetAssignmentSerializer
     filterset_class = NatRuleSetAssignmentFilterSet
@@ -258,7 +262,7 @@ class NatRuleViewSet(NetBoxModelViewSet):
     filterset_class = NatRuleFilterSet
 
 
-class NatRuleAssignmentViewSet(NetBoxModelViewSet):
+class NatRuleAssignmentViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = NatRuleAssignment.objects.all()
     serializer_class = NatRuleAssignmentSerializer
     filterset_class = NatRuleAssignmentFilterSet
@@ -270,7 +274,7 @@ class PolicerViewSet(NetBoxModelViewSet):
     filterset_class = PolicerFilterSet
 
 
-class PolicerAssignmentViewSet(NetBoxModelViewSet):
+class PolicerAssignmentViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = PolicerAssignment.objects.all()
     serializer_class = PolicerAssignmentSerializer
     filterset_class = PolicerAssignmentFilterSet
@@ -284,7 +288,9 @@ class FirewallFilterViewSet(NetBoxModelViewSet):
     filterset_class = FirewallFilterFilterSet
 
 
-class FirewallFilterAssignmentViewSet(NetBoxModelViewSet):
+class FirewallFilterAssignmentViewSet(
+    GenericAssignmentViewSetMixin, NetBoxModelViewSet
+):
     queryset = FirewallFilterAssignment.objects.all()
     serializer_class = FirewallFilterAssignmentSerializer
     filterset_class = FirewallFilterAssignmentFilterSet
@@ -296,13 +302,13 @@ class FirewallFilterRuleViewSet(NetBoxModelViewSet):
     filterset_class = FirewallFilterRuleFilterSet
 
 
-class FirewallRuleFromSettingViewSet(NetBoxModelViewSet):
+class FirewallRuleFromSettingViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = FirewallRuleFromSetting.objects.all()
     serializer_class = FirewallRuleFromSettingSerializer
     filterset_class = FirewallRuleFromSettingFilterSet
 
 
-class FirewallRuleThenSettingViewSet(NetBoxModelViewSet):
+class FirewallRuleThenSettingViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
     queryset = FirewallRuleThenSetting.objects.all()
     serializer_class = FirewallRuleThenSettingSerializer
     filterset_class = FirewallRuleThenSettingFilterSet

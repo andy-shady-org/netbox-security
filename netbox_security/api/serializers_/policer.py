@@ -1,17 +1,15 @@
+from netbox_security.mixins import GenericAssignmentValidationMixin
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
     BooleanField,
     SerializerMethodField,
-    JSONField,
     IntegerField,
 )
-from drf_spectacular.utils import extend_schema_field
 
 from netbox.api.fields import ContentTypeField
 from netbox.api.serializers import NetBoxModelSerializer
 from tenancy.api.serializers import TenantSerializer
-from utilities.api import get_serializer_for_model
 
 from netbox_security.models import Policer, PolicerAssignment
 from netbox_security.constants import (
@@ -74,7 +72,12 @@ class PolicerSerializer(NetBoxModelSerializer):
         )
 
 
-class PolicerAssignmentSerializer(NetBoxModelSerializer):
+class PolicerAssignmentSerializer(
+    GenericAssignmentValidationMixin, NetBoxModelSerializer
+):
+    assignment_models = POLICER_ASSIGNMENT_MODELS
+    assignment_permission = "change"
+    allow_empty_assignment = False
     policer = PolicerSerializer(nested=True, required=True, allow_null=False)
     assigned_object_type = ContentTypeField(
         queryset=ContentType.objects.filter(POLICER_ASSIGNMENT_MODELS)
@@ -102,11 +105,3 @@ class PolicerAssignmentSerializer(NetBoxModelSerializer):
             "assigned_object_type",
             "assigned_object_id",
         )
-
-    @extend_schema_field(JSONField(allow_null=True))
-    def get_assigned_object(self, obj):
-        if obj.assigned_object is None:
-            return None
-        serializer = get_serializer_for_model(obj.assigned_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.assigned_object, nested=True, context=context).data

@@ -114,6 +114,11 @@ class SecurityZonePolicyAPITestCase(
     APIViewTestCases.GraphQLTestCase,
 ):
     model = SecurityZonePolicy
+    user_permissions = (
+        "netbox_security.view_address",
+        "netbox_security.view_addresslist",
+        "netbox_security.view_customprefix",
+    )
 
     # TODO: Remove this override once NetBox fixes enum-backed ArrayLookup
     # auto-filter rendering in utilities.testing.api (_emit_array_lookup_filter_tests).
