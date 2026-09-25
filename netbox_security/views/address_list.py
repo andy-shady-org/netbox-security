@@ -3,7 +3,7 @@ from utilities.views import register_model_view
 from netbox.object_actions import BulkExport
 
 from netbox_security.utils.assignment import get_assigned_object
-from netbox_security.constants import ADDRESS_LIST_ASSIGNMENT_MODELS
+from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
 
 from netbox_security.models import AddressList, AddressListAssignment
 from netbox_security.filtersets import (
@@ -86,7 +86,7 @@ class AddressListAssignmentEditView(generic.ObjectEditView):
         if not obj.pk:
             obj.assigned_object = get_assigned_object(
                 request,
-                allowed_content_type_filter=ADDRESS_LIST_ASSIGNMENT_MODELS,
+                allowed_content_type_filter=ADDRESS_ASSIGNMENT_MODELS,
             )
 
         return obj
