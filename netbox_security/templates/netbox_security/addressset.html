@@ -65,6 +65,27 @@
                 </tr>
             </table>
         </div>
+        {% include 'inc/panels/comments.html' %}
+        {% include 'inc/panels/tags.html' %}
+        {% include 'inc/panels/custom_fields.html' %}
+        {% plugin_left_page object %}
+    </div>
+    <div class="col col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                Child Address Sets
+            </h5>
+            {% htmx_table 'plugins:netbox_security:addressset_list' address_set_id=object.pk %}
+        </div>
+        {% plugin_right_page object %}
+    </div>
+    <div class="col col-md-12">
+        <div class="card">
+            <h5 class="card-header">
+                Child Addresses
+            </h5>
+            {% htmx_table 'plugins:netbox_security:address_list' address_set_id=object.pk %}
+        </div>
         <div class="card">
             {% if zone_assignments_table.rows|length == 1 %}
                 <h2 class="card-header">{% trans "Security Zone Assignment" %}</h2>
@@ -105,26 +126,7 @@
                 {% render_table virtual_machine_assignments_table 'inc/table.html' %}
             </div>
         </div>
-        {% include 'inc/panels/comments.html' %}
-        {% include 'inc/panels/tags.html' %}
-        {% include 'inc/panels/custom_fields.html' %}
-        {% plugin_left_page object %}
+        {% plugin_full_width_page object %}
     </div>
-    <div class="col col-md-6">
-        <div class="card">
-            <h5 class="card-header">
-                Child Addresses
-            </h5>
-            {% htmx_table 'plugins:netbox_security:address_list' address_set_id=object.pk %}
-        </div>
-        <div class="card">
-            <h5 class="card-header">
-                Child Address Sets
-            </h5>
-            {% htmx_table 'plugins:netbox_security:addressset_list' address_set_id=object.pk %}
-        </div>
-        {% plugin_right_page object %}
-    </div>
-    {% plugin_full_width_page object %}
 </div>
 {% endblock %}

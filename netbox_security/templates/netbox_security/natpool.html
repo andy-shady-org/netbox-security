@@ -44,6 +44,15 @@
                 </tr>
             </table>
         </div>
+        {% include 'inc/panels/comments.html' %}
+        {% include 'inc/panels/tags.html' %}
+        {% include 'inc/panels/custom_fields.html' %}
+        {% plugin_left_page object %}
+    </div>
+    <div class="col-md-6">
+        {% plugin_right_page object %}
+    </div>
+    <div class="col-md-6">
         <div class="card">
             {% if virtual_machine_assignments_table.rows|length == 1 %}
                 <h2 class="card-header">{% trans "Virtual Machine Assignment" %}</h2>
@@ -74,11 +83,7 @@
                 {% render_table virtual_device_assignments_table 'inc/table.html' %}
             </div>
         </div>
-        {% include 'inc/panels/custom_fields.html' %}
-    </div>
-    <div class="col-md-6">
-        {% include 'inc/panels/tags.html' %}
-        {% include 'inc/panels/comments.html' %}
+        {% plugin_full_width_page object %}
     </div>
 </div>
 {% endblock %}

@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Security Zones" %}
@@ -27,7 +27,7 @@
             {% htmx_table 'plugins:netbox_security:securityzoneassignment_list' virtualdevicecontext_id=object.pk %}
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Address Lists" %}
@@ -50,7 +50,7 @@
 
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "NAT Pools" %}
@@ -70,7 +70,7 @@
             {% htmx_table 'plugins:netbox_security:natpoolassignment_list' virtualdevicecontext_id=object.pk %}
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "NAT Rulesets" %}
@@ -92,7 +92,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Applications" %}
@@ -112,7 +112,7 @@
             {% htmx_table 'plugins:netbox_security:applicationassignment_list' virtualdevicecontext_id=object.pk %}
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Application Sets" %}
@@ -134,7 +134,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Addresses" %}
@@ -154,7 +154,7 @@
             {% htmx_table 'plugins:netbox_security:addressassignment_list' virtualdevicecontext_id=object.pk %}
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Address Sets" %}
@@ -176,7 +176,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Firewall Filters" %}
@@ -196,7 +196,7 @@
             {% htmx_table 'plugins:netbox_security:firewallfilterassignment_list' virtualdevicecontext_id=object.pk %}
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Firewall Policers" %}

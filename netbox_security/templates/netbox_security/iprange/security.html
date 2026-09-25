@@ -9,7 +9,7 @@
 {% include "netbox_security/inc/hierarchy_warning.html" %}
 {% include "netbox_security/inc/zone_context_warning.html" %}
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "NAT Pool Members" %}
@@ -24,7 +24,7 @@
             {% htmx_table 'plugins:netbox_security:natpoolmember_list' address_range_id=object.pk %}
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "NAT Rules" %}
@@ -44,7 +44,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Addresses" %}
@@ -59,7 +59,7 @@
             {% htmx_table 'plugins:netbox_security:address_list' ip_range_id=object.pk %}
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <h5 class="card-header">
                 {% trans "Security Zones" %}
