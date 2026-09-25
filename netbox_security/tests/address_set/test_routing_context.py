@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
+from netaddr import IPNetwork
 from ipam.models import IPAddress, IPRange, Prefix, VRF
 from users.models import ObjectPermission
 
@@ -28,8 +29,8 @@ class RoutingContextTestCase(TestCase):
                 Prefix.objects.create(prefix="192.0.2.0/24", vrf=vrf),
                 IPAddress.objects.create(address="192.0.2.1/32", vrf=vrf),
                 IPRange.objects.create(
-                    start_address="192.0.2.1/32",
-                    end_address="192.0.2.10/32",
+                    start_address=IPNetwork("192.0.2.1/32"),
+                    end_address=IPNetwork("192.0.2.10/32"),
                     vrf=vrf,
                 ),
             ]
