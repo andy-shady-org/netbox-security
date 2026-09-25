@@ -1,18 +1,16 @@
+from netbox_security.mixins import GenericAssignmentValidationMixin
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
     SerializerMethodField,
-    JSONField,
     ValidationError,
     ListField,
     IntegerField,
 )
-from drf_spectacular.utils import extend_schema_field
 
 from netbox.api.fields import SerializedPKRelatedField, ContentTypeField
 from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
 from ipam.api.serializers import IPAddressSerializer, PrefixSerializer
-from utilities.api import get_serializer_for_model
 from ipam.models import IPAddress, Prefix
 
 from netbox_security.models import NatRule, NatRuleAssignment
@@ -215,7 +213,12 @@ class NatRuleSerializer(PrimaryModelSerializer):
         return obj
 
 
-class NatRuleAssignmentSerializer(NetBoxModelSerializer):
+class NatRuleAssignmentSerializer(
+    GenericAssignmentValidationMixin, NetBoxModelSerializer
+):
+    assignment_models = RULE_ASSIGNMENT_MODELS
+    assignment_permission = "change"
+    allow_empty_assignment = False
     rule = NatRuleSerializer(nested=True, required=True, allow_null=False)
     assigned_object_type = ContentTypeField(
         queryset=ContentType.objects.filter(RULE_ASSIGNMENT_MODELS)
@@ -243,11 +246,3 @@ class NatRuleAssignmentSerializer(NetBoxModelSerializer):
             "assigned_object_type",
             "assigned_object_id",
         )
-
-    @extend_schema_field(JSONField(allow_null=True))
-    def get_assigned_object(self, obj):
-        if obj.assigned_object is None:
-            return None
-        serializer = get_serializer_for_model(obj.assigned_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.assigned_object, nested=True, context=context).data

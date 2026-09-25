@@ -17,6 +17,10 @@ class AddressAPITestCase(
     APIViewTestCases.GraphQLTestCase,
 ):
     model = Address
+    user_permissions = (
+        "ipam.view_iprange",
+        "netbox_security.view_customprefix",
+    )
 
     brief_fields = [
         "assigned_object_id",

@@ -1,13 +1,8 @@
+from netbox_security.mixins import GenericAssignmentValidationMixin
 from django.contrib.contenttypes.models import ContentType
-from rest_framework.serializers import (
-    HyperlinkedIdentityField,
-    SerializerMethodField,
-    JSONField,
-)
-from drf_spectacular.utils import extend_schema_field
+from rest_framework.serializers import HyperlinkedIdentityField, SerializerMethodField
 from netbox.api.fields import ContentTypeField
 from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
-from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 from netbox_security.models import ApplicationSet, ApplicationSetAssignment
 from netbox_security.constants import APPLICATION_ASSIGNMENT_MODELS
@@ -111,7 +106,12 @@ class ApplicationSetSerializer(PrimaryModelSerializer):
         return obj
 
 
-class ApplicationSetAssignmentSerializer(NetBoxModelSerializer):
+class ApplicationSetAssignmentSerializer(
+    GenericAssignmentValidationMixin, NetBoxModelSerializer
+):
+    assignment_models = APPLICATION_ASSIGNMENT_MODELS
+    assignment_permission = "change"
+    allow_empty_assignment = False
     application_set = ApplicationSetSerializer(
         nested=True, required=True, allow_null=False
     )
@@ -141,11 +141,3 @@ class ApplicationSetAssignmentSerializer(NetBoxModelSerializer):
             "assigned_object_type",
             "assigned_object_id",
         )
-
-    @extend_schema_field(JSONField(allow_null=True))
-    def get_assigned_object(self, obj):
-        if obj.assigned_object is None:
-            return None
-        serializer = get_serializer_for_model(obj.assigned_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.assigned_object, nested=True, context=context).data

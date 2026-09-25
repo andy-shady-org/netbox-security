@@ -16,6 +16,10 @@ class AddressSetAPITestCase(
     APIViewTestCases.GraphQLTestCase,
 ):
     model = AddressSet
+    user_permissions = (
+        "netbox_security.view_address",
+        "netbox_security.view_customprefix",
+    )
 
     brief_fields = [
         "address_sets",

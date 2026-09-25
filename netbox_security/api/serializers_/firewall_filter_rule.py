@@ -1,8 +1,8 @@
-from drf_spectacular.utils import extend_schema_field
+from netbox_security.constants import FILTER_SETTING_ASSIGNMENT_MODELS
+from netbox_security.mixins import GenericAssignmentValidationMixin
 from rest_framework import serializers
 
 from netbox.api.serializers import PrimaryModelSerializer
-from utilities.api import get_serializer_for_model
 
 from netbox_security.api.serializers import FirewallFilterSerializer
 
@@ -19,7 +19,12 @@ __all__ = (
 )
 
 
-class FirewallRuleFromSettingSerializer(PrimaryModelSerializer):
+class FirewallRuleFromSettingSerializer(
+    GenericAssignmentValidationMixin, PrimaryModelSerializer
+):
+    assignment_models = FILTER_SETTING_ASSIGNMENT_MODELS
+    assignment_permission = "change"
+    allow_empty_assignment = True
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:firewallrulefromsetting-detail"
     )
@@ -47,16 +52,13 @@ class FirewallRuleFromSettingSerializer(PrimaryModelSerializer):
             "key",
         )
 
-    @extend_schema_field(serializers.JSONField(allow_null=True))
-    def get_assigned_object(self, obj):
-        if obj.assigned_object is None:
-            return None
-        serializer = get_serializer_for_model(obj.assigned_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.assigned_object, context=context, nested=True).data
 
-
-class FirewallRuleThenSettingSerializer(PrimaryModelSerializer):
+class FirewallRuleThenSettingSerializer(
+    GenericAssignmentValidationMixin, PrimaryModelSerializer
+):
+    assignment_models = FILTER_SETTING_ASSIGNMENT_MODELS
+    assignment_permission = "change"
+    allow_empty_assignment = True
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_security-api:firewallrulethensetting-detail"
     )
@@ -83,14 +85,6 @@ class FirewallRuleThenSettingSerializer(PrimaryModelSerializer):
             "assigned_object",
             "key",
         )
-
-    @extend_schema_field(serializers.JSONField(allow_null=True))
-    def get_assigned_object(self, obj):
-        if obj.assigned_object is None:
-            return None
-        serializer = get_serializer_for_model(obj.assigned_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.assigned_object, context=context, nested=True).data
 
 
 class FirewallFilterRuleSerializer(PrimaryModelSerializer):

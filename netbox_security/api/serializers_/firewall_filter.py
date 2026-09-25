@@ -1,14 +1,12 @@
+from netbox_security.mixins import GenericAssignmentValidationMixin
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
     SerializerMethodField,
-    JSONField,
     IntegerField,
 )
-from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
 from netbox.api.serializers import NetBoxModelSerializer, PrimaryModelSerializer
-from utilities.api import get_serializer_for_model
 from tenancy.api.serializers import TenantSerializer
 
 from netbox_security.models import FirewallFilter, FirewallFilterAssignment
@@ -50,7 +48,12 @@ class FirewallFilterSerializer(PrimaryModelSerializer):
         )
 
 
-class FirewallFilterAssignmentSerializer(NetBoxModelSerializer):
+class FirewallFilterAssignmentSerializer(
+    GenericAssignmentValidationMixin, NetBoxModelSerializer
+):
+    assignment_models = FILTER_ASSIGNMENT_MODELS
+    assignment_permission = "change"
+    allow_empty_assignment = False
     firewall_filter = FirewallFilterSerializer(
         nested=True, required=True, allow_null=False
     )
@@ -80,11 +83,3 @@ class FirewallFilterAssignmentSerializer(NetBoxModelSerializer):
             "assigned_object_type",
             "assigned_object_id",
         )
-
-    @extend_schema_field(JSONField(allow_null=True))
-    def get_assigned_object(self, obj):
-        if obj.assigned_object is None:
-            return None
-        serializer = get_serializer_for_model(obj.assigned_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.assigned_object, nested=True, context=context).data
