@@ -303,12 +303,12 @@ class FirewallFilterRuleViewSet(NetBoxModelViewSet):
 
 
 class FirewallRuleFromSettingViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
-    queryset = FirewallRuleFromSetting.objects.all()
+    queryset = FirewallRuleFromSetting.objects.order_by("pk")
     serializer_class = FirewallRuleFromSettingSerializer
     filterset_class = FirewallRuleFromSettingFilterSet
 
 
 class FirewallRuleThenSettingViewSet(GenericAssignmentViewSetMixin, NetBoxModelViewSet):
-    queryset = FirewallRuleThenSetting.objects.all()
+    queryset = FirewallRuleThenSetting.objects.order_by("pk")
     serializer_class = FirewallRuleThenSettingSerializer
     filterset_class = FirewallRuleThenSettingFilterSet
