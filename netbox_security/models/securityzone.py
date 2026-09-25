@@ -90,7 +90,9 @@ class SecurityZone(ContactsMixin, PrimaryModel):
         """Annotate zone counts using only policies visible to the requesting user."""
         from netbox_security.models import SecurityZonePolicy
 
-        visible_policies = SecurityZonePolicy.objects.restrict(user, "view").values("pk")
+        visible_policies = SecurityZonePolicy.objects.restrict(user, "view").values(
+            "pk"
+        )
         if queryset is None:
             queryset = cls.objects.all()
         return queryset.annotate(

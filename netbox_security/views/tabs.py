@@ -47,7 +47,9 @@ def _annotate_ipam_security_queryset(
 
     return queryset.annotate(
         nat_pool_member_count=_count_subquery(
-            NatPoolMember.objects.restrict(user, "view").filter(**nat_pool_member_filter)
+            NatPoolMember.objects.restrict(user, "view").filter(
+                **nat_pool_member_filter
+            )
         ),
         nat_rule_count=_count_subquery(
             NatRule.objects.restrict(user, "view").filter(
@@ -62,11 +64,13 @@ def _annotate_ipam_security_queryset(
             )
         ),
         security_zone_count=_count_subquery(
-            SecurityZone.objects.restrict(user, "view").filter(
+            SecurityZone.objects.restrict(user, "view")
+            .filter(
                 addresses__address__assigned_object_type__app_label="ipam",
                 addresses__address__assigned_object_type__model=assigned_object_model,
                 addresses__address__assigned_object_id=OuterRef("pk"),
-            ).distinct()
+            )
+            .distinct()
         ),
     ).annotate(
         related_total_count=(

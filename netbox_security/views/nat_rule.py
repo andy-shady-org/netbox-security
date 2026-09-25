@@ -117,7 +117,9 @@ class NatRuleView(generic.ObjectView):
             ),
         )
         interface_assignments_table = InterfaceTable(
-            Interface.objects.restrict(request.user, "view").filter(natrules__rule=instance),
+            Interface.objects.restrict(request.user, "view").filter(
+                natrules__rule=instance
+            ),
             orderable=False,
         )
         interface_assignments_table.configure(request)
