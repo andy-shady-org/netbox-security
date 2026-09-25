@@ -69,9 +69,7 @@ class SecurityZoneAPITestCase(
             SecurityZone.objects.order_by("name", "pk").values_list("pk", flat=True)[:2]
         )
 
-        response = self.client.get(
-            self._get_list_url(), {"limit": 2}, **self.header
-        )
+        response = self.client.get(self._get_list_url(), {"limit": 2}, **self.header)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(

@@ -596,7 +596,9 @@ class IPAMToCustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
     def test_ipaddress_inherits_from_custom_prefix(self):
         result = get_address_set_hierarchy(
             user=self.user,
-            app_label="ipam", model="ipaddress", object_id=self.ip_address.pk
+            app_label="ipam",
+            model="ipaddress",
+            object_id=self.ip_address.pk,
         )
 
         self.assertIn(self.custom_prefix_address.pk, result["inherited_address_ids"])

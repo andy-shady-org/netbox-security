@@ -165,7 +165,9 @@ class AddressSetHierarchyTestCase(TestCase):
         self.assertEqual(result["policy_paths"], [])
 
     def test_returns_empty_for_inaccessible_root(self):
-        user = get_user_model().objects.create_user(username="restricted-hierarchy-user")
+        user = get_user_model().objects.create_user(
+            username="restricted-hierarchy-user"
+        )
 
         result = get_address_set_hierarchy(
             user=user,
