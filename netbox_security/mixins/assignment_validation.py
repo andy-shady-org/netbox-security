@@ -173,7 +173,14 @@ class GenericAssignmentValidationMixin:
 
         return super().validate(data)
 
+    def _is_event_serialization(self):
+        # NetBox's serialize_for_event() explicitly supplies request=None.
+        # A missing context must still fail closed; writes never use this bypass.
+        return "request" in self.context and self.context["request"] is None
+
     def to_representation(self, instance):
+        if self._is_event_serialization():
+            return super().to_representation(instance)
         # Nested serializers bypass the target-filtered viewset. Check before
         # rendering display/URLs, which may dereference the generic target.
         if (
@@ -192,10 +199,14 @@ class GenericAssignmentValidationMixin:
     def get_assigned_object(self, obj):
         from utilities.api import get_serializer_for_model
 
-        request = self.context.get("request")
-        if request is None:
-            return None
-        target = get_visible_assignment_target(obj, request.user)
+        if self._is_event_serialization():
+            # Event payloads are internal snapshots, independent of user access.
+            target = obj.assigned_object
+        else:
+            request = self.context.get("request")
+            if request is None:
+                return None
+            target = get_visible_assignment_target(obj, request.user)
         if target is None:
             return None
         serializer = get_serializer_for_model(target)

@@ -194,7 +194,7 @@ class NetBoxSecuritySecurityZonePolicyType(PrimaryObjectType):
     source_address: (
         List[
             Annotated[
-                "NetBoxSecurityAddressType",
+                "NetBoxSecurityAddressListType",
                 strawberry.lazy("netbox_security.graphql.types"),
             ]
         ]
@@ -203,7 +203,7 @@ class NetBoxSecuritySecurityZonePolicyType(PrimaryObjectType):
     destination_address: (
         List[
             Annotated[
-                "NetBoxSecurityAddressType",
+                "NetBoxSecurityAddressListType",
                 strawberry.lazy("netbox_security.graphql.types"),
             ]
         ]
