@@ -18,7 +18,7 @@ class AddressSetHierarchyTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         cls.prefix = Prefix.objects.create(prefix=IPNetwork("10.1.0.0/24"))
         cls.address = Address.objects.create(

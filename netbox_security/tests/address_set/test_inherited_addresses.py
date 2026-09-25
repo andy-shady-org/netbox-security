@@ -23,7 +23,7 @@ class PrefixInheritedAddressTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         # Create parent and child prefixes
         cls.parent_prefix = Prefix.objects.create(prefix=IPNetwork("10.0.0.0/8"))
@@ -122,7 +122,7 @@ class IPAddressInheritedAddressTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         # Create parent prefix
         cls.parent_prefix = Prefix.objects.create(prefix=IPNetwork("10.1.0.0/24"))
@@ -193,7 +193,7 @@ class IPRangeInheritedAddressTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         # Create parent prefix
         cls.parent_prefix = Prefix.objects.create(prefix=IPNetwork("10.1.0.0/24"))
@@ -236,7 +236,7 @@ class InheritedAddressSetHierarchyTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         # Create parent and child prefixes
         cls.parent_prefix = Prefix.objects.create(prefix=IPNetwork("10.0.0.0/8"))
@@ -291,7 +291,7 @@ class InheritedAddressPolicyContextTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         # Create parent and child prefixes
         cls.parent_prefix = Prefix.objects.create(prefix=IPNetwork("10.0.0.0/8"))
@@ -355,7 +355,7 @@ class CustomPrefixInheritedAddressTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         # Create parent and child custom prefixes
         cls.parent_custom_prefix = CustomPrefix.objects.create(
@@ -430,7 +430,7 @@ class CustomPrefixInheritedAddressSetHierarchyTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         # Create parent and child custom prefixes
         cls.parent_custom_prefix = CustomPrefix.objects.create(
@@ -489,7 +489,7 @@ class CustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         # Create parent and child custom prefixes
         cls.parent_custom_prefix = CustomPrefix.objects.create(
@@ -557,7 +557,7 @@ class IPAMToCustomPrefixInheritedAddressPolicyContextTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         cls.global_custom_prefix = CustomPrefix.objects.create(
             prefix=IPNetwork("0.0.0.0/0")
@@ -612,7 +612,7 @@ class CustomPrefixToIPAMInheritedAddressPolicyContextTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = get_user_model().objects.create_user(
-            username="hierarchy-test-user", is_superuser=True, is_staff=True
+            username="hierarchy-test-user", is_superuser=True
         )
         cls.global_prefix = Prefix.objects.create(prefix=IPNetwork("0.0.0.0/0"))
         cls.custom_prefix = CustomPrefix.objects.create(
