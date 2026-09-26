@@ -27,7 +27,9 @@ def _zone_ids_for_assignments(model, object_ids, *, user, budget):
 
 
 def _direct_zone_ids(target, *, user, budget):
-    return _zone_ids_for_assignments(target.__class__, [target.pk], user=user, budget=budget)
+    return _zone_ids_for_assignments(
+        target.__class__, [target.pk], user=user, budget=budget
+    )
 
 
 def _effective_prefix_zone_ids(prefix, *, user, budget, cache):
@@ -42,7 +44,10 @@ def _effective_prefix_zone_ids(prefix, *, user, budget, cache):
 
     inherited_zone_ids = set()
     for parent in budget.take(
-        prefix.get_parents().restrict(user, "view").filter(vrf_id=prefix.vrf_id).order_by("pk")
+        prefix.get_parents()
+        .restrict(user, "view")
+        .filter(vrf_id=prefix.vrf_id)
+        .order_by("pk")
     ):
         inherited_zone_ids.update(
             _effective_prefix_zone_ids(parent, user=user, budget=budget, cache=cache)
@@ -61,7 +66,11 @@ def resolve_zone_membership(target, *, user):
     can also inherit zone context from containing prefixes unless they have a
     direct assignment of their own.
     """
-    if target._meta.label_lower not in {"ipam.ipaddress", "ipam.prefix", "ipam.iprange"}:
+    if target._meta.label_lower not in {
+        "ipam.ipaddress",
+        "ipam.prefix",
+        "ipam.iprange",
+    }:
         return None
 
     from dcim.models import Interface
@@ -72,7 +81,9 @@ def resolve_zone_membership(target, *, user):
 
     if target._meta.label_lower == "ipam.prefix":
         zone_ids = set(
-            _effective_prefix_zone_ids(target, user=user, budget=budget, cache=prefix_cache)
+            _effective_prefix_zone_ids(
+                target, user=user, budget=budget, cache=prefix_cache
+            )
         )
         if budget.truncated or not zone_ids:
             return None
@@ -86,15 +97,23 @@ def resolve_zone_membership(target, *, user):
             return sorted(set(direct_zone_ids))
 
         if target.vrf_id is not None:
-            parent_prefixes = Prefix.objects.restrict(user, "view").filter(
-                vrf_id=target.vrf_id,
-                prefix__net_contains_or_equals=str(target.start_address.ip),
-            ).filter(prefix__net_contains_or_equals=str(target.end_address.ip))
+            parent_prefixes = (
+                Prefix.objects.restrict(user, "view")
+                .filter(
+                    vrf_id=target.vrf_id,
+                    prefix__net_contains_or_equals=str(target.start_address.ip),
+                )
+                .filter(prefix__net_contains_or_equals=str(target.end_address.ip))
+            )
         else:
-            parent_prefixes = Prefix.objects.restrict(user, "view").filter(
-                vrf__isnull=True,
-                prefix__net_contains_or_equals=str(target.start_address.ip),
-            ).filter(prefix__net_contains_or_equals=str(target.end_address.ip))
+            parent_prefixes = (
+                Prefix.objects.restrict(user, "view")
+                .filter(
+                    vrf__isnull=True,
+                    prefix__net_contains_or_equals=str(target.start_address.ip),
+                )
+                .filter(prefix__net_contains_or_equals=str(target.end_address.ip))
+            )
 
         zone_ids = set()
         for prefix in budget.take(parent_prefixes.order_by("pk")):
@@ -132,7 +151,9 @@ def resolve_zone_membership(target, *, user):
     prefix_qs = prefix_qs.filter(prefix__net_contains_or_equals=str(target.address))
     for prefix in budget.take(prefix_qs.order_by("pk")):
         zone_ids.update(
-            _effective_prefix_zone_ids(prefix, user=user, budget=budget, cache=prefix_cache)
+            _effective_prefix_zone_ids(
+                prefix, user=user, budget=budget, cache=prefix_cache
+            )
         )
 
     # IP range membership: compare host values explicitly rather than relying on
@@ -161,15 +182,23 @@ def resolve_zone_membership(target, *, user):
             continue
 
         if ip_range.vrf_id is not None:
-            parent_prefixes = Prefix.objects.restrict(user, "view").filter(
-                vrf_id=ip_range.vrf_id,
-                prefix__net_contains_or_equals=str(ip_range.start_address.ip),
-            ).filter(prefix__net_contains_or_equals=str(ip_range.end_address.ip))
+            parent_prefixes = (
+                Prefix.objects.restrict(user, "view")
+                .filter(
+                    vrf_id=ip_range.vrf_id,
+                    prefix__net_contains_or_equals=str(ip_range.start_address.ip),
+                )
+                .filter(prefix__net_contains_or_equals=str(ip_range.end_address.ip))
+            )
         else:
-            parent_prefixes = Prefix.objects.restrict(user, "view").filter(
-                vrf__isnull=True,
-                prefix__net_contains_or_equals=str(ip_range.start_address.ip),
-            ).filter(prefix__net_contains_or_equals=str(ip_range.end_address.ip))
+            parent_prefixes = (
+                Prefix.objects.restrict(user, "view")
+                .filter(
+                    vrf__isnull=True,
+                    prefix__net_contains_or_equals=str(ip_range.start_address.ip),
+                )
+                .filter(prefix__net_contains_or_equals=str(ip_range.end_address.ip))
+            )
 
         for prefix in budget.take(parent_prefixes.order_by("pk")):
             zone_ids.update(
