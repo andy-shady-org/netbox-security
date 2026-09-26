@@ -20,6 +20,7 @@ from utilities.forms.fields import (
 )
 
 from dcim.models import Device, VirtualDeviceContext, Interface
+from ipam.models import IPRange, Prefix
 from tenancy.models import Tenant, TenantGroup
 from virtualization.models import VirtualMachine
 
@@ -218,4 +219,14 @@ class SecurityZoneAssignmentFilterForm(NetBoxModelFilterSetForm):
             "device_id": "$device_id",
             "vdc_id": "$virtualdevicecontext_id",
         },
+    )
+    prefix_id = DynamicModelChoiceField(
+        queryset=Prefix.objects.all(),
+        required=False,
+        label=_("Prefix"),
+    )
+    iprange_id = DynamicModelChoiceField(
+        queryset=IPRange.objects.all(),
+        required=False,
+        label=_("IP Range"),
     )

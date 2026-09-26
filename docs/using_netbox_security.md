@@ -241,6 +241,86 @@ Security Zone Policies
 ![List Security Zone Policies](img/policies_list.png)
 ![View Security Zone Policy](img/policy.png)
 
+#### IPAM Integration
+
+NetBox Security adds a **Security** tab to the following IPAM objects:
+
+* **IP Addresses**
+* **Prefixes**
+* **IP Ranges**
+
+These pages provide a single place to review how an IPAM object is used by security data in the plugin. The tab is hidden when no related security objects are found, and the badge count reflects the number of related objects that can be displayed for the current user.
+
+For zone-aware policy evaluation, the relevant IPAM object must have visible zone membership. In practice, this means you should assign the appropriate **Security Zone** to the related **Prefix** or **IP Range** when you want all addresses within that network to inherit zone context. Without those assignments, the plugin may still show address relationships, but zone applicability for policies can remain unconfirmed.
+
+##### What the pages display
+
+All three IPAM security pages show the plugin objects that directly reference the selected IPAM object:
+
+* **NAT Pool Members** using the IP address, prefix, or range
+* **NAT Rules** using the object as a source or destination match
+* **Addresses** assigned to the object
+* **Security Zones** assigned to the object
+
+Each section includes shortcuts for creating new related records from the current object page, subject to the user's permissions.
+
+##### IP Address security page
+
+The **IP Address** security page includes an additional **Policy candidates** section.
+
+This section correlates the IP address to:
+
+1. directly assigned **Address** objects
+2. inherited **Address** objects from containing prefixes
+3. **Address Sets** built from those addresses
+4. **Address Lists** built from those addresses or sets
+5. **Security Zone Policies** that reference those lists
+
+The resulting table helps answer: *"Which policies could match this IP on the source or destination side?"*
+
+The page also shows the resolved **zone context** for the IP address. When zone membership can be confirmed, the page lists matching zones and evaluates whether a candidate policy is:
+
+* a confirmed zone match
+* excluded because of a zone mismatch
+* excluded because the matched address-book entry is out of scope for the current context
+* unconfirmed because the zone or scope could not be established
+
+If the IP address is not directly assigned to a zoned interface, assign the containing **Prefix** or **IP Range** to the appropriate **Security Zone** so the plugin can establish subnet-based zone context.
+
+This is an analysis aid, not a connectivity verdict. The opposite endpoint, application criteria, and policy order still affect the actual decision on a firewall.
+
+##### Prefix and IP Range security pages
+
+The **Prefix** and **IP Range** security pages show a **Security Policy Context** summary instead of policy candidates.
+
+These pages focus on the address hierarchy behind the selected object:
+
+* direct **Address** objects assigned to the prefix or range
+* inherited addresses from containing parent prefixes where applicable
+* the **Address Set** hierarchy built from those addresses
+* visible **Security Zone Policies** that reference the resulting address lists
+
+If zone membership cannot be established from visible assignments, the page still shows the address relationships and hierarchy, but it warns that policy applicability is unconfirmed.
+
+For routed subnets and network blocks, assigning the **Prefix** or **IP Range** to the correct **Security Zone** is the recommended way to make this context available on these pages.
+
+##### How the integration works
+
+The IPAM security pages are designed to bridge IPAM data and security modeling:
+
+* **Addresses** connect IPAM objects to reusable security address-book objects
+* **Address Sets** and **Address Lists** provide grouping and policy reuse
+* **Security Zones** provide the zone context used for policy evaluation
+* **Security Zone Policies** are shown when the object's address relationships and zone context can be correlated
+* **NAT Pools**, **NAT Pool Members**, and **NAT Rules** are shown alongside policy data so address translation and policy context can be reviewed from the same page
+
+In practice, these tabs are most useful when troubleshooting or documenting:
+
+* which policies reference a subnet or host
+* whether an IP belongs to a zone context that makes a policy applicable
+* which address-book objects were used to derive a policy relationship
+* whether NAT and policy references are aligned for the same IPAM object
+
 
 ### NAT Pools and NAT Pool Members
 
@@ -277,7 +357,7 @@ NAT Pools
 ![View NAT Pool](img/nat-pool.png)
 
 NAT Pool Members
-![List NAT Pool Members](img/members.png)
+![List NAT Pool Members](img/nat-pool-member-list.png)
 ![View NAT Pool Member](img/nat-pool-member.png)
 
 

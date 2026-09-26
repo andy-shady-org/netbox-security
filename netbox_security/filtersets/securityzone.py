@@ -11,6 +11,7 @@ from utilities.filters import (
 )
 
 from dcim.models import Interface, Device, VirtualDeviceContext
+from ipam.models import Prefix, IPRange
 from virtualization.models import VirtualMachine
 
 from netbox_security.models import (
@@ -169,6 +170,26 @@ class SecurityZoneAssignmentFilterSet(AssignmentFilterSet):
         field_name="pk",
         label=_("Virtual Machine (ID)"),
     )
+    prefix = MultiValueCharFilter(
+        method="filter_prefix",
+        field_name="name",
+        label=_("Prefix (prefix)"),
+    )
+    prefix_id = MultiValueNumberFilter(
+        method="filter_prefix",
+        field_name="pk",
+        label=_("Prefix (ID)"),
+    )
+    iprange = MultiValueCharFilter(
+        method="filter_ip_range",
+        field_name="name",
+        label=_("IP Range (start_address)"),
+    )
+    iprange_id = MultiValueNumberFilter(
+        method="filter_ip_range",
+        field_name="pk",
+        label=_("IP Range (ID)"),
+    )
 
     class Meta:
         model = SecurityZoneAssignment
@@ -212,4 +233,20 @@ class SecurityZoneAssignmentFilterSet(AssignmentFilterSet):
         return queryset.filter(
             assigned_object_type=ContentType.objects.get_for_model(VirtualMachine),
             assigned_object_id__in=devices.values_list("id", flat=True),
+        )
+
+    def filter_prefix(self, queryset, name, value):
+        if not (prefixes := Prefix.objects.filter(**{f"{name}__in": value})).exists():
+            return queryset.none()
+        return queryset.filter(
+            assigned_object_type=ContentType.objects.get_for_model(Prefix),
+            assigned_object_id__in=prefixes.values_list("id", flat=True),
+        )
+
+    def filter_ip_range(self, queryset, name, value):
+        if not (ip_ranges := IPRange.objects.filter(**{f"{name}__in": value})).exists():
+            return queryset.none()
+        return queryset.filter(
+            assigned_object_type=ContentType.objects.get_for_model(IPRange),
+            assigned_object_id__in=ip_ranges.values_list("id", flat=True),
         )

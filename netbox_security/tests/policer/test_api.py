@@ -41,6 +41,9 @@ class PolicerAPITestCase(
     bulk_update_data = {
         "description": "Test Policers",
     }
+    bulk_update_invalid_data = {
+        "bandwidth_limit": "Test Bandwidth Limit",
+    }
 
     @classmethod
     def setUpTestData(cls):

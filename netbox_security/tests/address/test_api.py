@@ -37,6 +37,9 @@ class AddressAPITestCase(
     bulk_update_data = {
         "description": "Test Address",
     }
+    bulk_update_invalid_data = {
+        "dns_name": "invalid_prefix",
+    }
 
     @classmethod
     def setUpTestData(cls):
