@@ -1,0 +1,13 @@
+{% load helpers %}
+{% load i18n %}
+{% if perms.netbox_security.add_securityzoneassignment %}
+    <form method="post" style="display: inline-block">
+        {% csrf_token %}
+
+        <button type="submit" name="_edit"
+                formaction="{% url 'plugins:netbox_security:securityzoneassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}"
+                class="btn btn-default">
+            <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Security Zone" %}
+        </button>
+    </form>
+{% endif %}
