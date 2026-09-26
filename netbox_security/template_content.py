@@ -1,6 +1,16 @@
 from netbox.plugins import PluginTemplateExtension
 
 
+class ZoneAssignmentButton(PluginTemplateExtension):
+    models = ["ipam.prefix", "ipam.iprange"]
+
+    def buttons(self):
+        """
+        A button to assign a security zone
+        """
+        return self.render("netbox_security/inc/zone_assignment_button.html")
+
+
 class SecurityZoneContextInfo(PluginTemplateExtension):
     models = ["netbox_security.securityzone"]
 
@@ -111,6 +121,7 @@ class InterfaceInfo(PluginTemplateExtension):
 
 
 template_extensions = [
+    ZoneAssignmentButton,
     SecurityZoneContextInfo,
     AddressContextInfo,
     AddressSetContextInfo,
