@@ -18,7 +18,11 @@ from netbox_security.tests.custom import APITestCase
 from netbox_security.utils import get_address_set_hierarchy
 from netbox_security.utils.policy_candidates import add_policy_candidates
 from netbox_security.utils.zone_membership import resolve_zone_membership
-from netbox_security.views.tabs import _ipaddress_related_total_count, _prefix_related_total_count
+from netbox_security.views.tabs import (
+    _ipaddress_related_total_count,
+    _iprange_related_total_count,
+    _prefix_related_total_count,
+)
 
 
 class ZoneContextRegressionTestCase(APITestCase):
@@ -49,11 +53,18 @@ class ZoneContextRegressionTestCase(APITestCase):
             start_address=IPNetwork("10.16.48.161/28"),
             end_address=IPNetwork("10.16.48.174/28"),
         )
+        cls.inherited_range = IPRange.objects.create(
+            start_address=IPNetwork("10.16.52.161/28"),
+            end_address=IPNetwork("10.16.52.174/28"),
+        )
         cls.range_member_ip = IPAddress.objects.create(
             address=IPNetwork("10.16.48.170/32")
         )
         cls.interface_zone = SecurityZone.objects.create(name="RFC1918-INTERFACE-ZONE")
         cls.interface_prefix = Prefix.objects.create(prefix=IPNetwork("10.16.90.5/32"))
+        cls.inherited_range_parent_prefix = Prefix.objects.create(
+            prefix=IPNetwork("10.16.52.160/28")
+        )
 
         manufacturer = Manufacturer.objects.create(
             name="Test Manufacturer",
@@ -100,6 +111,11 @@ class ZoneContextRegressionTestCase(APITestCase):
         )
         SecurityZoneAssignment.objects.create(
             assigned_object_type=prefix_type,
+            assigned_object_id=cls.inherited_range_parent_prefix.pk,
+            zone=cls.shady_zone,
+        )
+        SecurityZoneAssignment.objects.create(
+            assigned_object_type=prefix_type,
             assigned_object_id=cls.interface_prefix.pk,
             zone=cls.interface_zone,
         )
@@ -140,6 +156,18 @@ class ZoneContextRegressionTestCase(APITestCase):
             [self.shady_zone.pk],
         )
 
+    def test_resolve_zone_membership_includes_interface_zone_for_attached_ip(self):
+        self.assertEqual(
+            resolve_zone_membership(self.interface_ip, user=self.user),
+            [self.interface_zone.pk],
+        )
+
+    def test_resolve_zone_membership_includes_parent_prefix_zone_for_iprange(self):
+        self.assertEqual(
+            resolve_zone_membership(self.inherited_range, user=self.user),
+            [self.shady_zone.pk],
+        )
+
     def test_get_address_set_hierarchy_uses_direct_prefix_zone_assignment(self):
         context = get_address_set_hierarchy(
             user=self.user,
@@ -161,6 +189,20 @@ class ZoneContextRegressionTestCase(APITestCase):
 
         self.assertTrue(context["zone_context_known"])
         self.assertEqual(context["member_zone_ids"], [self.shady_zone.pk])
+
+    def test_iprange_security_tab_is_visible_for_zone_assigned_range(self):
+        token = current_request.set(SimpleNamespace(user=self.user))
+        try:
+            self.assertEqual(_iprange_related_total_count(self.destination_range), 1)
+        finally:
+            current_request.reset(token)
+
+    def test_iprange_security_tab_is_visible_when_parent_prefix_is_zoned(self):
+        token = current_request.set(SimpleNamespace(user=self.user))
+        try:
+            self.assertEqual(_iprange_related_total_count(self.inherited_range), 1)
+        finally:
+            current_request.reset(token)
 
     def test_prefix_security_tab_is_visible_for_zone_assigned_prefix(self):
         token = current_request.set(SimpleNamespace(user=self.user))

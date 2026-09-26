@@ -175,7 +175,22 @@ def _prefix_related_total_count(obj):
 
 
 def _iprange_related_total_count(obj):
-    return _related_total_count(obj, IPRange, _annotate_iprange_queryset)
+    count = _related_total_count(obj, IPRange, _annotate_iprange_queryset)
+    if count:
+        return count
+
+    request = current_request.get()
+    if request is None or getattr(request, "user", None) is None:
+        return 0
+
+    context = _policy_context(
+        "ipam",
+        "iprange",
+        obj.pk,
+        user=request.user,
+        include_candidates=True,
+    )
+    return 1 if context.get("zone_context_known") else 0
 
 
 def _policy_context(app_label, model, object_id, *, user, include_candidates=False):
