@@ -51,6 +51,9 @@ class SecurityZoneAPITestCase(
     bulk_update_data = {
         "description": "Test Security Zone",
     }
+    bulk_update_invalid_data = {
+        "allow_intra_zone": "Test Security Zone",
+    }
 
     @classmethod
     def setUpTestData(cls):
@@ -143,6 +146,9 @@ class SecurityZonePolicyAPITestCase(
 
     bulk_update_data = {
         "description": "Test Security Zone Policy",
+    }
+    bulk_update_invalid_data = {
+        "policy_actions": "Test Security Zone Policy",
     }
 
     @classmethod

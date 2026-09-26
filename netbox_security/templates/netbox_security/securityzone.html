@@ -124,6 +124,26 @@
                 {% render_table interface_assignments_table 'inc/table.html' %}
             </div>
         </div>
+        <div class="card">
+            {% if prefix_assignments_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "Prefix Assignment" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "Prefix Assignments" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table prefix_assignments_table 'inc/table.html' %}
+            </div>
+        </div>
+        <div class="card">
+            {% if iprange_assignments_table.rows|length == 1 %}
+                <h2 class="card-header">{% trans "IP Range Assignment" %}</h2>
+            {% else %}
+                <h2 class="card-header">{% trans "IP Range Assignments" %}</h2>
+            {% endif %}
+            <div class="table-responsive">
+                {% render_table iprange_assignments_table 'inc/table.html' %}
+            </div>
+        </div>
     </div>
     {% plugin_full_width_page object %}
 </div>

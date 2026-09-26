@@ -35,6 +35,9 @@ class AddressSetAPITestCase(
     bulk_update_data = {
         "description": "Test Address Set",
     }
+    bulk_update_invalid_data = {
+        "addresses": "invalid_prefix",
+    }
 
     @classmethod
     def setUpTestData(cls):

@@ -4,6 +4,8 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+
+from ipam.models import Prefix, IPRange
 from netbox.search import SearchIndex, register_search
 
 from netbox.models import PrimaryModel, NetBoxModel
@@ -193,3 +195,17 @@ GenericRelation(
     object_id_field="assigned_object_id",
     related_query_name="virtualmachine",
 ).contribute_to_class(VirtualMachine, "security_zones")
+
+GenericRelation(
+    to=SecurityZoneAssignment,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="prefix",
+).contribute_to_class(Prefix, "security_zones")
+
+GenericRelation(
+    to=SecurityZoneAssignment,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="iprange",
+).contribute_to_class(IPRange, "security_zones")

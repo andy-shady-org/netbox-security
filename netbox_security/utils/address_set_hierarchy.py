@@ -9,6 +9,7 @@ from netbox_security.models import (
     AddressList,
     AddressSet,
     SecurityZone,
+    SecurityZoneAssignment,
     SecurityZonePolicy,
 )
 
@@ -376,6 +377,28 @@ def get_address_set_hierarchy(
 
     if member_zone_ids is _AUTO_ZONE_CONTEXT:
         member_zone_ids = resolve_zone_membership(target_object, user=user)
+        if member_zone_ids is None and target_object is not None:
+            target_label = target_object._meta.label_lower
+            if target_label in {"ipam.prefix", "ipam.iprange"}:
+                assignment_model = target_object.__class__
+                member_zone_ids = (
+                    list(
+                        SecurityZoneAssignment.objects.restrict(user, "view")
+                        .filter(
+                            assigned_object_type=ContentType.objects.get_for_model(
+                                assignment_model
+                            ),
+                            assigned_object_id=target_object.pk,
+                            zone_id__in=SecurityZone.objects.restrict(
+                                user, "view"
+                            ).values("pk"),
+                        )
+                        .order_by("zone_id")
+                        .values_list("zone_id", flat=True)
+                        .distinct()
+                    )
+                    or None
+                )
     zone_context_known = member_zone_ids is not None
     # Permission filtering is independent of actual network membership.
     membership_budget = HierarchyBudget()

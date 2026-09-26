@@ -53,6 +53,9 @@ class NatRuleSetAPITestCase(
     bulk_update_data = {
         "description": "Test Nat Rule Set",
     }
+    bulk_update_invalid_data = {
+        "nat_type": "Test NAT Type",
+    }
 
     @classmethod
     def setUpTestData(cls):
@@ -100,6 +103,9 @@ class NatRuleAPITestCase(
 
     bulk_update_data = {
         "description": "Test Nat Rule",
+    }
+    bulk_update_invalid_data = {
+        "status": "invalid status",
     }
 
     @classmethod

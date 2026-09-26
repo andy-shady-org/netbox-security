@@ -11,6 +11,9 @@ from dcim.models import Interface
 from dcim.tables import InterfaceTable
 from virtualization.tables import VirtualMachineTable
 
+from ipam.tables import PrefixTable, IPRangeTable
+from ipam.models import Prefix, IPRange
+
 from netbox_security.utils.assignment import get_assigned_object
 from netbox_security.constants import ZONE_ASSIGNMENT_MODELS
 from netbox_security.tables import SecurityZoneTable, SecurityZoneAssignmentTable
@@ -77,6 +80,18 @@ class SecurityZoneView(generic.ObjectView):
             "interface_assignments_table": (
                 InterfaceTable,
                 Interface.objects.restrict(request.user, "view").filter(
+                    security_zones__zone=instance
+                ),
+            ),
+            "prefix_assignments_table": (
+                PrefixTable,
+                Prefix.objects.restrict(request.user, "view").filter(
+                    security_zones__zone=instance
+                ),
+            ),
+            "iprange_assignments_table": (
+                IPRangeTable,
+                IPRange.objects.restrict(request.user, "view").filter(
                     security_zones__zone=instance
                 ),
             ),

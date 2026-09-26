@@ -53,6 +53,9 @@ class NatPoolAPITestCase(
     bulk_update_data = {
         "description": "Test Nat Pool",
     }
+    bulk_update_invalid_data = {
+        "status": "Test Status",
+    }
 
     @classmethod
     def setUpTestData(cls):
@@ -96,6 +99,10 @@ class NatPoolMemberAPITestCase(
         "status",
         "url",
     ]
+
+    bulk_update_invalid_data = {
+        "status": "invalid status",
+    }
 
     @classmethod
     def setUpTestData(cls):

@@ -27,6 +27,9 @@ class CustomPrefixAPITestCase(
     bulk_update_data = {
         "description": "Test Address",
     }
+    bulk_update_invalid_data = {
+        "prefix": "invalid_prefix",
+    }
 
     @classmethod
     def setUpTestData(cls):

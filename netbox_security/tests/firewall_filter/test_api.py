@@ -40,6 +40,9 @@ class FirewallFilterAPITestCase(
     bulk_update_data = {
         "description": "Test Firewall Filter",
     }
+    bulk_update_invalid_data = {
+        "family": "Test Family",
+    }
 
     @classmethod
     def setUpTestData(cls):
@@ -75,6 +78,9 @@ class FirewallFilterRuleAPITestCase(
 
     bulk_update_data = {
         "description": "Test Firewall Filter Rule",
+    }
+    bulk_update_invalid_data = {
+        "index": "Test Index",
     }
 
     @classmethod
