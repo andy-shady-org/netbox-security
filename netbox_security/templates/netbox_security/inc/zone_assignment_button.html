@@ -6,7 +6,7 @@
 
         <button type="submit" name="_edit"
                 formaction="{% url 'plugins:netbox_security:securityzoneassignment_add' %}?assigned_object_type={{ object|content_type_id }}&assigned_object_id={{ object.pk }}&return_url={{ object.get_absolute_url }}"
-                class="btn btn-default">
+                class="btn btn-success">
             <span class="mdi mdi-plus-thick" aria-hidden="true"></span> {% trans "Assign Security Zone" %}
         </button>
     </form>
