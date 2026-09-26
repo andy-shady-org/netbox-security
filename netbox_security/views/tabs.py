@@ -135,11 +135,43 @@ def _related_total_count(obj, model, annotate_queryset):
 
 
 def _ipaddress_related_total_count(obj):
-    return _related_total_count(obj, IPAddress, _annotate_ipaddress_queryset)
+    count = _related_total_count(obj, IPAddress, _annotate_ipaddress_queryset)
+    if count:
+        return count
+
+    request = current_request.get()
+    if request is None or getattr(request, "user", None) is None:
+        return 0
+
+    # Keep the tab visible when the IP already has meaningful zone context,
+    # even if there are no directly counted related objects yet.
+    context = _policy_context(
+        "ipam",
+        "ipaddress",
+        obj.pk,
+        user=request.user,
+        include_candidates=True,
+    )
+    return 1 if context.get("zone_context_known") else 0
 
 
 def _prefix_related_total_count(obj):
-    return _related_total_count(obj, Prefix, _annotate_prefix_queryset)
+    count = _related_total_count(obj, Prefix, _annotate_prefix_queryset)
+    if count:
+        return count
+
+    request = current_request.get()
+    if request is None or getattr(request, "user", None) is None:
+        return 0
+
+    context = _policy_context(
+        "ipam",
+        "prefix",
+        obj.pk,
+        user=request.user,
+        include_candidates=True,
+    )
+    return 1 if context.get("zone_context_known") else 0
 
 
 def _iprange_related_total_count(obj):

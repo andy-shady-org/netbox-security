@@ -1,6 +1,11 @@
+from types import SimpleNamespace
+
 from django.contrib.contenttypes.models import ContentType
 from netaddr import IPNetwork
 
+from dcim.choices import InterfaceTypeChoices
+from dcim.models import Device, DeviceRole, DeviceType, Interface, Manufacturer, Site
+from netbox.context import current_request
 from ipam.models import IPAddress, IPRange, Prefix
 from netbox_security.models import (
     Address,
@@ -13,6 +18,7 @@ from netbox_security.tests.custom import APITestCase
 from netbox_security.utils import get_address_set_hierarchy
 from netbox_security.utils.policy_candidates import add_policy_candidates
 from netbox_security.utils.zone_membership import resolve_zone_membership
+from netbox_security.views.tabs import _ipaddress_related_total_count, _prefix_related_total_count
 
 
 class ZoneContextRegressionTestCase(APITestCase):
@@ -46,6 +52,37 @@ class ZoneContextRegressionTestCase(APITestCase):
         cls.range_member_ip = IPAddress.objects.create(
             address=IPNetwork("10.16.48.170/32")
         )
+        cls.interface_zone = SecurityZone.objects.create(name="RFC1918-INTERFACE-ZONE")
+        cls.interface_prefix = Prefix.objects.create(prefix=IPNetwork("10.16.90.5/32"))
+
+        manufacturer = Manufacturer.objects.create(
+            name="Test Manufacturer",
+            slug="test-manufacturer",
+        )
+        device_type = DeviceType.objects.create(
+            manufacturer=manufacturer,
+            model="Test Device Type",
+            slug="test-device-type",
+        )
+        device_role = DeviceRole.objects.create(name="Test Role", slug="test-role")
+        site = Site.objects.create(name="Test Site", slug="test-site")
+
+        cls.ip_device = Device.objects.create(
+            device_type=device_type,
+            role=device_role,
+            site=site,
+            name="test-device",
+        )
+        cls.ip_interface = Interface.objects.create(
+            device=cls.ip_device,
+            name="eth0",
+            type=InterfaceTypeChoices.TYPE_OTHER,
+        )
+        cls.interface_ip = IPAddress.objects.create(
+            address=IPNetwork("10.16.90.5/32"),
+            assigned_object_type=ContentType.objects.get_for_model(Interface),
+            assigned_object_id=cls.ip_interface.pk,
+        )
 
         prefix_type = ContentType.objects.get_for_model(Prefix)
         iprange_type = ContentType.objects.get_for_model(IPRange)
@@ -60,6 +97,16 @@ class ZoneContextRegressionTestCase(APITestCase):
             assigned_object_type=iprange_type,
             assigned_object_id=cls.destination_range.pk,
             zone=cls.shady_zone,
+        )
+        SecurityZoneAssignment.objects.create(
+            assigned_object_type=prefix_type,
+            assigned_object_id=cls.interface_prefix.pk,
+            zone=cls.interface_zone,
+        )
+        SecurityZoneAssignment.objects.create(
+            assigned_object_type=ContentType.objects.get_for_model(Interface),
+            assigned_object_id=cls.ip_interface.pk,
+            zone=cls.interface_zone,
         )
 
         cls.destination_address = Address.objects.create(
@@ -114,6 +161,20 @@ class ZoneContextRegressionTestCase(APITestCase):
 
         self.assertTrue(context["zone_context_known"])
         self.assertEqual(context["member_zone_ids"], [self.shady_zone.pk])
+
+    def test_prefix_security_tab_is_visible_for_zone_assigned_prefix(self):
+        token = current_request.set(SimpleNamespace(user=self.user))
+        try:
+            self.assertEqual(_prefix_related_total_count(self.destination_prefix), 1)
+        finally:
+            current_request.reset(token)
+
+    def test_ipaddress_security_tab_is_visible_for_interface_attached_ip(self):
+        token = current_request.set(SimpleNamespace(user=self.user))
+        try:
+            self.assertEqual(_ipaddress_related_total_count(self.interface_ip), 1)
+        finally:
+            current_request.reset(token)
 
     def test_policy_candidate_moves_from_unconfirmed_to_zone_confirmed(self):
         unknown = add_policy_candidates(
