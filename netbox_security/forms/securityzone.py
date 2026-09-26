@@ -187,6 +187,8 @@ class SecurityZoneAssignmentFilterForm(NetBoxModelFilterSetForm):
             "virtualdevicecontext_id",
             "virtualmachine_id",
             "interface_id",
+            "prefix_id",
+            "iprange_id",
             name="Assignments",
         ),
     )
