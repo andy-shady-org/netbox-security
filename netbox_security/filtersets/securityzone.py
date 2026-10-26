@@ -36,13 +36,13 @@ class SecurityZoneFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
     )
     source_zone_id = django_filters.ModelMultipleChoiceFilter(
         field_name="natruleset_source_zones",
-        queryset=SecurityZone.objects.all(),
+        queryset=NatRuleSet.objects.all(),
         to_field_name="id",
         label=_("Source Zone NAT Rule Set (ID)"),
     )
     destination_zone_id = django_filters.ModelMultipleChoiceFilter(
         field_name="natruleset_destination_zones",
-        queryset=SecurityZone.objects.all(),
+        queryset=NatRuleSet.objects.all(),
         to_field_name="id",
         label=_("Destination Zone NAT Rule Set (ID)"),
     )
