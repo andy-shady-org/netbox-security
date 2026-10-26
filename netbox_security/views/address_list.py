@@ -3,7 +3,10 @@ from utilities.views import register_model_view
 from netbox.object_actions import BulkExport
 
 from netbox_security.utils.assignment import get_assigned_object
-from netbox_security.constants import ADDRESS_ASSIGNMENT_MODELS
+from netbox_security.constants import (
+    ADDRESS_ASSIGNMENT_MODELS,
+    ADDRESS_LIST_ASSIGNMENT_MODELS,
+)
 
 from netbox_security.models import AddressList, AddressListAssignment
 from netbox_security.filtersets import (

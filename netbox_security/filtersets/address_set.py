@@ -49,7 +49,7 @@ class AddressSetFilterSet(TenancyFilterSet, PrimaryModelFilterSet):
         label=_("Address Set (ID)"),
     )
     address_set = django_filters.ModelMultipleChoiceFilter(
-        queryset=Address.objects.all(),
+        queryset=AddressSet.objects.all(),
         field_name="addressset_address_sets__name",
         to_field_name="name",
         label=_("Address Set (Name)"),
