@@ -413,7 +413,7 @@ export NETBOX_CONFIGURATION=netbox.configuration_testing
 python manage.py test netbox_security
 
 # Single test module
-python manage.py test netbox_security.tests.test_api
+python manage.py test netbox_security.tests.address.test_api
 
 # Faster runs
 python manage.py test --keepdb --parallel 4 netbox_security
