@@ -3,13 +3,13 @@ from utilities.views import register_model_view
 from netbox.object_actions import BulkExport
 
 from dcim.models import Device, VirtualDeviceContext
-from virtualization.models import VirtualMachine
+from virtualization.models import VirtualMachine, VMInterface
 
 from dcim.tables import DeviceTable, VirtualDeviceContextTable
 from dcim.models import Interface
 
 from dcim.tables import InterfaceTable
-from virtualization.tables import VirtualMachineTable
+from virtualization.tables import VirtualMachineTable, VMInterfaceTable
 
 from ipam.tables import PrefixTable, IPRangeTable
 from ipam.models import Prefix, IPRange
@@ -80,6 +80,12 @@ class SecurityZoneView(generic.ObjectView):
             "interface_assignments_table": (
                 InterfaceTable,
                 Interface.objects.restrict(request.user, "view").filter(
+                    security_zones__zone=instance
+                ),
+            ),
+            "vminterface_assignments_table": (
+                VMInterfaceTable,
+                VMInterface.objects.restrict(request.user, "view").filter(
                     security_zones__zone=instance
                 ),
             ),

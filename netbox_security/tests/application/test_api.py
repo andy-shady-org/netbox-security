@@ -2,9 +2,15 @@ from utilities.testing import APIViewTestCases
 from netbox_security.tests.custom import APITestCase, NetBoxSecurityGraphQLMixin
 from netbox_security.models import ApplicationItem, Application, ApplicationSet
 from netbox_security.choices import ProtocolChoices
+from netbox_security.tests.mixins import (
+    ApplicationItemMixin,
+    ApplicationMixin,
+    ApplicationSetMixin,
+)
 
 
 class ApplicationItemAPITestCase(
+    ApplicationItemMixin,
     APITestCase,
     APIViewTestCases.GetObjectViewTestCase,
     APIViewTestCases.ListObjectsViewTestCase,
@@ -14,8 +20,6 @@ class ApplicationItemAPITestCase(
     NetBoxSecurityGraphQLMixin,
     APIViewTestCases.GraphQLTestCase,
 ):
-    model = ApplicationItem
-
     # TODO: Remove this override once NetBox fixes enum-backed ArrayLookup
     # auto-filter rendering in utilities.testing.api (_emit_array_lookup_filter_tests).
     graphql_auto_filter_exclude = ("protocol",)
@@ -34,21 +38,21 @@ class ApplicationItemAPITestCase(
 
     create_data = [
         {
-            "name": "item-1",
+            "name": "item-x",
             "destination_ports": [1],
             "source_ports": [1],
             "index": 1,
             "protocol": [ProtocolChoices.TCP],
         },
         {
-            "name": "item-2",
+            "name": "item-y",
             "destination_ports": [2],
             "source_ports": [2],
             "index": 2,
             "protocol": [ProtocolChoices.TCP],
         },
         {
-            "name": "item-3",
+            "name": "item-z",
             "destination_ports": [3],
             "source_ports": [3],
             "index": 4,
@@ -63,33 +67,11 @@ class ApplicationItemAPITestCase(
 
     @classmethod
     def setUpTestData(cls):
-        items = (
-            ApplicationItem(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-9",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-        )
-        ApplicationItem.objects.bulk_create(items)
+        super().setUpTestData()
 
 
 class ApplicationAPITestCase(
+    ApplicationMixin,
     APITestCase,
     APIViewTestCases.GetObjectViewTestCase,
     APIViewTestCases.ListObjectsViewTestCase,
@@ -99,11 +81,13 @@ class ApplicationAPITestCase(
     NetBoxSecurityGraphQLMixin,
     APIViewTestCases.GraphQLTestCase,
 ):
-    model = Application
-
     # TODO: Remove this override once NetBox fixes enum-backed ArrayLookup
     # auto-filter rendering in utilities.testing.api (_emit_array_lookup_filter_tests).
     graphql_auto_filter_exclude = ("protocol",)
+
+    user_permissions = (
+        "netbox_security.view_applicationitem",
+    )
 
     brief_fields = [
         "application_items",
@@ -120,19 +104,19 @@ class ApplicationAPITestCase(
 
     create_data = [
         {
-            "name": "item-1",
+            "name": "item-x",
             "destination_ports": [1],
             "source_ports": [1],
             "protocol": [ProtocolChoices.TCP],
         },
         {
-            "name": "item-2",
+            "name": "item-y",
             "destination_ports": [1],
             "source_ports": [1],
             "protocol": [ProtocolChoices.TCP],
         },
         {
-            "name": "item-3",
+            "name": "item-z",
             "destination_ports": [1],
             "source_ports": [1],
             "protocol": [ProtocolChoices.TCP],
@@ -146,51 +130,12 @@ class ApplicationAPITestCase(
 
     @classmethod
     def setUpTestData(cls):
-        cls.items = (
-            ApplicationItem(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-9",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-        )
-        ApplicationItem.objects.bulk_create(cls.items)
-
-        cls.applications = (
-            Application(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-            Application(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-            Application(name="item-9"),
-        )
-        Application.objects.bulk_create(cls.applications)
+        super().setUpTestData()
         cls.applications[2].application_items.set([cls.items[0], cls.items[1]])
 
 
 class ApplicationSetAPITestCase(
+    ApplicationSetMixin,
     APITestCase,
     APIViewTestCases.GetObjectViewTestCase,
     APIViewTestCases.ListObjectsViewTestCase,
@@ -200,7 +145,10 @@ class ApplicationSetAPITestCase(
     NetBoxSecurityGraphQLMixin,
     APIViewTestCases.GraphQLTestCase,
 ):
-    model = ApplicationSet
+    user_permissions = (
+        "netbox_security.view_applicationitem",
+        "netbox_security.view_application",
+    )
 
     brief_fields = [
         "application_sets",
@@ -213,6 +161,18 @@ class ApplicationSetAPITestCase(
         "url",
     ]
 
+    create_data = [
+        {
+            "name": "app-x",
+        },
+        {
+            "name": "app-y",
+        },
+        {
+            "name": "app-z",
+        },
+    ]
+
     bulk_update_data = {
         "description": "Test Item",
     }
@@ -220,85 +180,21 @@ class ApplicationSetAPITestCase(
 
     @classmethod
     def setUpTestData(cls):
-        cls.create_data = [
-            {
-                "name": "app-1",
-            },
-            {
-                "name": "app-2",
-            },
-            {
-                "name": "app-3",
-            },
-        ]
-
-        cls.items = (
-            ApplicationItem(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-9",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-        )
-        ApplicationItem.objects.bulk_create(cls.items)
-
-        cls.applications = (
-            Application(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-            Application(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-            Application(name="item-9"),
-        )
-        Application.objects.bulk_create(cls.applications)
+        super().setUpTestData()
         cls.applications[1].application_items.set([cls.items[0]])
         cls.applications[2].application_items.set([cls.items[1], cls.items[2]])
-        cls.sets = (
-            ApplicationSet(
-                name="item-7",
-            ),
-            ApplicationSet(
-                name="item-8",
-            ),
-            ApplicationSet(
-                name="item-9",
-            ),
-        )
-        ApplicationSet.objects.bulk_create(cls.sets)
-        cls.sets[0].applications.set(
+        cls.application_sets[0].applications.set(
             [
                 cls.applications[0],
             ]
         )
-        cls.sets[1].applications.set(
+        cls.application_sets[1].applications.set(
             [
                 cls.applications[0],
                 cls.applications[1],
             ]
         )
-        cls.sets[2].applications.set(
+        cls.application_sets[2].applications.set(
             [
                 cls.applications[1],
                 cls.applications[2],

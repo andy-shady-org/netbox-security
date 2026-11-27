@@ -12,7 +12,7 @@ from utilities.filters import (
 
 from dcim.models import Interface, Device, VirtualDeviceContext
 from ipam.models import Prefix, IPRange
-from virtualization.models import VirtualMachine
+from virtualization.models import VirtualMachine, VMInterface
 
 from netbox_security.models import (
     SecurityZone,
@@ -160,6 +160,16 @@ class SecurityZoneAssignmentFilterSet(AssignmentFilterSet):
         field_name="pk",
         label=_("Interface (ID)"),
     )
+    vminterface = MultiValueCharFilter(
+        method="filter_vminterface",
+        field_name="name",
+        label=_("VM Interface (name)"),
+    )
+    vminterface_id = MultiValueNumberFilter(
+        method="filter_vminterface",
+        field_name="pk",
+        label=_("VM Interface (ID)"),
+    )
     virtualmachine = MultiValueCharFilter(
         method="filter_virtual_machine",
         field_name="name",
@@ -202,6 +212,16 @@ class SecurityZoneAssignmentFilterSet(AssignmentFilterSet):
             return queryset.none()
         return queryset.filter(
             assigned_object_type=ContentType.objects.get_for_model(Interface),
+            assigned_object_id__in=interfaces.values_list("id", flat=True),
+        )
+
+    def filter_vminterface(self, queryset, name, value):
+        if not (
+            interfaces := VMInterface.objects.filter(**{f"{name}__in": value})
+        ).exists():
+            return queryset.none()
+        return queryset.filter(
+            assigned_object_type=ContentType.objects.get_for_model(VMInterface),
             assigned_object_id__in=interfaces.values_list("id", flat=True),
         )
 

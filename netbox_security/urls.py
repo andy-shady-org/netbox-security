@@ -12,168 +12,168 @@ app_name = "netbox_security"
 urlpatterns = [
     # Custom Prefixes
     path(
-        "custom-prefix/",
+        "custom-prefixes/",
         include(get_model_urls("netbox_security", "customprefix", detail=False)),
     ),
     path(
-        "custom-prefix/<int:pk>/",
+        "custom-prefixes/<int:pk>/",
         include(get_model_urls("netbox_security", "customprefix")),
     ),
     # Addresses
     path(
-        "address/",
+        "addresses/",
         include(get_model_urls("netbox_security", "address", detail=False)),
     ),
     path(
-        "address/<int:pk>/",
+        "addresses/<int:pk>/",
         include(get_model_urls("netbox_security", "address")),
     ),
     # Address Sets
     path(
-        "address-set/",
+        "address-sets/",
         include(get_model_urls("netbox_security", "addressset", detail=False)),
     ),
     path(
-        "address-set/<int:pk>/",
+        "address-sets/<int:pk>/",
         include(get_model_urls("netbox_security", "addressset")),
     ),
     # Address Lists
     path(
-        "address-list/",
+        "address-lists/",
         include(get_model_urls("netbox_security", "addresslist", detail=False)),
     ),
     path(
-        "address-list/<int:pk>/",
+        "address-lists/<int:pk>/",
         include(get_model_urls("netbox_security", "addresslist")),
     ),
     # Application Items
     path(
-        "application-item/",
+        "application-items/",
         include(get_model_urls("netbox_security", "applicationitem", detail=False)),
     ),
     path(
-        "application-item/<int:pk>/",
+        "application-items/<int:pk>/",
         include(get_model_urls("netbox_security", "applicationitem")),
     ),
     # Applications
     path(
-        "application/",
+        "applications/",
         include(get_model_urls("netbox_security", "application", detail=False)),
     ),
     path(
-        "application/<int:pk>/",
+        "applications/<int:pk>/",
         include(get_model_urls("netbox_security", "application")),
     ),
     # Application Sets
     path(
-        "application-set/",
+        "application-sets/",
         include(get_model_urls("netbox_security", "applicationset", detail=False)),
     ),
     path(
-        "application-set/<int:pk>/",
+        "application-sets/<int:pk>/",
         include(get_model_urls("netbox_security", "applicationset")),
     ),
     # Security Zones
     path(
-        "security-zone/",
+        "security-zones/",
         include(get_model_urls("netbox_security", "securityzone", detail=False)),
     ),
     path(
-        "security-zone/<int:pk>/",
+        "security-zones/<int:pk>/",
         include(get_model_urls("netbox_security", "securityzone")),
     ),
     # Security Zone Policies
     path(
-        "security-zone-policy/",
+        "security-zone-policies/",
         include(get_model_urls("netbox_security", "securityzonepolicy", detail=False)),
     ),
     path(
-        "security-zone-policy/<int:pk>/",
+        "security-zone-policies/<int:pk>/",
         include(get_model_urls("netbox_security", "securityzonepolicy")),
     ),
     # Nat Pools
     path(
-        "nat-pool/",
+        "nat-pools/",
         include(get_model_urls("netbox_security", "natpool", detail=False)),
     ),
     path(
-        "nat-pool/<int:pk>/",
+        "nat-pools/<int:pk>/",
         include(get_model_urls("netbox_security", "natpool")),
     ),
     # Nat Pool Members
     path(
-        "nat-pool-member/",
+        "nat-pool-members/",
         include(get_model_urls("netbox_security", "natpoolmember", detail=False)),
     ),
     path(
-        "nat-pool-member/<int:pk>/",
+        "nat-pool-members/<int:pk>/",
         include(get_model_urls("netbox_security", "natpoolmember")),
     ),
     # Nat Rule Sets
     path(
-        "nat-rule-set/",
+        "nat-rule-sets/",
         include(get_model_urls("netbox_security", "natruleset", detail=False)),
     ),
     path(
-        "nat-rule-set/<int:pk>/",
+        "nat-rule-sets/<int:pk>/",
         include(get_model_urls("netbox_security", "natruleset")),
     ),
     # Nat Rules
     path(
-        "nat-rule/",
+        "nat-rules/",
         include(get_model_urls("netbox_security", "natrule", detail=False)),
     ),
     path(
-        "nat-rule/<int:pk>/",
+        "nat-rules/<int:pk>/",
         include(get_model_urls("netbox_security", "natrule")),
     ),
     # Firewall Filters
     path(
-        "firewall-filter/",
+        "firewall-filters/",
         include(get_model_urls("netbox_security", "firewallfilter", detail=False)),
     ),
     path(
-        "firewall-filter/<int:pk>/",
+        "firewall-filters/<int:pk>/",
         include(get_model_urls("netbox_security", "firewallfilter")),
     ),
     # Policers
     path(
-        "policer/",
+        "policers/",
         include(get_model_urls("netbox_security", "policer", detail=False)),
     ),
     path(
-        "policer/<int:pk>/",
+        "policers/<int:pk>/",
         include(get_model_urls("netbox_security", "policer")),
     ),
     # Firewall Filter Rules
     path(
-        "firewall-filter-rule/",
+        "firewall-filter-rules/",
         include(get_model_urls("netbox_security", "firewallfilterrule", detail=False)),
     ),
     path(
-        "firewall-filter-rule/<int:pk>/",
+        "firewall-filter-rules/<int:pk>/",
         include(get_model_urls("netbox_security", "firewallfilterrule")),
     ),
     # Firewall Filter Rule From Settings
     path(
-        "firewall-filter-rule-from-setting/",
+        "firewall-filter-rule-from-settings/",
         include(
             get_model_urls("netbox_security", "firewallrulefromsetting", detail=False)
         ),
     ),
     path(
-        "firewall-filter-rule-from-setting/<int:pk>/",
+        "firewall-filter-rule-from-settings/<int:pk>/",
         include(get_model_urls("netbox_security", "firewallrulefromsetting")),
     ),
     # Firewall Filter Rule Then Settings
     path(
-        "firewall-filter-rule-then-setting/",
+        "firewall-filter-rule-then-settings/",
         include(
             get_model_urls("netbox_security", "firewallrulethensetting", detail=False)
         ),
     ),
     path(
-        "firewall-filter-rule-then-setting/<int:pk>/",
+        "firewall-filter-rule-then-settings/<int:pk>/",
         include(get_model_urls("netbox_security", "firewallrulethensetting")),
     ),
     # Address List Assignments

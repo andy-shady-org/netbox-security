@@ -2,10 +2,12 @@ from netaddr import IPNetwork
 from utilities.testing import APIViewTestCases
 from netbox_security.tests.custom import APITestCase, NetBoxSecurityGraphQLMixin
 from netbox_security.models import CustomPrefix
+from netbox_security.tests.mixins import CustomPrefixMixin
 
 
 class CustomPrefixAPITestCase(
     APITestCase,
+    CustomPrefixMixin,
     APIViewTestCases.GetObjectViewTestCase,
     APIViewTestCases.ListObjectsViewTestCase,
     APIViewTestCases.CreateObjectViewTestCase,
@@ -14,7 +16,6 @@ class CustomPrefixAPITestCase(
     NetBoxSecurityGraphQLMixin,
     APIViewTestCases.GraphQLTestCase,
 ):
-    model = CustomPrefix
 
     brief_fields = [
         "description",
@@ -33,13 +34,7 @@ class CustomPrefixAPITestCase(
 
     @classmethod
     def setUpTestData(cls):
-        cls.custom_prefixes = (
-            CustomPrefix(prefix=IPNetwork("1.1.1.1/32")),
-            CustomPrefix(prefix=IPNetwork("1.1.1.2/32")),
-            CustomPrefix(prefix=IPNetwork("1.1.1.3/32")),
-        )
-        CustomPrefix.objects.bulk_create(cls.custom_prefixes)
-
+        super().setUpTestData()
         cls.create_data = [
             {
                 "prefix": "1.1.2.1/32",

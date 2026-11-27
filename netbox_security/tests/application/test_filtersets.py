@@ -3,7 +3,6 @@ from django.test import TestCase
 
 from dcim.models import Site, Manufacturer
 from dcim.models import Device, VirtualDeviceContext, DeviceRole, DeviceType
-from tenancy.models import Tenant, TenantGroup
 from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from netbox_security.models import (
@@ -12,8 +11,6 @@ from netbox_security.models import (
     ApplicationSet,
     ApplicationAssignment,
     ApplicationSetAssignment,
-    SecurityZone,
-    SecurityZonePolicy,
 )
 from netbox_security.filtersets import (
     ApplicationItemFilterSet,
@@ -22,49 +19,19 @@ from netbox_security.filtersets import (
     ApplicationAssignmentFilterSet,
     ApplicationSetAssignmentFilterSet,
 )
-from netbox_security.choices import ProtocolChoices, ActionChoices
+from netbox_security.choices import ProtocolChoices
+from netbox_security.tests.mixins import ApplicationSetMixin, SecurityZonePolicyMixin
 
 
-class ApplicationItemFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class ApplicationItemFilterSetTestCase(
+    ApplicationSetMixin, TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = ApplicationItem.objects.all()
     filterset = ApplicationItemFilterSet
 
     @classmethod
     def setUpTestData(cls):
-        cls.items = (
-            ApplicationItem(
-                name="item-1",
-                protocol=[ProtocolChoices.TCP],
-                source_ports=[1, 2, 3],
-                destination_ports=[4, 5, 6],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-2",
-                protocol=[ProtocolChoices.TCP],
-                source_ports=[4, 5, 6],
-                destination_ports=[1, 2, 3],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-3",
-                protocol=[ProtocolChoices.UDP],
-                source_ports=[1, 2, 3],
-                destination_ports=[4, 5, 6],
-                index=1,
-            ),
-        )
-        ApplicationItem.objects.bulk_create(cls.items)
-
-        cls.applications = (
-            Application(
-                name="app-item-test-1", source_ports=[80], destination_ports=[80]
-            ),
-            Application(
-                name="app-item-test-2", source_ports=[443], destination_ports=[443]
-            ),
-        )
-        Application.objects.bulk_create(cls.applications)
+        super().setUpTestData()
         cls.applications[0].application_items.set([cls.items[0], cls.items[1]])
         cls.applications[1].application_items.set([cls.items[2]])
 
@@ -76,9 +43,13 @@ class ApplicationItemFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin)
 
     def test_protocol(self):
         params = {"protocol": [ProtocolChoices.TCP]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"protocol": [ProtocolChoices.UDP]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"protocol": [ProtocolChoices.UDP, ProtocolChoices.ICMP]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"protocol": [ProtocolChoices.GRE]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
 
     def test_ports(self):
         params = {"source_ports": 1}
@@ -86,9 +57,9 @@ class ApplicationItemFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin)
         params = {"source_ports": 4}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_ports": 1}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
-        params = {"destination_ports": 4}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"destination_ports": 4}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_application_id(self):
         params = {"application_id": [self.applications[0].pk]}
@@ -103,73 +74,15 @@ class ApplicationItemFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin)
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class ApplicationFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class ApplicationFilterSetTestCase(
+    SecurityZonePolicyMixin, TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = Application.objects.all()
     filterset = ApplicationFilterSet
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant_groups = (
-            TenantGroup(name="Tenant group 1", slug="tenant-group-1"),
-            TenantGroup(name="Tenant group 2", slug="tenant-group-2"),
-            TenantGroup(name="Tenant group 3", slug="tenant-group-3"),
-        )
-        for tenantgroup in cls.tenant_groups:
-            tenantgroup.save()
-
-        cls.tenants = (
-            Tenant(name="Tenant 1", slug="tenant-1", group=cls.tenant_groups[0]),
-            Tenant(name="Tenant 2", slug="tenant-2", group=cls.tenant_groups[1]),
-            Tenant(name="Tenant 3", slug="tenant-3", group=cls.tenant_groups[2]),
-        )
-        Tenant.objects.bulk_create(cls.tenants)
-
-        cls.items = (
-            ApplicationItem(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                source_ports=[1, 2, 3],
-                destination_ports=[4, 5, 6],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                source_ports=[4, 5, 6],
-                destination_ports=[1, 2, 3],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-9",
-                protocol=[ProtocolChoices.UDP],
-                source_ports=[1, 2, 3],
-                destination_ports=[4, 5, 6],
-                index=1,
-            ),
-        )
-        ApplicationItem.objects.bulk_create(cls.items)
-
-        cls.applications = (
-            Application(
-                name="item-1",
-                protocol=[ProtocolChoices.ICMP],
-                source_ports=[1, 2, 3],
-                destination_ports=[4, 5, 6],
-                tenant=cls.tenants[0],
-            ),
-            Application(
-                name="item-2",
-                source_ports=[4, 5, 6],
-                destination_ports=[1, 2, 3],
-            ),
-            Application(
-                name="item-3",
-                source_ports=[1, 2, 3],
-                destination_ports=[4, 5, 6],
-                tenant=cls.tenants[2],
-            ),
-        )
-        Application.objects.bulk_create(cls.applications)
+        super().setUpTestData()
         cls.applications[1].application_items.set(
             [
                 cls.items[0],
@@ -177,54 +90,6 @@ class ApplicationFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
             ]
         )
         cls.applications[2].application_items.set([cls.items[1], cls.items[2]])
-
-        cls.zones = (
-            SecurityZone(name="DMZ", tenant=cls.tenants[0]),
-            SecurityZone(name="INTERNAL", tenant=cls.tenants[1]),
-            SecurityZone(name="PUBLIC", tenant=cls.tenants[2]),
-            SecurityZone(name="EXTERNAL"),
-        )
-        for zone in cls.zones:
-            zone.save()
-
-        cls.policies = (
-            SecurityZonePolicy(
-                name="policy-1",
-                index=5,
-                source_zone=cls.zones[0],
-                destination_zone=cls.zones[1],
-                policy_actions=[
-                    ActionChoices.PERMIT,
-                    ActionChoices.COUNT,
-                    ActionChoices.LOG,
-                ],
-            ),
-            SecurityZonePolicy(
-                name="policy-2",
-                index=6,
-                source_zone=cls.zones[1],
-                destination_zone=cls.zones[0],
-                policy_actions=[
-                    ActionChoices.PERMIT,
-                    ActionChoices.COUNT,
-                    ActionChoices.LOG,
-                ],
-            ),
-            SecurityZonePolicy(
-                name="policy-3",
-                index=6,
-                source_zone=cls.zones[0],
-                destination_zone=cls.zones[1],
-                policy_actions=[
-                    ActionChoices.DENY,
-                    ActionChoices.COUNT,
-                    ActionChoices.LOG,
-                ],
-            ),
-        )
-        for policy in cls.policies:
-            policy.save()
-
         cls.policies[0].applications.set([cls.applications[0]])
         cls.policies[1].applications.set([cls.applications[0], cls.applications[1]])
         cls.policies[2].applications.set([cls.applications[0], cls.applications[2]])
@@ -236,8 +101,10 @@ class ApplicationFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_tenant(self):
-        params = {"tenant_id": [self.tenants[0].pk, self.tenants[1].pk]}
+        params = {"tenant_id": [self.tenants[0].pk]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"tenant_id": [self.tenants[0].pk, self.tenants[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
         params = {"tenant": [self.tenants[0].slug, self.tenants[2].slug]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
@@ -245,6 +112,10 @@ class ApplicationFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
         params = {"protocol": [ProtocolChoices.ICMP]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"protocol": [ProtocolChoices.UDP]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"protocol": [ProtocolChoices.TCP]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"protocol": [ProtocolChoices.GRE]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
 
     def test_items(self):
@@ -286,87 +157,22 @@ class ApplicationFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
         params = {"source_ports": 4}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
         params = {"destination_ports": 1}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
-        params = {"destination_ports": 4}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+        params = {"destination_ports": 4}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class ApplicationSetFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class ApplicationSetFilterSetTestCase(
+    SecurityZonePolicyMixin, TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = ApplicationSet.objects.all()
     filterset = ApplicationSetFilterSet
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant_groups = (
-            TenantGroup(name="Tenant group 1", slug="tenant-group-1"),
-            TenantGroup(name="Tenant group 2", slug="tenant-group-2"),
-            TenantGroup(name="Tenant group 3", slug="tenant-group-3"),
-        )
-        for tenantgroup in cls.tenant_groups:
-            tenantgroup.save()
-
-        cls.tenants = (
-            Tenant(name="Tenant 1", slug="tenant-1", group=cls.tenant_groups[0]),
-            Tenant(name="Tenant 2", slug="tenant-2", group=cls.tenant_groups[1]),
-            Tenant(name="Tenant 3", slug="tenant-3", group=cls.tenant_groups[2]),
-        )
-        Tenant.objects.bulk_create(cls.tenants)
-
-        cls.items = (
-            ApplicationItem(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-9",
-                protocol=[ProtocolChoices.UDP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-        )
-        ApplicationItem.objects.bulk_create(cls.items)
-
-        cls.applications = (
-            Application(
-                name="item-1",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                tenant=cls.tenants[0],
-            ),
-            Application(name="item-2", tenant=cls.tenants[1]),
-            Application(
-                name="item-3",
-                tenant=cls.tenants[2],
-            ),
-        )
-        Application.objects.bulk_create(cls.applications)
+        super().setUpTestData()
         cls.applications[1].application_items.set([cls.items[0]])
         cls.applications[2].application_items.set([cls.items[1]])
-
-        cls.application_sets = (
-            ApplicationSet(name="item-1", tenant=cls.tenants[0]),
-            ApplicationSet(
-                name="item-2",
-                tenant=cls.tenants[1],
-            ),
-            ApplicationSet(
-                name="item-3",
-                tenant=cls.tenants[2],
-            ),
-        )
-        ApplicationSet.objects.bulk_create(cls.application_sets)
         cls.application_sets[0].applications.set(
             [
                 cls.applications[0],
@@ -385,53 +191,6 @@ class ApplicationSetFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
                 cls.applications[2],
             ]
         )
-        cls.zones = (
-            SecurityZone(name="DMZ", tenant=cls.tenants[0]),
-            SecurityZone(name="INTERNAL", tenant=cls.tenants[1]),
-            SecurityZone(name="PUBLIC", tenant=cls.tenants[2]),
-            SecurityZone(name="EXTERNAL"),
-        )
-        for zone in cls.zones:
-            zone.save()
-
-        cls.policies = (
-            SecurityZonePolicy(
-                name="policy-1",
-                index=5,
-                source_zone=cls.zones[0],
-                destination_zone=cls.zones[1],
-                policy_actions=[
-                    ActionChoices.PERMIT,
-                    ActionChoices.COUNT,
-                    ActionChoices.LOG,
-                ],
-            ),
-            SecurityZonePolicy(
-                name="policy-2",
-                index=6,
-                source_zone=cls.zones[1],
-                destination_zone=cls.zones[0],
-                policy_actions=[
-                    ActionChoices.PERMIT,
-                    ActionChoices.COUNT,
-                    ActionChoices.LOG,
-                ],
-            ),
-            SecurityZonePolicy(
-                name="policy-3",
-                index=6,
-                source_zone=cls.zones[0],
-                destination_zone=cls.zones[1],
-                policy_actions=[
-                    ActionChoices.DENY,
-                    ActionChoices.COUNT,
-                    ActionChoices.LOG,
-                ],
-            ),
-        )
-        for policy in cls.policies:
-            policy.save()
-
         cls.policies[0].application_sets.set([cls.application_sets[0]])
         cls.policies[1].application_sets.set(
             [cls.application_sets[0], cls.application_sets[1]]
@@ -441,9 +200,9 @@ class ApplicationSetFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
         )
 
     def test_name(self):
-        params = {"name": ["item-1", "item-2"]}
+        params = {"name": ["set-1", "set-2"]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-        params = {"name": ["item-3"]}
+        params = {"name": ["set-3"]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_tenant(self):
@@ -484,32 +243,15 @@ class ApplicationSetFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
 
-class ApplicationAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class ApplicationAssignmentFilterSetTestCase(
+    SecurityZonePolicyMixin, TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = ApplicationAssignment.objects.all()
     filterset = ApplicationAssignmentFilterSet
 
     @classmethod
     def setUpTestData(cls):
-        cls.applications = (
-            Application(
-                name="item-1",
-                protocol=[ProtocolChoices.ICMP],
-                source_ports=[1, 2, 3],
-                destination_ports=[4, 5, 6],
-            ),
-            Application(
-                name="item-2",
-                source_ports=[4, 5, 6],
-                destination_ports=[1, 2, 3],
-            ),
-            Application(
-                name="item-3",
-                source_ports=[1, 2, 3],
-                destination_ports=[4, 5, 6],
-            ),
-        )
-        Application.objects.bulk_create(cls.applications)
-
+        super().setUpTestData()
         cls.sites = (Site(name="site-1", slug="site-1"),)
         Site.objects.bulk_create(cls.sites)
 
@@ -614,26 +356,14 @@ class ApplicationAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTest
 
 
 class ApplicationSetAssignmentFilterSetTestCase(
-    TestCase, ChangeLoggedFilterSetTestMixin
+    SecurityZonePolicyMixin, TestCase, ChangeLoggedFilterSetTestMixin
 ):
     queryset = ApplicationSetAssignment.objects.all()
     filterset = ApplicationSetAssignmentFilterSet
 
     @classmethod
     def setUpTestData(cls):
-        cls.application_sets = (
-            ApplicationSet(
-                name="item-1",
-            ),
-            ApplicationSet(
-                name="item-2",
-            ),
-            ApplicationSet(
-                name="item-3",
-            ),
-        )
-        ApplicationSet.objects.bulk_create(cls.application_sets)
-
+        super().setUpTestData()
         cls.sites = (Site(name="site-1", slug="site-1"),)
         Site.objects.bulk_create(cls.sites)
 

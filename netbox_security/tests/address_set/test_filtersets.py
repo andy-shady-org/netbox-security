@@ -19,66 +19,16 @@ from netbox_security.filtersets import (
     AddressListFilterSet,
     AddressSetAssignmentFilterSet,
 )
+from netbox_security.tests.mixins import AddressSetMixin
 
 
-class AddressSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class AddressSetFiterSetTestCase(AddressSetMixin, TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = AddressSet.objects.all()
     filterset = AddressSetFilterSet
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant_groups = (
-            TenantGroup(name="Tenant group 1", slug="tenant-group-1"),
-            TenantGroup(name="Tenant group 2", slug="tenant-group-2"),
-            TenantGroup(name="Tenant group 3", slug="tenant-group-3"),
-        )
-        for tenantgroup in cls.tenant_groups:
-            tenantgroup.save()
-
-        cls.tenants = (
-            Tenant(name="Tenant 1", slug="tenant-1", group=cls.tenant_groups[0]),
-            Tenant(name="Tenant 2", slug="tenant-2", group=cls.tenant_groups[1]),
-            Tenant(name="Tenant 3", slug="tenant-3", group=cls.tenant_groups[2]),
-        )
-        Tenant.objects.bulk_create(cls.tenants)
-
-        cls.custom_prefixes = (
-            CustomPrefix(prefix=IPNetwork("1.1.1.1/32")),
-            CustomPrefix(prefix=IPNetwork("1.1.1.2/32")),
-            CustomPrefix(prefix=IPNetwork("1.1.1.3/32")),
-        )
-        CustomPrefix.objects.bulk_create(cls.custom_prefixes)
-        cls.addresses = (
-            Address(
-                name="address-7",
-                assigned_object_id=cls.custom_prefixes[0].pk,
-                assigned_object_type=ContentType.objects.get(
-                    app_label="netbox_security", model="customprefix"
-                ),
-            ),
-            Address(
-                name="address-8",
-                assigned_object_id=cls.custom_prefixes[1].pk,
-                assigned_object_type=ContentType.objects.get(
-                    app_label="netbox_security", model="customprefix"
-                ),
-            ),
-            Address(
-                name="address-9",
-                assigned_object_id=cls.custom_prefixes[2].pk,
-                assigned_object_type=ContentType.objects.get(
-                    app_label="netbox_security", model="customprefix"
-                ),
-            ),
-        )
-        Address.objects.bulk_create(cls.addresses)
-
-        cls.address_sets = (
-            AddressSet(name="address-set-1", tenant=cls.tenants[0]),
-            AddressSet(name="address-set-2", tenant=cls.tenants[1]),
-            AddressSet(name="address-set-3", tenant=cls.tenants[2]),
-        )
-        AddressSet.objects.bulk_create(cls.address_sets)
+        super().setUpTestData()
         cls.address_sets[0].addresses.add(cls.addresses[0])
         cls.address_sets[1].addresses.add(cls.addresses[1])
         cls.address_sets[1].addresses.add(cls.addresses[2])
@@ -137,18 +87,13 @@ class AddressSetFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class AddressSetAssignmentFilterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class AddressSetAssignmentFilterSetTestCase(AddressSetMixin, TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = AddressSetAssignment.objects.all()
     filterset = AddressSetAssignmentFilterSet
 
     @classmethod
     def setUpTestData(cls):
-        cls.address_sets = (
-            AddressSet(name="address-set-1"),
-            AddressSet(name="address-set-2"),
-            AddressSet(name="address-set-3"),
-        )
-        AddressSet.objects.bulk_create(cls.address_sets)
+        super().setUpTestData()
 
         cls.sites = (Site(name="site-1", slug="site-1"),)
         Site.objects.bulk_create(cls.sites)

@@ -9,7 +9,7 @@ from ipam.models import Prefix, IPRange
 from netbox.search import SearchIndex, register_search
 
 from netbox.models import PrimaryModel, NetBoxModel
-from virtualization.models import VirtualMachine
+from virtualization.models import VirtualMachine, VMInterface
 from netbox.models.features import ContactsMixin
 from dcim.models import Device, VirtualDeviceContext, Interface
 
@@ -195,6 +195,13 @@ GenericRelation(
     object_id_field="assigned_object_id",
     related_query_name="virtualmachine",
 ).contribute_to_class(VirtualMachine, "security_zones")
+
+GenericRelation(
+    to=SecurityZoneAssignment,
+    content_type_field="assigned_object_type",
+    object_id_field="assigned_object_id",
+    related_query_name="vminterface",
+).contribute_to_class(VMInterface, "security_zones")
 
 GenericRelation(
     to=SecurityZoneAssignment,

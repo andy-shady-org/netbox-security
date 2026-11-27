@@ -22,7 +22,7 @@ from utilities.forms.fields import (
 from dcim.models import Device, VirtualDeviceContext, Interface
 from ipam.models import IPRange, Prefix
 from tenancy.models import Tenant, TenantGroup
-from virtualization.models import VirtualMachine
+from virtualization.models import VirtualMachine, VMInterface
 
 from netbox_security.models import (
     SecurityZone,
@@ -220,6 +220,14 @@ class SecurityZoneAssignmentFilterForm(NetBoxModelFilterSetForm):
         query_params={
             "device_id": "$device_id",
             "vdc_id": "$virtualdevicecontext_id",
+        },
+    )
+    vminterface_id = DynamicModelChoiceField(
+        queryset=VMInterface.objects.all(),
+        required=False,
+        label=_("VM Interface"),
+        query_params={
+            "virtual_machine_id": "$virtualmachine_id",
         },
     )
     prefix_id = DynamicModelChoiceField(

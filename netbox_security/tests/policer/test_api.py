@@ -1,9 +1,10 @@
 from utilities.testing import APIViewTestCases
 from netbox_security.tests.custom import APITestCase, NetBoxSecurityGraphQLMixin
-from netbox_security.models import Policer
+from netbox_security.tests.mixins import PolicerMixin
 
 
 class PolicerAPITestCase(
+    PolicerMixin,
     APITestCase,
     APIViewTestCases.GetObjectViewTestCase,
     APIViewTestCases.ListObjectsViewTestCase,
@@ -13,7 +14,6 @@ class PolicerAPITestCase(
     NetBoxSecurityGraphQLMixin,
     APIViewTestCases.GraphQLTestCase,
 ):
-    model = Policer
 
     brief_fields = [
         "bandwidth_limit",
@@ -33,9 +33,9 @@ class PolicerAPITestCase(
     ]
 
     create_data = [
-        {"name": "policer-1"},
-        {"name": "policer-2"},
-        {"name": "policer-3"},
+        {"name": "policer-x"},
+        {"name": "policer-y"},
+        {"name": "policer-z"},
     ]
 
     bulk_update_data = {
@@ -47,9 +47,4 @@ class PolicerAPITestCase(
 
     @classmethod
     def setUpTestData(cls):
-        policers = (
-            Policer(name="policer-4"),
-            Policer(name="policer-5"),
-            Policer(name="policer-6"),
-        )
-        Policer.objects.bulk_create(policers)
+        super().setUpTestData()

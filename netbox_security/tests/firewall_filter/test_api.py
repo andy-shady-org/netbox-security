@@ -1,15 +1,13 @@
 from utilities.testing import APIViewTestCases
 from netbox_security.tests.custom import APITestCase, NetBoxSecurityGraphQLMixin
-from netbox_security.models import (
-    FirewallFilter,
-    FirewallFilterRule,
-)
 from netbox_security.choices import (
     FamilyChoices,
 )
+from netbox_security.tests.mixins import FirewallFilterMixin, FirewallFilterRuleMixin
 
 
 class FirewallFilterAPITestCase(
+    FirewallFilterMixin,
     APITestCase,
     APIViewTestCases.GetObjectViewTestCase,
     APIViewTestCases.ListObjectsViewTestCase,
@@ -19,7 +17,6 @@ class FirewallFilterAPITestCase(
     NetBoxSecurityGraphQLMixin,
     APIViewTestCases.GraphQLTestCase,
 ):
-    model = FirewallFilter
 
     brief_fields = [
         "description",
@@ -32,9 +29,9 @@ class FirewallFilterAPITestCase(
     ]
 
     create_data = [
-        {"name": "filter-1", "family": FamilyChoices.INET},
-        {"name": "filter-2", "family": FamilyChoices.INET},
-        {"name": "filter-3", "family": FamilyChoices.INET},
+        {"name": "filter-x", "family": FamilyChoices.INET},
+        {"name": "filter-y", "family": FamilyChoices.INET},
+        {"name": "filter-z", "family": FamilyChoices.INET},
     ]
 
     bulk_update_data = {
@@ -46,15 +43,11 @@ class FirewallFilterAPITestCase(
 
     @classmethod
     def setUpTestData(cls):
-        filters = (
-            FirewallFilter(name="filter-4", family=FamilyChoices.INET),
-            FirewallFilter(name="filter-5", family=FamilyChoices.INET),
-            FirewallFilter(name="filter-6", family=FamilyChoices.INET),
-        )
-        FirewallFilter.objects.bulk_create(filters)
+        super().setUpTestData()
 
 
 class FirewallFilterRuleAPITestCase(
+    FirewallFilterRuleMixin,
     APITestCase,
     APIViewTestCases.GetObjectViewTestCase,
     APIViewTestCases.ListObjectsViewTestCase,
@@ -64,7 +57,6 @@ class FirewallFilterRuleAPITestCase(
     NetBoxSecurityGraphQLMixin,
     APIViewTestCases.GraphQLTestCase,
 ):
-    model = FirewallFilterRule
 
     brief_fields = [
         "description",
@@ -85,34 +77,21 @@ class FirewallFilterRuleAPITestCase(
 
     @classmethod
     def setUpTestData(cls):
-        cls.filters = (
-            FirewallFilter(name="filter-4", family=FamilyChoices.INET),
-            FirewallFilter(name="filter-5", family=FamilyChoices.INET),
-            FirewallFilter(name="filter-6", family=FamilyChoices.INET),
-        )
-        FirewallFilter.objects.bulk_create(cls.filters)
-
-        cls.rules = (
-            FirewallFilterRule(name="rule-1", firewall_filter=cls.filters[0], index=1),
-            FirewallFilterRule(name="rule-2", firewall_filter=cls.filters[1], index=1),
-            FirewallFilterRule(name="rule-3", firewall_filter=cls.filters[2], index=1),
-        )
-        for rule in cls.rules:
-            rule.save()
+        super().setUpTestData()
 
         cls.create_data = [
             {
-                "name": "rule-4",
+                "name": "rule-x",
                 "index": 1,
                 "firewall_filter": cls.filters[0].pk,
             },
             {
-                "name": "rule-5",
+                "name": "rule-y",
                 "index": 1,
                 "firewall_filter": cls.filters[1].pk,
             },
             {
-                "name": "rule-6",
+                "name": "rule-z",
                 "index": 1,
                 "firewall_filter": cls.filters[2].pk,
             },

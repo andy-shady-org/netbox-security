@@ -2,9 +2,11 @@ from utilities.testing import ViewTestCases, create_tags
 
 from netbox_security.tests.custom import ModelViewTestCase
 from netbox_security.models import Policer
+from netbox_security.tests.mixins import PolicerMixin
 
 
 class PolicerViewTestCase(
+    PolicerMixin,
     ModelViewTestCase,
     ViewTestCases.GetObjectViewTestCase,
     ViewTestCases.GetObjectChangelogViewTestCase,
@@ -20,12 +22,7 @@ class PolicerViewTestCase(
 
     @classmethod
     def setUpTestData(cls):
-        cls.policers = (
-            Policer(name="policer-1"),
-            Policer(name="policer-2"),
-            Policer(name="policer-3"),
-        )
-        Policer.objects.bulk_create(cls.policers)
+        super().setUpTestData()
 
         tags = create_tags("Alpha", "Bravo", "Charlie")
 

@@ -17,8 +17,11 @@ from netbox_security.choices import (
     ActionChoices,
 )
 
+from netbox_security.tests.mixins.api import SecurityZoneMixin, SecurityZonePolicyMixin
+
 
 class SecurityZoneAPITestCase(
+    SecurityZoneMixin,
     APITestCase,
     APIViewTestCases.GetObjectViewTestCase,
     APIViewTestCases.ListObjectsViewTestCase,
@@ -28,7 +31,6 @@ class SecurityZoneAPITestCase(
     NetBoxSecurityGraphQLMixin,
     APIViewTestCases.GraphQLTestCase,
 ):
-    model = SecurityZone
 
     brief_fields = [
         "allow_intra_zone",
@@ -57,12 +59,7 @@ class SecurityZoneAPITestCase(
 
     @classmethod
     def setUpTestData(cls):
-        zones = (
-            SecurityZone(name="AMBER"),
-            SecurityZone(name="RED"),
-            SecurityZone(name="GREEN"),
-        )
-        SecurityZone.objects.bulk_create(zones)
+        super().setUpTestData()
 
     def test_list_objects_has_stable_default_ordering(self):
         self.add_permissions("netbox_security.view_securityzone")
@@ -107,6 +104,7 @@ class SecurityZoneAPITestCase(
 
 
 class SecurityZonePolicyAPITestCase(
+    SecurityZonePolicyMixin,
     APITestCase,
     APIViewTestCases.GetObjectViewTestCase,
     APIViewTestCases.ListObjectsViewTestCase,
@@ -116,10 +114,18 @@ class SecurityZonePolicyAPITestCase(
     NetBoxSecurityGraphQLMixin,
     APIViewTestCases.GraphQLTestCase,
 ):
-    model = SecurityZonePolicy
     user_permissions = (
+        "ipam.view_iprange",
+        "ipam.view_ipaddress",
+        "ipam.view_prefix",
+        "tenancy.view_tenant",
+        "tenancy.view_tenantgroup",
+        "netbox_security.view_securityzone",
         "netbox_security.view_address",
         "netbox_security.view_addresslist",
+        "netbox_security.view_applicationitem",
+        "netbox_security.view_application",
+        "netbox_security.view_applicationset",
         "netbox_security.view_customprefix",
     )
 
@@ -153,67 +159,7 @@ class SecurityZonePolicyAPITestCase(
 
     @classmethod
     def setUpTestData(cls):
-        cls.zones = (
-            SecurityZone(name="ZONE-3"),
-            SecurityZone(name="ZONE-4"),
-        )
-        SecurityZone.objects.bulk_create(cls.zones)
-
-        cls.applications = (
-            Application(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-            Application(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-            Application(name="item-9"),
-        )
-        Application.objects.bulk_create(cls.applications)
-
-        cls.application_sets = (
-            ApplicationSet(
-                name="item-7",
-            ),
-            ApplicationSet(
-                name="item-8",
-            ),
-            ApplicationSet(
-                name="item-9",
-            ),
-        )
-        ApplicationSet.objects.bulk_create(cls.application_sets)
-
-        cls.policies = (
-            SecurityZonePolicy(
-                name="policy-5",
-                index=5,
-                source_zone=cls.zones[0],
-                destination_zone=cls.zones[1],
-                policy_actions=[
-                    ActionChoices.PERMIT,
-                    ActionChoices.COUNT,
-                    ActionChoices.LOG,
-                ],
-            ),
-            SecurityZonePolicy(
-                name="policy-6",
-                index=6,
-                source_zone=cls.zones[0],
-                destination_zone=cls.zones[1],
-                policy_actions=[
-                    ActionChoices.PERMIT,
-                    ActionChoices.COUNT,
-                    ActionChoices.LOG,
-                ],
-            ),
-        )
-        SecurityZonePolicy.objects.bulk_create(cls.policies)
+        super().setUpTestData()
         cls.policies[0].applications.add(cls.applications[0])
         cls.policies[1].applications.add(
             cls.applications[1],
@@ -224,83 +170,15 @@ class SecurityZonePolicyAPITestCase(
             cls.application_sets[1],
             cls.application_sets[2],
         )
-        cls.custom_prefixes = (
-            CustomPrefix(prefix=IPNetwork("1.1.1.1/32")),
-            CustomPrefix(prefix=IPNetwork("1.1.1.2/32")),
-            CustomPrefix(prefix=IPNetwork("1.1.1.3/32")),
-        )
-        CustomPrefix.objects.bulk_create(cls.custom_prefixes)
-        cls.addresses = (
-            Address(
-                name="address-7",
-                assigned_object_id=cls.custom_prefixes[0].pk,
-                assigned_object_type=ContentType.objects.get(
-                    app_label="netbox_security", model="customprefix"
-                ),
-            ),
-            Address(
-                name="address-8",
-                assigned_object_id=cls.custom_prefixes[1].pk,
-                assigned_object_type=ContentType.objects.get(
-                    app_label="netbox_security", model="customprefix"
-                ),
-            ),
-            Address(
-                name="address-9",
-                assigned_object_id=cls.custom_prefixes[2].pk,
-                assigned_object_type=ContentType.objects.get(
-                    app_label="netbox_security", model="customprefix"
-                ),
-            ),
-        )
-        Address.objects.bulk_create(cls.addresses)
-
-        cls.addresses_lists = (
-            AddressList(
-                name="address-list-1",
-                assigned_object_id=cls.addresses[0].pk,
-                assigned_object_type=ContentType.objects.get(
-                    app_label="netbox_security", model="address"
-                ),
-            ),
-            AddressList(
-                name="address-list-2",
-                assigned_object_id=cls.addresses[1].pk,
-                assigned_object_type=ContentType.objects.get(
-                    app_label="netbox_security", model="address"
-                ),
-            ),
-            AddressList(
-                name="address-list-3",
-                assigned_object_id=cls.addresses[2].pk,
-                assigned_object_type=ContentType.objects.get(
-                    app_label="netbox_security", model="address"
-                ),
-            ),
-        )
-        cls.destination_addresses = (cls.addresses_lists[1], cls.addresses_lists[2])
-        AddressList.objects.bulk_create(cls.addresses_lists)
-
-        cls.policy = SecurityZonePolicy.objects.create(
-            name="policy-8",
-            index=8,
-            source_zone=cls.zones[0],
-            destination_zone=cls.zones[1],
-            policy_actions=[
-                ActionChoices.PERMIT,
-                ActionChoices.COUNT,
-                ActionChoices.LOG,
-            ],
-        )
-        cls.policy.source_address.add(cls.addresses_lists[0])
-        cls.policy.destination_address.add(cls.addresses_lists[1])
-        cls.policy.destination_address.set(cls.destination_addresses)
-        cls.policy.applications.set(cls.applications)
-        cls.policy.application_sets.set(cls.application_sets)
+        cls.policies[2].source_address.add(cls.address_lists[0])
+        cls.policies[2].destination_address.add(cls.address_lists[1])
+        cls.policies[2].destination_address.set(cls.destination_addresses)
+        cls.policies[2].applications.set(cls.applications)
+        cls.policies[2].application_sets.set(cls.application_sets)
 
         cls.create_data = [
             {
-                "name": "policy-1",
+                "name": "policy-x",
                 "index": 1,
                 "policy_actions": [
                     ActionChoices.PERMIT,
@@ -311,7 +189,7 @@ class SecurityZonePolicyAPITestCase(
                 "destination_zone": cls.zones[1].pk,
             },
             {
-                "name": "policy-2",
+                "name": "policy-y",
                 "index": 2,
                 "policy_actions": [
                     ActionChoices.PERMIT,
@@ -322,7 +200,7 @@ class SecurityZonePolicyAPITestCase(
                 "destination_zone": cls.zones[1].pk,
             },
             {
-                "name": "policy-3",
+                "name": "policy-z",
                 "index": 3,
                 "policy_actions": [
                     ActionChoices.PERMIT,
@@ -336,11 +214,11 @@ class SecurityZonePolicyAPITestCase(
 
     def test_policy(self):
         self.assertEqual(
-            set(self.policy.destination_address.all()), set(self.destination_addresses)
+            set(self.policies[2].destination_address.all()), set(self.destination_addresses)
         )
-        self.assertEqual(set(self.policy.applications.all()), set(self.applications))
+        self.assertEqual(set(self.policies[2].applications.all()), set(self.applications))
         self.assertEqual(
-            set(self.policy.application_sets.all()), set(self.application_sets)
+            set(self.policies[2].application_sets.all()), set(self.application_sets)
         )
 
     def test_create_same_zone_rejected_when_intra_zone_not_allowed(self):
