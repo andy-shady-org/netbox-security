@@ -3,10 +3,11 @@ from utilities.testing import ViewTestCases, create_tags
 
 
 from netbox_security.tests.custom import ModelViewTestCase
-from netbox_security.models import CustomPrefix
+from netbox_security.tests.mixins import CustomPrefixMixin
 
 
 class CustomPrefixViewTestCase(
+    CustomPrefixMixin,
     ModelViewTestCase,
     ViewTestCases.GetObjectViewTestCase,
     ViewTestCases.GetObjectChangelogViewTestCase,
@@ -18,16 +19,10 @@ class CustomPrefixViewTestCase(
     ViewTestCases.BulkEditObjectsViewTestCase,
     ViewTestCases.BulkDeleteObjectsViewTestCase,
 ):
-    model = CustomPrefix
 
     @classmethod
     def setUpTestData(cls):
-        cls.custom_prefixes = (
-            CustomPrefix(prefix=IPNetwork("1.1.1.1/32")),
-            CustomPrefix(prefix=IPNetwork("1.1.1.2/32")),
-            CustomPrefix(prefix=IPNetwork("1.1.1.3/32")),
-        )
-        CustomPrefix.objects.bulk_create(cls.custom_prefixes)
+        super().setUpTestData()
 
         tags = create_tags("Alpha", "Bravo", "Charlie")
 

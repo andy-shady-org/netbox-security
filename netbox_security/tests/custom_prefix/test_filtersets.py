@@ -10,44 +10,18 @@ from netbox_security.models import (
 from netbox_security.filtersets import (
     CustomPrefixFilterSet,
 )
+from netbox_security.tests.mixins import CustomPrefixMixin
 
 
-class CustomPrefixFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class CustomPrefixFiterSetTestCase(
+    CustomPrefixMixin, TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = CustomPrefix.objects.all()
     filterset = CustomPrefixFilterSet
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant_groups = (
-            TenantGroup(name="Tenant group 1", slug="tenant-group-1"),
-            TenantGroup(name="Tenant group 2", slug="tenant-group-2"),
-            TenantGroup(name="Tenant group 3", slug="tenant-group-3"),
-        )
-        for tenantgroup in cls.tenant_groups:
-            tenantgroup.save()
-
-        cls.tenants = (
-            Tenant(name="Tenant 1", slug="tenant-1", group=cls.tenant_groups[0]),
-            Tenant(name="Tenant 2", slug="tenant-2", group=cls.tenant_groups[1]),
-            Tenant(name="Tenant 3", slug="tenant-3", group=cls.tenant_groups[2]),
-        )
-        Tenant.objects.bulk_create(cls.tenants)
-
-        cls.custom_prefixes = (
-            CustomPrefix(
-                prefix=IPNetwork("1.1.1.1/32"),
-                tenant=cls.tenants[0],
-            ),
-            CustomPrefix(
-                prefix=IPNetwork("1.1.1.2/32"),
-                tenant=cls.tenants[1],
-            ),
-            CustomPrefix(
-                prefix=IPNetwork("1.1.1.3/32"),
-                tenant=cls.tenants[2],
-            ),
-        )
-        CustomPrefix.objects.bulk_create(cls.custom_prefixes)
+        super().setUpTestData()
 
     def test_prefix(self):
         params = {"prefix": ["1.1.1.1/32", "1.1.1.2/32"]}

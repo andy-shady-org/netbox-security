@@ -12,57 +12,16 @@ from netbox_security.choices import (
     LossPriorityChoices,
     ForwardingClassChoices,
 )
+from netbox_security.tests.mixins import PolicerMixin
 
 
-class PolicerFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
+class PolicerFiterSetTestCase(PolicerMixin, TestCase, ChangeLoggedFilterSetTestMixin):
     queryset = Policer.objects.all()
     filterset = PolicerFilterSet
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant_groups = (
-            TenantGroup(name="Tenant group 1", slug="tenant-group-1"),
-            TenantGroup(name="Tenant group 2", slug="tenant-group-2"),
-            TenantGroup(name="Tenant group 3", slug="tenant-group-3"),
-        )
-        for tenantgroup in cls.tenant_groups:
-            tenantgroup.save()
-
-        cls.tenants = (
-            Tenant(name="Tenant 1", slug="tenant-1", group=cls.tenant_groups[0]),
-            Tenant(name="Tenant 2", slug="tenant-2", group=cls.tenant_groups[1]),
-            Tenant(name="Tenant 3", slug="tenant-3", group=cls.tenant_groups[2]),
-        )
-        Tenant.objects.bulk_create(cls.tenants)
-
-        cls.policers = (
-            Policer(
-                name="policer-1",
-                loss_priority=LossPriorityChoices.HIGH,
-                forwarding_class=ForwardingClassChoices.ASSURED_FORWARDING,
-                logical_interface_policer=True,
-                physical_interface_policer=False,
-                tenant=cls.tenants[0],
-            ),
-            Policer(
-                name="policer-2",
-                loss_priority=LossPriorityChoices.HIGH,
-                forwarding_class=ForwardingClassChoices.ASSURED_FORWARDING,
-                logical_interface_policer=True,
-                physical_interface_policer=False,
-                tenant=cls.tenants[1],
-            ),
-            Policer(
-                name="policer-3",
-                loss_priority=LossPriorityChoices.HIGH,
-                forwarding_class=ForwardingClassChoices.ASSURED_FORWARDING,
-                logical_interface_policer=True,
-                physical_interface_policer=False,
-                tenant=cls.tenants[2],
-            ),
-        )
-        for policer in cls.policers:
-            policer.save()
+        super().setUpTestData()
 
     def test_name(self):
         params = {"name": ["policer-1", "policer-2"]}
@@ -86,7 +45,7 @@ class PolicerFiterSetTestCase(TestCase, ChangeLoggedFilterSetTestMixin):
 
     def test_loss_priority(self):
         params = {"loss_priority": [LossPriorityChoices.HIGH]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_forwarding_class(self):
         params = {"forwarding_class": [ForwardingClassChoices.ASSURED_FORWARDING]}

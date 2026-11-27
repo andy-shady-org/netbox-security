@@ -4,9 +4,11 @@ from netbox_security.tests.custom import ModelViewTestCase
 from netbox_security.models import ApplicationItem, Application, ApplicationSet
 
 from netbox_security.choices import ProtocolChoices
+from netbox_security.tests.mixins import ApplicationSetMixin
 
 
 class ApplicationItemViewTestCase(
+    ApplicationSetMixin,
     ModelViewTestCase,
     ViewTestCases.GetObjectViewTestCase,
     ViewTestCases.GetObjectChangelogViewTestCase,
@@ -22,30 +24,7 @@ class ApplicationItemViewTestCase(
 
     @classmethod
     def setUpTestData(cls):
-        cls.items = (
-            ApplicationItem(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-9",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-        )
-        ApplicationItem.objects.bulk_create(cls.items)
+        super().setUpTestData()
 
         tags = create_tags("Alpha", "Bravo", "Charlie")
 
@@ -78,6 +57,7 @@ class ApplicationItemViewTestCase(
 
 
 class ApplicationViewTestCase(
+    ApplicationSetMixin,
     ModelViewTestCase,
     ViewTestCases.GetObjectViewTestCase,
     ViewTestCases.GetObjectChangelogViewTestCase,
@@ -93,52 +73,7 @@ class ApplicationViewTestCase(
 
     @classmethod
     def setUpTestData(cls):
-        cls.items = (
-            ApplicationItem(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-9",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-        )
-        ApplicationItem.objects.bulk_create(cls.items)
-
-        cls.applications = (
-            Application(
-                name="item-1",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-            Application(
-                name="item-2",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-            Application(
-                name="item-3",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-        )
-        Application.objects.bulk_create(cls.applications)
+        super().setUpTestData()
 
         tags = create_tags("Alpha", "Bravo", "Charlie")
 
@@ -171,6 +106,7 @@ class ApplicationViewTestCase(
 
 
 class ApplicationSetViewTestCase(
+    ApplicationSetMixin,
     ModelViewTestCase,
     ViewTestCases.GetObjectViewTestCase,
     ViewTestCases.GetObjectChangelogViewTestCase,
@@ -186,63 +122,7 @@ class ApplicationSetViewTestCase(
 
     @classmethod
     def setUpTestData(cls):
-        cls.items = (
-            ApplicationItem(
-                name="item-7",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-8",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-            ApplicationItem(
-                name="item-9",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-                index=1,
-            ),
-        )
-        ApplicationItem.objects.bulk_create(cls.items)
-
-        cls.applications = (
-            Application(
-                name="item-1",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-            Application(
-                name="item-2",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-            Application(
-                name="item-3",
-                protocol=[ProtocolChoices.TCP],
-                destination_ports=[1],
-                source_ports=[1],
-            ),
-        )
-        Application.objects.bulk_create(cls.applications)
-
-        cls.application_sets = (
-            ApplicationSet(name="item-1"),
-            ApplicationSet(
-                name="item-2",
-            ),
-            ApplicationSet(
-                name="item-3",
-            ),
-        )
-        ApplicationSet.objects.bulk_create(cls.application_sets)
+        super().setUpTestData()
 
         tags = create_tags("Alpha", "Bravo", "Charlie")
 
