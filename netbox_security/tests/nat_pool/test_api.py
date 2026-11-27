@@ -109,7 +109,7 @@ class NatPoolMemberAPITestCase(
                 "name": "member-y",
                 "pool": cls.pools[1].pk,
                 "status": IPAddressStatusChoices.STATUS_ACTIVE,
-                "address": cls.addresses[0].pk,
+                "address": cls.ip_addresses[0].pk,
                 "source_ports": [1, 2, 3],
                 "destination_ports": [4, 5, 6],
             },

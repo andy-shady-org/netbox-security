@@ -122,6 +122,7 @@ class SecurityZonePolicyAPITestCase(
         "tenancy.view_tenantgroup",
         "netbox_security.view_securityzone",
         "netbox_security.view_address",
+        "netbox_security.view_addressset",
         "netbox_security.view_addresslist",
         "netbox_security.view_applicationitem",
         "netbox_security.view_application",
