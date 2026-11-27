@@ -18,7 +18,9 @@ from netbox_security.filtersets import (
 from netbox_security.tests.mixins import AddressListMixin
 
 
-class AddressFiterSetTestCase(AddressListMixin, TestCase, ChangeLoggedFilterSetTestMixin):
+class AddressFiterSetTestCase(
+    AddressListMixin, TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = Address.objects.all()
     filterset = AddressFilterSet
 
@@ -98,7 +100,9 @@ class AddressFiterSetTestCase(AddressListMixin, TestCase, ChangeLoggedFilterSetT
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
 
-class AddressAssignmentFilterSetTestCase(AddressListMixin, TestCase, ChangeLoggedFilterSetTestMixin):
+class AddressAssignmentFilterSetTestCase(
+    AddressListMixin, TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = AddressAssignment.objects.all()
     filterset = AddressAssignmentFilterSet
 

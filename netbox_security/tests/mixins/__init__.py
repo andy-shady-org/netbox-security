@@ -16,7 +16,6 @@ from .api import PolicerMixin
 from .api import SecurityZoneMixin
 from .api import SecurityZonePolicyMixin
 
-
 __all__ = [
     "CustomPrefixMixin",
     "AddressMixin",

@@ -13,7 +13,9 @@ from netbox_security.filtersets import (
 from netbox_security.tests.mixins import CustomPrefixMixin
 
 
-class CustomPrefixFiterSetTestCase(CustomPrefixMixin, TestCase, ChangeLoggedFilterSetTestMixin):
+class CustomPrefixFiterSetTestCase(
+    CustomPrefixMixin, TestCase, ChangeLoggedFilterSetTestMixin
+):
     queryset = CustomPrefix.objects.all()
     filterset = CustomPrefixFilterSet
 

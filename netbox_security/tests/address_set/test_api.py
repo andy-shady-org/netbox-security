@@ -22,7 +22,7 @@ class AddressSetAPITestCase(
         "tenancy.view_tenantgroup",
         "tenancy.view_tenant",
         "netbox_security.view_customprefix",
-        "netbox_security.view_address"
+        "netbox_security.view_address",
     )
 
     brief_fields = [

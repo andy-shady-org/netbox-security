@@ -214,9 +214,12 @@ class SecurityZonePolicyAPITestCase(
 
     def test_policy(self):
         self.assertEqual(
-            set(self.policies[2].destination_address.all()), set(self.destination_addresses)
+            set(self.policies[2].destination_address.all()),
+            set(self.destination_addresses),
         )
-        self.assertEqual(set(self.policies[2].applications.all()), set(self.applications))
+        self.assertEqual(
+            set(self.policies[2].applications.all()), set(self.applications)
+        )
         self.assertEqual(
             set(self.policies[2].application_sets.all()), set(self.application_sets)
         )

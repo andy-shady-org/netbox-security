@@ -85,9 +85,7 @@ class ApplicationAPITestCase(
     # auto-filter rendering in utilities.testing.api (_emit_array_lookup_filter_tests).
     graphql_auto_filter_exclude = ("protocol",)
 
-    user_permissions = (
-        "netbox_security.view_applicationitem",
-    )
+    user_permissions = ("netbox_security.view_applicationitem",)
 
     brief_fields = [
         "application_items",
